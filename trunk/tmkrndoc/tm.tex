@@ -862,7 +862,7 @@ If the variable does not exist an empty string is returned.
 Determine whether environment variable {\tt nm} exists.
 Return {\it true} if it exists, or {\it false} \/if it does not.
 \\
-{\tt processortime}\index{dsfilename@{\tt dsfilename}}
+{\tt dsfilename}\index{dsfilename@{\tt dsfilename}}
 &
 Return the name of the file that describes the data structures.
 \\
@@ -1262,9 +1262,10 @@ the direct reach of a list type is its element type, the direct reach
 of an alias type is the target type of the alias, and the direct reach
 of an atomic type is empty.
 \par
-The \defn{reach} of a type is the union of the type itself, the direct reach of
-the type, and the reach of the types in the direct reach of the type.
-Thus, the reach is the transitive closure of the direct reach.
+The \defn{reach} of a type is the union of the type itself, the direct
+reach of the type, and the reach of the types in the direct reach of
+the type.  In other words, the reach is the transitive closure of the
+direct reach.
 \\
 \end{desctab}
 For example:
