@@ -396,9 +396,9 @@ extern char tm_errmsg[];
 #define TM_ERRLEN 100
 extern int tm_lineno;
 
-#define _TM_TMCDEFS 1
-#endif
-
 #ifdef __cplusplus
 } /* Closing bracket for 'extern "C" {' */
+#endif
+
+#define _TM_TMCDEFS 1
 #endif
