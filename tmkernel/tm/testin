@@ -268,7 +268,8 @@ inherits: ${inherits} ${inherits iserniet}
 inheritors: ${inheritors} ${inheritors iserniet}
 superclasses: ${superclasses} ${superclasses iserniet}
 subclasses: ${subclasses} ${subclasses iserniet}
-reach: ${reach} ${reach iserniet}
+.set listsuff _list
+reach: [${reach}] [${reach iserniet}] [${reach toplevel "" Toptuple}]
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
 fields: ${fields} ${fields bla bla} ${fields notatype}
 allfields: ${allfields} ${allfields bla bla} ${allfields notatype}
