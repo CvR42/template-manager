@@ -86,7 +86,6 @@ int main( void )
     toplevel_list *l;
     toplevel *e;
     bool valid;
-    int n;
     FILE *infile;
     FILE *outfile;
     TMPRINTSTATE *st;
