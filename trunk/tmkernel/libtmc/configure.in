@@ -1,9 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(tmc.h)
 
-dnl Set the installation path by default to the path were gcc is found.
-AC_PREFIX_PROGRAM(gcc)
-
 dnl Checks for programs.
 AC_PROG_CC
 if test "$GCC" = "yes"; then
