@@ -128,7 +128,6 @@ static foldexpr *add_foldexpr_action( foldexpr *elm, int n )
 
 int main( void )                             
 {
-    TMPRINTSTATE *st;
     int level;
     expr *x;                                                     
     FILE *infile;
@@ -151,9 +150,10 @@ int main( void )
         exit( 1 );
     }
 .call generate_descent_call "    " x expr expr
-    st = tm_setprint( outfile, 1, 75, 8, 0 );
+    TmPrintState *st = new TmPrintState( outfile, 1, 75, 8, 0 );
     print_expr( st, x );
-    level = tm_endprint( st );
+    level = st->getLevel();
+    st->destroy();
     if( level != 0 ){                          
         fprintf( stderr, "Internal error: bracket level = %d\n", level );
         exit( 1 );

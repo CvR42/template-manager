@@ -44,9 +44,10 @@ static void test_valuetype_list( FILE *infile, FILE *outfile )
     lc = l->slice( 1, 2 );
     lc->reverse();
     fprint_int_list( outfile, l );
-    TMPRINTSTATE *st = tm_setprint( outfile, 4, 78, 8, 0 );
+    TmPrintState *st = new TmPrintState( outfile, 4, 78, 8, 0 );
     print_int_list( st, l );
-    int lev = tm_endprint( st );
+    int lev = st->getLevel();
+    st->destroy();
     fprintf( outfile, "bracket level: %d\n", lev );
     {
 	int n;
@@ -88,7 +89,6 @@ int main( void )
     bool valid;
     FILE *infile;
     FILE *outfile;
-    TMPRINTSTATE *st;
 
     tm_lineno = 1;
     label *lbl = new label( 42 );
@@ -197,14 +197,15 @@ int main( void )
     fprint_label( outfile, lbl );
     fprint_thing( outfile, t );
     fprint_expr( outfile, x );
-    st = tm_setprint( outfile, 4, 78, 8, 0 );
+    TmPrintState *st = new TmPrintState( outfile, 4, 78, 8, 0 );
     print_toplevel_list( st, ds );
     print_label( st, lbl );
     print_thing( st, t );
     print_expr( st, x );
     x->destroy();
-    int lev = tm_endprint( st );
+    int lev = st->getLevel();
     fprintf( outfile, "bracket level: %d\n", lev );
+    st->destroy();
     ds->destroy();
     lbl->destroy();
     t->destroy();

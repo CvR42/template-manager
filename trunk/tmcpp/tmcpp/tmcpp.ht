@@ -239,10 +239,10 @@ public:
 
 .. print() routines
 .foreach t $(want_print)
-extern void print_$t( TMPRINTSTATE *, const $t * );
+extern void print_$t( TmPrintState *, const $t * );
 .endforeach
 .foreach t $(want_print_list)
-extern void print_$t_list( TMPRINTSTATE *, const $t_list * );
+extern void print_$t_list( TmPrintState *, const $t_list * );
 .endforeach
 ..
 .. fprint() routines
