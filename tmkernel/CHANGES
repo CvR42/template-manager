@@ -1,4 +1,5 @@
 New in version 2.0:
+
 - 'inheritsort': a Tm function that sorts a list of types so that
   inherited types are placed after the types they inherit from.
 
@@ -40,6 +41,16 @@ New in version 2.0:
   information about that field, and from the variables listpre and
   listsuff.
 
+- The C templates provide the new functions insertlist_<type>_list()
+  and extractlist_<type>_list().
+
+- The tmc template provides a function is_<class>() to determine whether
+  an element belongs to the given subclass.
+
+- The data structure files allow aliases.
+
+- The Tm template language allows type renaming; mainly to allow
+  the implementation of aliases.
 
 New in version 1.2:
 - Documentation moved to a separate package.
