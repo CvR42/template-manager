@@ -91,16 +91,16 @@ static ds merge_cons_types( const ds a, const ds b )
     tmstring_list ilb;
     unsigned int ix;
 
-    la = rdup_tmstring_list( a->DsCons.constructors );
-    lb = rdup_tmstring_list( b->DsCons.constructors );
+    la = rdup_tmstring_list( a->DsConstructorBase.constructors );
+    lb = rdup_tmstring_list( b->DsConstructorBase.constructors );
     la = concat_tmstring_list( la, lb );
-    ila = rdup_tmstring_list( a->DsCons.inherits );
-    ilb = b->DsCons.inherits;
+    ila = rdup_tmstring_list( a->DsConstructorBase.inherits );
+    ilb = b->DsConstructorBase.inherits;
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return new_DsCons(
-	rdup_tmstring( a->DsCons.name ),
+    return new_DsConstructorBase(
+	rdup_tmstring( a->DsConstructorBase.name ),
 	ila,
 	la
     );
@@ -114,10 +114,10 @@ static void ckcname_type( const ds t, const tmstring cnm, const tmstring tnm )
 {
     tmstring_list cl;
 
-    if( t->tag != TAGDsCons ){
+    if( t->tag != TAGDsConstructorBase ){
 	return;
     }
-    cl = t->DsCons.constructors;
+    cl = t->DsConstructorBase.constructors;
     if( member_tmstring_list( tnm, cl ) ){
 	(void) sprintf( errpos, "type %s", tnm );
 	(void) sprintf( errarg, "'%s' (in type %s)", cnm, get_type_name( t ) );
@@ -148,10 +148,10 @@ static void ckcnames( ds_list l, ds t )
     unsigned int ix;
     tmstring tnm;
 
-    if( t->tag != TAGDsCons ){
+    if( t->tag != TAGDsConstructorBase ){
 	return;
     }
-    cl = t->DsCons.constructors;
+    cl = t->DsConstructorBase.constructors;
     tnm = get_type_name( t );
     for( ix=0; ix<cl->sz; ix++ ){
 	ckcname( l, cl->arr[ix], tnm );
@@ -177,7 +177,7 @@ static ds_list add_ds_list( ds_list l, ds t )
     ix = find_type_ix( l, nm );
     if( ix<l->sz ){
 	old = l->arr[ix];
-	if( old->tag == TAGDsCons && t->tag == TAGDsCons ){
+	if( old->tag == TAGDsConstructorBase && t->tag == TAGDsConstructorBase ){
 	    nw = merge_cons_types( old, t );
 	    l = delete_ds_list( l, ix );
 	    l = append_ds_list( l, nw );
@@ -412,7 +412,7 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
 
 	members = append_tmstring_list( members, rdup_tmstring( mnm ) );
     }
-    *tp = append_ds_list( new_ds_list(), new_DsCons( nm, inherits, members ) );
+    *tp = append_ds_list( new_ds_list(), new_DsConstructorBase( nm, inherits, members ) );
     *tp = concat_ds_list( *tp, cl );
     return ok;
 }

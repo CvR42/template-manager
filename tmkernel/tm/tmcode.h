@@ -51,7 +51,7 @@ typedef struct str_var *var;
 #define CCFields u.ue_CCFields
 #define CCAlternatives u.ue_CCAlternatives
 #define CCSublist u.ue_CCSublist
-#define DsCons u.ue_DsCons
+#define DsConstructorBase u.ue_DsConstructorBase
 #define DsTuple u.ue_DsTuple
 #define DsClass u.ue_DsClass
 #define DsConstructor u.ue_DsConstructor
@@ -77,7 +77,7 @@ typedef enum en_tags_classComponent {
 } tags_classComponent;
 
 typedef enum en_tags_ds {
-    TAGDsCons, TAGDsTuple, TAGDsClass, TAGDsConstructor
+    TAGDsConstructorBase, TAGDsTuple, TAGDsClass, TAGDsConstructor
 } tags_ds;
 
 typedef enum en_tags_tplelm {
@@ -127,12 +127,12 @@ struct str_alternative {
 #endif
 };
 
-/* Structure for constructor DsCons */
-typedef struct str_DsCons {
+/* Structure for constructor DsConstructorBase */
+typedef struct str_DsConstructorBase {
     tmstring name;
     tmstring_list inherits;
     tmstring_list constructors;
-} C_DsCons;
+} C_DsConstructorBase;
 
 /* Structure for constructor DsTuple */
 typedef struct str_DsTuple {
@@ -160,7 +160,7 @@ typedef struct str_DsConstructor {
 struct str_ds {
     tags_ds tag;
     union uni_ds {
-	C_DsCons ue_DsCons;
+	C_DsConstructorBase ue_DsConstructorBase;
 	C_DsTuple ue_DsTuple;
 	C_DsClass ue_DsClass;
 	C_DsConstructor ue_DsConstructor;
@@ -406,7 +406,7 @@ struct str_var_list {
 #define new_CCFields(fields) real_new_CCFields(fields,__FILE__,__LINE__)
 #define new_CCAlternatives(alternatives) real_new_CCAlternatives(alternatives,__FILE__,__LINE__)
 #define new_CCSublist(components) real_new_CCSublist(components,__FILE__,__LINE__)
-#define new_DsCons(name,inherits,constructors) real_new_DsCons(name,inherits,constructors,__FILE__,__LINE__)
+#define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
 #define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,__FILE__,__LINE__)
 #define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,__FILE__,__LINE__)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
@@ -469,9 +469,9 @@ extern classComponent real_new_CCSublist( classComponent_list, const char *, con
 extern classComponent new_CCSublist( classComponent_list );
 #endif
 #ifdef LOGNEW
-extern ds real_new_DsCons( tmstring, tmstring_list, tmstring_list, const char *, const int );
+extern ds real_new_DsConstructorBase( tmstring, tmstring_list, tmstring_list, const char *, const int );
 #else
-extern ds new_DsCons( tmstring, tmstring_list, tmstring_list );
+extern ds new_DsConstructorBase( tmstring, tmstring_list, tmstring_list );
 #endif
 #ifdef LOGNEW
 extern ds real_new_DsTuple( tmstring, tmstring_list, field_list, const char *, const int );
