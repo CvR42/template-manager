@@ -1227,7 +1227,10 @@ static tmstring fnctypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
-		nl = append_tmstring_list( nl, new_tmstring( to_DsConstructor(d)->name ) );
+		nl = append_tmstring_list(
+		    nl,
+		    new_tmstring( to_DsConstructor(d)->name )
+		);
 		break;
 
 	    case TAGDsTuple:

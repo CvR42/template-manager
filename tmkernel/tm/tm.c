@@ -63,7 +63,7 @@ static tmstring find_active_libpath( void )
     char *env;
 
     env = getenv( "TMLIBPATH" );
-    if( env == NULL ){
+    if( env == (char *) 0 ){
 #ifdef LIBPATH
 	return new_tmstring( LIBPATH );
 #else

@@ -1,52 +1,92 @@
-/* required:  new_alternative new_alternative_list new_classComponent new_classComponent_list new_ds new_ds_list new_field new_field_list new_macro new_macro_list new_switchcase new_switchcase_list new_tmstring_list new_tplelm new_tplelm_list new_var new_var_list */
-/* required: . ds_alternative ds_alternative_list ds_classComponent ds_classComponent_list ds_ds ds_ds_list ds_field ds_field_list ds_macro ds_macro_list ds_switchcase ds_switchcase_list ds_tmstring_list ds_tplelm ds_tplelm_list ds_var ds_var_list */
-/* required: .. ds_tmstring */
-/* required: .. ds_int ds_tmbool ds_uint */
-/* required:  rfre_alternative_list rfre_classComponent rfre_classComponent_list rfre_ds rfre_ds_list rfre_field_list rfre_macro rfre_macro_list rfre_tmstring_list rfre_tplelm rfre_tplelm_list rfre_var_list */
-/* required: . rfre_alternative rfre_field rfre_tmstring rfre_var */
-/* required: .. rfre_int rfre_uint */
-/* required: ... fre_int fre_uint */
-/* required: .. fre_alternative fre_field fre_tmstring fre_var */
-/* required: . rfre_switchcase_list rfre_tmbool */
-/* required: .. rfre_switchcase */
-/* required: ... fre_switchcase */
-/* required: .. fre_switchcase_list fre_tmbool */
-/* required: . fre_alternative_list fre_classComponent fre_classComponent_list fre_ds fre_ds_list fre_field_list fre_macro fre_macro_list fre_tmstring_list fre_tplelm fre_tplelm_list fre_var_list */
-/* required:  rdup_ds rdup_field_list rdup_tmstring_list rdup_tplelm rdup_tplelm_list */
-/* required: . setroom_field_list setroom_tmstring_list setroom_tplelm_list */
-/* required: . rdup_field rdup_tmstring */
-/* required: .. new_tmstring */
-/* required: .. rdup_int */
-/* required: ... new_int */
-/* required: . rdup_switchcase_list rdup_tmbool */
-/* required: .. new_tmbool */
-/* required: .. setroom_switchcase_list */
-/* required: .. rdup_switchcase */
-/* required:  print_ds_list print_tmstring_list */
-/* required: . print_ds print_tmstring */
-/* required: .. print_field_list print_tmbool */
-/* required: ... print_field */
-/* required: .... print_int */
-/* required:  append_alternative_list append_classComponent_list append_ds_list append_field_list append_switchcase_list append_tmstring_list append_tplelm_list append_var_list */
-/* required: . setroom_alternative_list setroom_classComponent_list setroom_ds_list setroom_var_list */
-/* required:  concat_ds_list concat_field_list concat_tmstring_list */
-/* required:  insert_macro_list insert_tmstring_list insert_var_list */
-/* required: . setroom_macro_list */
-/* required:  delete_ds_list delete_macro_list delete_tmstring_list delete_var_list */
-/* required:  extract_tmstring_list */
-/* Requirement analysis took 2360 milliseconds. */
+/* Type casting macros. */
+#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
+#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
+#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
+#define to_DsTuple(e) (&(e->u.ue_DsTuple))
+#define to_DsTuple(e) (&(e->u.ue_DsTuple))
+#define to_DsTuple(e) (&(e->u.ue_DsTuple))
+#define to_DsClass(e) (&(e->u.ue_DsClass))
+#define to_DsClass(e) (&(e->u.ue_DsClass))
+#define to_DsClass(e) (&(e->u.ue_DsClass))
+#define to_DsClass(e) (&(e->u.ue_DsClass))
+#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
+#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
+#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
+#define to_CCSuper(e) (&(e->u.ue_CCSuper))
+#define to_CCFields(e) (&(e->u.ue_CCFields))
+#define to_CCAlternatives(e) (&(e->u.ue_CCAlternatives))
+#define to_CCSublist(e) (&(e->u.ue_CCSublist))
+#define to_alternative(e) (e)          
+#define to_alternative(e) (e)          
+#define to_field(e) (e)          
+#define to_field(e) (e)          
+#define to_field(e) (e)          
+#define to_macro(e) (e)          
+#define to_macro(e) (e)          
+#define to_macro(e) (e)          
+#define to_macro(e) (e)          
+#define to_macro(e) (e)          
+#define to_var(e) (e)          
+#define to_var(e) (e)          
+#define to_var(e) (e)          
+#define to_switchcase(e) (e)          
+#define to_switchcase(e) (e)          
+#define to_Plain(e) (&(e->u.ue_Plain))
+#define to_Plain(e) (&(e->u.ue_Plain))
+#define to_Foreach(e) (&(e->u.ue_Foreach))
+#define to_Foreach(e) (&(e->u.ue_Foreach))
+#define to_Foreach(e) (&(e->u.ue_Foreach))
+#define to_While(e) (&(e->u.ue_While))
+#define to_While(e) (&(e->u.ue_While))
+#define to_While(e) (&(e->u.ue_While))
+#define to_If(e) (&(e->u.ue_If))
+#define to_If(e) (&(e->u.ue_If))
+#define to_If(e) (&(e->u.ue_If))
+#define to_If(e) (&(e->u.ue_If))
+#define to_Switch(e) (&(e->u.ue_Switch))
+#define to_Switch(e) (&(e->u.ue_Switch))
+#define to_Switch(e) (&(e->u.ue_Switch))
+#define to_Switch(e) (&(e->u.ue_Switch))
+#define to_Set(e) (&(e->u.ue_Set))
+#define to_Set(e) (&(e->u.ue_Set))
+#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
+#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
+#define to_Append(e) (&(e->u.ue_Append))
+#define to_Append(e) (&(e->u.ue_Append))
+#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
+#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
+#define to_Error(e) (&(e->u.ue_Error))
+#define to_Error(e) (&(e->u.ue_Error))
+#define to_Exit(e) (&(e->u.ue_Exit))
+#define to_Exit(e) (&(e->u.ue_Exit))
+#define to_Redirect(e) (&(e->u.ue_Redirect))
+#define to_Redirect(e) (&(e->u.ue_Redirect))
+#define to_Redirect(e) (&(e->u.ue_Redirect))
+#define to_Include(e) (&(e->u.ue_Include))
+#define to_Include(e) (&(e->u.ue_Include))
+#define to_Macro(e) (&(e->u.ue_Macro))
+#define to_Macro(e) (&(e->u.ue_Macro))
+#define to_Macro(e) (&(e->u.ue_Macro))
+#define to_Call(e) (&(e->u.ue_Call))
+#define to_Call(e) (&(e->u.ue_Call))
+#define to_Return(e) (&(e->u.ue_Return))
+#define to_Return(e) (&(e->u.ue_Return))
+#define to_Insert(e) (&(e->u.ue_Insert))
+#define to_Insert(e) (&(e->u.ue_Insert))
+#define to_Case(e) (&(e->u.ue_Case))
+#define to_Case(e) (&(e->u.ue_Case))
+#define to_Default(e) (&(e->u.ue_Default))
+
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/calu.ht ---- */
-/* External definitions (Version for array list).
+/* Definition C datastructures (Version for array list).
 
    template file:      /usr/local/lib/calu.ht
    datastructure file: tm.ds
-   tm version:         36
-   tm kernel version:  *** development -- not for distribution ***
+   tm version:         35
+   tm kernel version:  1.2-beta3
  */
-
-/* data structures */
 
 /* forward reference typedefs for all types.
  * C does not like the use of undefined types, but does not
@@ -61,23 +101,23 @@ typedef struct str_switchcase_list *switchcase_list;
 typedef struct str_tmstring_list *tmstring_list;
 typedef struct str_tplelm_list *tplelm_list;
 typedef struct str_var_list *var_list;
+typedef struct str_ds *ds;
 typedef struct str_classComponent *classComponent;
 typedef struct str_alternative *alternative;
-typedef struct str_ds *ds;
 typedef struct str_field *field;
 typedef struct str_macro *macro;
+typedef struct str_var *var;
 typedef struct str_switchcase *switchcase;
 typedef struct str_tplelm *tplelm;
-typedef struct str_var *var;
 
-#define alternativeNIL (alternative)0
-#define classComponentNIL (classComponent)0
 #define dsNIL (ds)0
+#define classComponentNIL (classComponent)0
+#define alternativeNIL (alternative)0
 #define fieldNIL (field)0
 #define macroNIL (macro)0
+#define varNIL (var)0
 #define switchcaseNIL (switchcase)0
 #define tplelmNIL (tplelm)0
-#define varNIL (var)0
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
 #define ds_listNIL (ds_list)0
@@ -88,60 +128,48 @@ typedef struct str_var *var;
 #define tplelm_listNIL (tplelm_list)0
 #define var_listNIL (var_list)0
 
-typedef enum en_tags_classComponent {
-    TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
-} tags_classComponent;
+#define DsConstructorBase u.ue_DsConstructorBase
+#define DsTuple u.ue_DsTuple
+#define DsClass u.ue_DsClass
+#define DsConstructor u.ue_DsConstructor
 
 typedef enum en_tags_ds {
     TAGDsConstructorBase, TAGDsTuple, TAGDsClass, TAGDsConstructor
 } tags_ds;
 
+#define CCSuper u.ue_CCSuper
+#define CCFields u.ue_CCFields
+#define CCAlternatives u.ue_CCAlternatives
+#define CCSublist u.ue_CCSublist
+
+typedef enum en_tags_classComponent {
+    TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
+} tags_classComponent;
+
+#define Plain u.ue_Plain
+#define Foreach u.ue_Foreach
+#define While u.ue_While
+#define If u.ue_If
+#define Switch u.ue_Switch
+#define Set u.ue_Set
+#define GlobalSet u.ue_GlobalSet
+#define Append u.ue_Append
+#define GlobalAppend u.ue_GlobalAppend
+#define Error u.ue_Error
+#define Exit u.ue_Exit
+#define Redirect u.ue_Redirect
+#define Include u.ue_Include
+#define Macro u.ue_Macro
+#define Call u.ue_Call
+#define Return u.ue_Return
+#define Insert u.ue_Insert
+#define Case u.ue_Case
+#define Default u.ue_Default
+
 typedef enum en_tags_tplelm {
     TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert, TAGCase, TAGDefault
 } tags_tplelm;
 
-
-/* Structure for constructor CCSuper */
-typedef struct str_CCSuper {
-    tmstring super;
-} C_CCSuper;
-
-/* Structure for constructor CCFields */
-typedef struct str_CCFields {
-    field_list fields;
-} C_CCFields;
-
-/* Structure for constructor CCAlternatives */
-typedef struct str_CCAlternatives {
-    alternative_list alternatives;
-} C_CCAlternatives;
-
-/* Structure for constructor CCSublist */
-typedef struct str_CCSublist {
-    classComponent_list components;
-} C_CCSublist;
-
-/* Constructor type classComponent */
-struct str_classComponent {
-    tags_classComponent tag;
-    union uni_classComponent {
-	C_CCSuper ue_CCSuper;
-	C_CCFields ue_CCFields;
-	C_CCAlternatives ue_CCAlternatives;
-	C_CCSublist ue_CCSublist;
-    } u;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_alternative {
-    tmstring label;
-    classComponent component;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
 
 /* Structure for constructor DsConstructorBase */
 typedef struct str_DsConstructorBase {
@@ -172,7 +200,6 @@ typedef struct str_DsConstructor {
     field_list fields;
 } C_DsConstructor;
 
-/* Constructor type ds */
 struct str_ds {
     tags_ds tag;
     union uni_ds {
@@ -181,6 +208,47 @@ struct str_ds {
 	C_DsClass ue_DsClass;
 	C_DsConstructor ue_DsConstructor;
     } u;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+/* Structure for constructor CCSuper */
+typedef struct str_CCSuper {
+    tmstring super;
+} C_CCSuper;
+
+/* Structure for constructor CCFields */
+typedef struct str_CCFields {
+    field_list fields;
+} C_CCFields;
+
+/* Structure for constructor CCAlternatives */
+typedef struct str_CCAlternatives {
+    alternative_list alternatives;
+} C_CCAlternatives;
+
+/* Structure for constructor CCSublist */
+typedef struct str_CCSublist {
+    classComponent_list components;
+} C_CCSublist;
+
+struct str_classComponent {
+    tags_classComponent tag;
+    union uni_classComponent {
+	C_CCSuper ue_CCSuper;
+	C_CCFields ue_CCFields;
+	C_CCAlternatives ue_CCAlternatives;
+	C_CCSublist ue_CCSublist;
+    } u;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_alternative {
+    tmstring label;
+    classComponent component;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -201,6 +269,15 @@ struct str_macro {
     tmstring orgfile;
     tmstring_list fpl;
     tplelm_list body;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_var {
+    uint lvl;
+    tmstring name;
+    tmstring val;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -335,7 +412,6 @@ typedef struct str_Default {
     int lno;
 } C_Default;
 
-/* Constructor type tplelm */
 struct str_tplelm {
     tags_tplelm tag;
     union uni_tplelm {
@@ -359,15 +435,6 @@ struct str_tplelm {
 	C_Case ue_Case;
 	C_Default ue_Default;
     } u;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_var {
-    uint lvl;
-    tmstring name;
-    tmstring val;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -454,85 +521,6 @@ struct str_var_list {
 #endif
 };
 
-
-/* Type casting macros. */
-#define to_alternative(e) (e)
-#define to_alternative(e) (e)
-#define to_CCSuper(e) (&(e->u.ue_CCSuper))
-#define to_CCFields(e) (&(e->u.ue_CCFields))
-#define to_CCAlternatives(e) (&(e->u.ue_CCAlternatives))
-#define to_CCSublist(e) (&(e->u.ue_CCSublist))
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define to_field(e) (e)
-#define to_field(e) (e)
-#define to_field(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_switchcase(e) (e)
-#define to_switchcase(e) (e)
-#define to_Plain(e) (&(e->u.ue_Plain))
-#define to_Plain(e) (&(e->u.ue_Plain))
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define to_While(e) (&(e->u.ue_While))
-#define to_While(e) (&(e->u.ue_While))
-#define to_While(e) (&(e->u.ue_While))
-#define to_If(e) (&(e->u.ue_If))
-#define to_If(e) (&(e->u.ue_If))
-#define to_If(e) (&(e->u.ue_If))
-#define to_If(e) (&(e->u.ue_If))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Set(e) (&(e->u.ue_Set))
-#define to_Set(e) (&(e->u.ue_Set))
-#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
-#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
-#define to_Append(e) (&(e->u.ue_Append))
-#define to_Append(e) (&(e->u.ue_Append))
-#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
-#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
-#define to_Error(e) (&(e->u.ue_Error))
-#define to_Error(e) (&(e->u.ue_Error))
-#define to_Exit(e) (&(e->u.ue_Exit))
-#define to_Exit(e) (&(e->u.ue_Exit))
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define to_Include(e) (&(e->u.ue_Include))
-#define to_Include(e) (&(e->u.ue_Include))
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define to_Call(e) (&(e->u.ue_Call))
-#define to_Call(e) (&(e->u.ue_Call))
-#define to_Return(e) (&(e->u.ue_Return))
-#define to_Return(e) (&(e->u.ue_Return))
-#define to_Insert(e) (&(e->u.ue_Insert))
-#define to_Insert(e) (&(e->u.ue_Insert))
-#define to_Case(e) (&(e->u.ue_Case))
-#define to_Case(e) (&(e->u.ue_Case))
-#define to_Default(e) (&(e->u.ue_Default))
-#define to_var(e) (e)
-#define to_var(e) (e)
-#define to_var(e) (e)
 
 #ifdef LOGNEW
 #define new_alternative(label,component) real_new_alternative(label,component,__FILE__,__LINE__)
@@ -795,8 +783,8 @@ extern void rfre_classComponent( classComponent );
 extern void rfre_ds( ds );
 extern void rfre_macro( macro );
 extern void rfre_tplelm( tplelm );
-extern void print_ds_list( TMPRINTSTATE *, const ds_list );
-extern void print_tmstring_list( TMPRINTSTATE *, const tmstring_list );
+extern void print_ds_list( TMPRINTSTATE *st, const ds_list );
+extern void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list );
 #ifdef LOGNEW
 #else
 #endif
@@ -820,4 +808,3 @@ extern void flush_tm( void );
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
 /* ---- end of /usr/local/lib/calu.ht ---- */
-/* Code generation required 3910 milliseconds. */
