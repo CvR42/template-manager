@@ -7,11 +7,11 @@ testsub(12): variable not found: blablabla
  this is a message line
 testin(118): malformed number: 'a'
 testin(119): malformed number: 'a'
-testin(129): bad number of parameters
-testin(133): bad number of parameters
-testin(134): bad number of parameters
-testin(147): missing expression
-testin(148): missing expression
+testin(129): 'subtract' requires exactly two parameters
+testin(133): 'max' requires at least one parameter
+testin(134): 'min' requires at least one parameter
+testin(147): 'index' requires at least one parameter
+testin(148): 'member' requires at least one parameter
 testin(197): not a constructor type: 'orig'
 testin(199): not a constructor type: 'orig'
 testin(197): not a constructor type: 'subtuple'
@@ -24,20 +24,20 @@ testin(207): not a tuple type: 'toplevel'
 testin(208): not a tuple type: 'toplevel'
 testin(207): not a tuple type: 'thing'
 testin(208): not a tuple type: 'thing'
-testin(214): missing expression
-testin(217): missing expression
-testin(220): missing expression
-testin(223): missing expression
-testin(225): bad number of parameters
+testin(214): 'mklist' requires at least one parameter
+testin(217): 'mklist' requires at least one parameter
+testin(220): 'mklist' requires at least one parameter
+testin(223): 'mklist' requires at least one parameter
+testin(225): 'inherits' does not need any parameters
 testin(225): no such type: iserniet
-testin(226): bad number of parameters
-testin(226): bad number of parameters
+testin(226): 'conslist' requires a type name
+testin(226): 'conslist' requires a type name
 testin(226): no such type: notatype
-testin(227): bad number of parameters
-testin(227): bad number of parameters
+testin(227): 'conslist' requires a type name
+testin(227): 'conslist' requires a type name
 testin(227): no such type: notatype
 testin(240): bad parameter: reutel
-testin(241): missing expression
+testin(241): 'ctypellev' requires at least one parameter
 Expansion does not allow inheritance from a constructor type: 'toplevel'
 testin(197): not a constructor type: 'orig'
 testin(199): not a constructor type: 'orig'
@@ -51,20 +51,20 @@ testin(207): not a tuple type: 'toplevel'
 testin(208): not a tuple type: 'toplevel'
 testin(207): not a tuple type: 'thing'
 testin(208): not a tuple type: 'thing'
-testin(214): missing expression
-testin(217): missing expression
-testin(220): missing expression
-testin(223): missing expression
-testin(225): bad number of parameters
+testin(214): 'mklist' requires at least one parameter
+testin(217): 'mklist' requires at least one parameter
+testin(220): 'mklist' requires at least one parameter
+testin(223): 'mklist' requires at least one parameter
+testin(225): 'inherits' does not need any parameters
 testin(225): no such type: iserniet
-testin(226): bad number of parameters
-testin(226): bad number of parameters
+testin(226): 'conslist' requires a type name
+testin(226): 'conslist' requires a type name
 testin(226): no such type: notatype
-testin(227): bad number of parameters
-testin(227): bad number of parameters
+testin(227): 'conslist' requires a type name
+testin(227): 'conslist' requires a type name
 testin(227): no such type: notatype
 testin(240): bad parameter: reutel
-testin(241): missing expression
+testin(241): 'ctypellev' requires at least one parameter
 testin(197): not a constructor type: 'orig'
 testin(199): not a constructor type: 'orig'
 testin(197): not a constructor type: 'subtuple'
@@ -77,22 +77,22 @@ testin(207): not a tuple type: 'toplevel'
 testin(208): not a tuple type: 'toplevel'
 testin(207): not a tuple type: 'thing'
 testin(208): not a tuple type: 'thing'
-testin(214): missing expression
-testin(217): missing expression
-testin(220): missing expression
-testin(223): missing expression
-testin(225): bad number of parameters
+testin(214): 'mklist' requires at least one parameter
+testin(217): 'mklist' requires at least one parameter
+testin(220): 'mklist' requires at least one parameter
+testin(223): 'mklist' requires at least one parameter
+testin(225): 'inherits' does not need any parameters
 testin(225): no such type: iserniet
-testin(226): bad number of parameters
-testin(226): bad number of parameters
+testin(226): 'conslist' requires a type name
+testin(226): 'conslist' requires a type name
 testin(226): no such type: notatype
-testin(227): bad number of parameters
-testin(227): bad number of parameters
+testin(227): 'conslist' requires a type name
+testin(227): 'conslist' requires a type name
 testin(227): no such type: notatype
 testin(240): bad parameter: reutel
-testin(241): missing expression
+testin(241): 'ctypellev' requires at least one parameter
 testin(251): empty padding string
-testin(263): bad number of parameters
+testin(263): 'isinenv' requires exactly one parameter
 testin(277): no separator
 testin(277): no separator
 testin(304): bad expression
