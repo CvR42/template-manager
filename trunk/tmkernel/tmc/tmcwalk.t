@@ -88,8 +88,9 @@
 .if ${len $(sub)}
     switch( e->tag ){
 .foreach tor ${inheritors $t}
-.if ${len ${comm $(tor) ${subclasses $(tor)} "" $(visit_types)}}
-.foreach i ${comm $(tor) ${subclasses $(tor)} "" $(visit_types)}
+.set l ${comm $(tor) ${subclasses $(tor)} "" $(visit_types)}
+.if ${len $l}
+.foreach i $(tor) ${subclasses $(tor)}
 .if ${not ${isvirtual $i}}
         case TAG$i:
 .endif
