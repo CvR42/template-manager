@@ -1,3 +1,7 @@
+New in version 2.0.7
+
+- Fixed a minor bug in the 'append' function of the linked-list library.
+
 New in version 2.0.6
 
 - Added a new function to the template: isequal_<type>().
