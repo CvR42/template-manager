@@ -18,7 +18,7 @@
 .append wantdefs destroy_thing
 .append wantdefs destroy_expr
 .append wantdefs clone_toplevel
-.append wantdefs cmp_toplevel
+.append wantdefs compare_toplevel
 .append wantdefs reserve_toplevel_list
 .append wantdefs slice_toplevel_list
 .append wantdefs extractlist_toplevel_list
@@ -38,11 +38,11 @@
 .append wantdefs fprint_toplevel_list
 .append wantdefs destroy_toplevel_list
 .append wantdefs print_toplevel_list
-.append wantdefs cmp_toplevel_list
+.append wantdefs compare_toplevel_list
 .append wantdefs stat_$(basename)
 .append wantdefs get_balance_$(basename)
 .append wantdefs flush_$(basename)
-.append wantdefs cmp_subtuple
+.append wantdefs compare_subtuple
 .append wantdefs subtuple_list
 .append wantdefs is_expr
 .append wantdefs is_toplevel_list
@@ -57,7 +57,7 @@
 .append wantdefs concat_int_list
 .append wantdefs extract_int_list
 .append wantdefs extractlist_int_list
-.append wantdefs cmp_int_list
+.append wantdefs compare_int_list
 .append wantdefs reverse_int_list
 .append wantdefs insertlist_int_list
 .append wantdefs insert_int_list
