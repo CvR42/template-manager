@@ -1,0 +1,49 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. File: pastype.pt
+.. Type declarations
+    { definition of Pascal data structures for system descriptions }
+.foreach t $(need_ds)
+    $t = ^Rec$t;
+.endforeach
+.foreach t $(need_ds_list)
+    $tlist = $t;
+.endforeach
+.foreach t $(need_ds)
+.if ${member $t ${ctypelist}}
+    { constructor type $t }
+    Alltags$t = ( ${seplist ", " ${prefix Tag ${conslist $t}}} );
+    Rec$t = record
+	next: $tlist;
+	case tag: Alltags$t of
+.foreach c ${conslist $t}
+	    Tag$c :(
+.foreach sname ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(sname)}}
+		$(sname): ${ctypename $t $c $(sname)}list;
+.else
+		$(sname): ${ctypename $t $c $(sname)};
+.endif
+.endforeach
+	    );
+.endforeach
+    end;
+.else
+    { tuple type $t }
+    Rec$t = record
+	next: $tlist;
+.foreach sname ${telmlist $t}
+.if ${eq list ${ttypeclass $t $(sname)}}
+	$(sname): ${ttypename $t $(sname)}list;
+.else
+	$(sname): ${ttypename $t $(sname)};
+.endif
+.endforeach
+    end;
+.endif
+.endforeach

@@ -1,0 +1,14 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+
+---- start of testsub ----
+var = $(var)
+.set var 123
+var = $(var)
+'${tplfilename}(${tpllineno})'
+'${dsfilename}'
+$(blablabla)
+---- end of testsub ----
+This line is not terminated, but should still appear in the output
