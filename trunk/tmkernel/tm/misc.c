@@ -222,7 +222,7 @@ Field find_field( const ds_list types, const char *type, const char *nm )
     return find_field_super( types, inherits, nm );
 }
 
-const tmstring_list extract_inherits( const ds_list types, const char *type )
+tmstring_list extract_inherits( const ds_list types, const char *type )
 {
     unsigned int ix;
 

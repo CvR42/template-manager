@@ -26,7 +26,7 @@ INSTALL_DATA = @INSTALL_DATA@
 IPATH = -I../libtmc -I$(LOCALINCLUDE)
 PROG = tm
 
-CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION)
+CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION) -g
 LDFLAGS	      = $(CFLAGS)
 
 TM            = tm
@@ -195,7 +195,7 @@ configure: configure.in
 config.status: configure
 	./config.status --recheck
 
-Makefile: Makefile.in config.status
+Makefile config.h: Makefile.in config.status config.hin
 	./config.status
 
 JUNK += config.log config.cache

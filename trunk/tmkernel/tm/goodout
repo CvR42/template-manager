@@ -11,6 +11,7 @@ VARIABLES:
 '$' '.' '"'
 unknownvariable: 'bla bla bla'
 'z y x z y x'
+a "a
 ----
 Special variables:
 dollar: '$'
@@ -197,7 +198,7 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '243'
+tpllineno: '246'
 1 bla
 testsub
 ----
@@ -998,7 +999,7 @@ gv: 1, ngv: 1 gl: [123], ngl: [123]
 gv: 2, ngv: 1 gl: [123 test], ngl: [123]
 matchmacro: 'testglobal test tv' '' ''
 definedmacro: '1' '0' '0' '0'
-matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff i var l bad op libpath pass t av test2 msg v test1 tmvers ngl gv pats z wildstring unknownvariable pathsep yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
+matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff i var l bad op libpath pass t av test2 msg v test1 tmvers x ngl y gv pats z wildstring unknownvariable pathsep yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
 ----
 
 Eval
