@@ -6,7 +6,10 @@
 || Structure of the datastructure itself
 || The Class type is in its canonical form. Before canonization
 || it is represented as a classComponent list.
-ds = { name:tmstring, inherits:[tmstring] } +
+||
+|| The list of inheritors of this type is a memoize of a lengthy
+|| and frequently used calculation.
+ds = { name:tmstring, inherits:[tmstring], inheritors:[tmstring] } +
     DsConstructorBase: { constructors:[tmstring] } |
     DsTuple: { fields:[Field] } |
     DsClass: { fields:[Field], isvirtual:tmbool } |

@@ -20,60 +20,56 @@
 #include "error.h"
 
 /* Given a pointer to a tmstring 's' and a pointer to a character pointer 'w',
-   scan the tmstring for a 'word'.
-   
-   First, all characters matching isspace() are skipped.
-   After that a word is scanned, a new tmstring is allocated for the word,
-   and assigned to '*w'. If there is no other word in the tmstring, '*w'
-   is set to tmstringNIL.
-
-   A word is one of the following regular expressions:
-   [^ \t\n\r\f\0]+: An arbitrary tmstring of nonblanks and non-specials.
-   "[^"\0]*": Arbitrary characters surrounded by "".
+ * scan the tmstring for a 'word'.
+ * 
+ * First, all characters matching isspace() are skipped.
+ * After that a word is scanned, a new tmstring is allocated for the word,
+ * and assigned to '*w'. If there is no other word in the tmstring, '*w'
+ * is set to tmstringNIL.
+ *
+ * A word is one of the following regular expressions:
+ * [^ \t\n\r\f\0]+: An arbitrary tmstring of nonblanks and non-specials.
+ * "[^"\0]*": Arbitrary characters surrounded by "".
  */
 const char *scanword( const char *s, char **w )
 {
-    unsigned int ix;
-    unsigned int room;
     tmstring buf;
+    const char *start;
+    const char *end;
+    size_t room;
 
     while( isspace( *s ) ){
 	s++;
     }
     if( *s == '\0' ){
 	*w = tmstringNIL;
-	return( s );
+	return s;
     }
-    buf = new_tmstring( s );
-    ix = 0;
-    room = (int) strlen( s )+1;
     if( *s == DQUOTE ){
 	s++;
+	start = s;
 	while( *s != DQUOTE && *s != '\0' ){
-	    if( ix>= room ){
-		room += STRSTEP;
-		buf = realloc_tmstring( buf, room+1 );
-	    }
-	    buf[ix++] = *s++;
+	    s++;
 	}
+	end = s;
 	if( *s != DQUOTE ){
 	    line_error( "unexpected end of line" );
 	}
 	else {
 	    s++;
 	}
-	buf[ix] = '\0';
-	*w = buf;
-	return( s );
     }
-    while( *s != '\0' && !isspace( *s ) ){
-	if( ix>= room ){
-	    room += STRSTEP;
-	    buf = realloc_tmstring( buf, room+1 );
+    else {
+	start = s;
+	while( *s != '\0' && !isspace( *s ) ){
+	    s++;
 	}
-	buf[ix++] = *s++;
+	end = s;
     }
-    buf[ix] = '\0';
+    room = (size_t) (end-start);
+    buf = create_tmstring( room+1 );
+    strncpy( buf, start, room );
+    buf[room] = '\0';
     *w = buf;
     return s;
 }

@@ -1288,8 +1288,6 @@ static tmstring fnmklist( const tmstring_list sl )
 /* Construct a list of types. */
 static tmstring fntypelist( const tmstring_list sl )
 {
-    ds d;
-    tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1299,9 +1297,9 @@ static tmstring fntypelist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	d = allds->arr[ix];
-	vp = d->name;
-	nl = append_tmstring_list( nl, new_tmstring( vp ) );
+	ds d = allds->arr[ix];
+
+	nl = append_tmstring_list( nl, new_tmstring( d->name ) );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
