@@ -73,10 +73,10 @@ static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
 static ds_list add_constructor_list( ds_list l, const ds c )
 {
     unsigned int ix;
-    const tmstring cnm = get_type_name( c );
+    const tmstring cnm = c->name;
 
     for( ix=0; ix<l->sz; ix++ ){
-	if( strcmp( cnm, get_type_name( l->arr[ix] ) ) == 0 ){
+	if( strcmp( cnm, l->arr[ix]->name ) == 0 ){
 	    (void) sprintf( errarg, "'%s'", cnm );
 	    yyerror( "double use of constructor name" );
 	    return l;
@@ -127,7 +127,7 @@ static void ckcname_type( const ds t, const tmstring cnm, const tmstring tnm )
     cl = to_DsConstructorBase(t)->constructors;
     if( member_tmstring_list( tnm, cl ) ){
 	(void) sprintf( errpos, "type %s", tnm );
-	(void) sprintf( errarg, "'%s' (in type %s)", cnm, get_type_name( t ) );
+	(void) sprintf( errarg, "'%s' (in type %s)", cnm, t->name );
 	error( "constructor already defined" );
     }
 }
@@ -159,7 +159,7 @@ static void ckcnames( ds_list l, ds t )
 	return;
     }
     cl = to_DsConstructorBase(t)->constructors;
-    tnm = get_type_name( t );
+    tnm = t->name;
     for( ix=0; ix<cl->sz; ix++ ){
 	ckcname( l, cl->arr[ix], tnm );
     }
@@ -180,7 +180,7 @@ static ds_list add_ds_list( ds_list l, ds t )
     ds old;		/* The old type definition. */
     ds nw;		/* The type constructed from two constr. def'ns. */
 
-    nm = get_type_name( t );
+    nm = t->name;
     ix = find_type_ix( l, nm );
     if( ix<l->sz ){
 	old = l->arr[ix];
@@ -415,7 +415,7 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
     }
     members = new_tmstring_list();
     for( ix=0; ix<cl->sz; ix++ ){
-	const tmstring mnm = get_type_name( cl->arr[ix] );
+	const tmstring mnm = cl->arr[ix]->name;
 
 	members = append_tmstring_list( members, rdup_tmstring( mnm ) );
     }
