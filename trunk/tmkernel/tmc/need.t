@@ -278,7 +278,7 @@
 .call require ds "${delisttypes $l}"
 .call require ds "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
-.call require ds "${subclasses $l}"
+.call require ds "${subclasses $l} ${superclasses $l}"
 .endif
 .endmacro
 ..
