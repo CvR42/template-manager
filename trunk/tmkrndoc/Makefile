@@ -12,15 +12,19 @@ TOPFILE = main
 REDUCT = 2
 
 TM = tm
+LEX	 = flex -b -i
+YACC	 = bison -v -d -y
+
+CALCDEMO = calc.ds calcpars.y calclex.l
 
 EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
   boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
-  linemacro.xt setfn.xt switch.xt
+  linemacro.xt setfn.xt switch.xt fncalss.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex tmc.tex intro.tex \
-	   ds.tex titlepage.tex dsgram.tex impl.tex \
-	   demoh.tex democ.tex defs.tex preface.tex flow.tex
+	   ds.tex titlepage.tex dsgram.tex impl.tex calc.tex \
+	   demoh.tex democ.tex defs.tex preface.tex flow.tex upgrade.tex
 
 AUXFILES = $(TEXFILES:.tex=.aux)
 
@@ -61,7 +65,6 @@ install:
 # The dependency rules as implemented by latex
 $(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES)
 	latex $(TOPFILE)
-	bibtex $(TOPFILE)
 	makeindex $(TOPFILE)
 	latex $(TOPFILE)
 	-fgrep 'get cross-references rig' $(TOPFILE).log && latex $(TOPFILE)
@@ -108,9 +111,27 @@ demo.c : plot.ds demo.ct democonf.t
 demo.h : plot.ds demo.ht democonf.t
 	tm plot.ds demo.ht | expand > demo.h
 
+calc.c : calc.ds calc.ct calcconf.t
+	tm calc.ds calc.ct | expand > calc.c
+
+calc.h : calc.ds calc.ht calcconf.t
+	tm calc.ds calc.ht | expand > calc.h
+
 title.c: title.ct title.ds
 	tm title.ds title.ct > title.c
 
+calcpars.c tokens.h: calcpars.y
+	$(YACC) $<
+	mv y.tab.c calcpars.c
+	mv y.tab.h tokens.h
+
+calclex.c: calclex.l
+	$(LEX) $<
+	mv lex.yy.c $*.c
+
+calcpars.o: calc.h
+calclex.o: tokens.h
 main.dvi: macdemo.out demo.c demo.h
 main.dvi: readin.m
 main.dvi: title.c
+$(EXAMPLEOUTFILES): plot.ds
