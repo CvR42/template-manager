@@ -613,8 +613,8 @@ $(stic_$t)void rfre_$t_list( $t_list e )
  **************************************************/
 
 .. Forward declarations
-.call ansi_static print_list "void print_$$t_list( TMPRINTSTATE *st, const $$t_list )"
-.call ansi_static print "void print_$$t( TMPRINTSTATE *st, const $$t )"
+.call ansi_static print_list "void print_$$t_list( TMPRINTSTATE *st, const const_$$t_list )"
+.call ansi_static print "void print_$$t( TMPRINTSTATE *st, const const_$$t )"
 .foreach t ${depsort $(need_print)}
 .set stic_$t "static "
 .endforeach
@@ -625,7 +625,7 @@ $(stic_$t)void rfre_$t_list( $t_list e )
 /* Print an element 't' of ${metatype $t} type '$t'
  * using print optimizer.
  */
-$(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
+$(stic_$t)void print_$t( TMPRINTSTATE *st, const const_$t t )
 {
     if( t == $tNIL ){
 	tm_printword( st, "@" );
@@ -686,7 +686,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 /* Print a list of elements 'l' of type '$t'
    using print optimizer.
  */
-$(stic_$t)void print_$t_list( TMPRINTSTATE *st, const $t_list l )
+$(stic_$t)void print_$t_list( TMPRINTSTATE *st, const const_$t_list l )
 {
     unsigned int ix;
 
@@ -709,8 +709,8 @@ $(stic_$t)void print_$t_list( TMPRINTSTATE *st, const $t_list l )
  ***************************************************/
 
 .. Forward declarations
-.call ansi_static fprint_list "void fprint_$$t_list( FILE *, const $$t_list )"
-.call ansi_static fprint "void fprint_$$t( FILE *, const $$t )"
+.call ansi_static fprint_list "void fprint_$$t_list( FILE *, const const_$$t_list )"
+.call ansi_static fprint "void fprint_$$t( FILE *, const const_$$t )"
 .foreach t $(need_fprint)
 .set stic_$t "static "
 .endforeach
@@ -719,7 +719,7 @@ $(stic_$t)void print_$t_list( TMPRINTSTATE *st, const $t_list l )
 .endforeach
 .foreach t $(need_fprint)
 /* Print a ${metatype $t} $t 't' to file 'f'. */
-$(stic_$t)void fprint_$t( FILE *f, const $t t )
+$(stic_$t)void fprint_$t( FILE *f, const const_$t t )
 {
     if( t == $tNIL ){
 	fputs( "@ ", f );
@@ -785,7 +785,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .endforeach
 .foreach t $(need_fprint_list)
 /* Print a $t list 'l' to file 'f'. */
-$(stic_$t)void fprint_$t_list( FILE *f, const $t_list l )
+$(stic_$t)void fprint_$t_list( FILE *f, const const_$t_list l )
 {
     unsigned int ix;
 
@@ -824,11 +824,11 @@ $(stic_$t)void fprint_$t_list( FILE *f, const $t_list l )
 #define rdup_$t_list(l) real_rdup_$t_list(l,_f,_l)
 .endforeach
 .. Forward declarations
-.call ansi_static rdup_list "$$t_list real_rdup_$$t_list( const $$t_list, const char *, const int )"
-.call ansi_static rdup "$$t real_rdup_$$t( const $$t, const char *, const int )"
+.call ansi_static rdup_list "$$t_list real_rdup_$$t_list( const const_$$t_list, const char *, const int )"
+.call ansi_static rdup "$$t real_rdup_$$t( const const_$$t, const char *, const int )"
 #else
-.call ansi_static rdup_list "$$t_list rdup_$$t_list( const $$t_list )"
-.call ansi_static rdup "$$t rdup_$$t( const $$t )"
+.call ansi_static rdup_list "$$t_list rdup_$$t_list( const const_$$t_list )"
+.call ansi_static rdup "$$t rdup_$$t( const const_$$t )"
 #endif
 .foreach t $(need_rdup)
 .set stic_$t "static "
@@ -839,9 +839,9 @@ $(stic_$t)void fprint_$t_list( FILE *f, const $t_list l )
 .foreach t $(need_rdup)
 /* Recursively duplicate a ${metatype $t} $t element 'e'. */
 #ifdef LOGNEW
-$(stic_$t)$t real_rdup_$t( const $t e, const char *_f, const int _l )
+$(stic_$t)$t real_rdup_$t( const const_$t e, const char *_f, const int _l )
 #else
-$(stic_$t)$t rdup_$t( const $t e )
+$(stic_$t)$t rdup_$t( const const_$t e )
 #endif
 {
 .switch ${metatype $t}
@@ -921,9 +921,9 @@ $(stic_$t)$t rdup_$t( const $t e )
 .foreach t $(need_rdup_list)
 /* Recursively duplicate $t list 'l'. */
 #ifdef LOGNEW
-$(stic_$t)$t_list real_rdup_$t_list( const $t_list l, const char *_f, const int _l )
+$(stic_$t)$t_list real_rdup_$t_list( const const_$t_list l, const char *_f, const int _l )
 #else
-$(stic_$t)$t_list rdup_$t_list( const $t_list l )
+$(stic_$t)$t_list rdup_$t_list( const const_$t_list l )
 #endif
 {
     unsigned int ix;
@@ -973,7 +973,7 @@ $(stic_$t)$t_list rdup_$t_list( const $t_list l )
  */
 #ifdef LOGNEW
 $(stic_$t)$t_list real_slice_$t_list(
-    const $t_list l,
+    const const_$t_list l,
     const unsigned int b,
     const unsigned int parm_e,
     const char *_f,
@@ -981,7 +981,7 @@ $(stic_$t)$t_list real_slice_$t_list(
 )
 #else
 $(stic_$t)$t_list slice_$t_list(
-    const $t_list l,
+    const const_$t_list l,
     const unsigned int b,
     const unsigned int parm_e
 )
@@ -1016,8 +1016,8 @@ $(stic_$t)$t_list slice_$t_list(
  **************************************************/
 
 .. Forward declarations
-.call ansi_static cmp_list "int cmp_$$t_list( const $$t_list, const $$t_list )"
-.call ansi_static cmp "int cmp_$$t( const $$t, const $$t )"
+.call ansi_static cmp_list "int cmp_$$t_list( const const_$$t_list, const const_$$t_list )"
+.call ansi_static cmp "int cmp_$$t( const const_$$t, const const_$$t )"
 .foreach t $(need_cmp)
 .if ${member $t $(want_cmp)}
 .set stat
@@ -1025,7 +1025,7 @@ $(stic_$t)$t_list slice_$t_list(
 .set stat "static "
 .endif
 /* Compare two $t ${metatype $t}. */
-$(stat)int cmp_$t( const $t a, const $t b )
+$(stat)int cmp_$t( const const_$t a, const const_$t b )
 {
 .switch ${metatype $t}
 .case alias
@@ -1131,7 +1131,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 .set stat "static "
 .endif
 /* Compare two $t lists. */
-$(stat)int cmp_$t_list( const $t_list a, const $t_list b )
+$(stat)int cmp_$t_list( const const_$t_list a, const const_$t_list b )
 {
     int res;
     unsigned int ix;
