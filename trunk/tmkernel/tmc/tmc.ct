@@ -252,10 +252,10 @@ $(stic_$t)void fre_$t( $t e )
 .case tuple
 .if ${member $t $(need_stat)}
     frecnt_$t++;
-.endif
 #ifdef LOGNEW
     tm_fre_logid( e->lognew_id );
 #endif
+.endif
     TM_FREE( e );
 .case constructor constructorbase class
 .if ${len ${nonvirtual $t ${subclasses $t}}}
@@ -263,10 +263,12 @@ $(stic_$t)void fre_$t( $t e )
 .if ${isvirtual $t}
 .else
 	case TAG$t:
+.if ${member $t $(need_stat)}
 	    frecnt_$t++;
 #ifdef LOGNEW
 	    tm_fre_logid( e->lognew_id );
 #endif
+.endif
 	    TM_FREE( e );
 	    break;
 
@@ -304,10 +306,10 @@ $(stic_$t)void fre_$t_list( $t_list l )
     if( l == $t_listNIL ){
 	return;
     }
+.if ${member $t $(need_stat_list)}
 #ifdef LOGNEW
     tm_fre_logid( l->lognew_id );
 #endif
-.if ${member $t $(need_stat_list)}
     frecnt_$t_list++;
 .endif
     if( l->room!=0 ){
