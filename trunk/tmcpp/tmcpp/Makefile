@@ -1,152 +1,110 @@
-# Generated automatically from Makefile.in by configure.
 # Tm - an interface code generator.
 # Author: C. van Reeuwijk.
 #
 # All rights reserved.
 #
-# To customize this Makefile, run configure.
+# This version is specific for Borland C++ for Windows.
+# It is tested on Borland C++ version 4.52; it *might* work with earlier
+# versions.
 #
-# Compilation for MSDOS/MS-Windows with Borland C is done with a
-# makefile. See the file 'README' for details.
- 
-CXX = c++
-CC = $(CXX)
-LINKER = $(CXX)
-INSTALL = /usr/bin/install -c
-INSTALL_DATA = ${INSTALL} -m 644
-LOCALBIN = /falcon/reeuwijk/lab/bin
-LOCALLIB = /falcon/reeuwijk/lab/lib
-LOCALINCLUDE = /falcon/reeuwijk/lab/include
-LOCALMAN = /falcon/reeuwijk/lab/man
+# A few variables can be defined below to change the configuration
 
-# System dependent flags for compilation with debugging
-DBUGFLAGS = -g -DLOGNEW -DSTAT
+# You can customize this Makefile for your system by editing
+# the variables immediately below. The current values are not magical;
+# they just reflect what I use.
+#  LOCALBIN	The place to put binaries
+#  LOCALLIB	The place to get libraries and templates
+#  LOCALINC	The place to get local include (.h) files
+#  CC		The compiler to use: BCC32 if possible, else BCC. 
+#  SYSCFLAGS	Compilation flags to use. You may want to change them
+#		to choose target machine architecture, optimization level,
+#		memory model, etc.
+#  PROGBASE	The basename of the resulting program. If you want to generate
+#		both the 16 bits and the 32 bits version, you
+#		may want a name with '32' in it for one of them.
+# 
+LOCALBIN=d:\bin
+LOCALLIB=d:\lib
+LOCALINC=d:\include
+CC = BCC32
+LINKER = $(CC)
+SYSCFLAGS = -v -P -wall -wstu -4 -O2 -DLOGNEW -DSTAT
 
-LDFLAGS	= $(DBUGFLAGS)
+LDFLAGS	      = $(SYSCFLAGS)
 
 # C compilation flags
-CFLAGS =  $(DBUGFLAGS) -I../libtmc -I$(LOCALINCLUDE)
+CFLAGS = $(SYSCFLAGS) -I$(LOCALINC)
 
 # Some names of programs
-TM  = tm
+TM  = tm.exe
 
-#TMCLIB = $(LOCALLIB)/libtmcpp.a
-TMCLIB = ../libtmcpp/libtmcpp.a
+TMCPPLIB = $(LOCALLIB)\tmcpp32.lib
 
-LIBS =  $(TMCLIB)
+LIBS = $(TMCPPLIB)
 
 MAKEFILE = Makefile
 
-DOC = README
+DOC	= README
 
-JUNK = tmp core makelog testerr testout config.log \
-       gmon.out log dist.lst distlist \
-       tpltest walktest
+DEMOFILES =
 
-TESTFILES = \
-    cltest.ds test.ds \
-    tmcokerr tmcokout testin tmcspec.t tmccode.ct tmccode.ht \
-    walktest.ct walkin walkok
-
-FOREIGNFILES = makefile.tc config.htc config.hts
-
-# Files for configuration
-CONFIGUREFILES = configure config.hin Makefile.in configure.in
-
-DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
-	    $(CONFIGUREFILES)
-
-TMMODULES     = tmcpp.ct tmcpp.ht \
-                need.t cppwalk.t \
-		macros.t tmcid.t
-
-TMCTMHDRS      = tmccode.h
-
-TMCTMSRCS      = tmccode.c
-
-TESTSRCS   = tpltest.c tmccode.c
-TESTHDRS   = tmccode.h
-TESTOBJS   = tpltest.o tmccode.o
-
-WALKTESTSRCS = walktest.c tmccode.c
-WALKTESTOBJS = $(WALKTESTSRCS:.c=.o)
-
-OBJS = $(WALKTESTOBJS) tmccode.o tpltest.o
-
-# These sources are generated from tm templates.
-TMOUT = tmccode.c tmccode.h walktest.c
+TESTSRCS = tpltest.c cppcode.c
+TESTOBJS = $(TESTSRCS:.c=.obj)
 
 help :
 	@echo " Possible make targets:"
 	@echo "all		Create local running programs."
-	@echo "clean		Free disk space."
-	@echo "empty		Free disk space."
-	@echo "distfiles	List distribution files."
+	@echo "clean		Delete all intermediate files."
+	@echo "empty		Delete all files that can be re-generated."
 	@echo "install		Install relevant files."
 	@echo "test		Run tests."
 
 #
-all: test walktest
+all: tpltest.exe
 
-test: tpltestrun walktestrun
+# Add rules for the programs themselves here.
 
-walktest: $(WALKTESTOBJS)
-	$(LINKER) $(LDFLAGS) $(WALKTESTOBJS) $(LIBS) -o walktest
+test : tpltestrun
 
-walktestrun: walktest walkin walkok
-	./walktest
-	diff testout walkok
+tpltest.exe: $(TESTOBJS)
+	$(LINKER) -etpltest $(LDFLAGS) $(TESTOBJS) $(LIBS)
 
-tpltest: $(TESTOBJS)
-	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o tpltest
-
-tpltestrun: tpltest testin tmcokout tmcokerr
-	./tpltest
+tpltestrun: tpltest.exe testin
+	tpltest.exe
 	diff testout tmcokout
 	diff testerr tmcokerr
 
-tmcinstall: need.t tmcpp.ct tmcpp.ht tmcid.t cppwalk.t
-	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t tmcid.t need.t tmcpp.ct > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmcpp.ct
-	cat macros.t tmcid.t need.t tmcpp.ht > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmcpp.ht
-	rm -f tmp4242
-	$(INSTALL_DATA) cppwalk.t $(LOCALLIB)/cppwalk.t
+tmcinstall: need.t tmcpp.ct tmcpp.ht
+	copy /a macros.t+tmcid.t+need.t+tmcpp.ct $(LOCALLIB)\tmcpp.ct
+	copy /a macros.t+tmcid.t+need.t+tmcpp.ht $(LOCALLIB)\tmcpp.ht
 
 install: tmcinstall
 
 clean:
-	rm -f $(JUNK) $(OBJS) $(TMOUT)
-
-distclean:
-	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
+	del *.obj
+	del testerr
+	del testout
+	del cppcode.c
+	del cppcode.h
+	del tpltest.exe
 
 empty:
-	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
+	del *.obj
+	del testerr
+	del testout
+	del cppcode.c
+	del cppcode.h
+	del tpltest.exe
 
-distfiles:
-	@echo $(DISTFILES) | tr ' ' '\012'
+cppcode.c: cppcode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds cppcode.ct > cppcode.c
 
-distlist: $(DISTFILES)
-	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+cppcode.h: cppcode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds cppcode.ht > cppcode.h
 
-depend: $(TMCTMHDRS) $(TMCTMSRCS)
-	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
-
-walktest.c: walktest.ct cltest.ds cppwalk.t
-	$(TM) cltest.ds walktest.ct > walktest.c
-
-tmccode.c: tmccode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
-	$(TM) cltest.ds tmccode.ct > tmccode.c
-
-tmccode.h: tmccode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
-	$(TM) cltest.ds tmccode.ht > tmccode.h
-
-stats:
-	wc -l $(TMMODULES)
+.c.obj:
+	$(CC) -c $(CFLAGS) -o$* $<
 
 ###
-tmccode.o: tmccode.h config.h
-tpltest.o: tmccode.h config.h
-walktest.o: tmccode.h config.h
+cppcode.obj: cppcode.h config.h
+tpltest.obj: cppcode.h config.h

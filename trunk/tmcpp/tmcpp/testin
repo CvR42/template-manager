@@ -1,3 +1,4 @@
+[1,4,9,7,4,3,-22]
 [
     TopNone,
     TopNone,
@@ -16,19 +17,28 @@
 		    || Some comment
 		    ,
 		    Thing -1,
-		    @
+		    Thing 6
 		]
 		|| Some comment
 	    ),
 	    || Some comment
-	    SubNamedlist -3 @
+	    SubNamedlist -3 []
 	])
 	[
+	    [
+		SubNamed 122 -144,
+		SubNamedlist 122 [Thing -1, Thing -1, Thing -1]
+	    ],
 	    [
 		SubNamed 122 -144,
 		SubNamedlist 122 [Thing -1, Thing -1, Thing -1]
 	    ]
 	]
     ),
+    TopEnum EA,
+    TopEnum EB,
+    TopEnum EC,
+    TopEmptyTuple (),
+    TopClass exprConst 3,
     (TopTuple ([Thing 5, Thing 9], 22))
 ]
