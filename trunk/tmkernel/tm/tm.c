@@ -271,6 +271,7 @@ int main( int argc, char **argv )
     int lev;
     char buf[10];
 
+    dsfile = stdout;
     tracestream = stderr;
     statstream = stderr;
     start_time = clock();
