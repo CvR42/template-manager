@@ -164,7 +164,7 @@
 .if ${eq $(template) tmc}
 .call require rdup "${nonvirtual ${reach $l}}"
 .else
-.call require rdup "${types ${nonvirtual ${subclasses $l}}}"
+.call require rdup "${types ${subclasses $l}}"
 .call require new "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
@@ -181,7 +181,7 @@
 .macro req_print l
 .call require ds "$l"
 .call require print "${delisttypes $l}"
-.call require print "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
+.call require print "${types ${singletypes $l} ${subclasses $l}}"
 .if ${eq $(template) tmc}
 .call require print "${nonvirtual ${subclasses $l}}"
 .endif
@@ -191,7 +191,7 @@
 .macro req_fprint l
 .call require ds "$l"
 .call require fprint "${delisttypes $l}"
-.call require fprint "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
+.call require fprint "${types ${singletypes $l} ${subclasses $l}}"
 .if ${eq $(template) tmc}
 .call require fprint "${nonvirtual ${subclasses $l}}"
 .endif
@@ -201,7 +201,7 @@
 .macro req_cmp l
 .call require ds "$l"
 .call require cmp "${delisttypes $l}"
-.call require cmp "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
+.call require cmp "${types ${singletypes $l} ${subclasses $l}}"
 .if ${eq $(template) tmc}
 .call require cmp "${nonvirtual ${subclasses $l}}"
 .endif
@@ -260,7 +260,7 @@
 .macro req_rfre l
 .call require fre "${nonvirtual $l}"
 .call require rfre "${delisttypes $l}"
-.call require rfre "${types ${nonvirtual ${singletypes $l}}}"
+.call require rfre "${types ${singletypes $l}}"
 .if ${eq $(template) tmc}
 .call require rfre "${nonvirtual ${subclasses $l}}"
 .call require fre "${nonvirtual $l}"
@@ -274,7 +274,7 @@
 .if ${eq $(template) ald}
 .macro req_null l
 .call require null "${delisttypes $l}"
-.call require null "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
+.call require null "${types ${singletypes $l} ${subclasses $l}}"
 .call require ds "$l"
 .endmacro
 .endif
