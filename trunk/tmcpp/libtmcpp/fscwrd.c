@@ -7,7 +7,6 @@
 /* File: fscwrd.c
  * 
  * Handle 'fscan_<type>' for type 'tmword'.
- * Version for use without lognew.
  */
 
 #include <ctype.h>

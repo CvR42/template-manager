@@ -15,10 +15,10 @@
 #define BACKSLASH '\\'
 
 // definition of 'print' for a 'tmsymbol'.
-void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s )
+void print_tmsymbol( TmPrintState *st, const tmsymbol s )
 {
     if( s == tmsymbolNIL ){
-	tm_printword( st, "@" );
+	st->printWord( "@" );
 	return;
     }
     print_tmstring( st, s->name );

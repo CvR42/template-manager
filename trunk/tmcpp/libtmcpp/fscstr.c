@@ -7,7 +7,6 @@
 /* File: fscstr.c
  * 
  * Handle 'fscan_<type>' for type 'tmstring'.
- * Version for use without lognew.
  */
 
 #include <ctype.h>

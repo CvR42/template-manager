@@ -50,21 +50,51 @@ struct str_sunit {
     int tag;
 };
 
-struct str_tmprintstate {
-    FILE *file;			/* output file */
+class TmPrintState {
+private:
+    FILE *file;			// output file
     char *linebuf;
-    int istep;			/* indent step */
-    int width;			/* with of output */
-    int tabwidth;		/* Width of a tab, or 0 if no tab. */
-    unsigned int flags;		/* Some configuration flags */
-    int braclev;		/* current bracket level */
-    struct str_sunit *curlist;	/* current list of units */
-    struct str_Sstack *stack;	/* stack of open constr. & lists */
+    int istep;			// indent step
+    int width;			// with of output
+    int tabwidth;		// Width of a tab, or 0 if no tab.
+    unsigned int flags;		// Some configuration flags
+    int braclev;		// current bracket level
+    struct str_sunit *curlist;	// current list of units
+    struct str_Sstack *stack;	// stack of open constr. & lists
+
+private:
+    void pushLevel();
+    void popLevel();
+    void doIndent( const int n );
+    void vertPrintConstructor( struct str_sunit * c, const int lev );
+    void vertPrintList( struct str_sunit * c, const int lev );
+    void vertPrintTuple( struct str_sunit * c, const int lev );
+    void vertPrintSunit( struct str_sunit * l, const int lev );
+    tmstring horPrintList( struct str_sunit * l );
+    tmstring horPrintConstructor( struct str_sunit *l );
+    tmstring horPrintTuple( struct str_sunit *l );
+
+public:
+    TmPrintState(
+	FILE *f,
+	const int istep,
+	const int width,
+	const int tabwidth,
+	const unsigned int flags
+    );
+    virtual ~TmPrintState();
+    virtual void destroy() { delete this; }
+    inline int getLevel() const { return braclev; }
+    void openList();
+    void closeList();
+    void openConstructor();
+    void closeConstructor();
+    void openTuple();
+    void closeTuple();
+    void printWord( const char *w );
 };
 
-typedef struct str_tmprintstate TMPRINTSTATE;
-
-/* 'schar' functions */
+// 'schar' functions
 #define scharNIL ('\0')
 #define rfre_schar(c)
 #define fre_schar(c)
@@ -189,16 +219,16 @@ extern int cmp_string_tmtext( const char *s, const tmtext *t );
 extern tmstring tmtext_to_tmstring( const tmtext *t );
 extern tmtext *puts_tmtext( const char *s, tmtext *t );
 extern tmtext *putc_tmtext( const char c, tmtext *t );
-extern void print_tmtext( TMPRINTSTATE *st, const tmtext *t );
+extern void print_tmtext( TmPrintState *st, const tmtext *t );
 extern void fprint_tmtext( FILE *f, const tmtext *t );
 extern int fscan_tmtext( FILE *f, tmtext **s );
 extern tmtext *slice_tmtext( const tmtext *t, const long from, const long to );
 
-/* The functions below are undocumented. */
+// The functions below are undocumented.
 extern void copyblock_tmtext( char *d, const char *s, const long sz );
 extern void insblock_tmtext( tmtext *t, const long pos, const long sz );
 
-/* 'tmbool' functions */
+// 'tmbool' functions
 #define TMTRUESTR "True"
 #define TMFALSESTR "False"
 typedef enum en_tmbool { TMFALSE=0, TMTRUE=1 } tmbool;
@@ -206,18 +236,18 @@ typedef enum en_tmbool { TMFALSE=0, TMTRUE=1 } tmbool;
 #define rdup_tmbool(b) (b)
 #define fre_tmbool(b)
 #define rfre_tmbool(b)
-#define print_tmbool(st,b) tm_printword(st,(b)?TMTRUESTR:TMFALSESTR)
+#define print_tmbool(st,b) (st->printWord((b)?TMTRUESTR:TMFALSESTR))
 #define fprint_tmbool(f,b) fputs(((b)?TMTRUESTR:TMFALSESTR),f)
 #define cmp_tmbool(a,b) ((int)a-(int)b)
 #define tmboolNIL TMFALSE
 
-/* 'tmsymbol' functions */
+// 'tmsymbol' functions
 extern tmsymbol find_tmsymbol( const char *name );
 extern tmsymbol add_tmsymbol( const char *name );
 extern tmsymbol gen_tmsymbol( const char *pre );
 extern void flush_tmsymbol();
 extern int fscan_tmsymbol( FILE *f, tmsymbol *s );
-extern void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s );
+extern void print_tmsymbol( TmPrintState *st, const tmsymbol s );
 extern void fprint_tmsymbol( FILE *f, const tmsymbol s );
 
 typedef void *tm_neutralp;
@@ -225,91 +255,70 @@ extern tm_neutralp tm_malloc( size_t sz );
 extern tm_neutralp tm_calloc( size_t n, size_t sz );
 extern tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
 
-#ifdef __cplusplus
 #define TM_MALLOC(t,n) (t) tm_malloc(n)
 #define TM_CALLOC(t,sz,n) (t) tm_calloc(sz,n)
 #define TM_REALLOC(t,p,n) (t) tm_realloc(p,n)
-#else
-#define TM_MALLOC(t,n) tm_malloc(n)
-#define TM_CALLOC(t,sz,n) tm_calloc(sz,n)
-#define TM_REALLOC(t,p,n) tm_realloc(p,n)
-#endif
 #define TM_FREE free
 
-extern TMPRINTSTATE *tm_setprint(
-    FILE *f,
-    const int istep,
-    const int width,
-    const int tabwidth,
-    const unsigned int flags
-);
-extern int tm_endprint( TMPRINTSTATE *st );
-extern void tm_openlist( TMPRINTSTATE *st );
-extern void tm_closelist( TMPRINTSTATE *st );
-extern void tm_opencons( TMPRINTSTATE *st );
-extern void tm_closecons( TMPRINTSTATE *st );
-extern void tm_opentuple( TMPRINTSTATE *st );
-extern void tm_closetuple( TMPRINTSTATE *st );
-extern void tm_printword( TMPRINTSTATE *st, const char *w );
 
-/* 'schar' functions. */
+// 'schar' functions.
 typedef signed char schar;
 extern int fscan_schar( FILE *f, schar *c );
-extern void print_schar( TMPRINTSTATE *st, const schar c );
+extern void print_schar( TmPrintState *st, const schar c );
 extern void fprint_schar( FILE *f, const schar c );
 
-/* 'uchar' functions. */
+// 'uchar' functions.
 #if !defined( _AIX ) || !defined( _ALL_SOURCE )
 typedef unsigned char uchar;
 #endif
 extern int fscan_uchar( FILE *f, uchar *c );
-extern void print_uchar( TMPRINTSTATE *st, const uchar c );
+extern void print_uchar( TmPrintState *st, const uchar c );
 extern void fprint_uchar( FILE *f, const uchar c );
 
-/* 'sshrt' functions. */
+// 'sshrt' functions.
 typedef short int sshrt;
 extern int fscan_sshrt( FILE *f, sshrt *c );
-extern void print_sshrt( TMPRINTSTATE *st, const sshrt c );
+extern void print_sshrt( TmPrintState *st, const sshrt c );
 extern void fprint_sshrt( FILE *f, const sshrt c );
 
-/* 'ushrt' functions. */
+// 'ushrt' functions.
 typedef unsigned short int ushrt;
 extern int fscan_ushrt( FILE *f, ushrt *c );
-extern void print_ushrt( TMPRINTSTATE *st, const ushrt c );
+extern void print_ushrt( TmPrintState *st, const ushrt c );
 extern void fprint_ushrt( FILE *f, const ushrt c );
 
-/* 'double' functions */
+// 'double' functions
 extern int fscan_double( FILE *f, double *d );
-extern void print_double( TMPRINTSTATE *st, const double d );
+extern void print_double( TmPrintState *st, const double d );
 extern void fprint_double( FILE *f, const double d );
 extern int cmp_double( const double a, const double b );
 
-/* 'float' functions */
+// 'float' functions
 extern int fscan_float( FILE *f, float *d );
 
-/* 'int' functions */
+// 'int' functions
 extern int fscan_int( FILE *f, int *i );
-extern void print_int( TMPRINTSTATE *st, const int i );
+extern void print_int( TmPrintState *st, const int i );
 extern void fprint_int( FILE *f, const int i );
 
-/* 'uint' functions */
+// 'uint' functions
 extern int fscan_uint( FILE *f, uint *p );
-extern void print_uint( TMPRINTSTATE *st, const uint u );
+extern void print_uint( TmPrintState *st, const uint u );
 extern void fprint_uint( FILE *f, const uint u );
 
 // 'long' functions
 extern int fscan_long( FILE *f, long *i );
-extern void print_long( TMPRINTSTATE *st, const long i );
+extern void print_long( TmPrintState *st, const long i );
 extern void fprint_long( FILE *f, const long i );
 
 // 'ulong' functions
 extern int fscan_ulong( FILE *f, ulong *p );
-extern void print_ulong( TMPRINTSTATE *st, const ulong u );
+extern void print_ulong( TmPrintState *st, const ulong u );
 extern void fprint_ulong( FILE *f, const ulong u );
 
 // 'tmword' functions
 extern int fscan_tmword( FILE *f, tmword *s );
-extern void print_tmword( TMPRINTSTATE *st, const tmconstword s );
+extern void print_tmword( TmPrintState *st, const tmconstword s );
 extern void fprint_tmword( FILE *f, const tmconstword s );
 
 // 'tmstring' functions
@@ -318,7 +327,7 @@ extern tmstring create_tmstring( const size_t sz );
 extern tmstring new_tmstring( const char *s );
 extern void fre_tmstring( tmstring s );
 extern int fscan_tmstring( FILE *f, tmstring *p );
-extern void print_tmstring( TMPRINTSTATE *st, tmconststring s );
+extern void print_tmstring( TmPrintState *st, tmconststring s );
 extern void fprint_tmstring( FILE *f, tmconststring s );
 extern void stat_tmstring( FILE *f );
 extern int get_balance_tmstring();
@@ -359,7 +368,7 @@ public:
     inline TmInt( int nn ) { n = nn; }
     inline TmInt( TmInt &c ) { n = c.n; }
     inline virtual ~TmInt() {}
-    inline TmInt print( TMPRINTSTATE * );
+    inline TmInt print( TmPrintState * );
     inline TmInt fprint( FILE * );
 };
 
