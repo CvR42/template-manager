@@ -5,7 +5,7 @@ MAKEFILE = Makefile
 
 # The Tm directories that may require compilation, testing or installation
 DIRLIST=tmmira miradoc
-CONFIGUREFILES = Makefile.in configure configure.in install-sh
+CONFIGUREFILES = Makefile.in configure configure.in install-sh .cvsignore
 DISTFILES = $(CONFIGUREFILES) README CHANGES LICENCE
 JUNK = distlist
 

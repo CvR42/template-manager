@@ -1,0 +1,8 @@
+*.aux
+*.ps
+*.ps.gz
+dist.lst
+main.dvi
+main.toc
+main.idx
+main.log
