@@ -1,3 +1,8 @@
+New in version 2.0.5
+
+- For some reason the new const declarations still caused lots of
+warnings. They should now be fixed.
+
 New in version 2.0.4
 
 - More functions in the C template are now declared with const_
