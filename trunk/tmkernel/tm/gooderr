@@ -24,7 +24,7 @@ testin: 'mklist' requires at least one parameter
 testin: empty padding string
 testin: 'tr': no new characters given
 testin: 'tr': no old characters given
-testin: 'tr': the strings of old an new characters must have the same length
+testin: 'tr': the strings of old and new characters must have the same length
 testin: 'isinenv' requires exactly one parameter
 testin: no separator
 testin: no separator
