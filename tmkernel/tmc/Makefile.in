@@ -210,28 +210,28 @@ distlist: $(DISTFILES)
 depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS)
 	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
 
-tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t
+tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t $(TM)
 	$(TM) cltest.ds tmcwalktest.ct > tmcwalktest.c
 
-tmcanalyzetest.c: tmcanalyzetest.ct cltest.ds tmcanalyze.t
+tmcanalyzetest.c: tmcanalyzetest.ct cltest.ds tmcanalyze.t $(TM)
 	$(TM) cltest.ds tmcanalyzetest.ct > tmcanalyzetest.c
 
-tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
+tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t $(TM)
 	$(TM) cltest.ds tmccode.ct > tmccode.c
 
-tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
+tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t tmcid.t $(TM)
 	$(TM) cltest.ds tmccode.ht > tmccode.h
 
-alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t
+alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t $(TM)
 	$(TM) test.ds alucode.ct > alucode.c
 
-alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t
+alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t $(TM)
 	$(TM) test.ds alucode.ht > alucode.h
 
-llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t
+llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t $(TM)
 	$(TM) test.ds llucode.ct > llucode.c
 
-llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t
+llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t $(TM)
 	$(TM) test.ds llucode.ht > llucode.h
 
 tmctest.c: xxtest.c
