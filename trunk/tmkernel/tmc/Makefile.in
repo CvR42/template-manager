@@ -36,6 +36,8 @@ TMCLIB = ../libtmc/libtmc.a
 
 LIBS = @LIBS@ $(TMCLIB)
 
+LINTFLAGS = -i$(LOCALINCLUDE) -i../libtmc
+
 MAKEFILE = Makefile
 
 DOC = README
@@ -224,6 +226,22 @@ alutest.c: xxtest.c
 
 llutest.c: xxtest.c
 	sed -e 's/XXX/llu/' xxtest.c > llutest.c
+
+lint: tmcwalktest.lint tmctest.lint alutest.lint llutest.lint
+
+LINTRUN = lint -zero co-gnu fnprop suppress $(LINTFLAGS)
+
+tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h
+	$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
+
+tmctest.lint: tmctest.c tmccode.c tmccode.h
+	$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
+
+alutest.lint: alutest.c alucode.c alucode.h
+	$(LINTRUN) alutest.c alucode.c > alutest.lint
+
+llutest.lint: llutest.c llucode.c llucode.h
+	$(LINTRUN) llutest.c llucode.c > llutest.lint
 
 stats:
 	wc -l $(TMMODULES)

@@ -10,7 +10,6 @@
    and write it out again in pretty-printed format.
  */
 
-#include "config.h"
 #include <stdio.h>
 #include <tmc.h>
 #include <stdlib.h>
@@ -244,5 +243,6 @@ int main( void )
     fclose( infile );
     fclose( outfile );
     exit( 0 );
+    /* UNREACHABLE */
     return 0;
 }

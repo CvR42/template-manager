@@ -65,7 +65,10 @@ typedef const struct str_$t *const_$t;
 .set l ${nonvirtual ${inheritsort $t ${subclasses $t}}}
 .if ${len $l}
 typedef enum en_tags_$t {
-    ${seplist ", " ${prefix TAG $l}}
+.foreach e $l
+    TAG$e,
+.endforeach
+    __badtag_$t
 } tags_$t;
 .else
 typedef int tags_$t;

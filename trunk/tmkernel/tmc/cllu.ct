@@ -9,12 +9,6 @@
 .. The following variables must be set in tm:
 .. basename:     the name of the module. used to generate stat_..
 .. wantdefs:     the names of the wanted definitions.
-..  OR
-.. alldefs:      All code.
-..
-.. The following C pre-processor variables may be defined:
-.. FATAL(msg)    If you want to supply a fatal error handler to print 'msg'.
-..               A default is provided.
 ..
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
@@ -29,10 +23,6 @@
  */
 
 static char tm_srcfile[] = __FILE__;
-
-#ifndef FATAL
-#define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
-#endif
 
 /* Error strings. */
 .if ${len $(need_fscan_list)}
@@ -456,8 +446,9 @@ $(stat)$t_list delete_$t_list( $t_list l, const unsigned int p )
 {
     $t_list res = l;
     $t_list *prev = &res;
+    unsigned int ix;
 
-    for( unsigned int ix=0; ix<p; ix++ ){
+    for( ix=0; ix<p; ix++ ){
 	if( l == $t_listNIL ){
 	    return res;
 	}
@@ -501,11 +492,13 @@ $(stat)$t_list deletelist_$t_list( $t_list l, const unsigned int from, unsigned 
 	prev = &l->${call linkname $t};
 	l = l->${call linkname $t};
     }
-    for( n=from; n<to; ix++ ){
+    for( n=from; n<to; n++ ){
+	$t_list nl;
+
 	if( l == $t_listNIL ){
 	    break;
 	}
-	$t_list nl = (*prev) = l->${call linkname $t};
+	nl = (*prev) = l->${call linkname $t};
 	rfre_$t( l );
 	l = nl;
     }
@@ -699,30 +692,30 @@ $(stat)void print_$t_list( TMPRINTSTATE * st, const $t_list l )
 $(stat)void fprint_$t( FILE *f, const $t t )
 {
     if( t == $tNIL ){
-	fputs( "@ ", f );
+	(void) fputs( "@ ", f );
 	return;
     }
 .if ${member $t ${tuplelist}}
-    putc( '(', f );
+    (void) putc( '(', f );
 .set first 1
 .foreach e ${allfields $t}
 .if $(first)
 .set first 0
 .else
-    fputs( ",\n", f );
+    (void) fputs( ",\n", f );
 .endif
     fprint_${type $t $e}( f, t->$e );
 .endforeach
-    fputs( ")\n", f );
+    (void) fputs( ")\n", f );
 .else
-    putc( '(', f );
+    (void) putc( '(', f );
 .if ${len ${subclasses $t}}
     switch( t->tag ){
 .foreach c ${subclasses $t}
 	case TAG$c:
-	    fputs( "$c", f );
+	    (void) fputs( "$c", f );
 .foreach e ${allfields $c}
-	    putc( ' ', f );
+	    (void) putc( ' ', f );
 	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
 	    break;
@@ -732,7 +725,7 @@ $(stat)void fprint_$t( FILE *f, const $t t )
 	    FATALTAG( t->tag );
     }
 .endif
-    fputs( ")\n", f );
+    (void) fputs( ")\n", f );
 .endif 
 }
 
@@ -748,15 +741,15 @@ $(stat)void fprint_$t_list( FILE *f, const $t_list l )
 {
     $t_list p = l;
 
-    putc( '[', f );
+    (void) putc( '[', f );
     while( p!=$t_listNIL ){
 	fprint_$t( f, p );
 	p = p->${call linkname $t};
 	if( p!=$tNIL ){
-	    putc( ',', f );
+	    (void) putc( ',', f );
 	}
     }
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 .endforeach
@@ -1146,7 +1139,7 @@ $(stat)tmbool isequal_$t_list( const $t_list a, const $t_list b )
 
     for(;;){
 	if( ap == bp ){
-	    return TMTRUE;
+	    break;
 	}
 	if( ap==$tNIL || bp==$tNIL ){
 	    return TMFALSE;
@@ -1220,7 +1213,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return 0;
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     err = tm_fneedc( f, '(' );
     if( err ){
 	return 1;
@@ -1234,8 +1227,8 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 	err = tm_fneedc( f, ',' );
     }
 .endif
-    if( !err ){
-	err = fscan_${type $t $e}( f, &l_$e );
+    if( fscan_${type $t $e}( f, &l_$e ) ){
+	return 1;
     }
 .endforeach
     *p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
@@ -1271,7 +1264,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     if( tm_fscancons( f, tm_word, $(maxlen) ) ){
 	return 1;
     }
@@ -1344,12 +1337,10 @@ $(stat)int fscan_$t_list( FILE *f, $t_list *p )
     int n;
     int c;
     $t nw;
-    int err;
 
     *p = new_$t_list();
     n = tm_fscanopenbrac( f );
-    err = tm_fneedc( f, '[' );
-    if( err ){
+    if( tm_fneedc( f, '[' ) ){
 	return 1;
     }
     if( tm_fscanspace( f ) ){
@@ -1363,13 +1354,12 @@ $(stat)int fscan_$t_list( FILE *f, $t_list *p )
     if( c == ']' ){
 	return 0;
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     for(;;){
-	err = fscan_$t( f, &nw );
-	*p = append_$t_list( *p, nw );
-	if( err ){
+	if( fscan_$t( f, &nw ) ){
 	    return 1;
 	}
+	*p = append_$t_list( *p, nw );
 	if( tm_fscanspace( f ) ){
 	    return 1;
 	}
@@ -1379,7 +1369,7 @@ $(stat)int fscan_$t_list( FILE *f, $t_list *p )
 	    return 1;
 	}
 	if( c != ',' ){
-	    ungetc( c, f );
+	    (void) ungetc( c, f );
 	    break;
 	}
     }

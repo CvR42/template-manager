@@ -45,7 +45,10 @@ typedef struct str_$t *$t;
 .foreach t ${comm $(need_ds) "" ${ctypelist}}
 .if ${len ${conslist $t}}
 typedef enum en_tags_$t {
-    ${seplist ", " ${prefix TAG ${conslist $t}}}
+.foreach e ${conslist $t}
+    TAG$e,
+.endforeach
+    __badtag_$t
 } tags_$t;
 .else
 typedef int tags_$t;
@@ -124,9 +127,6 @@ struct str_$t {
 .case constructor
 .endswitch
 
-.endforeach
-.foreach t $(need_ds_list)
-#define $t_listNIL ($t_list)0
 .endforeach
 
 .. new_<type> routines
