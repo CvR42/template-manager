@@ -270,6 +270,21 @@ fields: ${fields} ${fields bla bla} ${fields notatype}
 types: '${types}'
 .set listpre [
 .set listsuff ]
+.set l ${typelist} bla ${mklist 1 ${typelist}}
+virtual <all>: '${virtual $l}'
+nonvirtual <all>: '${nonvirtual $l}'
+.set bad ${excl ${sort $l} "" ${sort ${virtual $l} ${nonvirtual $l}}}
+.if ${len $(bad)}
+Returned by both virtual and nonvirtual: '$(bad)'
+.else
+virtual and nonvirtual behave as they should
+.endif
+.set bad ${excl ${sort ${virtual $l} ${nonvirtual $l}} "" ${sort $l}}
+.if ${len $(bad)}
+Returned by neither virtual or nonvirtual: '$(bad)'
+.else
+virtual and nonvirtual behave as they should
+.endif
 types <all>: '${types ${typelist}}'
 subclasses <all>: '${subclasses ${typelist}}'
 conslist <all>: '${conslist ${typelist}}'
