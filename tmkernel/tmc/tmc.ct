@@ -1269,7 +1269,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	    err = fscan_${type $c $e}( f, &l_$e );
 	}
 .endforeach
-	*p = ($t) new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
+	*p =  ($t) new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
     }
 .set els "else "
 .endif

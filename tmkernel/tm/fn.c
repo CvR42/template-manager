@@ -1425,13 +1425,12 @@ static tmstring fnsuperclasses( const tmstring_list sl )
 {
     tmstring ans;
     tmstring_list superclasses;
+    unsigned int ix;
 
-    if( sl->sz != 1 ){
-	line_error( "'superclasses' requires exactly one parameter" );
-	return new_tmstring( "" );
-    }
     superclasses = new_tmstring_list();
-    collect_superclasses( &superclasses, allds, sl->arr[0] );
+    for( ix=0; ix<sl->sz; ix++ ){
+	collect_superclasses( &superclasses, allds, sl->arr[ix] );
+    }
     ans = flatstrings( superclasses );
     rfre_tmstring_list( superclasses );
     return ans;

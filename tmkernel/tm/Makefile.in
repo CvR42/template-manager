@@ -18,7 +18,8 @@ LOCALBIN = @prefix@/bin
 LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
 LOCALMAN = @prefix@/man
-LIBS = @LIBS@ $(LOCALLIB)/libtmc.a
+#LIBS = @LIBS@ $(LOCALLIB)/libtmc.a
+LIBS = @LIBS@ ../libtmc/libtmc.a
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 
