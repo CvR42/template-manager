@@ -1,5 +1,9 @@
 New version 2.0.1
 
+- The software is now compiled with -O6 if gcc is used.
+
+- Tuned gen_tmsymbol() a lot.
+
 - Added some functions to access and manipulate time: 'now',
 'processortime' and 'formattime'.
 
