@@ -99,10 +99,10 @@ $(indent)$(var) = ($(nowtype) *) add_$(type)_walker( to_$(type)( $(var) ), n );
  * expr tree.
  */
 
-#include <tmc.h>
+#include <tmcpp.h>
 
 #include "config.h"
-#include "tmccode.h"
+#include "cppcode.h"
 
 typedef expr foldexpr;
 
@@ -158,12 +158,11 @@ int main( void )
         fprintf( stderr, "Internal error: bracket level = %d\n", level );
         exit( 1 );
     }
-    rfre_expr( x );
+    x->destroy();
     if( get_balance_ds() != 0 || get_balance_tmstring() != 0 ){
         fprintf( stderr, "Tm object allocation not balanced\n" );
         stat_ds( stderr );
         stat_tmstring( stderr );
-        report_lognew( stderr );
 	exit( 1 );
     }
     exit( 0 );
