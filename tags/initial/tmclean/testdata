@@ -1,0 +1,43 @@
+[
+|| Comment should also be possible
+(TestInt 12),
+TestChar 'a',
+TestString "bla",
+TestTuple (1,2),
+(TestBool (True)),
+TestBool False,
+TestNum 1.2,
+TestList [12,-1,1.0,-4.2,-1e12,1e12,-1e-12,	(1e-12),1.2e24],
+(TestString "\0\4\7\b\t\n\13\f\r\16 \"#\'().019:;?@AZ[\\]^_`abyz~\177\376\377"),
+(TestChar '\0')
+,(TestChar '\1')
+,(TestChar '\7')
+,(TestChar '\b')
+,(TestChar '\t')
+,(TestChar '\n')
+,(TestChar '\13')
+,(TestChar '\f')
+,(TestChar '\r')
+,(TestChar '\16')
+,(TestChar ' ')
+,(TestChar '\"')
+,(TestChar '#')
+,(TestChar '&')
+,(TestChar '\'')
+,(TestChar '/')
+,(TestChar '0')
+,(TestChar '9')
+,(TestChar 'A')
+,(TestChar 'Z')
+,(TestChar '^')
+,(TestChar '_')
+,(TestChar '`')
+,(TestChar 'a')
+,(TestChar 'z')
+,(TestChar '~')
+,(TestChar '\177')
+,(TestChar '\200')
+,(TestChar '\277')
+,(TestChar '\300')
+,(TestChar '\377')
+]

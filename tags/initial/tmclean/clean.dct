@@ -1,0 +1,17 @@
+..file: clean.dct
+.. Generate Clean datastructure description.
+
+== THIS IS GENERATED CODE  for the DEFINITION MODULE. ==
+
+== Declaration of Clean datastructures and functions
+==
+== template file:      ${tplfilename}
+== datastructure file: ${dsfilename}
+== tm version:         $(tmvers) ($(tmdate))
+
+.foreach t $(need_Scan)
+RULE :: Scan_${capitalize $t} [CHAR] -> (${capitalize $t},[CHAR]);
+.endforeach
+.foreach t $(need_Show)
+RULE :: Show_${capitalize $t} ${capitalize $t} -> STRING;
+.endforeach

@@ -1,0 +1,150 @@
+# Tm - an interface code generator.
+# Author: C. van Reeuwijk.
+#
+# All rights reserved.
+#
+# This version is specific for Borland C++ for Windows.
+# It is tested on Borland C++ version 4.52; it *might* work with earlier
+# versions.
+#
+# A few variables can be defined below to change the configuration
+
+# You can customize this Makefile for your system by editing
+# the variables immediately below. The current values are not magical;
+# they just reflect what I use.
+#  LOCALBIN	The place to put binaries
+#  LOCALLIB	The place to get libraries and templates
+#  LOCALINC	The place to get local include (.h) files
+#  TPLPATH	The place where the compiled version of tm will look
+#		for templates. Since this will end up as a C string,
+#		quadruple all backslashes in the path.
+#  CC		The compiler to use: BCC32 if possible, else BCC. 
+#  SYSCFLAGS	Compilation flags to use. You may want to change them
+#		to choose target machine architecture, optimization level,
+#		memory model, etc.
+#  PROGBASE	The basename of the resulting program. If you want to generate
+#		both the 16 bits and the 32 bits version, you
+#		may want a name with '32' in it for one of them.
+# 
+LOCALBIN = c:\bin
+LOCALLIB=e:\lib
+LOCALINC=e:\include
+TPLPATH = e:\\\\lib
+CC = BCC32
+SYSCFLAGS = -wall -wstu -4 -O2
+#PROGBASE = tm32
+PROGBASE = tm
+PROG = $(PROGBASE).exe
+
+LINKER = $(CC)
+LIBS = $(LOCALLIB)\tmc32.lib
+
+VERSION=35
+
+# -I flags for  .h files
+IPATH = -I$(LOCALINC)
+
+CFLAGS = $(IPATH) $(SYSCFLAGS) -DCACHESZ=0 -DVERSION=$(VERSION)
+LDFLAGS	= $(CFLAGS)
+
+MAKEFILE      = Makefile
+
+SRCS	      = refex.c \
+		tm.c \
+		flag.c \
+		tmcode.c \
+		error.c \
+		tmexpr.c \
+		fn.c \
+		global.c \
+		dsparser.c \
+		lex.c \
+		tmpath.c \
+		misc.c \
+		expand.c \
+		tmstring.c \
+		tmtrans.c \
+		var.c \
+		srchfile.c
+
+OBJS = $(SRCS:.c=.obj)
+
+help:
+	@echo Possible make targets:
+	@echo all:  Create local running programs.
+	@echo test: Run tests.
+	@echo install: Install relevant files.
+	@echo clean: Delete all intermediate files.
+	@echo empty: Delete all files that can be re-generated.
+
+all: $(PROG)
+
+$(PROG): $(OBJS) $(LIBS)
+	$(LINKER) -e$(PROGBASE) @&&Ý
+ $(LDFLAGS)
+ $(OBJS)
+ $(LIBS)
+Ý
+
+install: $(PROG)
+	copy $(PROG) $(LOCALBIN)\$(PROG)
+
+empty:
+	del *.obj
+	del tmcode.c
+	del tmcode.h
+	del tmpath.c
+	del testout
+	del testerr
+	del $(PROG)
+
+clean:
+	del *.obj
+	del tmpath.c
+	del testout
+	del testerr
+
+.c.obj:
+	$(CC) -c $(CFLAGS) -o$* $<
+
+tmcode.h: tmcode.ht tm.ds tmspec.t
+	tm tm.ds tmcode.ht > tmcode.h
+
+tmcode.c: tmcode.ct tm.ds tmspec.t
+	tm tm.ds tmcode.ct > tmcode.c
+
+tmpath.c: $(MAKEFILE)
+	echo char libpath[]="$(TPLPATH)"; > tmpath.c
+
+version.h: ..\\version.h
+	cp ..\\version.h version.h
+
+test: testin sub.ds test.ds testsub goodout gooderr
+	 -.\$(PROG) -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
+	diff testout goodout
+	diff testerr gooderr
+	diff testrdir goodrdir
+
+###
+refex.obj: tmdefs.h refex.h
+tm.obj: tmdefs.h tmcode.h tmstring.h error.h fn.h lex.h \
+	misc.h tmtrans.h var.h global.h dsparser.h srchfile.h version.h
+tmcode.obj: tmdefs.h tmcode.h tmstring.h global.h
+error.obj: tmdefs.h tmcode.h tmstring.h global.h error.h config.h
+tmexpr.obj: tmdefs.h tmcode.h tmstring.h error.h tmexpr.h global.h misc.h
+fn.obj: tmdefs.h refex.h tmcode.h tmstring.h error.h fn.h \
+	global.h misc.h var.h srchfile.h
+global.obj: tmdefs.h tmcode.h tmstring.h global.h
+dsparser.obj: tmdefs.h tmcode.h tmstring.h error.h global.h lex.h \
+	misc.h dsparser.h
+lex.obj: tmdefs.h tmcode.h tmstring.h error.h global.h \
+	lex.h misc.h srchfile.h
+misc.obj: tmdefs.h misc.h error.h tmcode.h
+tmstring.obj: tmdefs.h tmcode.h tmstring.h misc.h error.h
+tmtrans.obj: tmdefs.h tmcode.h tmstring.h fn.h tmexpr.h error.h \
+	expand.h global.h tmpath.h misc.h tmtrans.h var.h srchfile.h
+var.obj: tmdefs.h tmcode.h tmstring.h misc.h error.h var.h \
+	global.h
+srchfile.obj: tmdefs.h tmcode.h srchfile.h
+flag.obj: tmdefs.h flag.h
+expand.o: tmdefs.h global.h expand.h tmcode.h config.h error.h misc.h

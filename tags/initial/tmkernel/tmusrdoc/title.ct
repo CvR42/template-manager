@@ -1,0 +1,11 @@
+.foreach t ${ttypelist}
+struct str_$t *$t;
+.endforeach
+
+.foreach t ${ctypelist}
+typedef enum en_$t {
+.foreach c ${conslist $t}
+    TAG$c,
+.endforeach
+} $t;
+.endforeach

@@ -1,0 +1,21 @@
+tm.ttp
+.C [-DVERSION=34 -DLIBPATH="c:\\lib"]
+=
+pcxstart.o
+flag.c
+refex.c
+tm.c
+tmcode.c
+error.c
+tmexpr.c
+fn.c
+global.c
+dsparser.c
+lex.c
+misc.c
+tmstring.c
+tmtrans.c
+var.c
+srchfile.c
+tmc.lib
+pcstdlib.lib

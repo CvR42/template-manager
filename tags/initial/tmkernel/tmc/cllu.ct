@@ -1,0 +1,1275 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+..
+.. file: cllu.ct
+.. Tm C support. Variant: linked lists, union constructors
+..
+.. The following variables must be set in tm:
+.. basename:     the name of the module. used to generate stat_..
+.. wantdefs:     the names of wanted definitions.
+..
+/*** WARNING: THIS IS GENERATED CODE. ***/
+
+.set stdctest defined(__STDC__) && __STDC__>0
+/* ---- start of ${tplfilename} ---- */
+
+/* routines for $(basename).
+
+   template file:      ${tplfilename}
+   datastructure file: ${dsfilename}
+   tm version:         $(tmvers)
+   tm kernel version:  $(kernel-version)
+
+   The following C pre-processor variables may be defined:
+.if ${member stat_$(basename) $(need_misc)}
+   STAT          If you want code for statistics.
+		 Statistics are written to 'FILE *statstream'.
+.endif
+   FATAL(msg)    If you want supply a fatal error handler to print 'msg'.
+		 A default is provided.
+  
+   Possible declaration or #define'ing of statstream
+   must be done outside this module.
+ */
+
+#ifndef WORDBUFSIZE
+#define WORDBUFSIZE 100
+#endif
+
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
+#endif
+.endif
+
+static char *tm_srcfile = __FILE__;
+
+#ifndef FATAL
+#define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
+#endif
+
+/* the possible error messages */
+.if ${len $(need_fscan_list)}
+static char tm_badeof[] = "unexpected end of file";
+.endif
+.if ${len $(need_fscan)}
+static char tm_badcons[] = "bad constructor for %s: '%s'";
+.endif
+
+#ifndef FATALTAG
+#define FATALTAG(tg) tm_badtag(tm_srcfile,__LINE__,tg)
+#endif
+
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+.foreach t $(need_stat)
+.if ${member $t ${ttypelist}}
+static long int newcnt_$t = 0, frecnt_$t = 0;
+.else
+.foreach c ${conslist $t}
+static long int newcnt_$c = 0, frecnt_$c = 0;
+.endforeach
+.endif
+.endforeach
+.foreach t $(need_stat_list)
+static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
+.endforeach
+#endif
+.endif
+
+/************************************************
+ *    new_<type> and new_<tuple> routines       *
+ ************************************************/
+
+#ifdef LOGNEW
+.foreach t $(need_new)
+.if ${member $t ${ttypelist}}
+.if ${member $t $(want_new)}
+#undef new_$t
+.endif
+#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} _f _l})
+.else
+.if ${member $t $(want_new)}
+.foreach c ${conslist $t}
+#undef new_$c
+.endforeach
+.endif
+.foreach c ${conslist $t}
+#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} _f _l})
+.endforeach
+.endif
+.endforeach
+#endif
+
+.foreach t $(need_new)
+.if ${member $t $(want_new)}
+.set stat
+.else
+.set stat "static "
+.endif
+.if ${member $t ${ttypelist}}
+/* Allocate a new instance of tuple type '$t' */
+#ifdef LOGNEW
+.set tl ${call ansi_nproto_lognew "${telmlist $t}" "ttypename $t" "ttypellev $t"}
+$(stat)$t real_new_$t( $(tl) )
+#else
+.set tl ${call ansi_nproto "${telmlist $t}" "ttypename $t" "ttypellev $t"}
+$(stat)$t new_$t( $(tl) )
+#endif
+{
+    $t nw;
+
+    nw = TM_MALLOC( $t, sizeof(*nw) );
+.. Zero all 'next' pointers for all necessary list levels
+.set links ${filt $t(*) next\1 $(need_ds_list)}
+.foreach link $(links)
+    nw->$(link) = ${subs next(*) $t\1 $(link)}_listNIL;
+.endforeach
+.foreach e ${telmlist $t}
+    nw->$e = p_$e;
+.endforeach
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    newcnt_$t++;
+#endif
+.endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+.else
+.foreach c ${conslist $t}
+/* Allocate a new instance of constructor '$c'. */
+#ifdef LOGNEW
+.set tl ${call ansi_nproto_lognew "${celmlist $t $c}" "ctypename $t $c" "ctypellev $t $c"}
+$(stat)$t real_new_$c( $(tl) )
+#else
+.set tl ${call ansi_nproto "${celmlist $t $c}" "ctypename $t $c" "ctypellev $t $c"}
+$(stat)$t new_$c( $(tl) )
+#endif
+{
+    $t nw;
+
+    nw = TM_MALLOC( $t, sizeof(*nw) );
+.. Zero all 'next' pointers for all necessary list levels
+.set links ${filt $t(*) next\1 $(need_ds_list)}
+.foreach link $(links)
+    nw->$(link) = ${subs next(*) $t\1 $(link)}_listNIL;
+.endforeach
+    nw->tag = TAG$c;
+.foreach e ${celmlist $t $c}
+    nw->$c.$e = p_$e;
+.endforeach
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    newcnt_$c++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+.endif
+    return nw;
+}
+
+.endforeach
+.endif
+.endforeach
+
+.foreach t $(need_new_list)
+.if ${member $t $(want_new_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Create a list of $t elements. */
+$(stat)$t_list new_$t_list( void )
+{
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    newcnt_$t_list++;
+#endif
+.endif
+    return $t_listNIL;
+}
+
+.endforeach
+/**********************************************************
+ *    fre_<type> and fre_<type>_list routines             *
+ **********************************************************/
+
+.foreach t $(need_fre)
+.if ${member $t $(want_fre)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* free an element of type $t */
+$(stat)void fre_$t( $t e )
+{
+    if( e == $tNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+.if ${member $t ${ttypelist}}
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    frecnt_$t++;
+#endif
+.endif
+.else
+.if ${len ${conslist $t}}
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    switch( e->tag ){
+.foreach c ${conslist $t}
+	case TAG$c:
+	    frecnt_$c++;
+	    break;
+
+.endforeach
+	default:
+	    FATALTAG( e->tag );
+	}
+#endif
+.endif
+.endif
+.endif
+    TM_FREE( e );
+}
+
+.endforeach
+.foreach t $(need_fre_list)
+.if ${member $t $(want_fre_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* free a list of $t elements */
+$(stat)void fre_$t_list( $t_list e )
+{
+    (void) e;
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    frecnt_$t_list++;
+#endif
+.endif
+}
+
+.endforeach
+/**********************************************************
+ *    rfre_<type> and rfre_<type>_list routines           *
+ **********************************************************/
+
+.call ansi_static rfre_list "void rfre_$$t_list( $$t_list )"
+.call ansi_static rfre "void rfre_$$t( $$t )"
+
+.foreach t $(need_rfre)
+.if ${member $t $(want_rfre)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Recursively free an element of type '$t'
+   and all elements in it.
+ */
+$(stat)void rfre_$t( $t e )
+{
+    if( e == $tNIL ){
+	return;
+    }
+.if ${member $t ${ttypelist}}
+.foreach e ${telmlist $t}
+    rfre_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( e->$e );
+.endforeach
+.else
+.if ${len ${conslist $t}}
+    switch( e->tag ){
+.foreach c ${conslist $t}
+	case TAG$c:
+.foreach e ${celmlist $t $c}
+	    rfre_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( e->$c.$e );
+.endforeach
+	    break;
+
+.endforeach
+	default:
+	    FATALTAG( e->tag );
+    }
+.endif
+.endif
+    fre_$t( e );
+}
+
+.endforeach
+.foreach t $(need_rfre_list)
+.if ${member $t $(want_rfre_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Recursively free a list of elements of type $t. */
+$(stat)void rfre_$t_list( $t_list l )
+{
+    $t_list n;
+
+    fre_$t_list( l );
+    while( l!=$t_listNIL ){
+	n = l->${call linkname $t};
+	rfre_$t( l );
+	l = n;
+    }
+}
+
+.endforeach
+/************************************************
+ *    append_<type>_list routines               *
+ ************************************************/
+
+.call ansi_static append_list "$$t_list append_$$t_list( $$t_list, $$t )"
+.foreach t $(need_append_list)
+.if ${member $t $(want_append_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Append $t 'b' after list of $t 'a'. */
+$(stat)$t_list append_$t_list( $t_list a, $t b )
+{
+    $t tl;
+
+    if( a == $tNIL ){
+	return b;
+    }
+    tl = a;
+    while( tl->${call linkname $t} != $tNIL ) tl = tl->${call linkname $t};
+    tl->${call linkname $t} = b;
+    return a;
+}
+
+.endforeach
+/************************************************
+ *    concat_<type>_list routines               *
+ ************************************************/
+
+.call ansi_static concat_list "$$t_list concat_$$t_list( $$t_list, $$t_list )"
+.foreach t $(need_concat_list)
+.if ${member $t $(want_concat_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Concatenate $t_list 'b' after $t_list 'a'. */
+$(stat)$t_list concat_$t_list( $t_list a, $t_list b )
+{
+    $t tl;
+
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    frecnt_$t_list++;
+#endif
+.endif
+    if( a == $tNIL ){
+	return b;
+    }
+    tl = a;
+    while( tl->${call linkname $t} != $tNIL ) tl = tl->${call linkname $t};
+    tl->${call linkname $t} = b;
+    return a;
+}
+
+.endforeach
+/************************************************
+ *    reverse_<type>_list routines               *
+ ************************************************/
+
+.foreach t $(need_reverse_list)
+.if ${member $t $(want_reverse_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Reverse the elements in 'l'. */
+$(stat)$t_list reverse_$t_list( $t_list l )
+{
+    $t_list next;
+    $t_list nl;
+
+    nl = $t_listNIL;
+    while( l!=$t_listNIL ){
+	next = l->${call linkname $t};
+	l->${call linkname $t} = nl;
+	nl = l;
+	l = next;
+    }
+    return nl;
+}
+
+.endforeach
+/************************************************
+ *    insert_<type>_list routines               *
+ ************************************************/
+
+.foreach t $(need_insert_list)
+.if ${member $t $(want_insert_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Insert element 'e' at position 'p' in list 'l'. */
+$(stat)$t_list insert_$t_list( $t_list l, const unsigned int p, $t e )
+{
+    $t_list nl;
+
+    if( l == $t_listNIL ){
+	e->${call linkname $t} = $t_listNIL;
+	return e;
+    }
+    if( p == 0 ){
+	e->${call linkname $t} = l;
+	nl = e;
+    }
+    else {
+	nl = insert_$t_list( l, (p-1), e );
+    }
+    return nl;
+}
+
+.endforeach
+/************************************************
+ *    delete_<type>_list routines               *
+ ************************************************/
+
+.call ansi_static delete_list "$$t_list delete_$$t_list( $$t_list, const unsigned int )"
+.foreach t $(need_delete_list)
+.if ${member $t $(want_delete_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Delete element at position 'p' in list 'l'. */
+$(stat)$t_list delete_$t_list( $t_list l, const unsigned int p )
+{
+    $t_list nl;
+
+    if( l == $t_listNIL ){
+	return l;
+    }
+    if( p == 0 ){
+	nl = l->${call linkname $t};
+	rfre_$t( l );
+    }
+    else {
+	nl = l;
+	nl->${call linkname $t} = delete_$t_list( l->${call linkname $t}, (p-1) );
+    }
+    return nl;
+}
+
+.endforeach
+/************************************************
+ *    extract_<type>_list routines               *
+ ************************************************/
+
+.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, $t *, int * )"
+.foreach t $(need_extract_list)
+.if ${member $t $(want_extract_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Delete element at position 'p' in list 'l'. */
+$(stat)$t_list extract_$t_list(
+    $t_list l,
+    const unsigned int p,
+    $t *e,
+    int *valid
+)
+{
+    $t_list nl;
+
+    if( l == $t_listNIL ){
+	*valid = 0;
+	return l;
+    }
+    if( p == 0 ){
+	nl = l->${call linkname $t};
+	l->${call linkname $t} = $tNIL;
+	*valid = 1;
+	*e = l;
+    }
+    else {
+	nl = l;
+	nl->${call linkname $t} = extract_$t_list( l->${call linkname $t}, p-1, e, valid );
+    }
+    return nl;
+}
+
+.endforeach
+/******************************************************
+ *    print_<type> and print_<type>_list routines     *
+ ******************************************************/
+
+.call ansi_static print_list "void print_$$t_list( TMPRINTSTATE *st, const $$t_list )"
+.call ansi_static print "void print_$$t( TMPRINTSTATE *st, const $$t )"
+.foreach t $(need_print)
+.if ${member $t $(want_print)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Print an element of type '$t'
+ * using print optimization routines.
+ */
+$(stat)void print_$t( TMPRINTSTATE *st, const $t t )
+{
+    if( t==$tNIL ){
+	tm_printword( st, "@" );
+	return;
+    }
+.if ${member $t ${ttypelist}}
+.. tuple type
+    tm_opentuple( st );
+.foreach e ${telmlist $t}
+    print_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( st, t->$e );
+.endforeach
+    tm_closetuple( st );
+.else
+    tm_opencons( st );
+.if ${len ${conslist $t}}
+    switch( t->tag ){
+.foreach c ${conslist $t}
+	case TAG$c:
+	    tm_printword( st, "$c" );
+.foreach e ${celmlist $t $c}
+	    print_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( st, t->$c.$e );
+.endforeach
+	    break;
+
+.endforeach
+	default:
+	    FATALTAG( t->tag );
+    }
+.endif
+    tm_closecons( st );
+.endif
+}
+
+.endforeach
+.foreach t $(need_print_list)
+.if ${member $t $(want_print_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Print list of elements of type '$t'
+ * using print optimization routines.
+ */
+$(stat)void print_$t_list( TMPRINTSTATE * st, const $t_list l )
+{
+    $t_list p = l;
+
+    tm_openlist( st );
+    while( p!=$tNIL ){
+	print_$t( st, p );
+	p = p->${call linkname $t};
+    }
+    tm_closelist( st );
+}
+
+.endforeach
+/*********************************************************
+ *    fprint_<type> and fprint_<type>_list routines      *
+ *********************************************************/
+
+.call ansi_static fprint_list "void fprint_$$t_list( FILE *, const $$t_list )"
+.call ansi_static fprint "void fprint_$$t( FILE *, const $$t )"
+.foreach t $(need_fprint)
+.if ${member $t $(want_fprint)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Print an element of type '$t' to file 'f' */
+$(stat)void fprint_$t( FILE *f, const $t t )
+{
+    if( t==$tNIL ){
+	fputs( "@ ", f );
+	return;
+    }
+.if ${member $t ${ttypelist}}
+    putc( '(', f );
+.set first 1
+.foreach e ${telmlist $t}
+.if $(first)
+.set first 0
+.else
+    fputs( ",\n", f );
+.endif
+    fprint_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( f, t->$e );
+.endforeach
+    fputs( ")\n", f );
+.else
+    putc( '(', f );
+.if ${len ${conslist $t}}
+    switch( t->tag ){
+.foreach c ${conslist $t}
+	case TAG$c:
+	    fputs( "$c", f );
+.foreach e ${celmlist $t $c}
+	    putc( ' ', f );
+	    fprint_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( f, t->$c.$e );
+.endforeach
+	    break;
+
+.endforeach
+	default:
+	    FATALTAG( t->tag );
+    }
+.endif
+    fputs( ")\n", f );
+.endif 
+}
+
+.endforeach
+.foreach t $(need_fprint_list)
+.if ${member $t $(want_fprint_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Print list of elements of type '$t' to file 'f' */
+$(stat)void fprint_$t_list( FILE *f, const $t_list l )
+{
+    $t_list p = l;
+
+    putc( '[', f );
+    while( p!=$t_listNIL ){
+	fprint_$t( f, p );
+	p = p->${call linkname $t};
+	if( p!=$tNIL ){
+	    putc( ',', f );
+	}
+    }
+    fputs( "]\n", f );
+}
+
+.endforeach
+/*********************************************************
+ *    rdup_<type> and rdup_<type>_list routines          *
+ *********************************************************/
+
+#ifdef LOGNEW
+.foreach t $(need_rdup)
+.if ${member $t $(want_rdup)}
+#undef rdup_$t
+.endif
+#define rdup_$t(e) real_rdup_$t(e,_f,_l)
+.endforeach
+.foreach t $(need_rdup_list)
+.if ${member $t $(want_rdup_list)}
+#undef rdup_$t_list
+.endif
+#define rdup_$t_list(l) real_rdup_$t_list(l,_f,_l)
+.endforeach
+.call ansi_static rdup_list "$$t_list real_rdup_$$t_list( const $$t_list, const char *_f, const int _l )"
+.call ansi_static rdup "$$t real_rdup_$$t( const $$t, const char *_f, const int _l )"
+#else
+.call ansi_static rdup_list "$$t_list rdup_$$t_list( const $$t_list )"
+.call ansi_static rdup "$$t rdup_$$t( const $$t )"
+#endif
+.foreach t $(need_rdup)
+.if ${member $t $(want_rdup)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Recursively duplicate instance `e' of type `$t'
+ * and all elements in it.
+ */
+#ifdef LOGNEW
+$(stat)$t real_rdup_$t( const $t e, const char *_f, const int _l )
+#else
+$(stat)$t rdup_$t( const $t e )
+#endif
+{
+.if ${member $t ${ttypelist}}
+.foreach e ${telmlist $t}
+    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} i_$e;
+.endforeach
+
+    if( e == $tNIL ){
+	return $tNIL;
+    }
+.foreach e ${telmlist $t}
+    i_$e = rdup_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( e->$e );
+.endforeach
+    return new_$t( ${seplist ", " ${prefix "i_" ${telmlist $t}}} );
+.else
+    if( e == $tNIL ){
+	return $tNIL;
+    }
+.if ${len ${conslist $t}}
+    switch( e->tag ){
+.foreach c ${conslist $t}
+	case TAG$c:
+	{
+.foreach e ${celmlist $t $c}
+	    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} i_$e;
+.endforeach
+
+.foreach e ${celmlist $t $c}
+	    i_$e = rdup_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( e->$c.$e );
+.endforeach
+	    return new_$c( ${seplist ", " ${prefix "i_" ${celmlist $t $c}}} );
+	}
+
+.endforeach
+	default:
+	    FATALTAG( e->tag );
+    }
+.else
+#ifdef LOGNEW
+    (void) _f;
+    (void) _l;
+#endif
+.endif
+    return $tNIL;
+.endif
+}
+
+.endforeach
+.foreach t $(need_rdup_list)
+.if ${member $t $(want_rdup_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Recursively duplicate an instance of a `$t' list. */
+#ifdef LOGNEW
+$(stat)$t_list real_rdup_$t_list( const $t_list p_e, const char *_f, const int _l )
+#else
+$(stat)$t_list rdup_$t_list( const $t_list p_e )
+#endif
+{
+    $t_list nw;
+    $t_list po;
+    $t_list *pn;
+
+    po = p_e;
+    pn = &nw;
+    while( po != $t_listNIL ){
+	*pn = rdup_$t( po );
+	pn = &((*pn)->${call linkname $t});
+	po = po->${call linkname $t};
+    }
+    *pn = $t_listNIL;
+.if ${member stat_$(basename) $(need_misc)}
+#ifdef STAT
+    newcnt_$t_list++;
+#endif
+.endif
+    return nw;
+}
+
+.endforeach
+/*********************************************************
+ *    slice_<type> and slice_<type>_list routines        *
+ *********************************************************/
+
+#ifdef LOGNEW
+.foreach t $(need_slice_list)
+.if ${member $t $(want_slice_list)}
+#undef slice_$t_list
+.endif
+#define slice_$t_list(l,b,e) real_slice_$t_list(l,b,e,_f,_l)
+.endforeach
+#endif
+
+.foreach t $(need_slice_list)
+.if ${member $t $(want_slice_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Recursively duplicate instances 'b' to 'e' of $t_list 'l'. */
+#ifdef LOGNEW
+$(stat)$t_list real_slice_$t_list(
+    const $t_list parm_l,
+    const unsigned int parm_b,
+    const unsigned int parm_e,
+    const char *_f,
+    const int _l
+)
+#else
+$(stat)$t_list slice_$t_list(
+    const $t_list parm_l,
+    const unsigned int parm_b,
+    const unsigned int parm_e
+)
+#endif
+{
+    $t_list l = parm_l;
+    $t_list nl;
+    unsigned int b = parm_b;
+    unsigned int e = parm_e;
+
+    if( b>=e ){
+	return new_$t_list();
+    }
+    while( b!=0 && l != $t_listNIL ){
+	b--;
+	e--;
+	l = l->${call linkname $t};
+    }
+    if( l == $t_listNIL ){
+	return new_$t_list();
+    }
+    nl = rdup_$t( l );
+    nl->${call linkname $t} = slice_$t_list( l->${call linkname $t}, 0, (e-1) );
+    return nl;
+}
+
+.endforeach
+/*********************************************************
+ *    cmp_<type> and cmp_<type>_list routines            *
+ *********************************************************/
+
+.call ansi_static cmp_list "int cmp_$$t_list( const $$t_list, const $$t_list )"
+.call ansi_static cmp "int cmp_$$t( const $$t, const $$t )"
+
+.foreach t $(need_cmp)
+.if ${member $t $(want_cmp)}
+.set stat
+.else
+.set stat "static "
+.endif
+.if ${member $t ${ttypelist}}
+.. cmp tuple
+/* Compare two $t tuples. */
+$(stat)int cmp_$t( const $t a, const $t b )
+{
+    int res;
+
+    res = 0;
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return res;
+    }
+    if( a == $tNIL ){
+	return -1;
+    }
+    if( b == $tNIL ){
+	return 1;
+    }
+.set first 1
+.foreach e ${telmlist $t}
+.set tn ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.if $(first)
+.set first 0
+.else
+    if( res != 0 ){
+	return res;
+    }
+.endif
+    res = cmp_$(tn)( a->$e, b->$e );
+.endforeach
+    return res;
+}
+
+.else
+.. cmp constructor
+/* Compare two $t constructors */
+$(stat)int cmp_$t( const $t a, const $t b )
+{
+    int res;
+
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return 0;
+    }
+    if( a == $tNIL ){
+	return -1;
+    }
+    if( b == $tNIL ){
+	return 1;
+    }
+.if ${len ${conslist $t}}
+    res = ((int) a->tag - (int) b->tag);
+    if( res != 0 ){
+	return res;
+    }
+    switch( a->tag )
+    {
+.foreach c ${conslist $t}
+	case TAG$c:
+.set first 1
+.foreach e ${celmlist $t $c}
+.set tn ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.if $(first)
+.set first 0
+.else
+	    if( res != 0 ){
+		break;
+	    }
+.endif
+	    res = cmp_$(tn)( a->$c.$e, b->$c.$e );
+.endforeach
+	    break;
+
+.endforeach
+	    default:
+		FATALTAG( a->tag );
+    }
+.else
+    res = 0;
+.endif
+    return res;
+}
+
+.endif
+.endforeach
+.foreach t $(need_cmp_list)
+.if ${member $t $(want_cmp_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Compare two $t lists. */
+$(stat)int cmp_$t_list( const $t_list a, const $t_list b )
+{
+    int res;
+    $t_list ap = a;
+    $t_list bp = b;
+
+    while( (ap!=$tNIL) || (bp!=$tNIL) ){
+	if( ap==$tNIL ){
+	    return -1;
+	}
+	if( bp==$tNIL ){
+	    return 1;
+	}
+	res = cmp_$t( ap, bp );
+	if( res != 0 ){
+	    return res;
+	}
+	ap = ap->${call linkname $t};
+	bp = bp->${call linkname $t};
+    }
+    return 0;
+}
+
+.endforeach
+/*********************************************************
+ *    fscan_<type> and fscan_<type>_list routines        *
+ *********************************************************/
+
+#ifdef LOGNEW
+.foreach t $(need_fscan)
+.if ${member $t $(want_fscan)}
+#undef fscan_$t
+.endif
+#define fscan_$t(f,e) real_fscan_$t(f,e,_f,_l)
+.endforeach
+.foreach t $(need_fscan_list)
+.if ${member $t $(want_fscan_list)}
+#undef fscan_$t_list
+.endif
+#define fscan_$t_list(f,l) real_fscan_$t_list(f,l,_f,_l)
+.endforeach
+.call ansi_static fscan_list "int real_fscan_$$t_list( FILE *, $$t_list *, const char *_f, const int _l )"
+.call ansi_static fscan "int real_fscan_$$t( FILE *, $$t *, const char *_f, const int _l )"
+#else
+.call ansi_static fscan_list "int fscan_$$t_list( FILE *, $$t_list * )"
+.call ansi_static fscan "int fscan_$$t( FILE *, $$t * )"
+#endif
+.foreach t $(need_fscan)
+.if ${member $t $(want_fscan)}
+.set stat
+.else
+.set stat "static "
+.endif
+.if ${member $t ${ttypelist}}
+.. tuple type
+/* Read a tuple of type '$t' from file 'f',
+   and create an instance of a C structure for it.
+   Set '*p' to this new structure.
+ */
+#ifdef LOGNEW
+$(stat)int real_fscan_$t( FILE *f, $t *p, const char *_f, const int _l )
+#else
+$(stat)int fscan_$t( FILE *f, $t *p )
+#endif
+{
+.foreach e ${telmlist $t}
+    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} l_$e;
+.endforeach
+    int c;
+    int err;
+
+.foreach e ${telmlist $t}
+    l_$e = ${mklist ${ttypellev $t $e} ${ttypename $t $e}}NIL;
+.endforeach
+    *p = $tNIL;
+    if( tm_fscanspace( f ) ){
+        return 1;
+    }
+    c = getc( f );
+    if( c == '@' ){
+	return 0;
+    }
+    ungetc( c, f );
+    err = tm_fneedc( f, '(' );
+    if( err ){
+	return 1;
+    }
+.set first 1
+.foreach e ${telmlist $t}
+.if $(first)
+.set first 0
+.else
+    if( !err ){
+	err = tm_fneedc( f, ',' );
+    }
+.endif
+.set tn ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+    if( !err ){
+	err = fscan_$(tn)( f, &l_$e );
+    }
+.endforeach
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${telmlist $t}}} );
+    if( err ){
+	return 1;
+    }
+    return tm_fneedc( f, ')' );
+}
+.else
+..
+.. First, determine the length of the largest constructor name.
+.set maxlen 1
+.foreach c ${conslist $t}
+.set maxlen ${max $(maxlen) ${strlen $c}}
+.endforeach
+.. Add some space for '\0' and safety..
+.set maxlen $[$(maxlen)+4]
+..
+/* Read an instance of a datastructure of type $t.
+   from file 'f' and allocate space for it. Set the pointer 'p' to
+   point to that structure.
+ */
+#ifdef LOGNEW
+$(stat)int real_fscan_$t( FILE *f, $t *p, const char *_f, const int _l )
+#else
+$(stat)int fscan_$t( FILE *f, $t *p )
+#endif
+{
+    int n;
+    int c;
+.if ${len ${conslist $t}}
+    char word[$(maxlen)];	/* Longest constructor name should fit. */
+    int err = 0;
+.endif
+
+.if ${not ${len ${conslist $t}}}
+#ifdef LOGNEW
+    (void) _f;
+    (void) _l;
+#endif
+.endif
+    *p = $tNIL;
+    n = tm_fscanopenbrac( f );
+    if( tm_fscanspace( f ) ){
+        return 1;
+    }
+    c = getc( f );
+    if( c == '@' ){
+	return tm_fscanclosebrac( f, n );
+    }
+    ungetc( c, f );
+.if ${len ${conslist $t}}
+    if( tm_fscancons( f, word, $(maxlen) ) ){
+	return 1;
+    }
+.set els
+.foreach c ${conslist $t}
+    $(els)if( strcmp( word, "$c" ) == 0 ){
+.foreach e ${celmlist $t $c}
+	${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} l_$e;
+.endforeach
+
+.foreach e ${celmlist $t $c}
+.set tn ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+	l_$e = $(tn)NIL;
+	if( !err ){
+	    err = fscan_$(tn)( f, &l_$e );
+	}
+.endforeach
+	*p = new_$c( ${seplist ", " ${prefix " l_" ${celmlist $t $c}}} );
+    }
+.set els "else "
+.endforeach
+    else {
+	(void) sprintf( tm_errmsg, tm_badcons, "$t", word );
+	return 1;
+    }
+    if( err ){
+	return 1;
+    }
+.endif
+    return tm_fscanclosebrac( f, n );
+}
+
+.endif
+.endforeach
+.foreach t $(need_fscan_list)
+.if ${member $t $(want_fscan_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Read an instance of a list of datastructure of type $t.
+   from file 'f' and allocate space for it. Set the pointer 'p' to
+   point to that structure.
+ */
+#ifdef LOGNEW
+$(stat)int real_fscan_$t_list( FILE *f, $t_list *p, const char *_f, const int _l )
+#else
+$(stat)int fscan_$t_list( FILE *f, $t_list *p )
+#endif
+{
+    int n;
+    int c;
+    $t nw;
+    int err;
+
+    *p = new_$t_list();
+    n = tm_fscanopenbrac( f );
+    err = tm_fneedc( f, '[' );
+    if( err ){
+	return 1;
+    }
+    if( tm_fscanspace( f ) ){
+	return 1;
+    }
+    c = getc( f );
+    if( c == EOF ){
+	(void) strcpy( tm_errmsg, tm_badeof );
+	return 1;
+    }
+    if( c == ']' ){
+	return 0;
+    }
+    ungetc( c, f );
+    for(;;){
+	err = fscan_$t( f, &nw );
+	*p = append_$t_list( *p, nw );
+	if( err ){
+	    return 1;
+	}
+	if( tm_fscanspace( f ) ){
+	    return 1;
+	}
+	c = getc( f );
+	if( c == EOF ){
+	    (void) strcpy( tm_errmsg, tm_badeof );
+	    return 1;
+	}
+	if( c != ',' ){
+	    ungetc( c, f );
+	    break;
+	}
+    }
+    if( tm_fneedc( f, ']' ) ){
+	return 1;
+    }
+    return tm_fscanclosebrac( f, n );
+}
+
+.endforeach
+.if ${member stat_$(basename) $(need_misc)}
+/*********************************************************
+ *    Statistics printing routines                       *
+ *********************************************************/
+
+.if ${member stat_$(basename) $(want_misc)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* give statistics */
+void stat_$(basename)( FILE *f )
+{
+#ifdef STAT
+.foreach t $(need_stat)
+.if ${member $t ${ttypelist}}
+    fprintf(f,tm_allocfreed,"$t",newcnt_$t,frecnt_$t,((newcnt_$t==frecnt_$t)? "": "<-"));
+.else
+.foreach c ${conslist $t}
+    fprintf(f,tm_allocfreed,"$c",newcnt_$c,frecnt_$c,((newcnt_$c==frecnt_$c)? "": "<-"));
+.endforeach
+.endif
+.endforeach
+.foreach t $(need_stat_list)
+    fprintf(
+	f,
+	tm_allocfreed,
+	"$t_list",
+	newcnt_$t_list,
+	frecnt_$t_list,
+	((newcnt_$t_list==frecnt_$t_list)? "": "<-")
+    );
+.endforeach
+#else
+    (void) f; /* to prevent 'f unused' from compiler and lint */
+#endif
+}
+
+.endif
+.if ${member get_balance_$(basename) $(need_misc)}
+/* Return -1 if there is a structure that has freed more than allocated, or
+ * else return 1 if there is a structure that has been freed less than
+ * allocated, or else return 0.
+ */
+int get_balance_$(basename)( void )
+{
+    int res;
+
+    res = 0;
+#ifdef STAT
+.foreach t $(need_stat_list)
+    if( newcnt_$t_list<frecnt_$t_list ){
+        return -1;
+    }
+    if( newcnt_$t_list>frecnt_$t_list ){
+        res = 1;
+    }
+.endforeach
+.foreach t $(need_stat)
+.if ${member $t ${ttypelist}}
+    if( newcnt_$t<frecnt_$t ){
+        return -1;
+    }
+    if( newcnt_$t>frecnt_$t ){
+        res = 1;
+    }
+.else
+.foreach c ${conslist $t}
+    if( newcnt_$c<frecnt_$c ){
+        return -1;
+    }
+    if( newcnt_$c>frecnt_$c ){
+        res = 1;
+    }
+.endforeach
+.endif
+.endforeach
+#endif
+    return res;
+}
+
+.endif
+/* ---- end of ${tplfilename} ---- */

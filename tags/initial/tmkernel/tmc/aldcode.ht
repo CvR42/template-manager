@@ -1,0 +1,10 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+
+.. File: aldcode.ht
+.insert aldspec.t
+.insert macros.t
+.insert aldneed.t
+.include cald.ht
