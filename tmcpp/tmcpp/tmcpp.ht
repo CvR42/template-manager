@@ -259,7 +259,7 @@ extern $t_list *setroom_$t_list( $t_list *, const unsigned int );
 .. append_<type>_list() routines.
 .foreach t $(want_append_list)
 .if ${member $t $(valuetypes)}
-extern $t_list append_$t_list( $t_list, $t );
+extern $t_list *append_$t_list( $t_list *, $t );
 .else
 extern $t_list *append_$t_list( $t_list *, $t * );
 .endif

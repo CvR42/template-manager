@@ -14,10 +14,10 @@ CC = $(CXX)
 LINKER = $(CXX)
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
-LOCALBIN = /usr/local/bin
-LOCALLIB = /usr/local/lib
-LOCALINCLUDE = /usr/local/include
-LOCALMAN = /usr/local/man
+LOCALBIN = /falcon/reeuwijk/lab/bin
+LOCALLIB = /falcon/reeuwijk/lab/lib
+LOCALINCLUDE = /falcon/reeuwijk/lab/include
+LOCALMAN = /falcon/reeuwijk/lab/man
 
 # System dependent flags for compilation with debugging
 DBUGFLAGS = -g -DLOGNEW -DSTAT

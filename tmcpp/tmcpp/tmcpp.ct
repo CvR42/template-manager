@@ -107,10 +107,18 @@ $(stic_$t)$t_list *setroom_$t_list( $t_list *l, const unsigned int rm )
 	return l;
     }
     if( l->room==0 ){
+.if ${member $t $(valuetypes)}
+	l->arr = TM_MALLOC( $t *, rm * sizeof(*(l->arr)) );
+.else
 	l->arr = TM_MALLOC( $t **, rm * sizeof(*(l->arr)) );
+.endif
     }
     else {
+.if ${member $t $(valuetypes)}
+	l->arr = TM_REALLOC( $t *, l->arr, rm * sizeof(*(l->arr)) );
+.else
 	l->arr = TM_REALLOC( $t **, l->arr, rm * sizeof(*(l->arr)) );
+.endif
     }
     l->room = rm;
     return l;
@@ -154,10 +162,18 @@ $(stic_$t)$t_list *new_$t_list( void )
     $t_list *nw = TM_MALLOC( $t_list *, sizeof(*nw) );
     nw->sz = 0;
 #if FIRSTROOM==0
+.if ${member $t $(valuetypes)}
+    nw->arr = ($t *) 0;
+.else
     nw->arr = ($t **) 0;
+.endif
     nw->room = 0;
 #else
+.if ${member $t $(valuetypes)}
+    nw->arr = TM_MALLOC( $t *, FIRSTROOM*sizeof($t) );
+.else
     nw->arr = TM_MALLOC( $t **, FIRSTROOM*sizeof($t) );
+.endif
     nw->room = FIRSTROOM;
 #endif
 .if ${member $t $(need_stat_list)}
@@ -662,7 +678,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t *t )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    print_$c( st, ($c *) t );
+	    print_$c( st, (const $c *) t );
 	    break;
 
 .endforeach
@@ -762,7 +778,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t *t )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    fprint_$c( f, ($c *) t );
+	    fprint_$c( f, (const $c *) t );
 	    break;
 
 .endforeach
@@ -887,7 +903,7 @@ $(stic_$t)$t *rdup_$t( const $t *e )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    return rdup_$c( ($c *) e );
+	    return rdup_$c( (const $c *) e );
 
 .endforeach
 	default:
@@ -1099,7 +1115,7 @@ $(stat)int cmp_$t( const $t *a, const $t *b )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    res = cmp_$c( ($c *) a, ($c *) b );
+	    res = cmp_$c( (const $c *) a, (const $c *) b );
 	    break;
 
 .endforeach
@@ -1370,7 +1386,11 @@ $(stic_$t)int real_fscan_$t_list( FILE *f, $t_list **p, const char *_f, const in
 $(stic_$t)int fscan_$t_list( FILE *f, $t_list **p )
 #endif
 {
+.if ${member $t $(valuetypes)}
+    $t nw;
+.else
     $t *nw;
+.endif
     int err = 0;
 
     *p = $t_listNIL;
