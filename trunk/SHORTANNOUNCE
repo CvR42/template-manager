@@ -1,0 +1,18 @@
+Subject: [ANN] Version 2.0.9 of Tm, a template preprocessor, avaiable
+Keywords: template, Tm, abstract syntax tree 
+
+Hello everyone, 
+
+Version 2.0.9 of Tm is now available for downloading. New in this
+release is a template to generate analyzers. Such analyzers apply
+a reduction operation (e.g. summation or boolean 'and' ) on a tree.
+The template is useful for small analysis operations such as determining
+the estimated code size of a function, or deciding wether an expression
+is constant.
+
+Also, the Tm function 'reach' has been extended to accept a list of
+blocking nodes.
+
+As usual, Tm can be obtained from the Tm downloading page:
+
+<http://www.pds.twi.tudelft.nl/~reeuwijk/software/Tm/downloading.html>
