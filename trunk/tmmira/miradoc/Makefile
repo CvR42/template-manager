@@ -22,7 +22,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).ilg pasdemo.p \
        $(TOPFILE).aux distlist
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) mirademo.t miraspec.t plot.ds \
-    $(TOPFILE).ps goodwords
+    $(TOPFILE).ps goodwords .cvsignore
 
 help:
 	@echo Possible targets:

@@ -148,7 +148,7 @@ MAKEFILE = Makefile
 FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
     config.hts makefile.tos
 
-CONFIGUREFILES = configure config.hin Makefile.in configure.in
+CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
 
 DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)

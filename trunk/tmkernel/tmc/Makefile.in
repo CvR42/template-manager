@@ -56,7 +56,7 @@ FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
 
 # Files for configuration
-CONFIGUREFILES = configure config.hin Makefile.in configure.in
+CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
 
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
