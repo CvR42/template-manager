@@ -31,6 +31,7 @@
 #include "tmtrans.h"
 #include "var.h"
 #include "srchfile.h"
+#include "checkds.h"
 
 /* tags for command table */
 typedef enum en_tmcommands {
@@ -997,6 +998,11 @@ static void dorename( const tplelm tpl )
 	return;
     }
     allds = rename_ds_list( allds, sl->arr[0], sl->arr[1] );
+    if( !check_ds_list( allds ) ){
+	sprintf( errarg, "'%s'->'%s'", sl->arr[0], sl->arr[1] );
+	line_error( "The problems were caused by .rename" );
+	exit( 1 );
+    }
     rfre_tmstring_list( sl );
 }
 

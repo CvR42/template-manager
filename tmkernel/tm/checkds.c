@@ -16,7 +16,7 @@
 /* Ensure that there are no double names in tuple with name 'nm'
  * and fields 'fields'.
  */
-void cktuple( tmstring nm, field_list fields, tmstring_list inherits )
+bool cktuple( tmstring nm, field_list fields, tmstring_list inherits )
 {
     unsigned int ix;	/* index of currently checked field */
     unsigned int iy;	/* index of searched subsequent fields */
@@ -33,13 +33,16 @@ void cktuple( tmstring nm, field_list fields, tmstring_list inherits )
 		sprintf( errpos, "in type '%s'", nm );
 		sprintf( errarg, "'%s'", fnm );
 		error( "double use of field name" );
+		return FALSE;
 	    }
 	}
     }
     if( member_tmstring_list( nm, inherits ) ){
 	sprintf( errpos, "in type '%s'", nm );
 	error( "Type inherits itself" );
+	return FALSE;
     }
+    return TRUE;
 }
 
 /* Given a list of datastructure definitions, an index in the list,
@@ -56,23 +59,29 @@ static bool check_ds_inheritance(
     tmstring_list supers;	/* The list of superclasses. */
     unsigned int ix;
     ds me = dl->arr[theds];
-    tmstring myname;
     bool ok = TRUE;
 
     assert( theds<dl->sz );
     if( accepted[theds] ){
         return ok;
     }
-    supers = rdup_tmstring_list( me->inherits );
-    myname = me->name;
     if( visited[theds] ){
-	sprintf( errpos, "type '%s'", myname );
-	error( "circular inheritance" );
+	sprintf( errpos, "type '%s'", me->name );
+	error( "circular inheritance/alias hierarchy" );
 	accepted[theds] = TRUE;		/* Break the circle to allow further checks. */
-	rfre_tmstring_list( supers );
 	return FALSE;
     }
     visited[theds] = TRUE;
+    supers = rdup_tmstring_list( me->inherits );
+    /* Although in general we don't want that, we now pretend the
+     * target of an alias is a superclass.
+     */
+    if( me->tag == TAGDsAlias ){
+	supers = append_tmstring_list(
+	    supers,
+	    rdup_tmstring( to_DsAlias(me)->target )
+	);
+    }
     for( ix=0; ix<supers->sz; ix++ ){
         tmstring super = supers->arr[ix];
         unsigned int superix = find_type_ix( dl, super );
@@ -80,13 +89,6 @@ static bool check_ds_inheritance(
         if( superix<dl->sz ){
 	    ok &= check_ds_inheritance( dl, superix, visited, accepted );
         }
-#if 0
-	else {
-	    sprintf( errpos, "type '%s'", myname );
-	    sprintf( errarg, "'%s'", super );
-	    error( "inheritance from unknown type" );
-	}
-#endif
     }
     rfre_tmstring_list( supers );
     visited[theds] = FALSE;
@@ -97,7 +99,7 @@ static bool check_ds_inheritance(
 /* Given a list of datastructure definitions, ensure that it does not
  * contain circular inheritances.
  */
-void check_ds_list( const ds_list dl )
+bool check_ds_list( const ds_list dl )
 {
     bool *visited;	/* The data structures currently under examination */
     bool *accepted;	/* The data structures that already passed the test. */
@@ -124,19 +126,19 @@ void check_ds_list( const ds_list dl )
     }
     if( !ok ){
 	/* Double definitions. Don't even try the next tests. */
-	return;
+	return ok;
     }
     sz = dl->sz;
     visited = TM_MALLOC( bool *, sizeof(bool)*sz );
     if( visited == NULL ){
         /* No room. Don't report it; the check is not that important anyway.  */
-        return;
+        return ok;
     }
     accepted = TM_MALLOC( bool *, sizeof(bool)*sz );
     if( accepted == NULL ){
         /* No room. Don't report it; the check is not that important anyway. */
         TM_FREE( visited );
-        return;
+        return ok;
     }
     for( ix=0; ix<sz; ix++ ){
         visited[ix] = accepted[ix] = FALSE;
@@ -148,7 +150,7 @@ void check_ds_list( const ds_list dl )
     TM_FREE( visited );
     if( !ok ){
 	/* Circular inheritance. Don't even try the next tests. */
-	return;
+	return ok;
     }
     for( ix=0; ix<dl->sz; ix++ ){
 	const tmstring nmx = dl->arr[ix]->name;
@@ -157,15 +159,16 @@ void check_ds_list( const ds_list dl )
 
 	collect_superclasses( &tl, dl, nmx );
 	sprintf( msg, "Duplicate superclass in type '%s'", nmx );
-	ok = check_double_strings( msg, tl );
+	ok &= check_double_strings( msg, tl );
 	rfre_tmstring_list( tl );
 	if( ok ){
 	    tmstring_list fields = new_tmstring_list();
 
 	    collect_all_fields( &fields, dl, nmx );
 	    sprintf( msg, "Duplicate field in type '%s'", nmx );
-	    (void) check_double_strings( msg, fields );
+	    ok &= check_double_strings( msg, fields );
 	    rfre_tmstring_list( fields );
 	}
     }
+    return ok;
 }

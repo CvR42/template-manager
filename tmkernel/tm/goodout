@@ -158,7 +158,7 @@ prefix:  'pfx_a pfx_b pfx_c pfx_d pfx_e pfx_f' 'pfx_a' ''
 suffix:  'a_sfx b_sfx c_sfx d_sfx e_sfx f_sfx' 'a_sfx' ''
 len:     '6' '1' '0'
 sort:    'a a b b c c d d e e f f' '-1 1 12 2' ''
-sizesort:'Top expr orig Thing thing TopNone notuple SubNamed Toptuple exprOrig exprPlus subclass sublevel subtuple toplevel exprConst testclass subNamedlist SubNamedlistlist' '1 2 -1 12' ''
+sizesort:'Top expr orig Thing thing TopNone notuple SubNamed Toptuple exprOrig exprPlus subclass sublevel subtuple toplevel aliastype exprConst testclass subNamedlist SubNamedlistlist' '1 2 -1 12' ''
 uniq:    'a b c d e f' '-1 1 12 2' ''
 rev:     'f e d c b a' ''
 ----
@@ -237,9 +237,9 @@ allfields:
 types: ''
 fields <all>: 'file line la lb tup tl tn n thinglist thinglistlist a b n a b lbl'
 allfields <all>: 'file line file line tl tn la lb file line tl tn tup file line tl tn file line tl tn file line tl tn n file line tl tn thinglist file line tl tn file line tl tn thinglistlist file line tl tn file line tl tn a b file line a b file line n file line a b file line a b lbl file line'
-metatype <all>: 'tuple constructor constructor constructor tuple constructor constructor constructorbase constructor tuple constructorbase constructorbase constructor class class class class class class atom list list list list list list list list list list list list list list list list list list list'
+metatype <all>: 'tuple constructor constructor constructor tuple constructor constructor constructorbase constructor tuple constructorbase constructorbase constructor class class class class class class alias atom list list list list list list list list list list list list list list list list list list list list'
 virtual <all>: 'sublevel toplevel thing testclass expr'
-nonvirtual <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist SubNamedlistlist notuple Thing subclass exprConst exprPlus exprOrig bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr]'
+nonvirtual <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist SubNamedlistlist notuple Thing subclass exprConst exprPlus exprOrig aliastype bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [aliastype]'
 virtual and nonvirtual behave as they should
 virtual and nonvirtual behave as they should
 types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int int expr expr tmstring'
@@ -249,11 +249,11 @@ conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thi
 metatype:  atom atom atom atom list
 
 =-=-=-=
-typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr'
+typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr aliastype'
 tuplelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
 classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
-aliases: ''
+aliases: 'aliastype'
     conslist orig: ''
     inherits orig: ''
     inheritors orig: 'subtuple subclass expr'
@@ -760,14 +760,23 @@ aliases: ''
 	typelevel expr line: 0
 	typename expr line: 'int'
 	type expr line: 'int'
+    conslist aliastype: ''
+    inherits aliastype: ''
+    inheritors aliastype: ''
+    superclasses aliastype: ''
+    subclasses aliastype: ''
+    isvirtual aliastype: '0'
+    metatype aliastype: 'alias'
+    fields aliastype: ''
+    allfields aliastype: ''
 ----
 
 Datastructure dependency
 ----
 Testing error handling:
 Type sorting:
-depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprOrig expr exprPlus ]
-inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig ]
+depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprOrig expr exprPlus aliastype ]
+inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig aliastype ]
 ----
 
 String manipulation functions:

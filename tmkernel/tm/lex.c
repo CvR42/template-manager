@@ -143,6 +143,7 @@ static struct tok toktab[] =
     { "::=", COLCOLEQ, "COLCOLEQ" },
     { ";", SEMI, "SEMI" },
     { "==", EQEQ, "EQEQ" },
+    { "->", ARROW, "ARROW" },
     { "=", EQ, "EQ" },
     { "~=", TILDEQ, "TILDEQ" },
     { "{", LCBRAC, "LCBRAC" },
