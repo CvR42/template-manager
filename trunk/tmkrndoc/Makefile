@@ -19,7 +19,7 @@ CALCDEMO = calc.ds calcpars.y calclex.l
 
 EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
   boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
-  linemacro.xt setfn.xt switch.xt fncalss.xt
+  linemacro.xt setfn.xt switch.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex tmc.tex intro.tex \
