@@ -10,7 +10,9 @@
 
 extern unsigned int find_type_ix( const ds_list dl, const char *t );
 extern unsigned int find_field_ix( const field_list fl, const char *nm );
+#if 0
 extern unsigned int find_constructor_ix( const constructor_list cl, const char *nm );
+#endif
 extern const tmstring get_type_name( const ds t );
 extern FILE *ckfopen( const char *nm, const char *acc );
 extern void ckfreopen( const char *nm, const char *acc, FILE *f );

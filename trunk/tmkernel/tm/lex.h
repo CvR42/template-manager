@@ -16,12 +16,6 @@ typedef enum en_lextok {
 } lextok;
 
 typedef union un_YYSTYPE {
-    ds pards;
-    ds_list pardslist;
-    constructor parcons;
-    constructor_list parconslist;
-    field parfield;
-    field_list parfieldlist;
     char *parstring;
 } YYSTYPE;
 

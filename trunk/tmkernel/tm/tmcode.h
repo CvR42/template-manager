@@ -5,7 +5,7 @@
 
    template file:      /usr/local/lib/calu.ht
    datastructure file: tm.ds
-   tm version:         35
+   tm version:         36
    tm kernel version:  *** development -- not for distribution ***
  */
 
@@ -15,7 +15,6 @@
  */
 typedef struct str_alternative_list *alternative_list;
 typedef struct str_classComponent_list *classComponent_list;
-typedef struct str_constructor_list *constructor_list;
 typedef struct str_ds_list *ds_list;
 typedef struct str_field_list *field_list;
 typedef struct str_macro_list *macro_list;
@@ -25,7 +24,6 @@ typedef struct str_var_list *var_list;
 typedef struct str_ds *ds;
 typedef struct str_classComponent *classComponent;
 typedef struct str_alternative *alternative;
-typedef struct str_constructor *constructor;
 typedef struct str_field *field;
 typedef struct str_macro *macro;
 typedef struct str_var *var;
@@ -34,14 +32,12 @@ typedef struct str_tplelm *tplelm;
 #define dsNIL (ds)0
 #define classComponentNIL (classComponent)0
 #define alternativeNIL (alternative)0
-#define constructorNIL (constructor)0
 #define fieldNIL (field)0
 #define macroNIL (macro)0
 #define varNIL (var)0
 #define tplelmNIL (tplelm)0
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
-#define constructor_listNIL (constructor_list)0
 #define ds_listNIL (ds_list)0
 #define field_listNIL (field_list)0
 #define macro_listNIL (macro_list)0
@@ -52,9 +48,10 @@ typedef struct str_tplelm *tplelm;
 #define DsCons u.ue_DsCons
 #define DsTuple u.ue_DsTuple
 #define DsClass u.ue_DsClass
+#define DsConstructor u.ue_DsConstructor
 
 typedef enum en_tags_ds {
-    TAGDsCons, TAGDsTuple, TAGDsClass
+    TAGDsCons, TAGDsTuple, TAGDsClass, TAGDsConstructor
 } tags_ds;
 
 #define CCSuper u.ue_CCSuper
@@ -90,7 +87,7 @@ typedef enum en_tags_tplelm {
 typedef struct str_DsCons {
     tmstring name;
     tmstring_list inherits;
-    constructor_list constructors;
+    tmstring_list constructors;
 } C_DsCons;
 
 /* Structure for constructor DsTuple */
@@ -103,10 +100,17 @@ typedef struct str_DsTuple {
 /* Structure for constructor DsClass */
 typedef struct str_DsClass {
     tmstring name;
-    tmbool virtual;
     tmstring_list inherits;
     field_list fields;
+    tmbool virtual;
 } C_DsClass;
+
+/* Structure for constructor DsConstructor */
+typedef struct str_DsConstructor {
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+} C_DsConstructor;
 
 struct str_ds {
     tags_ds tag;
@@ -114,6 +118,7 @@ struct str_ds {
 	C_DsCons ue_DsCons;
 	C_DsTuple ue_DsTuple;
 	C_DsClass ue_DsClass;
+	C_DsConstructor ue_DsConstructor;
     } u;
 #ifdef LOGNEW
     long int lognew_id;
@@ -156,14 +161,6 @@ struct str_classComponent {
 struct str_alternative {
     tmstring label;
     classComponent component;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_constructor {
-    tmstring name;
-    field_list fields;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -329,15 +326,6 @@ struct str_classComponent_list {
 #endif
 };
 
-struct str_constructor_list {
-    unsigned int sz;
-    unsigned int room;
-    constructor *arr;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
 struct str_ds_list {
     unsigned int sz;
     unsigned int room;
@@ -399,10 +387,10 @@ struct str_var_list {
 #define new_CCFields(fields) real_new_CCFields(fields,__FILE__,__LINE__)
 #define new_CCAlternatives(alternatives) real_new_CCAlternatives(alternatives,__FILE__,__LINE__)
 #define new_CCSublist(components) real_new_CCSublist(components,__FILE__,__LINE__)
-#define new_constructor(name,fields) real_new_constructor(name,fields,__FILE__,__LINE__)
 #define new_DsCons(name,inherits,constructors) real_new_DsCons(name,inherits,constructors,__FILE__,__LINE__)
 #define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,__FILE__,__LINE__)
-#define new_DsClass(name,virtual,inherits,fields) real_new_DsClass(name,virtual,inherits,fields,__FILE__,__LINE__)
+#define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,__FILE__,__LINE__)
+#define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
 #define new_field(level,name,type) real_new_field(level,name,type,__FILE__,__LINE__)
 #define new_macro(lvl,name,orgfile,fpl,body) real_new_macro(lvl,name,orgfile,fpl,body,__FILE__,__LINE__)
 #define new_Plain(lno,plainline) real_new_Plain(lno,plainline,__FILE__,__LINE__)
@@ -422,16 +410,13 @@ struct str_var_list {
 #define new_var(lvl,name,val) real_new_var(lvl,name,val,__FILE__,__LINE__)
 #define new_alternative_list() real_new_alternative_list(__FILE__,__LINE__)
 #define new_classComponent_list() real_new_classComponent_list(__FILE__,__LINE__)
-#define new_constructor_list() real_new_constructor_list(__FILE__,__LINE__)
 #define new_ds_list() real_new_ds_list(__FILE__,__LINE__)
 #define new_field_list() real_new_field_list(__FILE__,__LINE__)
 #define new_macro_list() real_new_macro_list(__FILE__,__LINE__)
 #define new_tmstring_list() real_new_tmstring_list(__FILE__,__LINE__)
 #define new_tplelm_list() real_new_tplelm_list(__FILE__,__LINE__)
 #define new_var_list() real_new_var_list(__FILE__,__LINE__)
-#define rdup_constructor(e) real_rdup_constructor(e,__FILE__,__LINE__)
 #define rdup_ds(e) real_rdup_ds(e,__FILE__,__LINE__)
-#define rdup_constructor_list(e) real_rdup_constructor_list(e,__FILE__,__LINE__)
 #define rdup_field_list(e) real_rdup_field_list(e,__FILE__,__LINE__)
 #define rdup_tmstring_list(e) real_rdup_tmstring_list(e,__FILE__,__LINE__)
 #define rdup_tplelm_list(e) real_rdup_tplelm_list(e,__FILE__,__LINE__)
@@ -463,14 +448,9 @@ extern classComponent real_new_CCSublist( classComponent_list, const char *, con
 extern classComponent new_CCSublist( classComponent_list );
 #endif
 #ifdef LOGNEW
-extern constructor real_new_constructor( tmstring, field_list, const char *_f, const int _l );
+extern ds real_new_DsCons( tmstring, tmstring_list, tmstring_list, const char *, const int );
 #else
-extern constructor new_constructor( tmstring, field_list );
-#endif
-#ifdef LOGNEW
-extern ds real_new_DsCons( tmstring, tmstring_list, constructor_list, const char *, const int );
-#else
-extern ds new_DsCons( tmstring, tmstring_list, constructor_list );
+extern ds new_DsCons( tmstring, tmstring_list, tmstring_list );
 #endif
 #ifdef LOGNEW
 extern ds real_new_DsTuple( tmstring, tmstring_list, field_list, const char *, const int );
@@ -478,9 +458,14 @@ extern ds real_new_DsTuple( tmstring, tmstring_list, field_list, const char *, c
 extern ds new_DsTuple( tmstring, tmstring_list, field_list );
 #endif
 #ifdef LOGNEW
-extern ds real_new_DsClass( tmstring, tmbool, tmstring_list, field_list, const char *, const int );
+extern ds real_new_DsClass( tmstring, tmstring_list, field_list, tmbool, const char *, const int );
 #else
-extern ds new_DsClass( tmstring, tmbool, tmstring_list, field_list );
+extern ds new_DsClass( tmstring, tmstring_list, field_list, tmbool );
+#endif
+#ifdef LOGNEW
+extern ds real_new_DsConstructor( tmstring, tmstring_list, field_list, const char *, const int );
+#else
+extern ds new_DsConstructor( tmstring, tmstring_list, field_list );
 #endif
 #ifdef LOGNEW
 extern field real_new_field( int, tmstring, tmstring, const char *_f, const int _l );
@@ -570,7 +555,6 @@ extern var new_var( uint, tmstring, tmstring );
 #ifdef LOGNEW
 extern alternative_list real_new_alternative_list( const char *file, const int line );
 extern classComponent_list real_new_classComponent_list( const char *file, const int line );
-extern constructor_list real_new_constructor_list( const char *file, const int line );
 extern ds_list real_new_ds_list( const char *file, const int line );
 extern field_list real_new_field_list( const char *file, const int line );
 extern macro_list real_new_macro_list( const char *file, const int line );
@@ -580,7 +564,6 @@ extern var_list real_new_var_list( const char *file, const int line );
 #else
 extern alternative_list new_alternative_list( void );
 extern classComponent_list new_classComponent_list( void );
-extern constructor_list new_constructor_list( void );
 extern ds_list new_ds_list( void );
 extern field_list new_field_list( void );
 extern macro_list new_macro_list( void );
@@ -590,7 +573,6 @@ extern var_list new_var_list( void );
 #endif
 extern alternative_list append_alternative_list( alternative_list, alternative );
 extern classComponent_list append_classComponent_list( classComponent_list, classComponent );
-extern constructor_list append_constructor_list( constructor_list, constructor );
 extern ds_list append_ds_list( ds_list, ds );
 extern field_list append_field_list( field_list, field );
 extern tmstring_list append_tmstring_list( tmstring_list, tmstring );
@@ -605,6 +587,7 @@ extern var_list delete_var_list( var_list, const unsigned int );
 extern tmstring_list extract_tmstring_list( tmstring_list, const unsigned int, tmstring *, int * );
 extern ds_list concat_ds_list( ds_list, ds_list );
 extern field_list concat_field_list( field_list, field_list );
+extern tmstring_list concat_tmstring_list( tmstring_list, tmstring_list );
 extern void rfre_alternative_list( alternative_list );
 extern void rfre_classComponent_list( classComponent_list );
 extern void rfre_ds_list( ds_list );
@@ -614,7 +597,6 @@ extern void rfre_tmstring_list( tmstring_list );
 extern void rfre_tplelm_list( tplelm_list );
 extern void rfre_var_list( var_list );
 extern void rfre_classComponent( classComponent );
-extern void rfre_constructor( constructor );
 extern void rfre_ds( ds );
 extern void rfre_macro( macro );
 extern void rfre_tplelm( tplelm );
@@ -624,16 +606,12 @@ extern void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list );
 #else
 #endif
 #ifdef LOGNEW
-extern constructor real_rdup_constructor( const constructor, const char *_f, const int _l );
 extern ds real_rdup_ds( const ds, const char *_f, const int _l );
-extern constructor_list real_rdup_constructor_list( const constructor_list, const char *_f, const int _l );
 extern field_list real_rdup_field_list( const field_list, const char *_f, const int _l );
 extern tmstring_list real_rdup_tmstring_list( const tmstring_list, const char *_f, const int _l );
 extern tplelm_list real_rdup_tplelm_list( const tplelm_list, const char *_f, const int _l );
 #else
-extern constructor rdup_constructor( const constructor );
 extern ds rdup_ds( const ds );
-extern constructor_list rdup_constructor_list( const constructor_list );
 extern field_list rdup_field_list( const field_list );
 extern tmstring_list rdup_tmstring_list( const tmstring_list );
 extern tplelm_list rdup_tplelm_list( const tplelm_list );

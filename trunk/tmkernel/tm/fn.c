@@ -1030,11 +1030,43 @@ static tmstring fntypelist( const tmstring_list sl )
     return ans;
 }
 
+/* Construct a list of constructors. */
+static tmstring fnconstructorlist( const tmstring_list sl )
+{
+    ds d;
+    tmstring ans;
+    unsigned int ix;
+    tmstring_list nl;
+
+    if( sl->sz!=0 ){
+	line_error( "'constructorlist' does not need any parameters" );
+    }
+    nl = new_tmstring_list();
+    for( ix = 0; ix< allds->sz; ix++ ){
+	d = allds->arr[ix];
+	switch( d->tag ){
+	    case TAGDsCons:
+		break;
+
+	    case TAGDsTuple:
+		break;
+
+	    case TAGDsClass:
+		break;
+
+	    case TAGDsConstructor:
+		nl = append_tmstring_list( nl, new_tmstring( d->DsConstructor.name ) );
+		break;
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
 /* Construct a list of constructor types. */
 static tmstring fnctypelist( const tmstring_list sl )
 {
     ds d;
-    tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1047,8 +1079,7 @@ static tmstring fnctypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsCons:
-		vp = d->DsCons.name;
-		nl = append_tmstring_list( nl, new_tmstring( vp ) );
+		nl = append_tmstring_list( nl, new_tmstring( d->DsCons.name ) );
 		break;
 
 	    case TAGDsTuple:
@@ -1057,6 +1088,8 @@ static tmstring fnctypelist( const tmstring_list sl )
 	    case TAGDsClass:
 		break;
 
+	    case TAGDsConstructor:
+		break;
 	}
     }
     ans = flatstrings( nl );
@@ -1084,8 +1117,7 @@ static tmstring fntuplelist( const tmstring_list sl )
 		break;
 
 	    case TAGDsCons:
-		break;
-
+	    case TAGDsConstructor:
 	    case TAGDsClass:
 		break;
 
@@ -1113,9 +1145,8 @@ static tmstring fnclasslist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		break;
-
 	    case TAGDsCons:
+	    case TAGDsConstructor:
 		break;
 
 	    case TAGDsClass:
@@ -1146,6 +1177,7 @@ static ds findtype( ds_list dl, const tmstring t )
     return dl->arr[ix];
 }
 
+#if 0
 /* Given a list of constructors 'dl', search for
    constructor with name 'nm'. Give an error message if it is not found.
  */ 
@@ -1161,7 +1193,9 @@ static constructor find_constructor( constructor_list cl, const tmstring nm )
     line_error( "no such constructor" );
     return constructorNIL;
 }
+#endif
 
+#if 0
 /* Given a list of constructor elements 'el',
    search for constructor element with name 'nm'.
  */ 
@@ -1179,6 +1213,7 @@ static field findfield( field_list el, const tmstring nm )
     line_error( "no such constructor element" );
     return fieldNIL;
 }
+#endif
 
 /* Given a type name, return TRUE if the type is virtual. */
 static tmstring fnisvirtual( const tmstring_list sl )
@@ -1197,7 +1232,11 @@ static tmstring fnisvirtual( const tmstring_list sl )
     ans = FALSE;
     switch( d->tag ){
 	case TAGDsCons:
+	    ans = TRUE;
+	    break;
+
 	case TAGDsTuple:
+	case TAGDsConstructor:
 	    break;
 
 	case TAGDsClass:
@@ -1426,10 +1465,6 @@ static tmstring fntype( const tmstring_list sl )
 static tmstring fnconslist( const tmstring_list sl )
 {
     ds d;
-    constructor_list cl;
-    tmstring ans;
-    unsigned int ix;
-    tmstring_list nl;
 
     if( sl->sz != 1 ){
 	line_error( "'conslist' requires a type name" );
@@ -1445,32 +1480,30 @@ static tmstring fnconslist( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.constructors;
-    nl = new_tmstring_list();
-    for( ix=0; ix<cl->sz; ix++ ){
-	constructor c = cl->arr[ix];
-
-	nl = append_tmstring_list( nl, new_tmstring( c->name ) );
-    }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
-    return ans;
+    return flatstrings( d->DsCons.constructors );
 }
 
 /* construct a list of fields for given type */
 static tmstring fncelmlist( const tmstring_list sl )
 {
     ds d;
-    constructor_list cl;
-    constructor c;
-    field_list el;
+    tmstring_list cl;
     tmstring ans;
-    unsigned int ix;
     tmstring_list nl;
+    bool inherited;
 
-    if( sl->sz != 2 ){
-	line_error( "'conslist' requires a type and a constructor name" );
+    inherited = FALSE;
+    if( sl->sz != 2 && sl->sz != 3 ){
+	line_error( "'celmlist' requires two or three parameters" );
 	return new_tmstring( "" );
+    }
+    if( sl->sz == 3 ){
+	if( strcmp( sl->arr[1], "inherited" ) == 0 ){
+	    inherited = TRUE;
+	}
+	else {
+	    line_error( "'celmlist' third parameter must be absent or `inherited'" );
+	}
     }
     d = findtype( allds, sl->arr[0] );
     if( d == dsNIL || d->tag != TAGDsCons ){
@@ -1479,16 +1512,17 @@ static tmstring fncelmlist( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = d->DsCons.constructors;
-    c = find_constructor( cl, sl->arr[1] );
-    if( c == constructorNIL ){
-	return new_tmstring( "" );
+    if( !member_tmstring_list( sl->arr[1], cl ) ){
+	(void) strcpy( errarg, sl->arr[0] );
+	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "not a member of this constructor type" );
     }
-    el = c->fields;
     nl = new_tmstring_list();
-    for( ix=0; ix<el->sz; ix++ ){
-	field e = el->arr[ix];
-
-	nl = append_tmstring_list( nl, new_tmstring( e->name ) );
+    if( inherited ){
+	collect_all_fields( &nl, allds, sl->arr[1] );
+    }
+    else {
+	collect_fields( &nl, allds, sl->arr[1] );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -1504,9 +1538,7 @@ static tmstring fncelmlist( const tmstring_list sl )
 static tmstring fnctypename( const tmstring_list sl )
 {
     ds d;
-    constructor_list cl;
-    constructor c;
-    field_list el;
+    tmstring_list cl;
     field e;
 
     if( sl->sz != 3 ){
@@ -1520,13 +1552,17 @@ static tmstring fnctypename( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = d->DsCons.constructors;
-    c = find_constructor( cl, sl->arr[1] );
-    if( c == constructorNIL ){
+    if( !member_tmstring_list( sl->arr[1], cl ) ){
+	(void) strcpy( errarg, sl->arr[0] );
+	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "not a member of this constructor type" );
+    }
+    e = find_field( allds, sl->arr[1], sl->arr[2] );
+    if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in constructor '%s'", sl->arr[2], sl->arr[1] );
+	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    el = c->fields;
-    e = findfield( el, sl->arr[2] );
-    if( e == fieldNIL ) return new_tmstring( "" );
     return new_tmstring( e->type );
 }
 
@@ -1540,9 +1576,7 @@ static tmstring fnctypename( const tmstring_list sl )
 static tmstring fnctypeclass( const tmstring_list sl )
 {
     ds d;
-    constructor_list cl;
-    constructor c;
-    field_list el;
+    tmstring_list cl;
     field e;
 
     if( sl->sz != 3 ){
@@ -1556,13 +1590,17 @@ static tmstring fnctypeclass( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = d->DsCons.constructors;
-    c = find_constructor( cl, sl->arr[1] );
-    if( c == constructorNIL ){
+    if( !member_tmstring_list( sl->arr[1], cl ) ){
+	(void) strcpy( errarg, sl->arr[0] );
+	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "not a member of this constructor type" );
+    }
+    e = find_field( allds, sl->arr[1], sl->arr[2] );
+    if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
+	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    el = c->fields;
-    e = findfield( el, sl->arr[2] );
-    if( e == fieldNIL ) return new_tmstring( "" );
     return new_tmstring( ( e->level!=0 ? "list" : "single" ) );
 }
 
@@ -1573,9 +1611,7 @@ static tmstring fnctypeclass( const tmstring_list sl )
 static tmstring fnctypellev( const tmstring_list sl )
 {
     ds d;
-    constructor_list cl;
-    constructor c;
-    field_list el;
+    tmstring_list cl;
     field e;
 
     if( sl->sz != 3 ){
@@ -1589,13 +1625,17 @@ static tmstring fnctypellev( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = d->DsCons.constructors;
-    c = find_constructor( cl, sl->arr[1] );
-    if( c == constructorNIL ){
+    if( !member_tmstring_list( sl->arr[1], cl ) ){
+	(void) strcpy( errarg, sl->arr[0] );
+	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "not a member of this constructor type" );
+    }
+    e = find_field( allds, sl->arr[1], sl->arr[2] );
+    if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
+	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    el = c->fields;
-    e = findfield( el, sl->arr[2] );
-    if( e == fieldNIL ) return new_tmstring( "" );
     return newintstr( e->level );
 }
 
@@ -1618,9 +1658,6 @@ static void markdep(
     unsigned int tix;
     bool found;
     ds d;
-    unsigned int cix;
-    constructor_list cl;
-    unsigned int eix;
 
     found = FALSE;
     d = dsNIL;
@@ -1644,22 +1681,24 @@ static void markdep(
     levels[tix] = listlev;
     switch( d->tag ){
 	case TAGDsCons:
-	    cl = d->DsCons.constructors;
+	{
+	    unsigned int cix;
+	    tmstring_list cl = d->DsCons.constructors;
+
 	    for( cix=0; cix<cl->sz; cix++ ){
-		constructor c = cl->arr[cix];
-		field_list el = c->fields;
-		for( eix=0; eix<el->sz; eix++ ){
-		    field e = el->arr[eix];
-		    markdep( marked, levels, e->type, e->level, dl );
-		}
+		markdep( marked, levels, cl->arr[cix], 0, dl );
 	    }
 	    break;
+	}
 
 	case TAGDsTuple:
 	{
-	    field_list el = d->DsTuple. fields;
+	    field_list el = d->DsTuple.fields;
+	    unsigned int eix;
+
 	    for( eix=0; eix<el->sz; eix++ ){
-		field e = el->arr[eix];
+		const field e = el->arr[eix];
+
 		markdep( marked, levels, e->type, e->level, dl );
 	    }
 	    break;
@@ -1667,9 +1706,25 @@ static void markdep(
 
 	case TAGDsClass:
 	{
-	    field_list el = d->DsClass. fields;
+	    field_list el = d->DsClass.fields;
+	    unsigned int eix;
+
 	    for( eix=0; eix<el->sz; eix++ ){
-		field e = el->arr[eix];
+		const field e = el->arr[eix];
+
+		markdep( marked, levels, e->type, e->level, dl );
+	    }
+	    break;
+	}
+
+	case TAGDsConstructor:
+	{
+	    field_list el = d->DsConstructor.fields;
+	    unsigned int eix;
+
+	    for( eix=0; eix<el->sz; eix++ ){
+		const field e = el->arr[eix];
+
 		markdep( marked, levels, e->type, e->level, dl );
 	    }
 	    break;
@@ -1798,6 +1853,19 @@ static bool depends_on( const tmstring t, const tmstring_list tl )
 	case TAGDsClass:
 	{
 	    field_list fl = d->DsClass.fields;
+
+	    for( ix=0; ix<fl->sz; ix++ ){
+		field e = fl->arr[ix];
+		if( e->level==0 && member_tmstring_list( e->type, tl ) ){
+		    return TRUE;
+		}
+	    }
+	    break;
+	}
+
+	case TAGDsConstructor:
+	{
+	    field_list fl = d->DsConstructor.fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		field e = fl->arr[ix];
@@ -2079,6 +2147,7 @@ static struct fnentry fntab[] = {
      { "classlist", fnclasslist },
      { "comm", fncomm },
      { "conslist", fnconslist },
+     { "constructorlist", fnconstructorlist },
      { "ctypeclass", fnctypeclass },
      { "ctypelist", fnctypelist },
      { "ctypellev", fnctypellev },
