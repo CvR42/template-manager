@@ -1,11 +1,5 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
 /* file: error.c
-   Error handling.
+ * Error handling.
  */
 
 #include "config.h"

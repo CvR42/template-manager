@@ -26,7 +26,7 @@ FILE *statstream = 0;
 tmstring tplfilename = tmstringNIL;
 int tpllineno = 0;
 tmstring dsfilename = tmstringNIL;
-FILE *dsfile = stdin;
+FILE *dsfile;
 int dslineno = 0;
 ds_list allds;
 tmstring_list searchpath = tmstring_listNIL;
