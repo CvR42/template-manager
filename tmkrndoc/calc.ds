@@ -1,12 +1,9 @@
 || Representation of a stream of variable assignments.
 statement = { lhs:tmstring, rhs:expr };
 
-expr =
+expr ~=
     ExprPlus: { a:expr, b:expr } |
-    ExprMinus: { a:expr, b:expr } |
     ExprTimes: { a:expr, b:expr } |
-    ExprDivide: { a:expr, b:expr } |
-    ExprModulus: { a:expr, b:expr } |
     ExprNegate: { x:expr } |
     ExprConst: { n:int } |
     ExprSymbol: { s:tmstring }

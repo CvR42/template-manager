@@ -15,7 +15,7 @@ TM = tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
-CALCDEMO = calc.ds calcpars.y calclex.l
+CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc
 
 EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
   boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
@@ -63,7 +63,7 @@ install:
 	@echo "Nothing to install"
 
 # The dependency rules as implemented by latex
-$(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES)
+$(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
 	latex $(TOPFILE)
 	makeindex $(TOPFILE)
 	latex $(TOPFILE)
