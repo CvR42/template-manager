@@ -1,9 +1,11 @@
 .. File: tmcanalize.t
 ..
-.. Given a list of starting types and a list of types to reach, calculate
-.. the list of types that must be visited to reach all targets
+.. Generate an analyzer.
+..
 .set listpre
 .set listsuff _list
+..
+..
 .set err 0
 .foreach m generate_formal_parameters generate_actual_parameters generate_reduction_operation
 .if ${not ${definedmacro $m}}
@@ -27,25 +29,16 @@
 .endif
 .endforeach
 ..
+.. Given a list of starting types and a list of types to reach, calculate
+.. the list of types that must be visited to reach all targets
 .macro calc_analyzer starts targets
-.set res
-.set types ${reach $(starts)}
-.set bad ${excl $(targets) "" $(types)}
-.if ${len $(bad)}
-.if ${== ${len $(bad)} 1}
-.error Target type '$(bad)' cannot be reached.
-.else
-.error The following target types cannot be reached: [$(bad)].
-.endif
-.exit 1
-.endif
-.foreach t $(types)
-.if ${len ${comm $(targets) "" ${reach $t}}}
-.append res $t
+.set explained 0
+.foreach t $(targets)
 .if ${not ${defined analyze_action_$t}}
 .error No action defined for type '$t'
-.if ${not ${len ${matchvar analyze_action_*}}}
+.if ${and ${not $(explained)} ${not ${len ${matchvar analyze_action_*}}}}
 .error To do this you must set variable analyze_action_$t
+.set explained 1
 .endif
 .else
 .switch ${first $(analyze_action_$t)}
@@ -70,6 +63,22 @@
 .error Unknown action for type '$t': '${first $(analyze_action_$t)}'
 .endswitch
 .endif
+.endforeach
+.. TODO: Optimize by filtering out types that have 'ignore' as action.
+.set res
+.set types ${reach $(starts)}
+.set bad ${excl $(targets) "" $(types)}
+.if ${len $(bad)}
+.if ${== ${len $(bad)} 1}
+.error Target type '$(bad)' cannot be reached.
+.else
+.error The following target types cannot be reached: [$(bad)].
+.endif
+.exit 1
+.endif
+.foreach t $(types)
+.if ${len ${comm $(targets) "" ${reach $t}}}
+.append res $t
 .endif
 .endforeach
 .return $(res)
@@ -95,11 +104,18 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 
 .foreach t $(visit_types)
 .set empty 1
-/* Walker for ${metatype $t} $t. */
+/* Analyzer for ${metatype $t} $t. */
 static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e $t}
 {
     $(reduction_type) _res;
+.if ${definedmacro generate_setup_code}
+.call generate_setup_code $t "    " _e _res
+.endif
+.if ${defined analyze_action_$t}
 .set action "$(analyze_action_$t)"
+.else
+.set action reduction
+.endif
 .switch ${metatype $t}
 .case alias
 .switch ${first $(action)}
@@ -114,11 +130,11 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .if $[${len $(action)}==2]
 .. There also is a local value to take into consideration
 .if ${member ${alias $t} $(visit_types)}
-    _res = ${call generate_reduction "${shift $(action)}" "$(analysis_name)_${alias $t}${call generate_actual_parameters _e ${alias $t} $t}"};
+    _res = ${call generate_reduction_operation "${shift $(action)}" "$(analysis_name)_${alias $t}${call generate_actual_parameters _e ${alias $t} $t}"};
+.set empty 0
 .else
     _res = ${shift $(action)};
 .endif
-.set empty 0
 .else
 .if ${member ${alias $t} $(visit_types)}
     _res = $(analysis_name)_${alias $t}${call generate_actual_parameters _e ${alias $t} $t};
@@ -164,7 +180,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 
 	for( ix=0; ix<_e->sz; ix++ ){
 	    $(reduction_type) _res1 = $(analysis_name)_$(elmtype)${call generate_actual_parameters _e->arr[ix] $(elmtype) $(elmtype)};
-	    _res = ${call generate_reduction _res _res1}
+	    _res = ${call generate_reduction_operation _res _res1};
 .if ${definedmacro generate_termination_test}
 	    if( ${call generate_termination_test _res} ){
 	        break;
@@ -188,6 +204,9 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
         case TAG$i:
 .endif
 .endforeach
+.if ${not ${defined analyze_action_$t}}
+	    _res = $(analysis_name)_$(tor)${call generate_actual_parameters _e $(tor) $t};
+.else
 .set action "$(analyze_action_$t)"
 .switch ${first $(action)}
 .case ignore
@@ -201,6 +220,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 	    _res = $(analysis_name)_$(tor)${call generate_actual_parameters _e $(tor) $t};
 .set empty 0
 .endswitch
+.endif
 	    break;
 
 .endif
@@ -223,7 +243,11 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 
     }
 .else
+.if ${defined analyze_action_$t}
 .set action "$(analyze_action_$t)"
+.else
+.set action reduction
+.endif
 .switch ${first $(action)}
 .case ignore
     _res = $(neutral_element);
@@ -247,14 +271,18 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .endswitch
 .endif
 .case tuple
-set action "$(analyze_action_$t)"
-.switch ${first action}
+.if ${defined analyze_action_$t}
+.set action "$(analyze_action_$t)"
+.else
+.set action reduction
+.endif
+.switch ${first $(action)}
 .case ignore
-	_res = $(neutral_element);
+    _res = $(neutral_element);
 .case constant
-	_res = ${shift $(action)};
+    _res = ${shift $(action)};
 .case function
-	_res = ${shift $(action)}${call generate_actual_parameters _e $t $t};
+    _res = ${shift $(action)}${call generate_actual_parameters _e $t $t};
 .set empty 0
 .case reduction
 .if $[${len $(action)}==2]

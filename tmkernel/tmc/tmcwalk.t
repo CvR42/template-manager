@@ -1,7 +1,8 @@
 .. File: tmcwalk.t
 ..
-.. Given a list of starting types and a list of types to reach, calculate
-.. the list of types that must be visited to reach all targets
+.. Generate a treewalker, that, given a set of starting nodes and a
+.. set of nodes to visit, generates code that ensures that all instances
+.. of the node type are visited.
 .set listpre
 .set listsuff _list
 .set err 0
@@ -21,6 +22,8 @@
 .endif
 .endforeach
 ..
+.. Given a list of starting types and a list of types to reach, calculate
+.. the list of types that must be visited to reach all targets
 .macro calc_treewalk starts targets
 .set res
 .set types ${reach $(starts)}
