@@ -7,7 +7,7 @@ MAKEFILE = Makefile
 #DIRLIST=libtmc tm tmc tmpas tmmira
 DIRLIST=libtmc tm tmc
 CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoconfall
-DISTFILES = $(CONFIGUREFILES) README CHANGES LICENCE version.h .cvsignore
+DISTFILES = $(CONFIGUREFILES) README CHANGES gpl.txt lgpl.txt version.h .cvsignore
 JUNK = dist.lst
 
 help:
