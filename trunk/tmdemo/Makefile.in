@@ -57,9 +57,11 @@ TMOUTPUT = calc.c calc.h
 
 GENFILES = $(GENSRC) $(GENHDR)
 
-PARSESRC = calcparse.c calclex.c calc.c
+PARSESRC = calcparse.y calclex.l
 
-PARSEOBJ = $(PARSESRC:.c=.o)
+PARSEGEN = calcparse.c calclex.c calc.c
+
+PARSEOBJ = $(PARSEGEN:.c=.o)
 
 OPTSRC = calcopt.c calc.c
 
@@ -74,7 +76,7 @@ JUNK          = sedlint y.output lint testerr testout index.sed \
 CONFIGUREFILES = configure Makefile.in configure.in
 
 DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) \
-    $(TMOUTPUT) $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES)
+    $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES) $(PARSESRC)
 
 
 help :
