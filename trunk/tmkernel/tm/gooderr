@@ -1,5 +1,7 @@
+testin: statements outside a case ignored
 testin: variable not found: iserniet
 testin: missing close bracket: ')'
+testin: A switch command requires exactly one parameter
 testsub: variable not found: blablabla
 testsub: variable not found: blablabla
 

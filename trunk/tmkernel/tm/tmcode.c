@@ -43,6 +43,8 @@ static long newcnt_field_list = 0;
 static long frecnt_field_list = 0;
 static long newcnt_macro_list = 0;
 static long frecnt_macro_list = 0;
+static long newcnt_switchcase_list = 0;
+static long frecnt_switchcase_list = 0;
 static long newcnt_tmstring_list = 0;
 static long frecnt_tmstring_list = 0;
 static long newcnt_tplelm_list = 0;
@@ -72,6 +74,8 @@ static long newcnt_field = 0;
 static long frecnt_field = 0;
 static long newcnt_macro = 0;
 static long frecnt_macro = 0;
+static long newcnt_switchcase = 0;
+static long frecnt_switchcase = 0;
 static long newcnt_Plain = 0;
 static long frecnt_Plain = 0;
 static long newcnt_Foreach = 0;
@@ -80,6 +84,8 @@ static long newcnt_While = 0;
 static long frecnt_While = 0;
 static long newcnt_If = 0;
 static long frecnt_If = 0;
+static long newcnt_Switch = 0;
+static long frecnt_Switch = 0;
 static long newcnt_Set = 0;
 static long frecnt_Set = 0;
 static long newcnt_GlobalSet = 0;
@@ -104,6 +110,10 @@ static long newcnt_Return = 0;
 static long frecnt_Return = 0;
 static long newcnt_Insert = 0;
 static long frecnt_Insert = 0;
+static long newcnt_Case = 0;
+static long frecnt_Case = 0;
+static long newcnt_Default = 0;
+static long frecnt_Default = 0;
 static long newcnt_var = 0;
 static long frecnt_var = 0;
 #endif
@@ -142,6 +152,8 @@ static short int cacheix_field_list = 0;
 static field_list cache_field_list[CACHESZ]; 
 static short int cacheix_macro_list = 0;
 static macro_list cache_macro_list[CACHESZ]; 
+static short int cacheix_switchcase_list = 0;
+static switchcase_list cache_switchcase_list[CACHESZ]; 
 static short int cacheix_tmstring_list = 0;
 static tmstring_list cache_tmstring_list[CACHESZ]; 
 static short int cacheix_tplelm_list = 0;
@@ -156,6 +168,8 @@ static short int cacheix_macro = 0;
 static macro cache_macro[CACHESZ];
 static short int cacheix_var = 0;
 static var cache_var[CACHESZ];
+static short int cacheix_switchcase = 0;
+static switchcase cache_switchcase[CACHESZ];
 static short int cacheix_ds = 0;
 static ds cache_ds[CACHESZ];
 static short int cacheix_classComponent = 0;
@@ -234,6 +248,24 @@ static tplelm_list setroom_tplelm_list( tplelm_list l, const unsigned int rm )
     }
     else {
 	l->arr = TM_REALLOC( tplelm *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need setroom for 'rm' elements in
+ * switchcase_list 'l'.
+ */
+static switchcase_list setroom_switchcase_list( switchcase_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( switchcase *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( switchcase *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -356,10 +388,13 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_field(level,name,type) real_new_field(level,name,type,_f,_l)
 #undef new_macro
 #define new_macro(lvl,name,orgfile,fpl,body) real_new_macro(lvl,name,orgfile,fpl,body,_f,_l)
+#undef new_switchcase
+#define new_switchcase(cases,action) real_new_switchcase(cases,action,_f,_l)
 #undef new_Plain
 #undef new_Foreach
 #undef new_While
 #undef new_If
+#undef new_Switch
 #undef new_Set
 #undef new_GlobalSet
 #undef new_Append
@@ -372,10 +407,13 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #undef new_Call
 #undef new_Return
 #undef new_Insert
+#undef new_Case
+#undef new_Default
 #define new_Plain(lno,plainline) real_new_Plain(lno,plainline,_f,_l)
 #define new_Foreach(lno,felist,felines) real_new_Foreach(lno,felist,felines,_f,_l)
 #define new_While(lno,whilecond,whilelines) real_new_While(lno,whilecond,whilelines,_f,_l)
 #define new_If(lno,ifcond,ifthen,ifelse) real_new_If(lno,ifcond,ifthen,ifelse,_f,_l)
+#define new_Switch(lno,val,cases,deflt) real_new_Switch(lno,val,cases,deflt,_f,_l)
 #define new_Set(lno,setline) real_new_Set(lno,setline,_f,_l)
 #define new_GlobalSet(lno,setline) real_new_GlobalSet(lno,setline,_f,_l)
 #define new_Append(lno,appline) real_new_Append(lno,appline,_f,_l)
@@ -388,6 +426,8 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_Call(lno,callline) real_new_Call(lno,callline,_f,_l)
 #define new_Return(lno,retval) real_new_Return(lno,retval,_f,_l)
 #define new_Insert(lno,fname) real_new_Insert(lno,fname,_f,_l)
+#define new_Case(lno,val) real_new_Case(lno,val,_f,_l)
+#define new_Default(lno) real_new_Default(lno,_f,_l)
 #undef new_var
 #define new_var(lvl,name,val) real_new_var(lvl,name,val,_f,_l)
 #undef new_alternative_list
@@ -400,6 +440,8 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_field_list() real_new_field_list(_f,_l)
 #undef new_macro_list
 #define new_macro_list() real_new_macro_list(_f,_l)
+#undef new_switchcase_list
+#define new_switchcase_list() real_new_switchcase_list(_f,_l)
 #undef new_tmstring_list
 #define new_tmstring_list() real_new_tmstring_list(_f,_l)
 #undef new_tplelm_list
@@ -576,6 +618,41 @@ macro_list new_macro_list( void )
 #endif
 #ifdef STAT
     newcnt_macro_list++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+switchcase_list real_new_switchcase_list( const char *_f, const int _l )
+#else
+switchcase_list new_switchcase_list( void )
+#endif
+{
+    switchcase_list nw;
+
+#ifdef USECACHE
+    if( cacheix_switchcase_list > 0 ){
+	nw = cache_switchcase_list[--cacheix_switchcase_list];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( switchcase_list, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->sz = 0;
+#if FIRSTROOM==0
+    nw->arr = (switchcase *) 0;
+    nw->room = 0;
+#else
+    nw->arr = TM_MALLOC( switchcase *, FIRSTROOM*sizeof(switchcase) );
+    nw->room = FIRSTROOM;
+#endif
+#ifdef STAT
+    newcnt_switchcase_list++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1021,6 +1098,35 @@ macro new_macro( uint p_lvl, tmstring p_name, tmstring p_orgfile, tmstring_list 
 }
 
 #ifdef LOGNEW
+switchcase real_new_switchcase( tmstring p_cases, tplelm_list p_action, const char *_f, const int _l )
+#else
+switchcase new_switchcase( tmstring p_cases, tplelm_list p_action )
+#endif
+{
+    switchcase nw;
+
+#ifdef USECACHE
+    if( cacheix_switchcase > 0 ){
+	nw = cache_switchcase[--cacheix_switchcase];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( switchcase, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->cases = p_cases;
+    nw->action = p_action;
+#ifdef STAT
+    newcnt_switchcase++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
 tplelm real_new_Plain( int p_lno, tmstring p_plainline, const char *_f, const int _l )
 #else
 tplelm new_Plain( int p_lno, tmstring p_plainline )
@@ -1137,6 +1243,38 @@ tplelm new_If( int p_lno, tmstring p_ifcond, tplelm_list p_ifthen, tplelm_list p
     nw->If.ifelse = p_ifelse;
 #ifdef STAT
     newcnt_If++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+tplelm real_new_Switch( int p_lno, tmstring p_val, switchcase_list p_cases, tplelm_list p_deflt, const char *_f, const int _l )
+#else
+tplelm new_Switch( int p_lno, tmstring p_val, switchcase_list p_cases, tplelm_list p_deflt )
+#endif
+{
+    tplelm nw;
+
+#ifdef USECACHE
+    if( cacheix_tplelm > 0 ){
+	nw = cache_tplelm[--cacheix_tplelm];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( tplelm, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGSwitch;
+    nw->Switch.lno = p_lno;
+    nw->Switch.val = p_val;
+    nw->Switch.cases = p_cases;
+    nw->Switch.deflt = p_deflt;
+#ifdef STAT
+    newcnt_Switch++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1507,6 +1645,65 @@ tplelm new_Insert( int p_lno, tmstring p_fname )
 }
 
 #ifdef LOGNEW
+tplelm real_new_Case( int p_lno, tmstring p_val, const char *_f, const int _l )
+#else
+tplelm new_Case( int p_lno, tmstring p_val )
+#endif
+{
+    tplelm nw;
+
+#ifdef USECACHE
+    if( cacheix_tplelm > 0 ){
+	nw = cache_tplelm[--cacheix_tplelm];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( tplelm, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGCase;
+    nw->Case.lno = p_lno;
+    nw->Case.val = p_val;
+#ifdef STAT
+    newcnt_Case++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+tplelm real_new_Default( int p_lno, const char *_f, const int _l )
+#else
+tplelm new_Default( int p_lno )
+#endif
+{
+    tplelm nw;
+
+#ifdef USECACHE
+    if( cacheix_tplelm > 0 ){
+	nw = cache_tplelm[--cacheix_tplelm];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( tplelm, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGDefault;
+    nw->Default.lno = p_lno;
+#ifdef STAT
+    newcnt_Default++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
 var real_new_var( uint p_lvl, tmstring p_name, tmstring p_val, const char *_f, const int _l )
 #else
 var new_var( uint p_lvl, tmstring p_name, tmstring p_val )
@@ -1597,6 +1794,27 @@ static void fre_var( var e )
 #ifdef USECACHE
     if( cacheix_var<CACHESZ ){
 	cache_var[cacheix_var++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
+/* Free an element 'e' of type 'switchcase'. */
+static void fre_switchcase( switchcase e )
+{
+    if( e == switchcaseNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_switchcase++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_switchcase<CACHESZ ){
+	cache_switchcase[cacheix_switchcase++] = e;
 	return;
     }
 #endif
@@ -1731,6 +1949,10 @@ static void fre_tplelm( tplelm e )
 	    frecnt_If++;
 	    break;
 
+	case TAGSwitch:
+	    frecnt_Switch++;
+	    break;
+
 	case TAGSet:
 	    frecnt_Set++;
 	    break;
@@ -1779,6 +2001,14 @@ static void fre_tplelm( tplelm e )
 	    frecnt_Insert++;
 	    break;
 
+	case TAGCase:
+	    frecnt_Case++;
+	    break;
+
+	case TAGDefault:
+	    frecnt_Default++;
+	    break;
+
 	default:
 	    FATALTAG( (int) e->tag );
     }
@@ -1790,6 +2020,30 @@ static void fre_tplelm( tplelm e )
     }
 #endif
     TM_FREE( e );
+}
+
+/* Free a list of switchcase elements 'l'. */
+static void fre_switchcase_list( switchcase_list l )
+{
+    if( l == switchcase_listNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( l->lognew_id );
+#endif
+#ifdef STAT
+    frecnt_switchcase_list++;
+#endif
+    if( l->room!=0 ){
+	TM_FREE( l->arr );
+    }
+#ifdef USECACHE
+    if( cacheix_switchcase_list<CACHESZ ){
+	cache_switchcase_list[cacheix_switchcase_list++] = l;
+	return;
+    }
+#endif
+    TM_FREE( l );
 }
 
 /* Free a list of alternative elements 'l'. */
@@ -2033,6 +2287,17 @@ field_list append_field_list( field_list l, field e )
     return l;
 }
 
+/* Append a switchcase element 'e' to list 'l', and return the new list. */
+switchcase_list append_switchcase_list( switchcase_list l, switchcase e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_switchcase_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
+
 /* Append a tmstring element 'e' to list 'l', and return the new list. */
 tmstring_list append_tmstring_list( tmstring_list l, tmstring e )
 {
@@ -2222,10 +2487,12 @@ tmstring_list concat_tmstring_list( tmstring_list la, tmstring_list lb )
  *    Recursive freeing routines                  *
  **************************************************/
 
+static void rfre_switchcase_list( switchcase_list );
 
 static void rfre_alternative( alternative );
 static void rfre_field( field );
 static void rfre_var( var );
+static void rfre_switchcase( switchcase );
 
 /* Recursively free an element 'e' of type 'classComponent'
    and all elements in it.
@@ -2347,6 +2614,13 @@ void rfre_tplelm( tplelm e )
 	    rfre_tplelm_list( e->If.ifelse );
 	    break;
 
+	case TAGSwitch:
+	    rfre_int( e->Switch.lno );
+	    rfre_tmstring( e->Switch.val );
+	    rfre_switchcase_list( e->Switch.cases );
+	    rfre_tplelm_list( e->Switch.deflt );
+	    break;
+
 	case TAGSet:
 	    rfre_int( e->Set.lno );
 	    rfre_tmstring( e->Set.setline );
@@ -2409,6 +2683,15 @@ void rfre_tplelm( tplelm e )
 	    rfre_tmstring( e->Insert.fname );
 	    break;
 
+	case TAGCase:
+	    rfre_int( e->Case.lno );
+	    rfre_tmstring( e->Case.val );
+	    break;
+
+	case TAGDefault:
+	    rfre_int( e->Default.lno );
+	    break;
+
 	default:
 	    FATALTAG( (int) e->tag );
     }
@@ -2454,6 +2737,19 @@ static void rfre_var( var e )
     rfre_tmstring( e->name );
     rfre_tmstring( e->val );
     fre_var( e );
+}
+
+/* Recursively free an element 'e' of type 'switchcase'
+   and all elements in it.
+ */
+static void rfre_switchcase( switchcase e )
+{
+    if( e == switchcaseNIL ){
+	return;
+    }
+    rfre_tmstring( e->cases );
+    rfre_tplelm_list( e->action );
+    fre_switchcase( e );
 }
 
 /* Recursively free a list of elements 'e' of type alternative. */
@@ -2566,6 +2862,20 @@ void rfre_var_list( var_list e )
 	rfre_var( e->arr[ix] );
     }
     fre_var_list( e );
+}
+
+/* Recursively free a list of elements 'e' of type switchcase. */
+static void rfre_switchcase_list( switchcase_list e )
+{
+    unsigned int ix;
+
+    if( e == switchcase_listNIL ){
+	return;
+    }
+    for( ix=0; ix<e->sz; ix++ ){
+	rfre_switchcase( e->arr[ix] );
+    }
+    fre_switchcase_list( e );
 }
 
 /**************************************************
@@ -2700,22 +3010,27 @@ static void print_field_list( TMPRINTSTATE *st, const field_list l )
 #ifdef LOGNEW
 #undef rdup_ds
 #define rdup_ds(e) real_rdup_ds(e,_f,_l)
-#define rdup_field(e) real_rdup_field(e,_f,_l)
+#undef rdup_tplelm
 #define rdup_tplelm(e) real_rdup_tplelm(e,_f,_l)
+#define rdup_field(e) real_rdup_field(e,_f,_l)
+#define rdup_switchcase(e) real_rdup_switchcase(e,_f,_l)
 #undef rdup_field_list
 #define rdup_field_list(l) real_rdup_field_list(l,_f,_l)
 #undef rdup_tmstring_list
 #define rdup_tmstring_list(l) real_rdup_tmstring_list(l,_f,_l)
 #undef rdup_tplelm_list
 #define rdup_tplelm_list(l) real_rdup_tplelm_list(l,_f,_l)
+#define rdup_switchcase_list(l) real_rdup_switchcase_list(l,_f,_l)
+static switchcase_list real_rdup_switchcase_list( const switchcase_list, const char *_f, const int _l );
 
 static field real_rdup_field( const field, const char *_f, const int _l );
-static tplelm real_rdup_tplelm( const tplelm, const char *_f, const int _l );
+static switchcase real_rdup_switchcase( const switchcase, const char *_f, const int _l );
 
 #else
+static switchcase_list rdup_switchcase_list( const switchcase_list );
 
 static field rdup_field( const field );
-static tplelm rdup_tplelm( const tplelm );
+static switchcase rdup_switchcase( const switchcase );
 
 #endif
 /* Recursively duplicate a ds element 'e'. */
@@ -2785,31 +3100,11 @@ ds rdup_ds( const ds e )
     return dsNIL;
 }
 
-/* Recursively duplicate a field element 'e'. */
-#ifdef LOGNEW
-static field real_rdup_field( const field e, const char *_f, const int _l )
-#else
-static field rdup_field( const field e )
-#endif
-{
-    int i_level;
-    tmstring i_name;
-    tmstring i_type;
-
-    if( e == fieldNIL ){
-	return fieldNIL;
-    }
-    i_level = rdup_int( e->level );
-    i_name = rdup_tmstring( e->name );
-    i_type = rdup_tmstring( e->type );
-    return new_field( i_level, i_name, i_type );
-}
-
 /* Recursively duplicate a tplelm element 'e'. */
 #ifdef LOGNEW
-static tplelm real_rdup_tplelm( const tplelm e, const char *_f, const int _l )
+tplelm real_rdup_tplelm( const tplelm e, const char *_f, const int _l )
 #else
-static tplelm rdup_tplelm( const tplelm e )
+tplelm rdup_tplelm( const tplelm e )
 #endif
 {
     if( e == tplelmNIL ){
@@ -2862,6 +3157,20 @@ static tplelm rdup_tplelm( const tplelm e )
 	    i_ifthen = rdup_tplelm_list( e->If.ifthen );
 	    i_ifelse = rdup_tplelm_list( e->If.ifelse );
 	    return new_If( i_lno, i_ifcond, i_ifthen, i_ifelse );
+	}
+
+	case TAGSwitch:
+	{
+	    int i_lno;
+	    tmstring i_val;
+	    switchcase_list i_cases;
+	    tplelm_list i_deflt;
+
+	    i_lno = rdup_int( e->Switch.lno );
+	    i_val = rdup_tmstring( e->Switch.val );
+	    i_cases = rdup_switchcase_list( e->Switch.cases );
+	    i_deflt = rdup_tplelm_list( e->Switch.deflt );
+	    return new_Switch( i_lno, i_val, i_cases, i_deflt );
 	}
 
 	case TAGSet:
@@ -2988,10 +3297,66 @@ static tplelm rdup_tplelm( const tplelm e )
 	    return new_Insert( i_lno, i_fname );
 	}
 
+	case TAGCase:
+	{
+	    int i_lno;
+	    tmstring i_val;
+
+	    i_lno = rdup_int( e->Case.lno );
+	    i_val = rdup_tmstring( e->Case.val );
+	    return new_Case( i_lno, i_val );
+	}
+
+	case TAGDefault:
+	{
+	    int i_lno;
+
+	    i_lno = rdup_int( e->Default.lno );
+	    return new_Default( i_lno );
+	}
+
 	default:
 	    FATALTAG( (int) e->tag );
     }
     return tplelmNIL;
+}
+
+/* Recursively duplicate a field element 'e'. */
+#ifdef LOGNEW
+static field real_rdup_field( const field e, const char *_f, const int _l )
+#else
+static field rdup_field( const field e )
+#endif
+{
+    int i_level;
+    tmstring i_name;
+    tmstring i_type;
+
+    if( e == fieldNIL ){
+	return fieldNIL;
+    }
+    i_level = rdup_int( e->level );
+    i_name = rdup_tmstring( e->name );
+    i_type = rdup_tmstring( e->type );
+    return new_field( i_level, i_name, i_type );
+}
+
+/* Recursively duplicate a switchcase element 'e'. */
+#ifdef LOGNEW
+static switchcase real_rdup_switchcase( const switchcase e, const char *_f, const int _l )
+#else
+static switchcase rdup_switchcase( const switchcase e )
+#endif
+{
+    tmstring i_cases;
+    tplelm_list i_action;
+
+    if( e == switchcaseNIL ){
+	return switchcaseNIL;
+    }
+    i_cases = rdup_tmstring( e->cases );
+    i_action = rdup_tplelm_list( e->action );
+    return new_switchcase( i_cases, i_action );
 }
 
 /* Recursively duplicate field list 'l'. */
@@ -3064,6 +3429,31 @@ tplelm_list rdup_tplelm_list( const tplelm_list l )
     o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
 	*ar++ = rdup_tplelm( *o_r++ );
+    }
+    nw->sz = l->sz;
+    return nw;
+}
+
+/* Recursively duplicate switchcase list 'l'. */
+#ifdef LOGNEW
+static switchcase_list real_rdup_switchcase_list( const switchcase_list l, const char *_f, const int _l )
+#else
+static switchcase_list rdup_switchcase_list( const switchcase_list l )
+#endif
+{
+    unsigned int ix;
+    switchcase_list nw;
+    switchcase *ar;
+    switchcase *o_r;
+
+    if( l == switchcase_listNIL ){
+	return switchcase_listNIL;
+    }
+    nw = setroom_switchcase_list( new_switchcase_list(), l->sz );
+    ar = nw->arr;
+    o_r = l->arr;
+    for( ix=0; ix<l->sz; ix++ ){
+	*ar++ = rdup_switchcase( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3210,6 +3600,10 @@ void flush_tm()
 	TM_FREE( cache_macro_list[ix] );
     }
     cacheix_macro_list = 0;
+    for( ix=0; ix<cacheix_switchcase_list; ix++ ){
+	TM_FREE( cache_switchcase_list[ix] );
+    }
+    cacheix_switchcase_list = 0;
     for( ix=0; ix<cacheix_tmstring_list; ix++ ){
 	TM_FREE( cache_tmstring_list[ix] );
     }
@@ -3242,6 +3636,10 @@ void flush_tm()
 	TM_FREE( cache_macro[ix] );
     }
     cacheix_macro = 0;
+    for( ix=0; ix<cacheix_switchcase; ix++ ){
+	TM_FREE( cache_switchcase[ix] );
+    }
+    cacheix_switchcase = 0;
     for( ix=0; ix<cacheix_tplelm; ix++ ){
 	TM_FREE( cache_tplelm[ix] );
     }
@@ -3348,6 +3746,14 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"switchcase",
+	newcnt_switchcase,
+	frecnt_switchcase,
+	((newcnt_switchcase==frecnt_switchcase)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"Plain",
 	newcnt_Plain,
 	frecnt_Plain,
@@ -3376,6 +3782,14 @@ void stat_tm( FILE *f )
 	newcnt_If,
 	frecnt_If,
 	((newcnt_If==frecnt_If)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"Switch",
+	newcnt_Switch,
+	frecnt_Switch,
+	((newcnt_Switch==frecnt_Switch)? "": "<-")
     );
     fprintf(
 	f,
@@ -3476,6 +3890,22 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"Case",
+	newcnt_Case,
+	frecnt_Case,
+	((newcnt_Case==frecnt_Case)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"Default",
+	newcnt_Default,
+	frecnt_Default,
+	((newcnt_Default==frecnt_Default)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"var",
 	newcnt_var,
 	frecnt_var,
@@ -3515,6 +3945,13 @@ void stat_tm( FILE *f )
 	newcnt_macro_list,
 	frecnt_macro_list,
 	((newcnt_macro_list==frecnt_macro_list)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed, "switchcase_list",
+	newcnt_switchcase_list,
+	frecnt_switchcase_list,
+	((newcnt_switchcase_list==frecnt_switchcase_list)? "": "<-")
     );
     fprintf(
 	f,
@@ -3580,6 +4017,12 @@ int get_balance_tm( void )
         return -1;
     }
     if( newcnt_macro_list>frecnt_macro_list ){
+        res = 1;
+    }
+    if( newcnt_switchcase_list<frecnt_switchcase_list ){
+        return -1;
+    }
+    if( newcnt_switchcase_list>frecnt_switchcase_list ){
         res = 1;
     }
     if( newcnt_tmstring_list<frecnt_tmstring_list ){
@@ -3666,6 +4109,12 @@ int get_balance_tm( void )
     if( newcnt_macro>frecnt_macro ){
         res = 1;
     }
+    if( newcnt_switchcase<frecnt_switchcase ){
+        return -1;
+    }
+    if( newcnt_switchcase>frecnt_switchcase ){
+        res = 1;
+    }
     if( newcnt_Plain<frecnt_Plain ){
         return -1;
     }
@@ -3688,6 +4137,12 @@ int get_balance_tm( void )
         return -1;
     }
     if( newcnt_If>frecnt_If ){
+        res = 1;
+    }
+    if( newcnt_Switch<frecnt_Switch ){
+        return -1;
+    }
+    if( newcnt_Switch>frecnt_Switch ){
         res = 1;
     }
     if( newcnt_Set<frecnt_Set ){
@@ -3760,6 +4215,18 @@ int get_balance_tm( void )
         return -1;
     }
     if( newcnt_Insert>frecnt_Insert ){
+        res = 1;
+    }
+    if( newcnt_Case<frecnt_Case ){
+        return -1;
+    }
+    if( newcnt_Case>frecnt_Case ){
+        res = 1;
+    }
+    if( newcnt_Default<frecnt_Default ){
+        return -1;
+    }
+    if( newcnt_Default>frecnt_Default ){
         res = 1;
     }
     if( newcnt_var<frecnt_var ){
