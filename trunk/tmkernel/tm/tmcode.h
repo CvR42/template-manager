@@ -74,7 +74,6 @@ typedef enum en_tags_classComponent {
 #define Append u.ue_Append
 #define Error u.ue_Error
 #define Exit u.ue_Exit
-#define ExpandInherits u.ue_ExpandInherits
 #define Redirect u.ue_Redirect
 #define Include u.ue_Include
 #define Macro u.ue_Macro
@@ -83,7 +82,7 @@ typedef enum en_tags_classComponent {
 #define Insert u.ue_Insert
 
 typedef enum en_tags_tplelm {
-    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSet, TAGAppend, TAGError, TAGExit, TAGExpandInherits, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert
+    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSet, TAGAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert
 } tags_tplelm;
 
 
@@ -251,12 +250,6 @@ typedef struct str_Exit {
     tmstring str;
 } C_Exit;
 
-/* Structure for constructor ExpandInherits */
-typedef struct str_ExpandInherits {
-    int lno;
-    tmstring types;
-} C_ExpandInherits;
-
 /* Structure for constructor Redirect */
 typedef struct str_Redirect {
     int lno;
@@ -306,7 +299,6 @@ struct str_tplelm {
 	C_Append ue_Append;
 	C_Error ue_Error;
 	C_Exit ue_Exit;
-	C_ExpandInherits ue_ExpandInherits;
 	C_Redirect ue_Redirect;
 	C_Include ue_Include;
 	C_Macro ue_Macro;
@@ -421,7 +413,6 @@ struct str_var_list {
 #define new_Append(lno,appline) real_new_Append(lno,appline,__FILE__,__LINE__)
 #define new_Error(lno,errstr) real_new_Error(lno,errstr,__FILE__,__LINE__)
 #define new_Exit(lno,str) real_new_Exit(lno,str,__FILE__,__LINE__)
-#define new_ExpandInherits(lno,types) real_new_ExpandInherits(lno,types,__FILE__,__LINE__)
 #define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,__FILE__,__LINE__)
 #define new_Include(lno,fname) real_new_Include(lno,fname,__FILE__,__LINE__)
 #define new_Macro(lno,formpar,macbody) real_new_Macro(lno,formpar,macbody,__FILE__,__LINE__)
@@ -540,11 +531,6 @@ extern tplelm new_Error( int, tmstring );
 extern tplelm real_new_Exit( int, tmstring, const char *, const int );
 #else
 extern tplelm new_Exit( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_ExpandInherits( int, tmstring, const char *, const int );
-#else
-extern tplelm new_ExpandInherits( int, tmstring );
 #endif
 #ifdef LOGNEW
 extern tplelm real_new_Redirect( int, tmstring, tplelm_list, const char *, const int );

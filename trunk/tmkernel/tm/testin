@@ -193,7 +193,7 @@ ${eq ${first $(path)} $(libpath)} ${shift $(path)}
 ${searchfile testsub}
 ----
 
-.foreach pass one two three
+.foreach pass one two
 Pass $(pass)
 Datastructure access functions:
 ----
@@ -257,7 +257,6 @@ Testing error handling:
 Type sorting:
 depsort: [${depsort int ${typelist}}]
 ----
-.expandinherits ${typelist}
 .endforeach
 
 String manipulation functions:

@@ -90,8 +90,6 @@ static long newcnt_Error = 0;
 static long frecnt_Error = 0;
 static long newcnt_Exit = 0;
 static long frecnt_Exit = 0;
-static long newcnt_ExpandInherits = 0;
-static long frecnt_ExpandInherits = 0;
 static long newcnt_Redirect = 0;
 static long frecnt_Redirect = 0;
 static long newcnt_Include = 0;
@@ -386,7 +384,6 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #undef new_Append
 #undef new_Error
 #undef new_Exit
-#undef new_ExpandInherits
 #undef new_Redirect
 #undef new_Include
 #undef new_Macro
@@ -401,7 +398,6 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #define new_Append(lno,appline) real_new_Append(lno,appline,_f,_l)
 #define new_Error(lno,errstr) real_new_Error(lno,errstr,_f,_l)
 #define new_Exit(lno,str) real_new_Exit(lno,str,_f,_l)
-#define new_ExpandInherits(lno,types) real_new_ExpandInherits(lno,types,_f,_l)
 #define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,_f,_l)
 #define new_Include(lno,fname) real_new_Include(lno,fname,_f,_l)
 #define new_Macro(lno,formpar,macbody) real_new_Macro(lno,formpar,macbody,_f,_l)
@@ -1320,36 +1316,6 @@ tplelm new_Exit( int p_lno, tmstring p_str )
 }
 
 #ifdef LOGNEW
-tplelm real_new_ExpandInherits( int p_lno, tmstring p_types, const char *_f, const int _l )
-#else
-tplelm new_ExpandInherits( int p_lno, tmstring p_types )
-#endif
-{
-    tplelm nw;
-
-#ifdef USECACHE
-    if( cacheix_tplelm > 0 ){
-	nw = cache_tplelm[--cacheix_tplelm];
-    }
-    else {
-#endif
-	nw = TM_MALLOC( tplelm, sizeof(*nw) );
-#ifdef USECACHE
-    }
-#endif
-    nw->tag = TAGExpandInherits;
-    nw->ExpandInherits.lno = p_lno;
-    nw->ExpandInherits.types = p_types;
-#ifdef STAT
-    newcnt_ExpandInherits++;
-#endif
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
-#ifdef LOGNEW
 tplelm real_new_Redirect( int p_lno, tmstring p_fname, tplelm_list p_body, const char *_f, const int _l )
 #else
 tplelm new_Redirect( int p_lno, tmstring p_fname, tplelm_list p_body )
@@ -1766,10 +1732,6 @@ static void fre_tplelm( tplelm e )
 
 	case TAGExit:
 	    frecnt_Exit++;
-	    break;
-
-	case TAGExpandInherits:
-	    frecnt_ExpandInherits++;
 	    break;
 
 	case TAGRedirect:
@@ -2455,11 +2417,6 @@ void rfre_tplelm( tplelm e )
 	    rfre_tmstring( e->Exit.str );
 	    break;
 
-	case TAGExpandInherits:
-	    rfre_int( e->ExpandInherits.lno );
-	    rfre_tmstring( e->ExpandInherits.types );
-	    break;
-
 	case TAGRedirect:
 	    rfre_int( e->Redirect.lno );
 	    rfre_tmstring( e->Redirect.fname );
@@ -2998,16 +2955,6 @@ static tplelm rdup_tplelm( const tplelm e )
 	    return new_Exit( i_lno, i_str );
 	}
 
-	case TAGExpandInherits:
-	{
-	    int i_lno;
-	    tmstring i_types;
-
-	    i_lno = rdup_int( e->ExpandInherits.lno );
-	    i_types = rdup_tmstring( e->ExpandInherits.types );
-	    return new_ExpandInherits( i_lno, i_types );
-	}
-
 	case TAGRedirect:
 	{
 	    int i_lno;
@@ -3494,14 +3441,6 @@ void stat_tm( FILE *f )
 	newcnt_Exit,
 	frecnt_Exit,
 	((newcnt_Exit==frecnt_Exit)? "": "<-")
-    );
-    fprintf(
-	f,
-	tm_allocfreed,
-	"ExpandInherits",
-	newcnt_ExpandInherits,
-	frecnt_ExpandInherits,
-	((newcnt_ExpandInherits==frecnt_ExpandInherits)? "": "<-")
     );
     fprintf(
 	f,
