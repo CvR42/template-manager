@@ -36,6 +36,59 @@
 /* Forward declarations. */
 static Type_list update_reach_Type( Type_list tl, bool *visited, const Type t );
 
+
+
+/* Given a list prefix 'pre' and suffix 'suff', and a type 't',
+ * return the element type of this type, or tmstringNIL if there is none.
+ *
+ * If both the prefix and the suffix are empty, consider no type to be
+ * a list type.
+ */
+static tmstring get_element_type( const char *pre, const char *suff, const tmstring t )
+{
+    const size_t prelen = strlen( pre );
+    const size_t sufflen = strlen( suff );
+    const size_t tlen = strlen( t );
+
+    if( prelen == 0 && sufflen == 0 ){
+	return tmstringNIL;
+    }
+    if(
+	tlen>prelen+sufflen &&
+	strncmp( pre, t, prelen ) == 0 &&
+	strncmp( suff, t+tlen-sufflen, sufflen ) == 0 
+    ){
+	tmstring ns = rdup_tmstring( t+prelen );
+
+	ns[tlen-(prelen+sufflen)] = '\0';
+	return ns;
+    }
+    return tmstringNIL;
+}
+
+/* Given a list prefix 'pre' and suffix 'suff', and a type string 't',
+ * return a Type representing this type string.
+ * given 
+ */
+static Type split_type( const char *pre, const char *suff, const tmstring t )
+{
+    tmstring old;
+    uint level = 0;
+    tmstring nw;
+
+    nw = rdup_tmstring( t );
+    for(;;) {
+	old = nw;
+	nw = get_element_type( pre, suff, old );
+	if( nw == tmstringNIL ){
+	    break;
+	}
+	rfre_tmstring( old );
+	level++;
+    }
+    return new_Type( level, old );
+}
+
 /* Given a list of types, return a list of strings representing these
  * types.
  */
@@ -69,10 +122,7 @@ static tmstring_list make_typename_list( const Type_list tl )
     return sl;
 }
 
-
-/* Given a list of types, return a list of strings representing these
- * types.
- */
+/* Given a list of types, return a list of strings representing these types. */
 static tmstring flat_Type_list( const Type_list tl )
 {
     tmstring_list sl = make_typename_list( tl );
@@ -1062,28 +1112,6 @@ static tmstring fnnot( const tmstring_list sl )
 
 /* -- datastructure access & file name access -- */
 
-/* Given a list prefix 'pre' and suffix 'suff', and a type 't',
- * return TRUE if 't' is a list type. That is, it starts with the
- * given 
- */
-static tmstring get_element_type( const char *pre, const char *suff, const tmstring t )
-{
-    const size_t prelen = strlen( pre );
-    const size_t sufflen = strlen( suff );
-    const size_t tlen = strlen( t );
-
-    if(
-	tlen>prelen+sufflen &&
-	strncmp( pre, t, prelen ) == 0 &&
-	strncmp( suff, t+tlen-sufflen, sufflen ) == 0 
-    ){
-	tmstring ns = rdup_tmstring( t+prelen );
-
-	ns[tlen-(prelen+sufflen)] = '\0';
-	return ns;
-    }
-    return tmstringNIL;
-}
 
 /* listtypes <list> */
 static tmstring fnlisttypes( const tmstring_list sl )
@@ -2037,6 +2065,8 @@ static tmstring fnreach( const tmstring_list pl )
     tmstring ans;
     bool *visited;
     unsigned int sz;
+    const char *pre;
+    const char *suff;
 
     sz = allds->sz;
     tl = new_Type_list();
@@ -2044,11 +2074,22 @@ static tmstring fnreach( const tmstring_list pl )
     if( visited == NULL ){                          
         return new_tmstring( "" );
     }
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
     for( ix=0; ix<sz; ix++ ){
         visited[ix] = FALSE;
     }
     for( ix=0; ix<pl->sz; ix++ ){
-	tl = update_reach( tl, visited, pl->arr[ix] );
+	Type t = split_type( pre, suff, pl->arr[ix] );
+
+	tl = update_reach_Type( tl, visited, t );
+	rfre_Type( t );
     }
     TM_FREE( visited );          
     ans = flat_Type_list( tl );
