@@ -233,7 +233,7 @@ static bool parse_Type( Type *tp )
     return FALSE;
 }
 
-/* Try to parse a Field. Return TRUE if you have a valid field. */
+/* Try to parse a field. Return TRUE iff you have a valid field. */
 static bool parse_field( Field *fp )
 {
     tmstring elmname;
@@ -255,11 +255,11 @@ static bool parse_field( Field *fp )
     return ok;
 }
 
-/* Try to parse a list of fields for a tuple body. 
+/* Try to parse a list of fields for a constructor body. 
  * keep parsing field definitions until you encounter
  * a '|' or a ')'. 
  *
- * Return TRUE if you have a valid tuple body.
+ * Return TRUE iff you have a valid constructor body.
  */
 static bool parse_Field_list( Field_list *flp )
 {
@@ -281,7 +281,7 @@ static bool parse_Field_list( Field_list *flp )
 
 /* Given the name of the constructor type these constructors are member
  * of, the name of the construcotr (if it isn't empty), try to parse a
- * constructor. Return TRUE if this succeeded.
+ * constructor. Return TRUE iff this succeeded.
  */
 static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
 {
@@ -424,9 +424,9 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
     return ok;
 }
 
-/* Try to parse a list of fields for a tuple body.
+/* Try to parse a list of fields for a tuple or class body.
  *
- * Return TRUE if you have a valid tuple body.
+ * Return TRUE iff you have a valid tuple or class body.
  */
 static bool parse_tuplebody( Field_list *flp )
 {
@@ -470,7 +470,7 @@ static bool parse_tuplebody( Field_list *flp )
 }
 
 /* Given a type name 'nm', try to parse a tuple definition. Return
- * TRUE if you have a valid tuple.
+ * TRUE iff you have a valid tuple.
  */
 static bool parse_tuple_type( tmstring nm, ds *tp )
 {
