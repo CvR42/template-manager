@@ -62,7 +62,6 @@
 #endif
 
 .if $(statcode)
-#ifdef STAT
 .foreach t $(need_stat_list)
 static long newcnt_$t_list = 0;
 static long frecnt_$t_list = 0;
@@ -75,16 +74,12 @@ static long newcnt_$t = 0;
 static long frecnt_$t = 0;
 .endif
 .endforeach
-#endif
 
 .endif
-
 static char tm_srcfile[] = __FILE__;
 
 .if $(statcode)
-#ifdef STAT
 static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
-#endif
 
 .endif
 #ifndef FATAL
@@ -189,9 +184,7 @@ $(stic_$t)$t_list new_$t_list( void )
     nw->room = FIRSTROOM;
 #endif
 .if $(statcode)
-#ifdef STAT
     newcnt_$t_list++;
-#endif
 .endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -226,9 +219,7 @@ $(stic_$t)$t new_$t( $(tl) )
     nw->$e = p_$e;
 .endforeach
 .if $(statcode)
-#ifdef STAT
     newcnt_$t++;
-#endif
 .endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -243,9 +234,7 @@ $(stic_$t)$t new_$t( $(tl) )
     nw->$e = p_$e;
 .endforeach
 .if $(statcode)
-#ifdef STAT
     newcnt_$t++;
-#endif
 .endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1196,7 +1185,6 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     }
 .set first 1
 .foreach e ${fields $t inherited}
-.set tn ${type $t $e}
 .if $(first)
 .set first 0
 .else
@@ -1205,7 +1193,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     }
 .endif
     if( !err ){
-	err = fscan_$(tn)( f, &l_$e );
+	err = fscan_${type $t $e}( f, &l_$e );
     }
 .endforeach
     *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
@@ -1276,10 +1264,9 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .endforeach
 
 .foreach e ${fields $c inherited}
-.set tn ${type $c $e}
 	l_$e = ${type $c $e}NIL;
 	if( !err){
-	    err = fscan_$(tn)( f, &l_$e );
+	    err = fscan_${type $c $e}( f, &l_$e );
 	}
 .endforeach
 	*p = ($t) new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
@@ -1319,6 +1306,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     int c;
     int n;
     $t nw;
+    int err = 0;
 
     *p = $t_listNIL;
     n = tm_fscanopenbrac( f );
@@ -1347,11 +1335,11 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     }
     ungetc( c, f );
     for(;;){
-	if( fscan_$t( f, &nw ) ){
-	    return 1;
+	if( !err ){
+	    err = fscan_$t( f, &nw );
 	}
 	*p = append_$t_list( *p, nw );
-	if( tm_fscanspace( f ) ){
+	if( err || tm_fscanspace( f ) ){
 	    return 1;
 	}
 	c = getc( f );
@@ -1522,3 +1510,4 @@ int get_balance_$(basename)( void )
 .endif
 .endif
 /* ---- end of ${tplfilename} ---- */
+/* Code generation required ${processortime} milliseconds. */

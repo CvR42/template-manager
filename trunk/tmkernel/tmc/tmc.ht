@@ -115,26 +115,10 @@ struct str_$t_list {
 };
 
 .endforeach
-../* Type casting macros. */
-...foreach t $(need_ds)
-...if ${member $t ${classlist}}
-...foreach e ${fields $t}
-..#define $t(e) (($t)e)
-...endforeach
-...endif
-...if ${member $t ${tuplelist}}
-...foreach e ${fields $t}
-..#define $t(e) (e)
-...endforeach
-...endif
-...if ${member $t ${ctypelist}}
-...foreach c ${conslist $t}
-...foreach e ${fields $c}
-..#define $c(e) (&(e->u.ue_$c))
-...endforeach
-...endforeach
-...endif
-...endforeach
+/* Type casting macros. */
+.foreach t $(need_ds)
+#define cast_$t(e) (($t)e)
+.endforeach
 
 /* constructors. */
 #ifdef LOGNEW
@@ -344,3 +328,4 @@ extern int get_balance_$(basename)( void );
 .endif
 ..
 /* ---- end of ${tplfilename} ---- */
+/* Code generation required ${processortime} milliseconds. */
