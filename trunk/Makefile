@@ -2,7 +2,7 @@
 
 # The version numbers below reflect release versions for the various
 # packages.
-TMKERNEL_VERSION = 2.1.0-pre2
+TMKERNEL_VERSION = 2.1.0-pre3
 TMPAS_VERSION = 1.0.3
 TMMIRA_VERSION = 1.0.2
 TMDEMO_VERSION = 1.0
@@ -63,29 +63,25 @@ empty:
 	rm -f $(JUNK) $(PACKAGES)
 
 tmmira_distlist: $(MAKEFILE) tmmira tmmira/tmmira tmmira/miradoc
-	cp /dev/null tmmira_distlist
 	cd tmmira; $(MAKE) distlist
+	cp /dev/null tmmira_distlist
 	sed -e "s/^/tmmira\//" tmmira/distlist >> tmmira_distlist
 
 tmpas_distlist: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
-	cp /dev/null tmpas_distlist
 	cd tmpas; $(MAKE) distlist
-	sed -e "s/^/tmpas-$(TMPAS_VERSION)\//" tmpas/distlist >> tmpas_distlist
+	sed -e "s/^/tmpas-$(TMPAS_VERSION)\//" tmpas/distlist > tmpas_distlist
 
 tmdemo_distlist: $(MAKEFILE) tmdemo
-	cp /dev/null tmdemo_distlist
 	cd tmdemo; $(MAKE) distlist
-	sed -e "s/^/tmdemo-$(TMDEMO_VERSION)\//" tmdemo/dist.lst >> tmdemo_distlist
+	sed -e "s/^/tmdemo-$(TMDEMO_VERSION)\//" tmdemo/dist.lst > tmdemo_distlist
 
 tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc
-	cp /dev/null tmkernel_distlist
 	cd tmkernel; $(MAKE) distlist
-	sed -e "s/^/tmkernel-$(TMKERNEL_VERSION)\//" tmkernel/dist.lst >> tmkernel_distlist
+	sed -e "s/^/tmkernel-$(TMKERNEL_VERSION)\//" tmkernel/dist.lst > tmkernel_distlist
 
 tmkerneldoc_distlist: $(MAKEFILE) tmkrndoc
-	cp /dev/null tmkerneldoc_distlist
 	cd tmkrndoc; $(MAKE) distlist
-	sed -e "s/^/tmkerneldoc-$(TMKERNEL_VERSION)\//" tmkrndoc/dist.lst >> tmkerneldoc_distlist
+	sed -e "s/^/tmkerneldoc-$(TMKERNEL_VERSION)\//" tmkrndoc/dist.lst > tmkerneldoc_distlist
 
 tmkerneldoc-$(TMKERNEL_VERSION).tar.gz tmkerneldoc-$(TMKERNEL_VERSION).zip: tmkerneldoc_distlist
 	-mkdir tmkerneldoc-$(TMKERNEL_VERSION)
