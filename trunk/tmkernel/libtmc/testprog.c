@@ -768,7 +768,7 @@ int main( void )
     for( ix=1; ix<49; ix++ ){
 	tm_fre_logid( idlist[ix] );
     }
-    report_lognew( stderr );
+    simple_report_lognew( stderr );
     flush_lognew();
     fflush( outfile );		/* Just to be sure.. */
     tm_fatal( __FILE__, __LINE__, "test of 'tm_fatal'" );
