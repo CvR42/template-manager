@@ -260,7 +260,7 @@
 .macro req_rfre l
 .call require fre "${nonvirtual $l}"
 .call require rfre "${delisttypes $l}"
-.call require rfre "${types ${singletypes $l}}"
+.call require rfre "${alltypes ${singletypes $l}}"
 .if ${eq $(template) tmc}
 .call require rfre "${nonvirtual ${subclasses $l}}"
 .call require fre "${nonvirtual $l}"
