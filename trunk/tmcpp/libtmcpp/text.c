@@ -10,20 +10,6 @@
 unsigned long tmtext::newcount = 0;
 unsigned long tmtext::freecount = 0;
 
-// Constructor from buffer size.
-tmtext::tmtext( const long sz ): room(0), arr(0), curpos(0), sz(0)
-{
-    reserve( sz );
-    newcount++;
-}
-
-// Destructor
-tmtext::~tmtext()
-{
-    free( arr );
-    freecount++;
-}
-
 // Print statistics of tmtext usage to file 'f'.
 void tmtext::stat( FILE *f )
 {

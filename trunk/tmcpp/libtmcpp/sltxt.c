@@ -4,8 +4,8 @@
  * All rights reserved.
  */
 
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 /* Given a start and end position 'from' and 'to',
  * return a new tmtext that contains the text between these positions.

@@ -4,8 +4,8 @@
  * All rights reserved.
  */
 
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 /* Given a tmtext datastructure 't' and a character 'c', add the character
  * to the tmtext.

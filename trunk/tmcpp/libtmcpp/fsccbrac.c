@@ -1,9 +1,3 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
 /* File: fsccbrac.c
  * Last modified: CvR
  *
@@ -11,8 +5,8 @@
  */
 
 #include <ctype.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 #define CLOSEBRAC ')'
 
