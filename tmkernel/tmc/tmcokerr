@@ -5,6 +5,7 @@ SubNamed            :    414 allocated,    410 freed.<-
 SubNamedlist        :    621 allocated,    615 freed.<-
 Thing               :   1657 allocated,   1641 freed.<-
 Top                 :    207 allocated,    205 freed.<-
+TopClass            :      0 allocated,      0 freed.
 TopEmptyTuple       :      0 allocated,      0 freed.
 TopEnum             :      0 allocated,      0 freed.
 TopNone             :    623 allocated,    618 freed.<-

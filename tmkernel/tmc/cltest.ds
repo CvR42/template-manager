@@ -13,6 +13,7 @@ toplevel ::=
     TopTuple tup:subtuple |
     TopEnum e:subenum |
     TopEmptyTuple e:emptytuple |
+    TopClass x:expr |
     TopNone;
 
 emptytuple == ();
