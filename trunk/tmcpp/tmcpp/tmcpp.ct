@@ -119,7 +119,22 @@ $t::$t( $(tl) )
 .set used 0
 $t::$t( const $t &c )
 .foreach st ${inherits $t}
-    $(comma)$(st)( ${seplist ", " ${prefix "c." ${allfields $(st)}}} )
+    $(comma)$(st)(
+.set subcomma
+.foreach fn ${allfields $(st)}
+.set subet ${type $(st) $(fn)}
+.if ${member $(subet) $(valuetypes)}
+        $(subcomma)c.$(fn)
+.else
+.if ${member $(subet) $(legacytypes)}
+        $(subcomma)rdup_$(subet)( c.$(fn) )
+.else
+        $(subcomma)c.$(fn)->clone()
+.endif
+.endif
+.set subcomma ,
+.endforeach
+    )
 .set comma ,
 .if ${len ${allfields $(st)}}
 .set used 1
