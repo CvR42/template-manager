@@ -1,4 +1,4 @@
-Subject: [ANN] Version 2.0.9 of Tm, a template preprocessor, available
+Subject: [ANN] Version 2.1.0 of Tm, a template preprocessor, available
 Keywords: template, Tm, abstract syntax tree 
 
 
@@ -82,7 +82,7 @@ All Tm-related software is licensed under the Gnu Public License (GPL), or
 the Library Gnu Public License (LGPL).
 
 For further information, see my Tm web site:
-<http://www.pds.twi.tudelft.nl/~reeuwijk/software/Tm>
+<http://www.few.vu.nl/~reeuwijk/software/Tm>
 
 Tm is used extensively in our Timber compiler, a static compiler for
 a superset of Java. The Timber compiler has its own website at
