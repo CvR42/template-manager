@@ -5,8 +5,7 @@
  */
 
 /* File: lex.c
-   Lexical analyzer for Miranda algebraic datatypes plus additions
-   for naming of constructor elements.
+ * Lexical analyzer for Tm datastructure definitions.
  */
 
 #include "config.h"
@@ -23,13 +22,15 @@
 
 YYSTYPE yylval;
 
-#ifdef DEBUG
-#define lexshow(tok,nm) if(lextr) fprintf(tracestream,"token: %s(%d). yytext=\"%s\".\n",nm,tok,yytext)
+#if 1
+#define lexshow(tok,nm) if(lextr) fprintf(tracestream,"token: %s(%d) yytext=\"%s\".\n",nm,tok,yytext)
 #else
 #define lexshow(tok,nm)
 #endif
 
 static char yytext[256];
+char linebuf[LINESIZE] = "";
+unsigned int lineix = 0;
 
 /******************************************************
  *            SCANNING TREES                          *
@@ -141,6 +142,10 @@ static struct tok toktab[] =
     { "::=", COLCOLEQ, "COLCOLEQ" },
     { ";", SEMI, "SEMI" },
     { "==", EQEQ, "EQEQ" },
+    { "=", EQ, "EQ" },
+    { "~=", TILDEQ, "TILDEQ" },
+    { "{", LCBRAC, "LCBRAC" },
+    { "}", RCBRAC, "RCBRAC" },
     { "[", LSBRAC, "LSBRAC" },
     { "]", RSBRAC, "RSBRAC" },
     { "|", BAR, "BAR" },
@@ -170,11 +175,15 @@ static unsigned int ungetbuflen;
 static int *ungetbuf;
 static unsigned int ungetbufix;
 
-/* push back character 'c' in local pushback queue.
-   Enlarge queue if necessary.
+/* Push back character 'c' in local pushback queue.
+ * Enlarge queue if necessary.
  */
 static void lexungetc( int c )
 {
+    if( lineix>0 ){
+	lineix--;
+	return;
+    }
     if( ungetbufix >= ungetbuflen ){
 	ungetbuflen+=UNGETBUFLENSTEP;
 	ungetbuf = TM_REALLOC( int *, ungetbuf, ungetbuflen*sizeof(int) );
@@ -191,9 +200,32 @@ static int lexgetc( void )
 	c = ungetbuf[--ungetbufix];
     }
     else {
+	if( linebuf[lineix] == '\0' ){
+	    if( fgets( linebuf, LINESIZE, dsfile ) == NULL ){
+		return EOF;
+	    }
+	    lineix = 0;
+	}
+	return linebuf[lineix++];
 	c = getc( dsfile );
     }
     return c;
+}
+
+void show_parse_context( FILE *f )
+{
+    unsigned int ix;
+
+    fputs( linebuf, f );
+    for( ix=0; ix<lineix; ix++ ){
+	if( linebuf[ix] == '\t' ){
+	    fputc( '\t', f );
+	}
+	else {
+	    fputc( ' ', f );
+	}
+    }
+    fputs( "^\n", f );
 }
 
 /* Try to read a tmstring. Return TRUE if this is successful, and set '*s'

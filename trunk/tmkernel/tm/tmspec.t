@@ -14,6 +14,7 @@
 .append wantdefs new_ds_list
 .append wantdefs delete_ds_list
 .append wantdefs append_ds_list
+.append wantdefs concat_ds_list
 .append wantdefs rfre_ds_list
 .append wantdefs print_ds_list
 ..
@@ -62,3 +63,15 @@
 .append wantdefs rfre_macro_list
 .append wantdefs delete_macro_list
 .append wantdefs insert_macro_list
+..
+.append wantdefs classComponent_list
+.append wantdefs rfre_classComponent_list
+.append wantdefs rfre_classComponent
+.append wantdefs new_classComponent_list
+.append wantdefs new_classComponent
+.append wantdefs append_classComponent_list
+..
+.append wantdefs new_alternative
+.append wantdefs new_alternative_list
+.append wantdefs rfre_alternative_list
+.append wantdefs append_alternative_list
