@@ -131,7 +131,7 @@ if 1: [true] [true] []
 List manipulation:
 ----
 index:   '1' '0' '0' '0'
-ismember:'1' '0' '0' '0'
+member:  '1' '0' '0' '0'
 shift:   'b c d e f' ''
 first:   'a' ''
 seplist: 'a, b, c, d, e, f' 'a' ''
