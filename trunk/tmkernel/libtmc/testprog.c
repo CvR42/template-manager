@@ -714,6 +714,8 @@ int main( void )
     str = new_tmstring( "bla" );
     str = realloc_tmstring( str, strlen( str )*4 );
     (void) str;
+    str = create_tmstring( 23 );
+    (void) str;
     for( ix=0; ix<TESTARRAYSIZE; ix++ ){
 	idlist[ix] = tm_new_logid( "testlognew", ix );
     }
