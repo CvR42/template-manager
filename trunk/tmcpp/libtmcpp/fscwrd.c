@@ -18,15 +18,12 @@
  */
 int fscan_tmword( FILE *f, tmword *s )
 {
-    int c;
-    int brac;
-
     *s = tmwordNIL;
-    brac = tm_fscanopenbrac( f );
-    c = fgetc( f );
+    int brac = tm_fscanopenbrac( f );
+    int c = fgetc( f );
     if( c != '@' ){
 	unsigned int sz = INITIAL_STRINGSIZE;
-	tmstring buf = create_tmstring( sz );
+	tmstring buf = create_tmstring_nolognew( sz );
 	unsigned int ix = 0;
 
 	for(;;){
@@ -37,7 +34,7 @@ int fscan_tmword( FILE *f, tmword *s )
 			"tmword expected, but got ascii code 0x%02x",
 			(c & 0xff)
 		    );
-		    fre_tmstring( buf );
+		    fre_tmstring_nolognew( buf );
 		    return 1;
 		}
 		ungetc( c, f );
@@ -45,7 +42,7 @@ int fscan_tmword( FILE *f, tmword *s )
 	    }
 	    if( ix+1>sz ){
 		sz += sz+1;
-		buf = realloc_tmstring( buf, sz );
+		buf = realloc_tmstring_nolognew( buf, sz );
 	    }
 	    buf[ix++] = c;
 	    c = fgetc( f );

@@ -122,6 +122,13 @@ LIBSRCS	 = \
                 sltxt.c \
                 symbol.c \
                 t2s.c \
+		lncrstr.c \
+		lnfrestr.c \
+		lnfscstr.c \
+		lnnewstr.c \
+		lnreastr.c \
+		lnt2s.c \
+		lognew.c \
                 text.c \
                 tmcalloc.c \
                 tmmalloc.c \
