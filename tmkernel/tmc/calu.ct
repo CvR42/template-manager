@@ -823,6 +823,7 @@ $(stic_$t)$t rdup_$t( const $t e )
     }
 .else
 #ifdef LOGNEW
+    (void) e;
     (void) _f;
     (void) _l;
 #endif
