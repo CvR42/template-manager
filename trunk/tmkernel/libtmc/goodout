@@ -56,9 +56,29 @@ tm_printword().
 (Longtest 2 3 -12 12222223 2349 42)
 (Ulongtest 2 3 12 12222223 2349 42)
 (Stringouttest "" "Test")
-(Stringintest "a" "bcdef" @ "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
+(
+    Stringintest
+    "a"
+    "bcdef"
+    @
+    "blablablabigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigword"
+    "\""
+    "\n"
+    "\001"
+    "\n"
+    "\323"
+    "STOP"
+)
 (Wordouttest Test)
-(Wordintest a bcdef  blablabla -12.34e-123 STOP)
+(
+    Wordintest
+    a
+    bcdef
+    @
+    blablablabigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwords
+    -12.34e-123
+    STOP
+)
 (Textouttest "" "Test")
 (Textintest "a" "bcdef" @ "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
 (Tmboolouttest True False True True False)
