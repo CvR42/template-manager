@@ -460,18 +460,18 @@ static tmstring fnindex( const tmstring_list sl )
     return newintstr( (int) ix );
 }
 
-/* member <elm> <list> */
+/* ismember <elm> <list> */
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnmember( const tmstring_list sl )
+static tmstring fnismember( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
     bool found = FALSE;
 
     if( sl->sz<1 ){
-	line_error( "'member' requires at least one parameter" );
+	line_error( "'ismember' requires at least one parameter" );
 	return new_tmstring( "0" );
     }
     estr = sl->arr[0];
@@ -1160,7 +1160,7 @@ static ds findtype( ds_list dl, const tmstring t )
     ix = find_type_ix( dl, t );
     if( ix>=dl->sz ){
 	(void) strcpy( errarg, t );
-	line_error( "no such type" );
+	line_error( "unknown type" );
 	return dsNIL;
     }
     return dl->arr[ix];
@@ -1231,75 +1231,62 @@ static tmstring fnisvirtual( const tmstring_list sl )
 /* Given a type name, return the inherits of this type.  */
 static tmstring fninherits( const tmstring_list sl )
 {
-    ds d;
     tmstring ans;
 
     if( sl->sz != 1 ){
 	line_error( "'inherits' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
-	return new_tmstring( "" );
-    }
-    ans = tmstringNIL;
-    switch( d->tag ){
-	case TAGDsCons:
-	    ans = flatstrings( d->DsCons.inherits );
-	    break;
+    {
+	const tmstring_list inherits = extract_inherits( allds, sl->arr[0] );
 
-	case TAGDsTuple:
-	    ans = flatstrings( d->DsTuple.inherits );
-	    break;
-
-	case TAGDsClass:
-	    ans = flatstrings( d->DsClass.inherits );
-	    break;
-
+	if( inherits == tmstring_listNIL ){
+	    sprintf( errarg, "'%s'", sl->arr[0] );
+	    line_error( "unknown type" );
+	    return new_tmstring( "" );
+	}
+	ans = flatstrings( inherits );
     }
     return ans;
 }
 
-/* Construct a list of fields for the given class or tuple type.  */
+/* Construct a list of fields for the given type.  */
 static tmstring fnmemberlist( const tmstring_list sl )
 {
     ds d;
-    field_list el = field_listNIL;
-    tmstring vp;
     tmstring ans;
-    unsigned int ix;
     tmstring_list nl;
+    bool inherited;
 
-    if( sl->sz != 1 ){
-	line_error( "'memberlist' requires exactly one parameter" );
+    inherited = FALSE;
+    if( sl->sz != 1 && sl->sz != 2 ){
+	line_error( "'memberlist' requires one or two parameters" );
 	return new_tmstring( "" );
+    }
+    if( sl->sz == 2 ){
+	if( strcmp( sl->arr[1], "inherited" ) == 0 ){
+	    inherited = TRUE;
+	}
+	else {
+	    line_error( "'memberlist' second parameter must be absent or `inherited'" );
+	}
     }
     d = findtype( allds, sl->arr[0] );
     if( d == dsNIL ){
 	/* findtype already complained about this. */
 	return new_tmstring( "" );
     }
-    switch( d->tag ){
-	case TAGDsTuple:
-	    el = d->DsTuple.fields;
-	    break;
-
-	case TAGDsClass:
-	    el = d->DsClass.fields;
-	    break;
-	    
-
-	case TAGDsCons:
-	    sprintf( errarg, "'%s'", sl->arr[0] );
-	    line_error( "not a tuple or class type" );
-	    return new_tmstring( "" );
+    if( d->tag == TAGDsCons ){
+	sprintf( errarg, "type `%s'", sl->arr[0] );
+	line_error( "'memberlist' does not work on a constructor type" );
+	/* Fall through, since nothing chokes on a constructor type. */
     }
     nl = new_tmstring_list();
-    for( ix=0; ix<el->sz; ix++ ){
-	field e = el->arr[ix];
-
-	vp = e->name;
-	nl = append_tmstring_list( nl, new_tmstring( vp ) );
+    if( inherited ){
+	collect_all_fields( &nl, allds, sl->arr[0] );
+    }
+    else {
+	collect_fields( &nl, allds, sl->arr[0] );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -1311,34 +1298,16 @@ static tmstring fnmemberlist( const tmstring_list sl )
  */
 static tmstring fnttypename( const tmstring_list sl )
 {
-    ds d;
-    field_list el = field_listNIL;
     field e;
 
     if( sl->sz != 2 ){
 	line_error( "'ttypename' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
-	return new_tmstring( "" );
-    }
-    switch( d->tag ){
-	case TAGDsCons:
-	    (void) strcpy( errarg, sl->arr[0] );
-	    line_error( "not a tuple or class type" );
-	    return new_tmstring( "" );
-
-	case TAGDsTuple:
-	    el = d->DsTuple.fields;
-	    break;
-
-	case TAGDsClass:
-	    el = d->DsClass.fields;
-	    break;
-    }
-    e = findfield( el, sl->arr[1] );
+    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
     if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "field not found" );
 	return new_tmstring( "" );
     }
     return new_tmstring( e->type );
@@ -1351,35 +1320,18 @@ static tmstring fnttypename( const tmstring_list sl )
  */
 static tmstring fnmembertypeclass( const tmstring_list sl )
 {
-    ds d;
-    field_list el = field_listNIL;
     field e;
 
     if( sl->sz != 2 ){
 	line_error( "'membertypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
+    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    switch( d->tag ){
-        case TAGDsCons:
-	    (void) strcpy( errarg, sl->arr[0] );
-	    line_error( "not a tuple or class type" );
-	    return new_tmstring( "" );
-
-	case TAGDsTuple:
-	    el = d->DsTuple.fields;
-	    break;
-
-	case TAGDsClass:
-	    el = d->DsClass.fields;
-	    break;
-
-    }
-    e = findfield( el, sl->arr[1] );
-    if( e == fieldNIL ) return new_tmstring( "" );
     return new_tmstring( ( e->level != 0 ? "list" : "single" ) );
 }
 
@@ -1388,35 +1340,18 @@ static tmstring fnmembertypeclass( const tmstring_list sl )
  */
 static tmstring fnttypellev( const tmstring_list sl )
 {
-    ds d;
-    field_list el = field_listNIL;
     field e;
 
     if( sl->sz != 2 ){
 	line_error( "'membertypellev' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
+    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    switch( d->tag ){
-	case TAGDsCons:
-	    (void) strcpy( errarg, sl->arr[0] );
-	    line_error( "not a tuple or class type" );
-	    return new_tmstring( "" );
-
-	case TAGDsTuple:
-	    el = d->DsTuple.fields;
-	    break;
-
-	case TAGDsClass:
-	    el = d->DsClass.fields;
-	    break;
-
-    }
-    e = findfield( el, sl->arr[1] );
-    if( e == fieldNIL ) return new_tmstring( "" );
     return newintstr( e->level );
 }
 
@@ -2099,11 +2034,14 @@ static struct fnentry fntab[] = {
      { "index", fnindex },
      { "inherits", fninherits },
      { "isinenv", fnisinenv },
+     { "ismember", fnismember },
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
      { "max", fnmax },
-     { "member", fnmember },
      { "memberlist", fnmemberlist },
+     { "membertypeclass", fnmembertypeclass },
+     { "membertypellev", fnttypellev },
+     { "membertypename", fnttypename },
      { "min", fnmin },
      { "mklist", fnmklist },
      { "neq", fnstrneq },
@@ -2130,12 +2068,9 @@ static struct fnentry fntab[] = {
      { "tplfilename", fntplfilename },
      { "tpllineno", fntpllineno },
      { "ttypeclass", fnmembertypeclass },
-     { "membertypeclass", fnmembertypeclass },
      { "ttypelist", fnttypelist },
      { "ttypellev", fnttypellev },
-     { "membertypellev", fnttypellev },
      { "ttypename", fnttypename },
-     { "membertypename", fnttypename },
      { "typelist", fntypelist },
      { "uniq", fnuniq },
      { "", fnplus }

@@ -152,7 +152,7 @@ List manipulation:
 ----
 .set lst a b c d e f
 index:   '${index a $(lst)}' '${index z $(lst)}' '${index z}' '${index}'
-member:   '${member a $(lst)}' '${member z $(lst)}' '${member z}' '${member}'
+ismember:'${ismember a $(lst)}' '${ismember z $(lst)}' '${ismember z}' '${ismember}'
 shift:   '${shift $(lst)}' '${shift}'
 first:   '${first $(lst)}' '${first}'
 seplist: '${seplist ", " $(lst)}' '${seplist a a}' '${seplist a}'
@@ -193,8 +193,8 @@ ${eq ${first $(path)} $(libpath)} ${shift $(path)}
 ${searchfile testsub}
 ----
 
-.foreach pass one two
-Pass $(pass)
+.foreach mode "" inherited
+Mode `$(mode)'
 Datastructure access functions:
 ----
 typelist: '${typelist}'
@@ -207,15 +207,15 @@ classtypelist: '${classtypelist}'
     isvirtual $t: '${isvirtual $t }'
 .foreach c ${conslist $t}
         celmlist: '${celmlist $t $c}'
-.foreach e ${celmlist $t $c }
+.foreach e ${celmlist $t $c}
             ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
 	    ctypellev $t $c $e: ${ctypellev $t $c $e}
             ctypename $t $c $e: '${ctypename $t $c $e }'
 .endforeach
 .endforeach
-    telmlist $t: '${telmlist $t }'
+    telmlist $t: '${telmlist $t $(mode)}'
     memberlist $t: '${memberlist $t }'
-.foreach e ${telmlist $t }
+.foreach e ${telmlist $t $(mode)}
 	ttypeclass $t $e: '${ttypeclass $t $e }'
 	ttypellev $t $e: ${ttypellev $t $e}
 	ttypename $t $e: '${ttypename $t $e }'
@@ -239,7 +239,7 @@ mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mkl
 stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
 inherits: ${inherits} ${inherits iserniet}
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
-telmlist: ${conslist} ${conslist bla bla} ${conslist notatype}
+telmlist: ${telmlist} ${telmlist bla bla} ${telmlist notatype}
 ----
 
 Datastructure dependency
