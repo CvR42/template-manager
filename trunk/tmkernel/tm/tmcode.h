@@ -1,4 +1,4 @@
-/* Requirement analysis took 450 milliseconds. */
+/* Requirement analysis took 360 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ht ---- */
@@ -7,7 +7,7 @@
    template file:      /usr/local/lib/tmc.ht
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta7
+   tm kernel version:  2.0-beta11
  */
 
 /* data structures */
@@ -34,6 +34,7 @@ typedef struct str_CCSuper *CCSuper;
 typedef struct str_Call *Call;
 typedef struct str_Case *Case;
 typedef struct str_Default *Default;
+typedef struct str_DsAlias *DsAlias;
 typedef struct str_DsClass *DsClass;
 typedef struct str_DsConstructor *DsConstructor;
 typedef struct str_DsConstructorBase *DsConstructorBase;
@@ -81,6 +82,7 @@ typedef struct str_tplelm *tplelm;
 #define CallNIL (Call)0
 #define CaseNIL (Case)0
 #define DefaultNIL (Default)0
+#define DsAliasNIL (DsAlias)0
 #define DsClassNIL (DsClass)0
 #define DsConstructorNIL (DsConstructor)0
 #define DsConstructorBaseNIL (DsConstructorBase)0
@@ -115,7 +117,7 @@ typedef enum en_tags_classComponent {
 } tags_classComponent;
 
 typedef enum en_tags_ds {
-    TAGDsConstructorBase, TAGDsTuple, TAGDsClass, TAGDsConstructor
+    TAGDsConstructorBase, TAGDsTuple, TAGDsClass, TAGDsConstructor, TAGDsAlias
 } tags_ds;
 
 typedef enum en_tags_tplelm {
@@ -218,11 +220,15 @@ public:
     tmstring_list inherits;
 };
 
+/* Structure for class 'DsAlias'. */
+class str_DsAlias: public str_ds {
+public:
+    tmstring target;
+};
+
 /* Structure for class 'DsClass'. */
 class str_DsClass: public str_ds {
 public:
-    tmstring name;
-    tmstring_list inherits;
     field_list fields;
     tmbool virtual;
 };
@@ -230,24 +236,18 @@ public:
 /* Structure for class 'DsConstructor'. */
 class str_DsConstructor: public str_ds {
 public:
-    tmstring name;
-    tmstring_list inherits;
     field_list fields;
 };
 
 /* Structure for class 'DsConstructorBase'. */
 class str_DsConstructorBase: public str_ds {
 public:
-    tmstring name;
-    tmstring_list inherits;
     tmstring_list constructors;
 };
 
 /* Structure for class 'DsTuple'. */
 class str_DsTuple: public str_ds {
 public:
-    tmstring name;
-    tmstring_list inherits;
     field_list fields;
 };
 
@@ -264,14 +264,12 @@ public:
 /* Structure for class 'Append'. */
 class str_Append: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'Appendfile'. */
 class str_Appendfile: public str_tplelm {
 public:
-    int lno;
     tmstring fname;
     tplelm_list body;
 };
@@ -279,41 +277,35 @@ public:
 /* Structure for class 'Call'. */
 class str_Call: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'Case'. */
 class str_Case: public str_tplelm {
 public:
-    int lno;
     tmstring val;
 };
 
 /* Structure for class 'Default'. */
 class str_Default: public str_tplelm {
 public:
-    int lno;
 };
 
 /* Structure for class 'Error'. */
 class str_Error: public str_tplelm {
 public:
-    int lno;
     tmstring str;
 };
 
 /* Structure for class 'Exit'. */
 class str_Exit: public str_tplelm {
 public:
-    int lno;
     tmstring str;
 };
 
 /* Structure for class 'Foreach'. */
 class str_Foreach: public str_tplelm {
 public:
-    int lno;
     tmstring felist;
     tplelm_list body;
 };
@@ -321,21 +313,18 @@ public:
 /* Structure for class 'GlobalAppend'. */
 class str_GlobalAppend: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'GlobalSet'. */
 class str_GlobalSet: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'If'. */
 class str_If: public str_tplelm {
 public:
-    int lno;
     tmstring cond;
     tplelm_list ifthen;
     tplelm_list ifelse;
@@ -344,21 +333,18 @@ public:
 /* Structure for class 'Include'. */
 class str_Include: public str_tplelm {
 public:
-    int lno;
     tmstring fname;
 };
 
 /* Structure for class 'Insert'. */
 class str_Insert: public str_tplelm {
 public:
-    int lno;
     tmstring fname;
 };
 
 /* Structure for class 'Macro'. */
 class str_Macro: public str_tplelm {
 public:
-    int lno;
     tmstring formals;
     tplelm_list body;
 };
@@ -366,14 +352,12 @@ public:
 /* Structure for class 'Plain'. */
 class str_Plain: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'Redirect'. */
 class str_Redirect: public str_tplelm {
 public:
-    int lno;
     tmstring fname;
     tplelm_list body;
 };
@@ -381,28 +365,24 @@ public:
 /* Structure for class 'Rename'. */
 class str_Rename: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'Return'. */
 class str_Return: public str_tplelm {
 public:
-    int lno;
     tmstring retval;
 };
 
 /* Structure for class 'Set'. */
 class str_Set: public str_tplelm {
 public:
-    int lno;
     tmstring line;
 };
 
 /* Structure for class 'Switch'. */
 class str_Switch: public str_tplelm {
 public:
-    int lno;
     tmstring val;
     switchcase_list cases;
     tplelm_list deflt;
@@ -411,7 +391,6 @@ public:
 /* Structure for class 'While'. */
 class str_While: public str_tplelm {
 public:
-    int lno;
     tmstring cond;
     tplelm_list body;
 };
@@ -501,6 +480,17 @@ struct str_Default {
 #endif
     tags_tplelm tag;
     int lno;
+};
+
+/* Structure for class 'DsAlias'. */
+struct str_DsAlias {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    tmstring target;
 };
 
 /* Structure for class 'DsClass'. */
@@ -886,6 +876,7 @@ struct str_var_list {
 #define to_Call(e) ((Call)e)
 #define to_Case(e) ((Case)e)
 #define to_Default(e) ((Default)e)
+#define to_DsAlias(e) ((DsAlias)e)
 #define to_DsClass(e) ((DsClass)e)
 #define to_DsConstructor(e) ((DsConstructor)e)
 #define to_DsConstructorBase(e) ((DsConstructorBase)e)
@@ -926,6 +917,7 @@ struct str_var_list {
 #define new_Call(lno,line) real_new_Call(lno,line,__FILE__,__LINE__)
 #define new_Case(lno,val) real_new_Case(lno,val,__FILE__,__LINE__)
 #define new_Default(lno) real_new_Default(lno,__FILE__,__LINE__)
+#define new_DsAlias(name,inherits,target) real_new_DsAlias(name,inherits,target,__FILE__,__LINE__)
 #define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,__FILE__,__LINE__)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
 #define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
@@ -977,6 +969,7 @@ extern CCSuper real_new_CCSuper( tmstring, const char *, const int );
 extern Call real_new_Call( int, tmstring, const char *, const int );
 extern Case real_new_Case( int, tmstring, const char *, const int );
 extern Default real_new_Default( int, const char *, const int );
+extern DsAlias real_new_DsAlias( tmstring, tmstring_list, tmstring, const char *, const int );
 extern DsClass real_new_DsClass( tmstring, tmstring_list, field_list, tmbool, const char *, const int );
 extern DsConstructor real_new_DsConstructor( tmstring, tmstring_list, field_list, const char *, const int );
 extern DsConstructorBase real_new_DsConstructorBase( tmstring, tmstring_list, tmstring_list, const char *, const int );
@@ -1021,6 +1014,7 @@ extern CCSuper new_CCSuper( tmstring );
 extern Call new_Call( int, tmstring );
 extern Case new_Case( int, tmstring );
 extern Default new_Default( int );
+extern DsAlias new_DsAlias( tmstring, tmstring_list, tmstring );
 extern DsClass new_DsClass( tmstring, tmstring_list, field_list, tmbool );
 extern DsConstructor new_DsConstructor( tmstring, tmstring_list, field_list );
 extern DsConstructorBase new_DsConstructorBase( tmstring, tmstring_list, tmstring_list );
@@ -1105,4 +1099,4 @@ extern tplelm_list rdup_tplelm_list( const tplelm_list );
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
 /* ---- end of /usr/local/lib/tmc.ht ---- */
-/* Code generation required 680 milliseconds. */
+/* Code generation required 580 milliseconds. */
