@@ -5,8 +5,6 @@
 
 .. File: tmccode.ct
 
-#include "config.h"
-
 /* Standard UNIX libraries */
 #include <stdio.h>
 #include <stdlib.h>
