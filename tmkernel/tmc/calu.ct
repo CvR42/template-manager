@@ -605,10 +605,6 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .endforeach
     tm_closetuple( st );
 .case constructorbase class
-    if( t == $tNIL ){
-	tm_printword( st, "@" );
-	return;
-    }
     tm_opencons( st );
 .if ${len ${nonvirtual $t ${subclasses $t}}}
     switch( t->tag ){
@@ -676,10 +672,10 @@ $(stic_$t)void print_$t_list( TMPRINTSTATE *st, const $t_list l )
 $(stic_$t)void fprint_$t( FILE *f, const $t t )
 {
     if( t == $tNIL ){
-	fputs( "@ ", f );
+	(void) fputs( "@ ", f );
 	return;
     }
-    putc( '(', f );
+    (void) putc( '(', f );
 .switch ${metatype $t}
 .case alias
 .error Internal error: alias $t still present.
@@ -689,7 +685,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .if $(first)
 .set first 0
 .else
-    fputs( ",\n", f );
+    (void) fputs( ",\n", f );
 .endif
     fprint_${type $t $e}( f, t->$e );
 .endforeach
@@ -698,9 +694,9 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
     switch( t->tag ){
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    fputs( "$c", f );
+	    (void) fputs( "$c", f );
 .foreach e ${allfields $c}
-	    putc( ' ', f );
+	    (void) putc( ' ', f );
 	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
 	    break;
@@ -712,7 +708,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .endif
 .case constructor
 .endswitch
-    fputs( ")\n", f );
+    (void) fputs( ")\n", f );
 }
 
 .endforeach
@@ -729,17 +725,17 @@ $(stic_$t)void fprint_$t_list( FILE *f, const $t_list l )
     unsigned int ix;
 
     if( l == $t_listNIL ){
-	fputs( "@ ", f );
+	(void) fputs( "@ ", f );
 	return;
     }
-    putc( '[', f );
+    (void) putc( '[', f );
     for( ix=0; ix<l->sz; ix++ ){
 	if( ix!=0 ){
-	    fputc( ',', f );
+	    (void) fputc( ',', f );
 	}
 	fprint_$t( f, l->arr[ix] );
     }
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 .endforeach
@@ -822,8 +818,8 @@ $(stic_$t)$t rdup_$t( const $t e )
 	    FATALTAG( e->tag );
     }
 .else
-#ifdef LOGNEW
     (void) e;
+#ifdef LOGNEW
     (void) _f;
     (void) _l;
 #endif
@@ -1252,7 +1248,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return 0;
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     err = tm_fneedc( f, '(' );
     if( err ){
 	return 1;
@@ -1304,7 +1300,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     if( tm_fscancons( f, tm_word, $(maxlen) ) ){
 	return 1;
     }
@@ -1377,7 +1373,6 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     int c;
     int n;
     $t nw;
-    int err = 0;
 
     *p = $t_listNIL;
     n = tm_fscanopenbrac( f );
@@ -1388,7 +1383,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     if( tm_fneedc( f, '[' ) ){
 	return 1;
     }
@@ -1404,13 +1399,13 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
 	(void) strcpy( tm_errmsg, tm_badeof );
 	return 1;
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     for(;;){
-	if( !err ){
-	    err = fscan_$t( f, &nw );
+	if( fscan_$t( f, &nw ) ){
+	    return 1;
 	}
 	*p = append_$t_list( *p, nw );
-	if( err || tm_fscanspace( f ) ){
+	if( tm_fscanspace( f ) ){
 	    return 1;
 	}
 	c = getc( f );
@@ -1419,7 +1414,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
 	    return 1;
 	}
 	if( c != ',' ){
-	    ungetc( c, f );
+	    (void) ungetc( c, f );
 	    break;
 	}
     }
@@ -1482,6 +1477,7 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
 $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int to )
 {
     unsigned int ix;
+    unsigned int shift;
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
@@ -1495,7 +1491,7 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
     for( ix=from; ix<to; ix++ ){
 	rfre_$t( l->arr[ix] );
     }
-    unsigned int shift = to-from;
+    shift = to-from;
     for( ix=from; (ix+shift)<l->sz; ix++ ){
 	l->arr[ix] = l->arr[ix+shift];
     }
