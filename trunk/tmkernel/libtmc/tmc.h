@@ -38,6 +38,7 @@ extern "C" {
 #endif
 
 typedef struct _tmc_sym *tmsymbol;
+typedef const struct _tmc_sym *const_tmsymbol;
 
 typedef char *tmstring;
 typedef char *tmword;
@@ -86,11 +87,21 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 
 /* 'tmsymbol' functions */
 #define tmsymbolNIL (tmsymbol)0
-#define null_tmsymbol() tmsymbolNIL
+#ifdef __cplusplus
+// These functions are safer than the macros below, since they only accept
+// tmsymbols.
+inline tmsymbol rdup_tmsymbol( tmsymbol s ) { return s; }
+inline void rfre_tmsymbol( tmsymbol s ) { }
+inline void fre_tmsymbol( tmsymbol s ) { }
+inline int cmp_tmsymbol( tmsymbol a, tmsymbol b) { return (a==b?0:(a<b?-1:1)); }
+inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
+#else
+#define rdup_tmsymbol(s) (s)
 #define rfre_tmsymbol(s)
 #define fre_tmsymbol(s)
-#define rdup_tmsymbol(s) (s)
 #define cmp_tmsymbol(a,b) (a==b?0:(a<b?-1:1))
+#define null_tmsymbol() tmsymbolNIL
+#endif
 
 /* 'double' functions */
 #define rdup_double(d) (d)
@@ -419,7 +430,11 @@ extern void tm_noroom( void );
 struct _tmc_sym {
     struct _tmc_sym *next;		/* next in list */
     tmconststring name;			/* pointer to the string */
+#ifdef __cplusplus
+    mutable tm_neutralp data;		/* any info for it. */
+#else
     tm_neutralp data;			/* any info for it. */
+#endif
 };
 
 /* the error message buffer of tm and its length */
