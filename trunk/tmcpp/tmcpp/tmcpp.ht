@@ -188,45 +188,45 @@ public:
     virtual ~$t_list();
     virtual $t_list *clone() const { return new $t_list( *this ); }
 
-    inline size_type size() const { return sz; }
-    inline size_type capacity() const { return room; }
-    inline bool empty() const { return sz == 0; }
+    virtual inline size_type size() const { return sz; }
+    virtual inline size_type capacity() const { return room; }
+    virtual inline bool empty() const { return sz == 0; }
 
-    void reserve( const size_type rm );
-    inline void resize( size_type new_sz ) { reserve( new_sz ); sz = new_sz; }
+    virtual void reserve( const size_type rm );
+    virtual inline void resize( size_type new_sz ) { reserve( new_sz ); sz = new_sz; }
 
-    inline iterator begin() { return arr; }
-    inline iterator end() { return arr+sz; }
+    virtual inline iterator begin() { return arr; }
+    virtual inline iterator end() { return arr+sz; }
 .if ${member $t $(need_reverse_list)}
-    void reverse();
+    virtual void reverse();
 .endif
 .if ${member $t $(need_extract_list)}
-    bool extract( const unsigned int, value_type * );
+    virtual bool extract( const unsigned int, value_type * );
 .endif
 .if ${member $t $(need_erase_list)}
-    void erase( const unsigned int );
-    void erase( const unsigned int, const unsigned int );
+    virtual void erase( const unsigned int );
+    virtual void erase( const unsigned int, const unsigned int );
 .endif
 .if ${member $t $(need_slice_list)}
-    $t_list *slice( const unsigned int, const unsigned int ) const;
+    virtual $t_list *slice( const unsigned int, const unsigned int ) const;
 .endif
 .if ${member $t $(need_append_list)}
-    void append( value_type );
+    virtual void append( value_type );
 .endif
 .if ${member $t $(need_insert_list)}
-    void insert( const unsigned int, value_type );
+    virtual void insert( const unsigned int, value_type );
 .endif
 .if ${member $t $(need_insertlist_list)}
-    void insertlist( unsigned int, $t_list & );
+    virtual void insertlist( unsigned int, $t_list & );
 .endif
 .if ${member $t $(need_extractlist_list)}
-    $t_list *extractlist( unsigned int, unsigned int );
+    virtual $t_list *extractlist( unsigned int, unsigned int );
 .endif
 .if ${member $t $(need_concat_list)}
-    void concat( $t_list * );
+    virtual void concat( $t_list * );
 .endif
 .if ${member $t $(need_destroy_list)}
-    void destroy();
+    virtual void destroy();
 .endif
 };
 
