@@ -22,7 +22,7 @@
 .return "($a)+($b)"
 .endmacro
 ..
-.macro generate_empty_analizer_body indent var t
+.macro generate_empty_analyzer_body indent var t
 $(indent)(void) $(var);
 $(indent)(void) n;
 .endmacro
