@@ -1,7 +1,7 @@
 #include <tmc.h>
 #include "calc.h"
 
-/* Requirement analysis took 100 milliseconds. */
+/* Requirement analysis took 120 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ct ---- */
@@ -11,7 +11,7 @@
    template file:      /usr/local/lib/tmc.ct
    datastructure file: calc.ds
    tm version:         36
-   tm kernel version:  2.0-beta3
+   tm kernel version:  2.0-beta4
  */
 
 #ifndef FIRSTROOM
@@ -330,7 +330,6 @@ static void fre_statement_list( statement_list l )
  *    Real append routines                        *
  **************************************************/
 
-
 /* Append a statement element 'e' to list 'l', and return the new list. */
 statement_list append_statement_list( statement_list l, statement e )
 {
@@ -346,14 +345,12 @@ statement_list append_statement_list( statement_list l, statement e )
  *    Recursive freeing routines                  *
  **************************************************/
 
-
 static void rfre_statement( statement );
 static void rfre_ExprConst( ExprConst );
 static void rfre_ExprNegate( ExprNegate );
 static void rfre_ExprPlus( ExprPlus );
 static void rfre_ExprSymbol( ExprSymbol );
 static void rfre_ExprTimes( ExprTimes );
-
 /* Recursively free an element 'e' of class type 'expr'
    and all elements in it.
  */
@@ -487,7 +484,6 @@ void rfre_statement_list( statement_list e )
  *    print_<type> and print_<type>_list routines *
  **************************************************/
 
-
 static void print_statement( TMPRINTSTATE *st, const statement );
 static void print_expr( TMPRINTSTATE *st, const expr );
 static void print_ExprConst( TMPRINTSTATE *st, const ExprConst );
@@ -495,7 +491,6 @@ static void print_ExprNegate( TMPRINTSTATE *st, const ExprNegate );
 static void print_ExprPlus( TMPRINTSTATE *st, const ExprPlus );
 static void print_ExprSymbol( TMPRINTSTATE *st, const ExprSymbol );
 static void print_ExprTimes( TMPRINTSTATE *st, const ExprTimes );
-
 /* Print an element 't' of class type 'statement'
  * using print optimizer.
  */
@@ -651,15 +646,11 @@ void print_statement_list( TMPRINTSTATE *st, const statement_list l )
 #define fscan_expr(f,ep) real_fscan_expr(f,ep,_f,_l)
 #undef fscan_statement_list
 #define fscan_statement_list(f,lp) real_fscan_statement_list(f,lp,_f,_l)
-
 static int real_fscan_statement( FILE *, statement *, const char *_f, const int _l );
 static int real_fscan_expr( FILE *, expr *, const char *_f, const int _l );
-
 #else
-
 static int fscan_statement( FILE *, statement * );
 static int fscan_expr( FILE *, expr * );
-
 #endif
 
 /* Read a class of type statement
@@ -972,7 +963,7 @@ int get_balance_calc( void )
     if( newcnt_statement<frecnt_statement ){
         return -1;
     }
-    /* Check for too many fre()s. */
+    /* Check for too few fre()s. */
     if( newcnt_statement_list>frecnt_statement_list ){
         res = 1;
     }
@@ -998,4 +989,4 @@ int get_balance_calc( void )
 }
 
 /* ---- end of /usr/local/lib/tmc.ct ---- */
-/* Code generation required 150 milliseconds. */
+/* Code generation required 170 milliseconds. */
