@@ -1,0 +1,175 @@
+New version 2.0.1
+
+- The software is now compiled with -O6 if gcc is used.
+
+- Tuned gen_tmsymbol() a lot.
+
+- Added some functions to access and manipulate time: 'now',
+'processortime' and 'formattime'.
+
+- Fixed a bug the C Tm library function to read a string, that might leave
+the terminating '\0' of that string beyond the allocated room.
+
+New version 2.0
+
+- No significant changes.
+
+New Version 2.0 beta 29
+
+- Fixed a bug that caused 'not set' expressions in Tm regular expressions
+to match the '\0' character that terminates a string.
+
+New in version 2.0:
+
+- 'inheritsort': a Tm function that sorts a list of types so that
+  inherited types are placed after the types they inherit from.
+
+- A new meta-type 'class'. Only the new C template 'tmc' supports this
+  meta-type; the older C templates calu, cald and cllu don't.
+  Tm has a number of new functions to support the new meta-type, and
+  other functions are renamed and generalized to support all types.
+  The older names of these functions have been retained for backward
+  compatibility, but will be removed in a future version.
+
+- .expandinherits is gone again.
+
+- The Tm function 'deptype' is gone. Instead, a couple of new functions
+  make it simpler to construct your own version. E.g. listtypes,
+  singletypes, delisttypes. The documentation describes a way to use
+  these functions for dependence analysis.
+
+- There is a new function that returns the current time of execution
+  in milliseconds. Mildly useful for determining why the template takes
+  such a long time.
+
+- Almost all restrictions on Tm datastructures have been lifted. E.g.
+  names may now contain '_'s, constructors may start with a lowercase
+  character, types and field names  may start with an uppercase character,
+  etc.
+
+- Constuctors are now considered as types, and are for example listed
+  in ${typelist}.
+
+- There is a new .switch statement that does the obvious.
+
+- There is a new ${if <cond> <then> <else>} function.
+
+- A number of new functions provide information on inheritance. Next to
+  the existing ${inherits t}, there are: ${inheritors t}, ${superclasses t}
+  and ${subclasses t}.
+
+- A new function ${type e} constructs a complete type name from the
+  information about that field, and from the variables listpre and
+  listsuff.
+
+- The C templates provide the new functions insertlist_<type>_list()
+  and extractlist_<type>_list().
+
+- The tmc template provides a function is_<class>() to determine whether
+  an element belongs to the given subclass.
+
+- The data structure files allow aliases.
+
+- The Tm template language allows type renaming; mainly to allow
+  the implementation of aliases.
+
+New in version 1.2:
+- Documentation moved to a separate package.
+
+- Tm now implements the expansion of inherited types. The .expandinherits
+  command recursively replaces all references to inherited types by their
+  definition. Only tuple types are allowed as superclass.
+
+- The version number of Tm has been incremented to allow templates to
+  take the new .expandinherits command into account.
+
+- Cycles in inherit references are now detected and reported.
+
+- Characters in a tmtext are now simply of type 'char' instead of
+  type 'unsigned char'. This reduces the number of complaints from
+  some compilers.
+
+- The C templates now provide a new function extract_<type>_list()
+  that is similar to delete_<type>_list(), but that returns the element
+  to the caller.
+
+- The IBM variant of UNIX, AIX, has typedefs for 'uchar', 'uint' and 'ulong'.
+  These typedefs clash with the typedefs in the C support library.
+  Current solution: #ifdef( _AIX ) around these typedefs. The real
+  solution for this would be to use different, less obvious, names for these
+  types, but why should *I* always be the one to yield.
+  The worst thing is that the AIX typedefs are not used anywhere.
+
+- Fixed a bug in tmtext freeing that caused errors of the lognew
+  administration on some systems.
+
+- An embarrasingly big bug in delete_<type>_list() of the linked list
+  template was fixed: the function only worked for the first element in
+  the list. Whoops.
+
+- Installation now uses the 'install' command, and creates directories
+  that aren't there. In the previous versions, installation went wrong
+  (often without warning), if the target directories didn't exist. Thanks
+  to all the people that pointed this out.
+
+- A small bug in the fscan_<type> function of the cllu template has been
+  fixed. (Whitespace before a '@' symbol was not skipped.) Thanks to
+  Dainel Schlachta <schlacht@emacs.central.de> for pointing this out.
+
+- LOGNEW handling has been cleaned up considerably, so that the origin
+  of more memory leaks is traced back to user code.
+
+- 'Tm -h' now prints the version number of the package it is part of.
+
+New in version 1.1.3:
+- The Tm functions 'conslist' and 'telmlist' are more strict: they
+  no longer accept that you pass them a tuple type or constructor type
+  respectively.
+- GNU C flags are now really used. I forgot to run autoconf in
+  previous versions.
+- Some small bugs have been removed from the tm C support library.
+
+New in version 1.1.2:
+- Nothing, but the miranda and pascal templates have been published,
+  and creating a new version here makes everything a lot simpler.
+
+New in version 1.1.1:
+- I gave up on MSDOS/MS-Windows with 16-bits. Farmalloc() and similar look
+  broken to me under MS-Windows, and it is simply not worth the aggravation.
+  Switch to 32 bits (MS-Windows 95 or NT).
+- Improved manual.
+- Tm now allows variables to be set from the command line with
+  -svar (equivalent to '.set var' before the first template line) or
+  -svar=val (equivalent to '.set var val' before the first template line).
+
+New in version 1.1:
+- The LOGNEW handling has been changed completely: now the position
+  information is passed as parameters. This prevents complaints from
+  some compilers, and is cleaner than the previous mechanism.
+
+  The support functions for this in the library have also been changed:
+  id_lognew() and id_logfre() have been renamed to tm_new_logid() and
+  tm_fre_logid() respectively, and the macros TM_LOGNEW() and TM_LOGFRE()
+  are gone (the corresponding functions still exist).
+
+- Fixed a bug in datastructure parsing in Tm that could cause it to
+  hang in some circumstances.
+
+- Fixed incorrect handling of files that do not end with a '\n'. Under
+  UNIX such files can be created by emacs.
+
+- Some small cosmetic changes.
+
+- The C templates are more hardened for empty tuples and constructors.
+
+- I have declared war on all warnings in any (non-broken) compiler
+  in all circumstances. Please report any warning issued about
+  the sources or the generated code, and I will try to eliminate it
+  in a future version.
+
+- The support library now has insert_tmtext(); the type of replace_tmtext()
+  is now changed: it returns a tmtext. This should not affect anyone
+  since hardly anyone has used it yet.
+
+- It now compiles on HPUX with the HP ANSI C compiler. You must add the
+  flag -Aa in the Makefiles, but then everything works.

@@ -1,0 +1,19 @@
+inheritsort plot curve XYCurve YCurve xypoint LinScale LogScale scale num:
+  plot curve XYCurve YCurve xypoint scale LinScale LogScale num
+depsort plot curve XYCurve YCurve xypoint LinScale LogScale scale num:
+  curve XYCurve scale plot num YCurve xypoint LinScale LogScale
+delisttypes: [b <c> <<d>>]
+listtypes: [<b> <<c>> <<<d>>>]
+mklist: [<<<a>>> <<<z>>>]
+singletypes: [a e> <f]
+stemname: [a b c d e> <f]
+reach int: int
+reach plot: tmstring int num LinScale LogScale scale <curve> <xypoint> xypoint XYCurve <num> YCurve curve plot
+reach curve: int <xypoint> num xypoint XYCurve <num> YCurve curve
+reach XYCurve: int <xypoint> num xypoint XYCurve
+reach YCurve: int num <num> YCurve
+reach xypoint: int num xypoint
+reach LinScale: tmstring int num LinScale
+reach LogScale: tmstring int num LogScale
+reach scale: tmstring int num LinScale LogScale scale
+reach num: int num
