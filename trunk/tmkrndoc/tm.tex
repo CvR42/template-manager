@@ -848,6 +848,7 @@ will produce:
 \verbatiminput{regex.out}
 \end{showfile}
 \subsection{Environment access functions}
+\index{environment access|(}
 \nopagebreak
 \par
 \begin{desctab}
@@ -861,7 +862,7 @@ If the variable does not exist an empty string is returned.
 Determine whether environment variable {\tt nm} exists.
 Return {\it true} if it exists, or {\it false} \/if it does not.
 \\
-{\tt dsfilename}\index{dsfilename@{\tt dsfilename}}
+{\tt processortime}\index{dsfilename@{\tt dsfilename}}
 &
 Return the name of the file that describes the data structures.
 \\
@@ -926,6 +927,77 @@ may produce (depending on the value of the \verb+SHELL+ environment variable):
 /bin/csh
 \end{verbatim}
 \end{showfile}
+\index{environment access|)}
+\subsection{Time functions}
+\index{time functions|(}
+\nopagebreak
+\par
+\begin{desctab}
+{\tt now}\index{now@{\tt now}}
+&
+Return the current time as an integer number of seconds from the epoch
+(system-dependent, but usually 1 jan 1970 00:00:00),
+similar to the function \verb'time()' in the standard {\C} library.
+\\
+{\tt formattime time fmt}\index{formattime@{\tt formattime}}
+&
+Given a time in an integer number of seconds from the epoch, (as returned
+by the function {\tt now}), return a formatted string for this time. The
+format string has the same syntax as for the function \verb'strftime()'
+in the {\C} library. That is, all characters are copied to the output
+string, except for the following character sequences, which are replaced
+by the listed string:
+\begin{center}
+\begin{tabular}{ll}
+\verb'%a' & abbreviated weekday name \\
+\verb'%A' & full weekday name \\
+\verb'%b' & abbreviated month name \\
+\verb'%B' & full month name \\
+\verb'%c' & local date and time representation \\
+\verb'%d' & day of the month \\
+\verb'%H' & hour (24-hour clock) (00-23) \\
+\verb'%I' & hour (12-hour clock) (01-12) \\
+\verb'%j' & day of the year (001-366) \\
+\verb'%m' & month (01-12) \\
+\verb'%M' & minute (00-59) \\
+\verb'%p' & local equivalent of AM or PM \\
+\verb'%S' & second (00-61) \\
+\verb'%U' & week number of the year (Sunday as 1st day of week) (00-53) \\
+\verb'%w' & weekday (0-6, Sunday is 0) \\
+\verb'%W' & week number of the year (Monday as 1st day of week) (00-53) \\
+\verb'%x' & local date representation \\
+\verb'%X' & local time representation \\
+\verb'%y' & year without century (00-99) \\
+\verb'%Y' & year with century \\
+\verb'%Z' & time zone name, if any \\
+\verb'%%' & \verb'%' \\
+\end{tabular}
+\end{center}
+\par
+By the default the format string \verb'%a %b %Y %H:%M:%S' is used.
+\\
+{\tt processortime}\index{processortime@{\tt processortime}}
+&
+Return the current amount of processor time that has been consumed by the
+program as an integer number of milliseconds. Note that this is {\em
+not} the elapsed time.
+\par
+Internally, the function \verb'clock()' from the standard {\C} library is
+used. Although the returned time has a {\em resolution} of milliseconds,
+it may have a much worse {\em accuracy}. The accuracy is system-dependent,
+but typically there is an error of about 10ms.
+\\
+\end{desctab}
+\par
+For example, the input file:
+\begin{showfile}
+\verbatiminput{time.xt}
+\end{showfile}
+could produce (depending on time and processor speed) the following output:
+\begin{showfile}
+\verbatiminput{time.out}
+\end{showfile}
+\index{time functions|)}
 \subsection{Data structure access functions}
 \begin{desctab}
 {\tt classlist}\index{classlist@{\tt classlist}}
