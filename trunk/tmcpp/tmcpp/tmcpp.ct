@@ -180,7 +180,7 @@ $t::~$t()
 // Normal constructor
 $t_list::$t_list( const size_type rm ): sz(0), room(0), arr(0)
 {
-    reserve( rm );
+    $t_list::reserve( rm );
 .if ${member $t $(need_stat_list)}
     newcount++;
 .endif
@@ -189,7 +189,7 @@ $t_list::$t_list( const size_type rm ): sz(0), room(0), arr(0)
 // Copy constructor
 $t_list::$t_list( const $t_list &l ): sz(0), room(0), arr(0)
 {
-    reserve( l.room );
+    $t_list::reserve( l.room );
     for( size_type ix=0; ix<l.sz; ix++ ){
 .if ${member $t $(valuetypes)}
 	arr[ix] = l.arr[ix];
@@ -259,7 +259,7 @@ void $t_list::reserve( const size_type rm )
 void $t_list::append( value_type e )
 {
     if( sz >= room ){
-	reserve( 1+sz+sz );
+	$t_list::reserve( 1+sz+sz );
     }
     arr[sz] = e;
     sz++;
@@ -302,7 +302,7 @@ void $t_list::insert( const size_type pos, value_type e )
     size_type the_pos = pos;
 
     if( sz >= room ){
-	reserve( 1+sz+sz );
+	$t_list::reserve( 1+sz+sz );
     }
     if( the_pos>sz ){
 	the_pos = sz;
@@ -329,7 +329,7 @@ void $t_list::insertlist( size_type pos, $t_list &lb )
 {
     const size_type szb = lb.sz;
 
-    reserve( sz+szb );
+    $t_list::reserve( sz+szb );
     if( pos>sz ){
 	pos = sz;
     }
@@ -369,7 +369,7 @@ void $t_list::concat( $t_list *lb )
     value_type *sp;
     value_type *dp;
 
-    reserve( sz+lb->size() );
+    $t_list::reserve( sz+lb->size() );
     size_type cnt = lb->size();
     sp = lb->arr;
     dp = &arr[sz];
