@@ -61,9 +61,9 @@ static void check_ds_inheritance(
     myname = tmstringNIL;
     supers = tmstring_listNIL;
     switch( me->tag ){
-        case TAGDsCons:
-            supers = rdup_tmstring_list( me->DsCons.inherits );
-            myname = me->DsCons.name;
+        case TAGDsConstructorBase:
+            supers = rdup_tmstring_list( me->DsConstructorBase.inherits );
+            myname = me->DsConstructorBase.name;
             break;
 
 	case TAGDsTuple:

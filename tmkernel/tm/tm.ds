@@ -41,11 +41,14 @@ var == (
     val:tmstring	|| The value of the variable
 );
 
+switchcase == ( cases:tmstring, action:[tplelm] );
+
 tplelm ::=
     Plain lno:int plainline:tmstring |
     Foreach lno:int felist:tmstring felines:[tplelm] |
     While lno:int whilecond:tmstring whilelines:[tplelm] |
     If lno:int ifcond:tmstring ifthen:[tplelm] ifelse:[tplelm] |
+    Switch lno:int val:tmstring cases:[switchcase] deflt:[tplelm] |
     Set lno:int setline:tmstring |
     GlobalSet lno:int setline:tmstring |
     Append lno:int appline:tmstring |
@@ -57,5 +60,10 @@ tplelm ::=
     Macro lno:int formpar:tmstring macbody:[tplelm] |
     Call lno:int callline:tmstring |
     Return lno:int retval:tmstring |
-    Insert lno:int fname:tmstring;
+    Insert lno:int fname:tmstring |
+    || The two statements below are constructed only temporary.
+    || They are removed once the complete switch statement has
+    || been digested.
+    Case lno:int val:tmstring |
+    Default lno:int ;
 

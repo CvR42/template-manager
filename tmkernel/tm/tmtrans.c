@@ -36,11 +36,14 @@
 typedef enum en_tmcommands {
     APPEND,
     CALL,
+    CASE,
+    DEFAULT,
     ELSE,
     ENDFOREACH,
     ENDIF,
     ENDMACRO,
     ENDREDIRECT,
+    ENDSWITCH,
     ENDWHILE,
     EOFLINE,		/* special line: end of file */
     ERROR,
@@ -55,6 +58,7 @@ typedef enum en_tmcommands {
     REDIRECT,
     RETURN,
     SET,
+    SWITCH,
     WHILE
 } tmcommand;
 
@@ -73,11 +77,14 @@ struct dotcom {
 static struct dotcom dotcomlist[] = {
     { "append", APPEND },
     { "call", CALL },
+    { "case", CASE },
+    { "default", DEFAULT },
     { "else", ELSE },
     { "endforeach", ENDFOREACH },
     { "endif", ENDIF },
     { "endmacro", ENDMACRO },
     { "endredirect", ENDREDIRECT },
+    { "endswitch", ENDSWITCH },
     { "endwhile", ENDWHILE },
     { "error", ERROR },
     { "exit", EXIT },
@@ -91,6 +98,7 @@ static struct dotcom dotcomlist[] = {
     { "redirect", REDIRECT },
     { "return", RETURN },
     { "set", SET },
+    { "switch", SWITCH },
     { "while", WHILE },
     { "", SET }		/* end of table mark */
 };
@@ -146,6 +154,89 @@ static void unbalance( int lno, tmcommand isterm, tmcommand needterm )
     }
 }
 
+typedef enum en_switchstate {
+    SWS_NONE, SWS_CASE, SWS_DEFAULT
+} switchstate;
+
+/* Given a list of template elements, construct a proper switch
+ * from these statements, by searching for the 'case' and 'default'
+ * lines.
+ */
+static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
+{
+    unsigned int ix = 0;
+    tplelm_list block;
+    tplelm_list deflt;
+    switchcase_list cases;
+    switchstate state = SWS_NONE;
+    tmstring val;
+
+    block = new_tplelm_list();
+    cases = new_switchcase_list();
+    deflt = tplelm_listNIL;
+    val = tmstringNIL;
+    for( ix=0; ix<el->sz; ix++ ){
+	const tplelm e = el->arr[ix];
+
+	switch( e->tag ){
+	    case TAGCase:
+	    case TAGDefault:
+		switch( state ){
+		    case SWS_NONE:
+			if( block->sz != 0 ){
+			    int oldtpllineno = tpllineno;
+
+			    tpllineno = lno+1;
+			    line_error( "statements outside a case ignored" );
+			    tpllineno = oldtpllineno;
+			    rfre_tplelm_list( block );
+			    block = new_tplelm_list();
+			}
+			break;
+
+		    case SWS_CASE:
+			cases = append_switchcase_list(
+			    cases,
+			    new_switchcase( rdup_tmstring( val ), block )
+			);
+			block = new_tplelm_list();
+			break;
+
+		    case SWS_DEFAULT:
+			if( deflt != tplelm_listNIL ){
+			    line_error( "second .deflt block ignored" );
+			    rfre_tplelm_list( block );
+			}
+			else {
+			    deflt = block;
+			}
+			block = new_tplelm_list();
+			break;
+		}
+		if( e->tag == TAGCase ){
+		    state = SWS_CASE;
+		    val = e->Case.val;
+		}
+		else {
+		    state = SWS_DEFAULT;
+		}
+
+	    default:
+		block = append_tplelm_list( block, rdup_tplelm( el->arr[ix] ) );
+		break;
+	}
+    }
+    if( deflt == tplelm_listNIL ){
+	deflt = new_tplelm_list();
+    }
+    /* We know the caller puts an empty case statement at the end, so
+     * this block is guaranteed to contain only that. Throw away
+     * without checking.
+     */
+    rfre_tplelm_list( block );
+    return new_Switch( lno, rdup_tmstring( swval ), cases, deflt );
+}
+
 /* Given a file 'f' and a pointer to an int 'endcom', read all lines from
    file 'f' up to the next unbalanced end command and put them in template
    elements. End commands are:
@@ -155,6 +246,7 @@ static void unbalance( int lno, tmcommand isterm, tmcommand needterm )
       .endredirect
       .endif
       .endmacro
+      .endswitch
       .endwhile
 
    Return the list of template elements, and set *endcom to the end command
@@ -221,6 +313,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 		    case ELSE:
 		    case ENDFOREACH:
 		    case ENDIF:
+		    case ENDSWITCH:
 		    case ENDMACRO:
 		    case ENDREDIRECT:
 		    case ENDWHILE:
@@ -228,6 +321,32 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			*endcom = cp->dotcomtag;
 			TM_FREE( inbuf );
 			return tel;
+
+		    case CASE:
+			te = new_Case( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case DEFAULT:
+			te = new_Default( tpllineno );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case SWITCH:
+		    {
+			tplelm_list el;
+
+			firstlno = tpllineno;
+			el = readtemplate( f, &subendcom );
+			if( subendcom != ENDSWITCH ){
+			    unbalance( firstlno, subendcom, ENDSWITCH );
+			}
+			el = append_tplelm_list( el, new_Case( 0, new_tmstring( "" ) ) );
+			te = construct_switch( firstlno, p, el );
+			tel = append_tplelm_list( tel, te );
+			rfre_tplelm_list( el );
+			break;
+		    }
 
 		    case IF:
 			firstlno = tpllineno;
@@ -807,6 +926,48 @@ static void doif( const tplelm tpl, FILE *outfile )
     }
 }
 
+/* Handle 'switch' command. */
+static void doswitch( const tplelm tpl, FILE *outfile )
+{
+    char *is;
+    char *os;
+    bool visited = FALSE;
+    tmstring_list sl;
+    unsigned int ix;
+    switchcase_list cases;
+
+    tpllineno = tpl->If.lno;
+    is = tpl->Switch.val;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+    if( sl->sz != 1 ){
+	line_error( "A switch command requires exactly one parameter" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    cases = tpl->Switch.cases;
+    for( ix=0; ix<cases->sz; ix++ ){
+	char *caseval = cases->arr[ix]->cases;
+	tmstring sentence;
+	tmstring_list words;
+
+	sentence = alevalto( &caseval, '\0' );
+	words = chopstring( sentence );
+	rfre_tmstring( sentence );
+	if( member_tmstring_list( sl->arr[0], words ) ){
+	    /* We've got a match. */
+	    dotrans( cases->arr[ix]->action, outfile );
+	    visited = TRUE;
+	}
+	rfre_tmstring_list( words );
+    }
+    if( !visited ){
+	dotrans( tpl->Switch.deflt, outfile );
+    }
+    rfre_tmstring_list( sl );
+}
+
 /* Handle 'foreach' command.
    Given a list of template lines, starting with a foreach command line,
    generate output lines. Handle local commands by recursion.
@@ -968,6 +1129,14 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
 	    case TAGIf:
 		doif( e, outfile );
+		break;
+
+	    case TAGSwitch:
+		doswitch( e, outfile );
+		break;
+
+	    case TAGCase:
+	    case TAGDefault:
 		break;
 
 	    case TAGPlain:
