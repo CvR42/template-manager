@@ -20,8 +20,8 @@
 #include "tmstring.h"
 #include "global.h"
 
-FILE *tracestream = stderr;
-FILE *statstream = stderr;
+FILE *tracestream = 0;
+FILE *statstream = 0;
 
 tmstring tplfilename = tmstringNIL;
 int tpllineno = 0;
@@ -31,7 +31,7 @@ int dslineno = 0;
 ds_list allds;
 tmstring_list searchpath = tmstring_listNIL;
 
-time_t start_time;
+clock_t start_time;
 
 int fntracing = FALSE;
 int listing = FALSE;
