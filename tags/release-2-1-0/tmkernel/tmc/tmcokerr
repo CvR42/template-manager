@@ -1,0 +1,75 @@
+EA                  :      0 allocated,      0 freed.
+EB                  :      0 allocated,      0 freed.
+EC                  :      0 allocated,      0 freed.
+SubNamed            :    414 allocated,    410 freed.<-
+SubNamedlist        :    621 allocated,    615 freed.<-
+Thing               :   1657 allocated,   1641 freed.<-
+Top                 :    207 allocated,    205 freed.<-
+TopClass            :      0 allocated,      0 freed.
+TopEmptyTuple       :      0 allocated,      0 freed.
+TopEnum             :      0 allocated,      0 freed.
+TopNone             :    626 allocated,    621 freed.<-
+TopTuple            :    207 allocated,    205 freed.<-
+emptytuple          :      0 allocated,      0 freed.
+exprConst           :      2 allocated,      2 freed.
+exprFold            :      0 allocated,      0 freed.
+exprPlus            :      1 allocated,      1 freed.
+exprSubtract        :      0 allocated,      0 freed.
+label               :      1 allocated,      1 freed.
+subtuple            :    207 allocated,    205 freed.<-
+sublevel_list       :    414 allocated,    410 freed.<-
+sublevel_list_list  :    207 allocated,    205 freed.<-
+subtuple_list       :      0 allocated,      0 freed.
+thing_list          :    621 allocated,    615 freed.<-
+toplevel_list       :    107 allocated,    106 freed.<-
+lognew: pending blocks:
+tmctest.c(220) id=30
+tmctest.c(220) id=56
+tmctest.c(220) id=57
+tmctest.c(220) id=59
+tmctest.c(220) id=60
+tmctest.c(220) id=61
+tmctest.c(220) id=62
+tmctest.c(220) id=63
+tmctest.c(220) id=64
+tmctest.c(220) id=65
+tmctest.c(220) id=66
+tmctest.c(220) id=67
+tmctest.c(220) id=68
+tmctest.c(220) id=69
+tmctest.c(220) id=70
+tmctest.c(220) id=71
+tmctest.c(220) id=72
+tmctest.c(220) id=73
+tmctest.c(220) id=74
+tmctest.c(220) id=75
+tmctest.c(220) id=76
+tmctest.c(220) id=77
+tmctest.c(220) id=78
+tmctest.c(220) id=79
+tmctest.c(220) id=80
+tmctest.c(220) id=81
+tmctest.c(220) id=82
+tmctest.c(220) id=83
+tmctest.c(220) id=84
+tmctest.c(220) id=85
+tmctest.c(220) id=86
+tmctest.c(220) id=87
+tmctest.c(220) id=88
+tmctest.c(220) id=89
+tmctest.c(220) id=90
+tmctest.c(220) id=91
+tmctest.c(220) id=92
+tmctest.c(220) id=93
+tmctest.c(220) id=94
+tmctest.c(220) id=95
+tmctest.c(220) id=96
+tmctest.c(220) id=97
+tmctest.c(220) id=98
+tmctest.c(220) id=99
+tmctest.c(220) id=100
+tmctest.c(220) id=101
+tmctest.c(220) id=102
+tmctest.c(220) id=103
+tmctest.c(220) id=104
+tmctest.c(220) id=105

@@ -1,0 +1,275 @@
+\chapter{The implementation of Tm}
+\label{s.impl}
+\section{General information}
+This appendix describes the implementation of {\Tm} and its language templates.
+Since most code of {\Tm} and its templates is provided with comments that
+describe the purpose of each definition.
+That information will not be repeated in this appendix.
+Instead the appendix describes the global structure of the code.
+\section{Tm}
+{\Tm} takes a data structure description file and a template file,
+and executes the commands in the template file to generate output.
+\subsection{Files}
+The following table describes the most important files of the {\Tm} sources.
+Most of the \texttt{.c} files have an associated \texttt{.h} file that
+contains \texttt{extern} declarations of all functions that are supposed
+to be visible outside that file.
+All other files that use one of these functions have an
+\texttt{\#include} of that \texttt{.h} file.
+\par
+\begin{tabular}{lp{\descwidth}}
+\texttt{debug.c} & Handles parsing of the command line debugging flags. \\
+\texttt{ds.ds} & Data structures for representation of data structures. \\
+\texttt{refex.c} & Regular expression pattern matcher. \\
+\texttt{tm.1} & Manual pages.\\
+\texttt{tm.c} & Main program. Setup, command line parsing and termination. \\
+\texttt{tmdefs.h} & General definitions for {\Tm}. \\
+\texttt{tmerror.c} & Error handling. \\
+\texttt{tmexpr.c} & Handling of numerical expressions. That is,
+evaluation of strings within \verb!$[]!. \\
+\texttt{tmfn.c} & Handling of functions. That is, evaluation of strings
+within \verb!${}!. \\
+\texttt{tmglobal.c} & Declaration of global variables. \\
+\texttt{tmgram.y} & \texttt{yacc} grammar for parsing of data structure
+definitions. \\
+\texttt{tmlex.c} & Lexical analysis for \texttt{tmgram.y}. \\
+\texttt{tmmisc.c} & Assorted low-level functions. \\
+\texttt{tmstring.c} & String handling. E.g. separation of a string into words.\\
+\texttt{tmtrans.c} & Template file parsing and evaluation. \\
+\texttt{tmvar.c} & Tm variable handling. \\
+\texttt{tplelm.ds} & Data structures for representation of template lines. \\
+\end{tabular}
+
+\subsection{debugging variables}
+{\Tm} has a number of debugging flags
+that can be switched on from the command line by the
+option \verb!-d<debugflags>!,
+where each \verb!<debugflag>! is character representing a debug switch.
+\par
+{\Tm} supports the following flags:
+\par
+\begin{tabular}{lll}
+character & variable & description \\
+\hline
+\texttt{e} & \texttt{sevaltr} & tracing of string evaluations \\
+\texttt{f} & \texttt{fntr} & tracing of function evaluations \\
+\texttt{l} & \texttt{listing} & list parsetree \\
+\texttt{m} & \texttt{maintr} & tracing of main actions \\
+\texttt{s} & \texttt{stat} & statistics \\
+\texttt{v} & \texttt{vartr} & variable tracing \\
+\texttt{x} & \texttt{lextr} & tracing of lexical analyser \\
+\texttt{y} & \texttt{yydebug} & tracing of YACC parser \\
+\end{tabular}
+\par
+For example, the command line option \verb!-desx! sets the variables
+\texttt{sevaltr}, \texttt{stat} and \texttt{lextr} to true.
+The table shown above is in essence the table \texttt{flagtab[]}
+in the file \texttt{tm.c}.
+The function \texttt{setdbflags()} is given this table and a string of debug
+flags as parameters, and turns on the appropriate flags.
+The function \texttt{dbreport()} indicates which flags are turned on,
+and the function \texttt{dbhelp()} gives a list of all available options.
+The latter is used for \verb!tm -h!.
+\subsection{error handling}
+Errors are handled by the functions in \texttt{tmerror.c}.
+To print an error message, the function \texttt{error()} is invoked.
+If the global \texttt{char} array \texttt{errpos} contains a string (that
+is, if \verb@errpos[0]!='\0'@),
+it is printed before the error message. 
+Similarly, if the global \texttt{char} array \texttt{errarg} contains a string,
+it is printed after the error message.
+Both arrays have length \texttt{ERRARGLEN}, that is at least 80.
+Using \texttt{errpos[]} and \texttt{errarg[]} may seem a clumsy way to pass
+parameters to \texttt{error()},
+but this way it is possible to use \texttt{sprintf()} to construct position
+and argument indications for the error message that may have any form.
+Unfortunately \texttt{errpos[]} and \texttt{errarg[]} have a constant size,
+but there is no easy way around this.
+\subsection{flow of control}
+Globally, {\Tm} executes the following steps:
+\begin{itemize}
+\item Initialisation.
+\item Command line parsing.
+\item Data structure file parsing.
+\item Template file parsing.
+\item Output generation.
+\item Termination.
+\end{itemize}
+Only data structure file parsing, template file parsing and output
+generation will be discussed in detail.
+\par
+The global execution steps of {\Tm} can be made visible by setting
+the variable \texttt{maintr} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-dm}.
+\subsection{data structure file parsing}
+Data structure file parsing is done by a \texttt{yacc} parser defined in
+the file \texttt{tmgram.y}.
+During parsing a list of instances of type \texttt{ds} is constructed as
+defined in the file \texttt{ds.ds}.
+During parsing some checks are done on the data structure definitions.
+The actions of the parser can be made visible by
+setting the variable \texttt{yyparse} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-dy}.
+\par
+Lexical analysis, as required by \texttt{yacc} is done by functions in the file
+\texttt{tmlex.c}.
+This is a general lexical analyser with tables filled with specific
+information for this program:
+\begin{itemize}
+\item The initialised array \texttt{toktab[]} contains a list of special
+character combinations like `\verb!::=!'.
+\item The initialised array \texttt{rwtab[]} contains a list of reserved words
+      (in this case empty).
+\end{itemize}
+It is possible to print the tokens found by
+the lexical analyser by setting the variable \texttt{lextr} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-dx}.
+\par
+The parse tree of the data structures can be printed by setting the
+variable \texttt{listing} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-dl}.
+\subsection{language template parsing}
+Before output is generated the entire template file is parsed for line
+commands, and stored in a parse tree consisting of instances of type
+\texttt{tplelm} as defined in the file \texttt{tplelm.ds}.
+This parse tree will then be evaluated to generate output.
+Variable references, functions and numerical expressions are \emph{not}
+parsed at this moment, thereby simplifying the parse tree representation,
+and allowing the use of a hand-written parser.
+(The use of two \texttt{yacc} parsers in the same program would have
+caused considerable problems.)
+\par
+The parsing is done by the function \texttt{readtemplate()}.
+It reads lines from the input file up to and including the first
+unbalanced end command (\texttt{.endforeach}, \texttt{.endwhile}, etc.)
+or until end of file.
+Commands that have an associated end command (\texttt{.foreach},
+\texttt{.while}, etc.) are parsed by a recursive call to \texttt{readtemplate()}.
+\subsection{output generation}
+Output generation is done by the function \texttt{dotrans()}.
+Given a list of parsed line commands (instances of type \texttt{tplelm}),
+it executes these commands.
+During execution it may invoke itself recursively to handle
+the body of block commands like \texttt{.if} and \texttt{.while}.
+Plain lines are interpreted as a command to write a line to the
+output file.
+\par
+Before each command is executed its parameter line (or for
+plain lines the entire line) is evaluated by the function \texttt{alevalto()}.
+The function \texttt{alevalto()} evaluates the following classes of
+expressions:
+\begin{itemize}
+\item Variable references. These are looked up in the variable table 
+      by the function \texttt{getvar()} and copied into the output string.
+
+\item Numerical expressions. These are handled by \texttt{evalexpr()}.
+
+\item Function invocations. These are handled by \texttt{evalfn()}.
+\end{itemize}
+The working of \texttt{alevalto()} can be traced by setting the variable
+\texttt{sevaltr} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-de}.
+\subsubsection{variable handling}
+Variables are handled by the functions in the file \texttt{tmvar.c}.
+They are set by a call to \texttt{setvar()},
+and looked up by the function \texttt{getvar()}.
+Since it must be guaranteed that the evaluation of a \texttt{.include} file
+will not affect the variables of the invoking template, separate contexts
+are maintained for each \texttt{.include} file.
+A context is created by the function \texttt{newvarctx()},
+and is destroyed by the function \texttt{flushvar()}.
+The function \texttt{setvar()} will place the new variable value in the topmost
+context, so that the variable value will vanish when the current
+\texttt{.include} file is terminated.
+The function \texttt{getvar()} will search the contexts from the topmost
+context downward, and will take the first variable value it finds.
+\par
+It is possible to trace the most important actions
+on the variable table by setting the variable \texttt{vartr} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-dv}.
+\subsubsection{function evaluation}
+The function \texttt{evalfn()} evaluates a function as follows:
+\begin{enumerate}
+\item Evaluate the given string up to the next unbalanced `\verb!}!'
+      by a call to \texttt{alevalto()}.
+      This will result in a string containing the function name and a list of
+      parameters.
+
+\item Divide the evaluated string into \emph{words}. A word is a
+      string of non-blanks or a string surrounded by \verb!""!.
+      This division is done by the function \texttt{chopstring()}.
+
+\item Interpret the first word as the function name, and the
+      remaining words as parameters.
+      Look up the function in the table of functions \texttt{fntab[]},
+      and execute the found function. The parameters are passed
+      to the function as a \texttt{string\_list}. The function
+      will return a \texttt{string}.
+\end{enumerate}
+Many functions will construct a \texttt{string\_list},
+and they will use the function \texttt{flatstrings()} to construct
+a flat string from that \texttt{string\_list()}.
+Others will return a boolean by using the function \texttt{newboolstr()},
+or an integer by using the function \texttt{newintstr()}.
+\par
+It is possible to trace the function evaluations
+by setting the variable \texttt{fntr} to \texttt{TRUE}.
+This can be done through the command line option \texttt{-df}.
+\section{Tm language support}
+The code generated by the language templates of {\Tm} is documented
+in the main part of this manual.
+Therefore, only the non-obvious parts of the templates themselves
+must be discussed.
+\subsection{commonly used tricks in templates}
+Tm is not exactly one of the most elegant programming languages,
+and it is sometimes necessary to resort to obscure tricks to get the
+required results.
+The most common tricks are explained in this section.
+\begin{verbatim}
+.if ${index <word> <list>}
+\end{verbatim}
+See if \verb!<word>! occurs in \verb!<list>!.
+\begin{verbatim}
+.if ${len <list>}
+\end{verbatim}
+See if \verb!<list>! contains anything.
+\begin{verbatim}
+.if ${len ${telmlist <type>}}
+\end{verbatim}
+See if \verb!<type>! is a tuple type.
+This works because constructor types will have an empty tuple
+element list.
+\begin{verbatim}
+.if ${len ${conslist <type>}}
+\end{verbatim}
+See if \verb!<type>! is a constructor type.
+This works because tuple types will have an empty constructor list.
+\subsection{handling of \texttt{wantdefs}}
+All language templates use a variable \texttt{wantdefs} to determine
+which code must be generated.  For the handling of this variable all
+language templates use a copy of a general deduction template that is
+adapted to the specific language code.  Unfortunately a \emph{copy} of
+the deduction template is necessary, since the separation of the template
+in a language-dependent part and language-independent part is difficult.
+
+The deduction is done as follows:
+First, all variables \verb!want_<function>! and \verb!want_<function>_list!
+will be set to the list of types for which \verb!<function>! code
+is requested.
+For example, if \texttt{wantdefs} contains \verb!app_coord_list! and
+\verb!rev_plot!, the variable \verb!want_app_list! will contain
+\texttt{coord}, and the variable \verb!want_rev! will contain \verb!plot!.
+For obvious reasons the \verb!<function>! should be known to the template.
+\par
+After all \verb!want_<function>! variables have been set, the variables
+\verb!need_<function>! are set to the types for which code is necessary.
+A needed function is
+\begin{enumerate}
+\item A wanted function.
+\item A function invoked by a needed function.
+\end{enumerate}
+\par
+Finally, the user may have specified that certain functions must not be
+generated.
+This is enforced by explicitly removing all those function from the
+\verb!need_<function>! and \verb!want_<function>! lists. 

@@ -1,0 +1,3 @@
+.set a a b c d
+.set b c d e f
+{${comm $a "" $b}}, {${excl $a "" $b}}, {${uniq $a $b}}

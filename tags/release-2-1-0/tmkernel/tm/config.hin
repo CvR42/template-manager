@@ -1,0 +1,11 @@
+/* @configure_input@ */
+
+#undef const
+#define STDC_HEADERS 0
+#define HAVE_STRERROR 0
+
+#define IS_ESCAPABLE(c) (((c)=='"')||((c)=='\\'))
+
+#ifdef __GNUC__
+#define __USE_FIXED_PROTOTYPES__
+#endif

@@ -1,0 +1,79 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. file: paslib.ht
+..
+.. External declarations for library of tm Pascal code
+{ ---- start of ${tplfilename} ---- }
+
+.if ${index tmgetc $(want_misc)}
+procedure tmgetc( var f: text ); external;
+.endif
+.if ${index tmreadspc $(want_misc)}
+procedure tmreadspc( var f: text ); external;
+.endif
+.if ${index tmneedc $(want_misc)}
+function tmneedc( var f, rf: text; needc: char ): boolean; external;
+.endif
+.if ${index tmreadc $(want_misc)}
+function tmreadc( var f, rf: text; var c: char ): boolean; external;
+.endif
+.if ${index tmwritec $(want_misc)}
+procedure tmwritec( var f: text; c: char ); external;
+.endif
+.if ${index tmreadobrac $(want_misc)}
+procedure tmreadobrac( var f: text; var n: integer ); external;
+.endif
+.if ${index tmreadcbrac $(want_misc)}
+function tmreadcbrac( var f, rf:text; n: integer ): boolean; external;
+.endif
+.if ${index Readinteger $(want_misc)}
+function Readinteger( var f, rf: text; var n: integer ): boolean; external;
+.endif
+.if ${index Writeinteger $(want_misc)}
+procedure Writeinteger( var f: text; n: integer ); external;
+.endif
+.if ${index Cmpinteger $(want_misc)}
+function Cmpinteger( a, b: integer ): integer; external;
+.endif
+.if ${index Rfreinteger $(want_misc)}
+procedure Rfreinteger( var i: integer ); external;
+.endif
+.if ${index Copyinteger $(want_misc)}
+function Copyinteger( i: integer ): integer; external;
+.endif
+.if ${index Readreal $(want_misc)}
+function Readreal( var f, rf: text; var r: real ): boolean; external;
+.endif
+.if ${index Writereal $(want_misc)}
+procedure Writereal( var f: text; r: real ); external;
+.endif
+.if ${index Cmpreal $(want_misc)}
+function Cmpreal( a, b: real ): integer; external;
+.endif
+.if ${index Rfrereal $(want_misc)}
+procedure Rfrereal( var i: real ); external;
+.endif
+.if ${index Copyreal $(want_misc)}
+function Copyreal( i: real ): real; external;
+.endif
+.if ${index Readboolean $(want_misc)}
+function Readboolean( var f, rf: text; var b: boolean ): boolean; external;
+.endif
+.if ${index Writeboolean $(want_misc)}
+procedure Writeboolean( var f: text; b: boolean ); external;
+.endif
+.if ${index Cmpboolean $(want_misc)}
+function Cmpboolean( a, b: boolean ): integer; external;
+.endif
+.if ${index Rfreboolean $(want_misc)}
+procedure Rfreboolean( var i: boolean ); external;
+.endif
+.if ${index Copyboolean $(want_misc)}
+function Copyboolean( i: boolean ): boolean; external;
+.endif
+{ ---- end of ${tplfilename} ---- }

@@ -1,0 +1,45 @@
+\def\Tm{{\sf Tm}}
+\def\coil{{\bf Coil}}
+\def\C{{\sf C}}
+\def\Unix{{\bf Unix}}
+\def\Miranda{Miranda}
+\def\Pascal{Pascal}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\medskipamount}
+
+\def\emptystring{$\epsilon$}
+
+\newenvironment{showfile}
+{
+        \list{}{\itemsep 0pt%
+                 \topsep 0pt%
+                 \itemindent   -0.0em%
+                \listparindent\itemindent
+                \rightmargin  \leftmargin
+                \advance\leftmargin 0em}%
+        \item\relax\footnotesize%
+}
+{\endlist\par}
+
+%\newenvironment{showfile}{\small\begin{flushleft}}{\end{flushleft}}
+
+\newenvironment{example}{\par}{}
+
+\newenvironment{note}{\par\em}{}
+
+\newcommand{\defn}[1]{\emph{#1}\index{#1}}
+
+% Description environment: Don't add any space after previous item,
+% indent left margin.
+\newenvironment{desc}{\nopagebreak\vspace{-\bigskipamount}\vspace{-\parskip}\begin{list}{}{\setlength{\topsep}{0pt}\setlength{\leftmargin}{1.5em}\setlength{\listparindent}{\itemindent}\setlength{\rightmargin}{\leftmargin}}\item[]}{\end{list}}
+
+% Description table.
+% Width of description column in tabular environments.
+\newlength{\descwidth}
+\setlength{\descwidth}{\textwidth}
+\addtolength{\descwidth}{-3.4cm}
+\newenvironment{desctab}{\begin{flushleft}\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}p{\descwidth}}}{\end{tabular*}\vspace{4mm}\end{flushleft}}
+%\newenvironment{desctab}{\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}p{0.7\textwidth}}}{\end{tabular*}}
+%\newenvironment{listing}{\begin{list}{}{\setlength{\leftmargin}{1em}}\item}{\end{list}}
+

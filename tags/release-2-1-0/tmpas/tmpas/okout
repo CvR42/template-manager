@@ -1,0 +1,20 @@
+TMTEST
+Initalizing.
+Opening input file.
+Reading Miranda data structure. 
+Copying data structure.
+Comparing.
+Disposing data structure.
+Generating Miranda.
+Re-opening output file.
+Reading back data.
+Comparing.
+Statistics.
+           TestBool:     6 allocated,      6 freed.
+           TestChar:    96 allocated,     96 freed.
+            TestNum:    33 allocated,     33 freed.
+            TestInt:     3 allocated,      3 freed.
+           TestList:     3 allocated,      3 freed.
+          TestTuple:     3 allocated,      3 freed.
+            xypoint:     3 allocated,      3 freed.
+Done.

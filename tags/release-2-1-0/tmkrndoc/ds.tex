@@ -1,0 +1,312 @@
+\chapter{Tm data structures}
+\label{s.ds}
+\section{Definition of the data structures}
+A {\Tm} data structure definition file consists of a series of
+definitions of {\Tm} \defn{types}.
+A {\Tm} type belongs to one of the following
+four meta-types: \defn{class}, \defn{tuple}, \defn{constructor}
+or \defn{constructor base}\footnote{In previous versions of Tm
+constructors were not considered types, only the constructor base
+type. For reasons of regularity this has been changed.}.
+
+The exact syntax of the type definitions is given in appendix~\ref{s.dsgram},
+in the following sections an informal overview of each type is given.
+\subsection{Fields}
+Each type contains a number of \defn{fields}. A field contains a type
+name surrounded by an arbitrary number of square bracket pairs (`{\tt
+[}' and `\texttt{]}').  A type without brackets denotes a single element of
+that type; a type surrounded with one pair of brackets denotes a list of
+arbitrary length of elements of that type; a type surrounded with two
+pairs of brackets denotes a list of lists, and so on.  Each field must
+be given a name---called the \defn{field name}---by prefixing the type
+specification with \verb'<name>:'.  This name is used to refer to
+the field. It is not allowed to use the same field name more than once
+in the same type, but the same field name can be used in different types.
+
+For example, the following are all valid fields:
+\begin{showfile}
+\begin{verbatim}
+line:int
+file:tmstring
+points:[point] 
+word:[[char]]
+\end{verbatim}
+\end{showfile}
+\subsection{The class meta-type}
+\index{data structures!class}\index{meta-type!class}
+In its simplest form, a class type consists of a list of fields separated
+by commas, and surrounded by curly braces.  Like all type definitions,
+it must be terminated by a semicolon (`\verb';'').  For example:
+\begin{showfile}
+\begin{verbatim}
+position = { file:tmstring, line:int };
+\end{verbatim}
+\end{showfile}
+The list of fields can be split into multiple \defn{components} separated
+by \verb'+' signs. Thus, the following definition would also be allowed:
+\begin{showfile}
+\begin{verbatim}
+position = { file:tmstring } + { line:int };
+\end{verbatim}
+\end{showfile}
+A class can also inherit from other types. 
+For example:
+\begin{showfile}
+\begin{verbatim}
+ifStatement = statement + { cond:expr, then:block, else:block };
+\end{verbatim}
+\end{showfile}
+means that the \texttt{ifStatement} class inherits from the \texttt{statement}
+class.
+
+A class can be defined to be \defn{virtual} by using the `\verb'~=''
+operator instead of the `\verb'='' operator. For example:
+\begin{showfile}
+\begin{verbatim}
+statement ~= { pos:position };
+\end{verbatim}
+\end{showfile}
+Labelling a class 'virtual', indicates that the class itself will
+never be created, only subclasses of this class.
+
+To allow compact and clear specification of a class with many
+subclasses, these subclasses can be specified in the class itself.
+For example:
+\begin{showfile}
+\begin{verbatim}
+statement = { pos:position } +
+    ifStatement: { cond:expr, then:block, else:block } |
+    whileStatement: { cond:expr, body:block } |
+    forStatement: { var:string, bound:expr, body:block } |
+    assignStatement: { lhs:expr, rhs:expr }
+    ;
+\end{verbatim}
+\end{showfile}
+Every labelled component is called an \defn{alternative};
+every alternative defines a subclass with the name of its label.
+A class containing alternatives is flagged as virtual.
+Thus, the definition above is equivalent with:
+\begin{showfile}
+\begin{verbatim}
+statement ~= { pos:position };
+ifStatement = statement + { cond:expr, then:block, else:block };
+whileStatement = statement + { cond:expr, body:block };
+forStatement = statement + { var:string, bound:expr, body:block };
+assignStatement = statement + { lhs:expr, rhs:expr };
+\end{verbatim}
+\end{showfile}
+
+A list of components can be grouped by surrounding it with parentheses.
+For example:
+\begin{showfile}
+\begin{verbatim}
+expr =
+    plusExpr: ( { a:expr } + { b:expr } ) |
+    constExpr: { n:int }
+    ;
+\end{verbatim}
+\end{showfile}
+\subsection{The tuple meta-type}
+\index{data structures!tuple}\index{meta-type!tuple}
+A \defn{tuple} consists of a list of fields separated by commas and
+surrounded by parentheses.
+Like all type definitions, it must be terminated by a semicolon (`\verb';'').
+For example:
+\begin{showfile}
+\begin{verbatim}
+position == ( file:tmstring, line:int );
+\end{verbatim}
+\end{showfile}
+The `\verb'=='' operator indicates that the following is a tuple type.
+
+A tuple can inherit from other types. For example:
+\begin{showfile}
+\begin{verbatim}
+ifStatement = statement + ( cond:expr, then:block, else:block );
+\end{verbatim}
+\end{showfile}
+A tuple statement cannot contain alternatives or multiple lists of fields.
+
+Clearly, every tuple type can be converted to an equivalent class type.
+Tuple types are mainly provided for backward compatibility with
+older versions of {\Tm}.
+\subsection{The constructor and constructor-base meta-types}
+\index{data structures!constructor}\index{meta-type!constructor}
+\index{data structures!constructor base}\index{meta-type!constructor base}
+A \defn{constructor} group consists of a number of \defn{constructors}
+and a \defn{constructor base} type.
+Every constructor consists of a \defn{name}, followed by a 
+list of fields separated by whitespace.
+Like all type definitions, it must be terminated by a semicolon (`\verb';'').
+For example:
+\begin{showfile}
+\begin{verbatim}
+expr ::=
+    constExpr n:int |
+    plusExpr a:expr b:expr
+    ;
+\end{verbatim}
+\end{showfile}
+Types \texttt{constExpr} and \texttt{plusExpr} are \defn{constructor} types;
+type \texttt{expr} is a \defn{constructor base} type.
+The `\verb'::='' operator indicates that the following is a group of
+constructor type.
+
+A constructor type can inherit. For example:
+\begin{showfile}
+\begin{verbatim}
+operatorExpression ::= expression +
+    addExpression a:expr b:expr |
+    multiplyExpression a:expr b:expr |
+    negateExpression x:expr
+    ;
+\end{verbatim}
+\end{showfile}
+All constructors types are considered to be subclasses of their
+constructor base type. All constructor base types are virtual.
+
+If the same constructor base type is defined repeatedly, {\Tm} will merge the
+definitions.
+Thus, a definition like
+\begin{showfile}
+\begin{verbatim}
+|| representation of plot data
+plot ::= XYPlot xycolor:int points:[xypoint];
+plot ::= YPlot ycolor:int xstart:num xend:num points:[num];
+\end{verbatim}
+\end{showfile}
+is allowed, and defines a constructor base type \texttt{plot} with two
+constructor types.
+
+Clearly, every constructor type can be converted to a similar class type.
+Constructor types are mainly provided for backward compatibility with
+older versions of {\Tm}.
+\subsection{Restrictions}
+A few restrictions are enforced on the type definitions:
+\index{data structure!restrictions|(}
+\begin{itemize}
+\item Except for from constructor base types, a type can not have
+the same name as a previously defined type.
+\item A type can not, directly or indirectly, inherit from itself.
+\item A type can not, directly or indirectly, inherit from the same type
+twice.
+\item A type can not have two fields with the same name, or inherit
+a field with the same name as one of its own fields.
+\end{itemize}
+\index{data structure!restrictions|)}
+
+Also, some templates (for example the standard C template) allow inheritance
+from only one type.
+\subsection{Comment}
+All text starting with the characters `\texttt{||}' up to the end of the line
+is comment that is ignored by {\Tm}.
+For example:
+\begin{showfile}
+\begin{verbatim}
+|| The representation of a position in a file
+position = { file:string, line:num };
+\end{verbatim}
+\end{showfile}
+\subsection{File inclusion}
+\index{%include@\verb+%include+}
+Inbetween type definitions, file inclusion commands may be put.
+They are of the form
+\begin{showfile}
+\begin{verbatim}
+%include "subfile.ds";
+\end{verbatim}
+\end{showfile}
+The file name (in this example \verb+subfile.ds+) must be surrounded by 
+double quotes.
+An included data structure file may only contain complete data
+structure definitions.
+No check is done on recursive file inclusion.
+\subsection{Definition style}
+{\Tm} is designed to handle data structures in a large range of languages.
+It is therefore a bad idea to define data structures that use specific
+features of a certain language.
+For example,
+in {\Miranda} strings are defined as lists of characters (\texttt{[char]}).
+Since this is probably very inefficient in other languages
+(where a general list manipulation mechanism must be used)
+it is not a good idea to use \texttt{[char]} in the data structure file.
+A better solution is to introduce a new type --- e.g. \texttt{string} ---
+and to specify the exact representation of a \texttt{string}
+for each language separately.
+\subsection{A larger example}
+The following file shows the use of all meta-types in a more-or-less
+useful definition file. The mixing of classes and constructor types
+in one file is not realistic, though. In practice either constructors
+or classes will be used consistently.
+
+This file will be used in the examples of chapter~\ref{s.tm} to demonstrate
+the use of the various template language functions.
+\begin{showfile}
+\verbatiminput{plot.ds}
+\end{showfile}
+\label{plotds}
+\section{Textual representation of the data}
+\label{sec:textds}
+To allow the exchange of data between various programs, a standard
+text representation is provided.
+This standard text representation is as follows:
+\begin{itemize}
+\item
+Each constructor and class is represented by the constructor or class
+name followed
+by the representation of the fields of that constructor or class.
+The entire representation may be surrounded by any number of `\texttt{(}'~`\texttt{)}' pairs
+to avoid ambiguity.
+\item
+Lists are surrounded by `\texttt{[}' and `\texttt{]}',
+and the members of the list are separated by commas.
+\item
+Tuples are surrounded by exactly \emph{one} pair of parentheses, and
+all fields of the tuple are separated by commas (`\texttt{,}').
+\item
+The representation of primitives cannot be prescribed here; it is entirely
+dependent on the primitive type involved.
+\item
+Between constructor, tuple and class fields, constructor and class
+names and punctuation any number of spaces, tabs, carriage returns,
+newlines or form-feeds may be inserted.  Also, any number of comment
+lines may be inserted.  Comment starts with the characters `\texttt{||}'
+and ends at the end of the line.
+\end{itemize}
+
+For example, a valid text representation of an instance of type \texttt{curve}
+as defined in section~\ref{plotds} is:
+\begin{showfile}
+\begin{verbatim}
+XYCurve 1
+[
+    || The points.
+    (1.0, 1.0),
+    (2.0, 2.0),
+    ((-1e9), 1e50)
+]
+\end{verbatim}
+\end{showfile}
+Others are:
+\begin{showfile}
+\begin{verbatim}
+|| A larger curve
+YCurve 1 (-1.0) 1.0 [1,2,3,4,5,6,7,8,9]
+(XYCurve 1 [])
+\end{verbatim}
+\end{showfile}
+
+Instances of classes, such as class
+\begin{showfile}
+\begin{verbatim}
+expr = exprPlus: { a:expr, b:expr } | exprConst: { n:int }; 
+\end{verbatim}
+\end{showfile}
+look like this:
+\begin{showfile}
+\begin{verbatim}
+exprConst 3
+exprPlus exprConst 2 exprPlus exprConst 4 exprConst 42
+\end{verbatim}
+\end{showfile}
+
