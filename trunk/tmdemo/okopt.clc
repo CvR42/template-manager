@@ -1,12 +1,18 @@
 [
- (statement "a" (ExprConst 7)),
- (statement "b" (ExprConst (-1))),
- (statement "c" (ExprConst 1)),
- (statement "d" (ExprConst (-3))),
+ (command "a" (ExprConst 7)),
+ (command "b" (ExprConst (-1))),
+ (command "c" (ExprConst 1)),
+ (command "d" (ExprConst (-3))),
  (
-  statement
+  command
   "e"
   (ExprPlus (ExprPlus (ExprSymbol "c") (ExprConst 3)) (ExprConst 4))
  ),
- (statement "f" (ExprPlus (ExprSymbol "c") (ExprConst 7)))
+ (command "c" (ExprTimes (ExprSymbol "c") (ExprConst 3))),
+ (command "f" (ExprPlus (ExprSymbol "c") (ExprConst 7))),
+ (
+  command
+  "z"
+  (ExprPlus (ExprPlus (ExprSymbol "x") (ExprSymbol "z")) (ExprSymbol "c"))
+ )
 ]

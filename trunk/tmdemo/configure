@@ -890,9 +890,42 @@ test -n "$YACC" && break
 done
 test -n "$YACC" || YACC="yacc"
 
+# Extract the first word of "tm", so it can be a program name with args.
+set dummy tm; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+echo "configure:897: checking for $ac_word" >&5
+if eval "test \"`echo '$''{'ac_cv_prog_TM'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$TM"; then
+  ac_cv_prog_TM="$TM" # Let the user override the test.
+else
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
+  for ac_dir in $PATH; do
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_prog_TM="tm"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_TM" && ac_cv_prog_TM="no"
+fi
+fi
+TM="$ac_cv_prog_TM"
+if test -n "$TM"; then
+  echo "$ac_t""$TM" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+if test "$TM" = "no"; then
+    echo "'tm' not found; please make sure it is compiled and in your path"
+    exit 1
+fi
 
 echo $ac_n "checking for main in -lmalloc""... $ac_c" 1>&6
-echo "configure:896: checking for main in -lmalloc" >&5
+echo "configure:929: checking for main in -lmalloc" >&5
 ac_lib_var=`echo malloc'_'main | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -900,14 +933,14 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lmalloc  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 904 "configure"
+#line 937 "configure"
 #include "confdefs.h"
 
 int main() {
 main()
 ; return 0; }
 EOF
-if { (eval echo configure:911: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+if { (eval echo configure:944: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -937,12 +970,12 @@ fi
 
 
 echo $ac_n "checking for working const""... $ac_c" 1>&6
-echo "configure:941: checking for working const" >&5
+echo "configure:974: checking for working const" >&5
 if eval "test \"`echo '$''{'ac_cv_c_const'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 946 "configure"
+#line 979 "configure"
 #include "confdefs.h"
 
 int main() {
@@ -991,7 +1024,7 @@ ccp = (char const *const *) p;
 
 ; return 0; }
 EOF
-if { (eval echo configure:995: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1028: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_c_const=yes
 else
@@ -1162,6 +1195,7 @@ s%@LN_S@%$LN_S%g
 s%@LEX@%$LEX%g
 s%@LEXLIB@%$LEXLIB%g
 s%@YACC@%$YACC%g
+s%@TM@%$TM%g
 
 CEOF
 EOF

@@ -9,24 +9,20 @@ MAKEFILE = Makefile
 DEPENDFILE = $(MAKEFILE).d
 CC = @CC@
 LINKER = @CC@
-LOCALBIN = @prefix@/bin
 LOCALLIB = @prefix@/lib
-LOCALINCLUDE = @prefix@/include
-LOCALMAN = @prefix@/man
 LIBS = @LIBS@ $(LOCALLIB)/libtmc.a
-INSTALL = @INSTALL@
-INSTALL_DATA = @INSTALL_DATA@
-LEX = @LEX@
-YACC = @YACC@
+YACC=@YACC@
+LEX=@LEX@
 
 # -I flags for  .h files
 IPATH = -I$(LOCALINCLUDE)
-PROGS = calcparse calcopt
+PROGS = calcparse calcopt subst
 
 # Files that are listed in the demonstration appendix of the reference
 # manual.
 REFMANFILES = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l \
-    calcopt.c calcparse.y okopt.clc oktest.clc test.calc
+    calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct oksubst.clc \
+    subst.c
 
 # Where should REFMANFILES be copied to.
 REFMANDIR = ../tmkrndoc
@@ -34,7 +30,7 @@ REFMANDIR = ../tmkrndoc
 CFLAGS        = @CFLAGS@ $(IPATH) -DCACHESZ=0 -DVERSION=$(VERSION) -DSTAT
 LDFLAGS	      = $(CFLAGS)
 
-TM            = tm
+TM            = @TM@
 
 DOC	      = README
 
@@ -75,10 +71,15 @@ OPTSRC = calcopt.c calc.c
 
 OPTOBJ = $(OPTSRC:.c=.o)
 
+SUBSTSRC = subst.c calc.c
+
+SUBSTOBJ = $(SUBSTSRC:.c=.o)
+
 JUNK          = sedlint y.output lint testerr testout index.sed \
 		dsneed.t makelog testscr  log tags dist.lst \
 		config.log version.h distlist $(GENSRC) $(GENHDR) \
-		test.clc opt.clc $(OPTOBJ) $(PARSEOBJ)
+		test.clc opt.clc $(OPTOBJ) $(PARSEOBJ) $(SUBSTOBJ)
+MAKESTATES    = refman
 
 # Files for configuration
 CONFIGUREFILES = configure Makefile.in configure.in
@@ -101,13 +102,16 @@ refman: $(REFMANFILES)
 	cp $(REFMANFILES) $(REFMANDIR)
 	touch refman
 
-all: calcparse calcopt
+all: calcparse calcopt subst
 
 calcparse: $(PARSEOBJ)
 	$(LINKER) $(LDFLAGS) $(PARSEOBJ) $(LIBS) -o calcparse
 
 calcopt: $(OPTOBJ)
 	$(LINKER) $(LDFLAGS) $(OPTOBJ) $(LIBS) -o calcopt
+
+subst: $(SUBSTOBJ)
+	$(LINKER) $(LDFLAGS) $(SUBSTOBJ) $(LIBS) -o subst
 
 install:
 	@echo "Nothing to install"
@@ -117,17 +121,20 @@ distclean:
 	rm -f config.status config.cache config.h
 
 empty:
-	rm -f $(OBJS) $(JUNK) $(PROGS)
+	rm -f $(OBJS) $(JUNK) $(PROGS) $(MAKESTATES)
 	rm -f config.status config.cache config.h
 
 clean:
 	rm -f $(OBJS) $(GENFILES) $(JUNK)
 
 calc.h: calc.ht calc.ds calcconf.t
-	tm calc.ds calc.ht > calc.h
+	$(TM) calc.ds calc.ht > calc.h
 
 calc.c: calc.ct calc.ds calcconf.t
-	tm calc.ds calc.ct > calc.c
+	$(TM) calc.ds calc.ct > calc.c
+
+subst.c: subst.ct calc.ds
+	$(TM) calc.ds subst.ct > subst.c
 
 tags: $(SRCS) $(HDRS)
 	ctags $(SRCS) $(HDRS)
@@ -138,9 +145,13 @@ test.clc: calcparse test.calc
 opt.clc: test.clc
 	calcopt < test.clc > opt.clc
 
-test: test.clc opt.clc
+subst.clc: test.clc
+	subst < test.clc | calcopt > subst.clc
+
+test: test.clc opt.clc subst.clc
 	diff test.clc oktest.clc
 	diff opt.clc okopt.clc
+	diff subst.clc oksubst.clc
 
 calcparse.c tokens.h: calcparse.y
 	$(YACC) -d $<
