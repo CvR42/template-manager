@@ -195,7 +195,8 @@ extern int compare( const tmtext &, const tmtext & );
 
 #define tmtextNIL ((tmtext *)0)
 extern int cmp_string_tmtext( const char *s, const tmtext *t );
-extern tmstring tmtext_to_tmstring( const tmtext *t );
+extern tmstring tmtext_to_tmstring_nolognew( const tmtext *t );
+extern tmstring tmtext_to_tmstring_lognew( const tmtext *t, const char *file, const int line );
 extern tmtext *puts_tmtext( const char *s, tmtext *t );
 extern tmtext *putc_tmtext( const char c, tmtext *t );
 extern void print_tmtext( TmPrintState *st, const tmtext *t );
@@ -292,17 +293,39 @@ extern void print_tmword( TmPrintState *st, const tmconstword s );
 extern void fprint_tmword( FILE *f, const tmconstword s );
 
 // 'tmstring' functions
+extern tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz );
+extern tmstring realloc_tmstring_lognew( tmstring s, const size_t sz, const char *file, const int line );
 extern tmstring realloc_tmstring( tmstring s, const size_t sz );
-extern tmstring create_tmstring( const size_t sz );
-extern tmstring new_tmstring( const char *s );
-extern void fre_tmstring( tmstring s );
-extern int fscan_tmstring( FILE *f, tmstring *p );
+extern tmstring create_tmstring_nolognew( const size_t sz );
+extern tmstring create_tmstring_lognew( const size_t sz, const char *file, const int line );
+extern tmstring new_tmstring_nolognew( const char *s );
+extern tmstring new_tmstring_lognew( const char *s, const char *file, const int line );
+extern void fre_tmstring_lognew( tmstring s );
+extern void fre_tmstring_nolognew( tmstring s );
+extern int fscan_tmstring_nolognew( FILE *f, tmstring *p );
+extern int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int line );
 extern void print_tmstring( TmPrintState *st, tmconststring s );
 extern void fprint_tmstring( FILE *f, tmconststring s );
 extern void stat_tmstring( FILE *f );
 extern int get_balance_tmstring();
 #define rfre_tmstring fre_tmstring
 #define rdup_tmstring new_tmstring
+
+#ifdef LOGNEW
+#define tmtext_to_tmstring(s) tmtext_to_tmstring_lognew(s,__FILE__,__LINE__)
+#define realloc_tmstring(s,n) realloc_tmstring_lognew(s,n,__FILE__,__LINE__)
+#define new_tmstring(s) new_tmstring_lognew(s,__FILE__,__LINE__)
+#define fscan_tmstring(f,p) fscan_tmstring_lognew(f,p,__FILE__,__LINE__)
+#define create_tmstring(n) create_tmstring_lognew(n,__FILE__,__LINE__)
+#define fre_tmstring fre_tmstring_lognew
+#else
+#define tmtext_to_tmstring(s) tmtext_to_tmstring_nolognew(s)
+#define realloc_tmstring(s,n) realloc_tmstring_nolognew(s,n)
+#define new_tmstring(s) new_tmstring_nolognew(s)
+#define fscan_tmstring(f,p) fscan_tmstring_nolognew(f,p)
+#define create_tmstring(n) create_tmstring_nolognew(n)
+#define fre_tmstring fre_tmstring_nolognew
+#endif
 
 // 'bool' functions
 extern int fscan_bool( FILE *f, bool *bp );
@@ -332,6 +355,12 @@ public:
 extern char tm_errmsg[];
 #define TM_ERRLEN 100
 extern int tm_lineno;
+
+// Lognew interface
+extern void tm_lognew( const tm_neutralp p, const char *file, const int line );
+extern void tm_logfre( const tm_neutralp p );
+extern void report_lognew( FILE *f );
+extern void flush_lognew();
 
 #define _TM_TMCDEFS 1
 #endif
