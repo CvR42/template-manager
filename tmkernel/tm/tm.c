@@ -271,6 +271,8 @@ int main( int argc, char **argv )
     int lev;
     char buf[10];
 
+    tracestream = stderr;
+    statstream = stderr;
     start_time = clock();
     init_error();
     init_lex();
@@ -298,7 +300,7 @@ int main( int argc, char **argv )
 	print_ds_list( st, allds );
 	lev = tm_endprint( st );
 	if( st != 0 ){
-	    fprintf( stderr, "Internal botch: print level is %d\n", lev );
+	    fprintf( stderr, "Internal error: print level is %d\n", lev );
 	}
     }
     errcheck();

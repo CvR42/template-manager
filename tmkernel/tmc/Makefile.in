@@ -25,7 +25,7 @@ DBUGFLAGS = -g -DLOGNEW -DSTAT
 LDFLAGS	= $(DBUGFLAGS)
 
 # C compilation flags
-CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
+CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I../libtmc -I$(LOCALINCLUDE)
 
 # Some names of programs
 TM  = ../tm/tm
@@ -120,14 +120,14 @@ tmcwalktest: $(TMCWALKTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCWALKTESTOBJS) $(LIBS) -o tmcwalktest
 
 tmcwalktestrun: tmcwalktest tmcwalkin tmcwalkok
-	tmcwalktest
+	./tmcwalktest
 	diff testout tmcwalkok
 
 tmctest: $(TMCTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCTESTOBJS) $(LIBS) -o tmctest
 
 tmctestrun: tmctest tmctesti tmcokout tmcokerr
-	tmctest
+	./tmctest
 	diff testout tmcokout
 	diff testerr tmcokerr
 
@@ -144,7 +144,7 @@ alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
 
 alutestrun: alutest alutesti aluokout aluokerr
-	alutest
+	./alutest
 	diff testout aluokout
 	diff testerr aluokerr
 
@@ -160,7 +160,7 @@ llutest:     $(LLUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(LLUTESTOBJS) $(LIBS) -o llutest
 
 llutestrun: llutest llutesti
-	llutest
+	./llutest
 	diff testout lluokout
 	diff testerr lluokerr
 

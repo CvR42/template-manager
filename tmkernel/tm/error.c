@@ -49,7 +49,7 @@ static void printerror( const char *msg )
 {
     if( errpos[0] != '\0' ) fprintf( stderr, "%s: ", errpos );
     fputs( msg, stderr );
-    if( errarg[0] != '\0' ) fprintf( stderr, ": %s", errarg);
+    if( errarg[0] != '\0' ) fprintf( stderr, ": %s", errarg );
     fputs( "\n", stderr );
     errarg[0] = '\0';
     errpos[0] = '\0';

@@ -2769,7 +2769,7 @@ static tmstring fngetenv( const tmstring_list sl )
  */
 static tmstring fnprocessortime( const tmstring_list sl )
 {
-    time_t t_ticks = clock()-start_time;
+    clock_t t_ticks = clock()-start_time;
     long t_ms = (1000*((long) t_ticks))/CLOCKS_PER_SEC;
     char buf[30];
 
