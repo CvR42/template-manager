@@ -43,7 +43,6 @@ JUNK = tmp core makelog testerr testout alutest llutest config.log \
        gmon.out log alutest.c llutest.c dist.lst distlist tmctest.c \
        alutest.c llutest.c tmctest tmcwalktest aldtest
 
-
 TESTFILES = \
     cltest.ds test.ds xxtest.c \
     tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
@@ -107,7 +106,7 @@ help :
 	@echo "empty		Free disk space."
 	@echo "distfiles	List distribution files."
 	@echo "install		Install relevant files."
-	@echo "test		Run tests."
+	@echo "check		Run tests."
 
 #
 all: tmctest llutest alutest tmcwalktest
@@ -115,6 +114,8 @@ all: tmctest llutest alutest tmcwalktest
 # Add rules for the programs themselves here.
 
 test: tmctestrun llutestrun alutestrun tmcwalktestrun
+
+check: tmctestrun llutestrun alutestrun tmcwalktestrun
 
 tmcwalktest: $(TMCWALKTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCWALKTESTOBJS) $(LIBS) -o tmcwalktest
