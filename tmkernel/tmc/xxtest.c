@@ -42,9 +42,9 @@ int main( void )
     {
 	expr x;
 
-	x = new_exprPlus(
-	    new_exprConst( 42 ),
-	    new_exprConst( 5 )
+	x = (expr) new_exprPlus(
+	    (expr) new_exprConst( 42 ),
+	    (expr) new_exprConst( 5 )
 	);
 	rfre_expr( x );
     }
