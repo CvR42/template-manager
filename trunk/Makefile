@@ -2,7 +2,7 @@
 
 # The version numbers below reflect release versions for the various
 # packages.
-TMKERNEL_VERSION = 2.0.11
+TMKERNEL_VERSION = 2.0.12
 TMPAS_VERSION = 1.0.3
 TMMIRA_VERSION = 1.0.2
 TMDEMO_VERSION = 1.0

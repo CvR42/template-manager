@@ -28,6 +28,7 @@ typedef char *tmstring;
 typedef char *tmword;
 typedef const char *const_tmstring;
 typedef const char *const_tmword;
+typedef void *tm_neutralp;
 
 struct str_Sstack {
     struct str_Sstack *next;
@@ -37,6 +38,17 @@ struct str_Sstack {
 struct str_sunit {
     struct str_sunit *next;
     int tag;
+};
+
+/* Storage for a tmsymbol string */
+struct _tmc_sym {
+    struct _tmc_sym *next;		/* next in list */
+    const_tmstring name;		/* pointer to the string */
+#ifdef __cplusplus
+    mutable tm_neutralp data;		/* any info for it. */
+#else
+    tm_neutralp data;			/* any info for it. */
+#endif
 };
 
 struct str_tmprintstate {
@@ -79,7 +91,7 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 inline tmsymbol rdup_tmsymbol( tmsymbol s ) { return s; }
 inline void rfre_tmsymbol( tmsymbol ) {}
 inline void fre_tmsymbol( tmsymbol ) { }
-inline int cmp_tmsymbol(tmsymbol a, tmsymbol b) { return (a==b)?0:strcmp( a->name, b->name ); }
+inline int cmp_tmsymbol(tmsymbol a, tmsymbol b) { return ((a)==(b))?0:strcmp( (a)->name, (b)->name ); }
 inline int isequal_tmsymbol(tmsymbol a, tmsymbol b) { return a==b; }
 inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #else
@@ -294,7 +306,6 @@ extern int fscan_tmsymbol( FILE *f, tmsymbol *s );
 extern void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s );
 extern void fprint_tmsymbol( FILE *f, const tmsymbol s );
 
-typedef void *tm_neutralp;
 extern tm_neutralp tm_malloc( size_t sz );
 extern tm_neutralp tm_calloc( size_t n, size_t sz );
 extern tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
@@ -428,17 +439,6 @@ extern void tm_fatal( const char *file, const int line, const char *s );
 extern void tm_badtag( const char *file, const int line, const int tag );
 extern void tm_noroom( void );
 extern tm_neutralp tm_badcast( const char *file, const int line );
-
-/* Storage for a tmsymbol string */
-struct _tmc_sym {
-    struct _tmc_sym *next;		/* next in list */
-    const_tmstring name;		/* pointer to the string */
-#ifdef __cplusplus
-    mutable tm_neutralp data;		/* any info for it. */
-#else
-    tm_neutralp data;			/* any info for it. */
-#endif
-};
 
 /* the error message buffer of tm and its length */
 extern char tm_errmsg[];
