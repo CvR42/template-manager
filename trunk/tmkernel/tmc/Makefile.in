@@ -45,6 +45,7 @@ JUNK = tmp core makelog testerr testout alutest llutest config.log \
 TESTFILES = \
     cltest.ds test.ds xxtest.c \
     aldokerr aldokout aldtesti aldspec.t aldcode.ct aldcode.ht \
+    tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
     aluokerr aluokout alutesti aluspec.t alucode.ct alucode.ht \
     lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht
 
