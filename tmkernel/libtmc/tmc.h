@@ -20,6 +20,10 @@
 #endif
 #if defined( __linux__ )
 #include <linux/types.h>
+#ifdef __KERNEL_STRICT_NAMES
+typedef unsigned int uint;
+typedef unsigned long ulong;
+#endif
 #define GOT_UINT
 #endif
 
