@@ -615,7 +615,11 @@ If {\tt pos} is greater than or equal to the length of {\tt l},
 nothing happens.
 \end{desc}
 \begin{verbatim}
-<type>_list deletelist_<type>_list( <type>_list l, unsigned int from, unsigned int to );
+<type>_list deletelist_<type>_list(
+ <type>_list l,
+ unsigned int from,
+ unsigned int to
+);
 \end{verbatim}
 \begin{desc}
 \index{deletelist_<type>_list@\verb+deletelist_<type>_list()+}
@@ -857,9 +861,10 @@ Compare data structures {\tt a} and {\tt b}, and return {\tt TMTRUE}
 if and only if all the elements of the structure are equal.
 Two constructors can only be equal if they are of the same type.
 \end{desc}
-\section{The tree walker}
+\section{The tree walker template}
 \label{s.treewalk}
 \index{tree walking}
+\index{template!tree walking}
 In many programs it is necessary to traverse (``walk'') a tree of
 datastructures, and so that information can be collected, or checking
 or modification can be done. In many cases only a few types of nodes
@@ -891,7 +896,7 @@ A tree walker template will normally contain the components listed below.
 They should be placed in the order shown here:
 \begin{enumerate}
 \item Definitions for the walker macros.
-\item Invocation of the standard walker template. This will define some
+\item Insertion of the walker template. This will define some
  additional macros.
 \item Definition of the list of target types.
 \item Generation of forward declarations of the walker functions.
@@ -904,7 +909,7 @@ These macros must be defined before the template itself is included
 (see below).
 \par
 To illustrate the description of the macros, a simple walker is
-constructed that returns the numberr of {\tt int} fields in a tree.
+constructed that returns the number of {\tt int} fields in a tree.
 \begin{verbatim}
 .macro generate_walker_signature var t
 \end{verbatim}
@@ -917,13 +922,14 @@ The signature should contain ``\verb'$t $(var)''' somewhere in the list
 of parameters. Apart from that, the function can have any signature.
 \par
 It is recommended to declare the functions as \verb'static', so that
-unused functions can be reported. This usually means that the
+unused functions can be reported. When a walker function is reported
+as being unused, this usually means that the
 action function does not invoke its walker function, as it should.
 \par
 For example:
 \begin{verbatim}
 .macro generate_walker_signature var t
-static int count_$t_walker( const $t $(var )
+static int count_$t_walker( const $t $(var ) )
 .endmacro
 \end{verbatim}
 \end{desc}
@@ -944,7 +950,7 @@ except that the declaration is ended with a semicolon.
 For example:
 \begin{verbatim}
 .macro generate_walker_declaration var t
-static int count_$t_walker( const $t $(var );
+static int count_$t_walker( const $t $(var) );
 .endmacro
 \end{verbatim}
 \end{desc}
@@ -968,6 +974,7 @@ this macro as follows:
 .endif
 .endmacro
 \end{verbatim}
+\begin{sloppypar}
 This assumes macros \verb'generate_action_call' and
 \verb'generate_walker_call', that have the same parameters as this
 macro, and generate a call to an action function and a walker function
@@ -976,6 +983,7 @@ their walker function, they usually have the same signature as the
 walker function, so the two macros will look very similar.  In fact,
 it is recommended to invoke the walker function from an action function
 with a call to the macro \verb'generate_walker_call'.
+\end{sloppypar}
 \par
 For example, assuming we have defined \verb'generate_descent_call' as
 shown above, we could define \verb'enerate_action_call' and
@@ -1042,7 +1050,7 @@ $(indent)int n = 0;
 \end{verbatim}
 \begin{desc}
 Given an indent \verb'indent', the name \verb'var' of the variable
-that holds the data structure we are waling on, and a type \verb't',
+that holds the data structure we are walking on, and a type \verb't',
 generate a body for an empty function.
 
 Usually, this macro contains code to prevent compiler warnings
@@ -1076,20 +1084,32 @@ defined, and it will define the following macros:
 \begin{desc}
 Given the list of types to start from {\tt starts}, and the list of types
 to visit {\tt targets}, return the list of types that must be visited.
+\par
+Note that both parameters of this macro could potentially consist of
+a list of types. It is therefore recommended that the expressions
+for these parameters are surrounded by quotes, so that the list is not
+broken up.
+
 \end{desc}
 \begin{verbatim}
 .macro generate_walker_forwards list
 \end{verbatim}
 \begin{desc}
-Given a list of types the tree walker should visit {\tt list}, generate
+Given a list {\tt list} of types the tree walker should visit, generate
 forward declarations for the walker functions for these types. 
+\par
+To ensure that the list that is passed to the macro is evaluated as
+a single parameter, it should be surrounded with quotes.
 \end{desc}
 \begin{verbatim}
-.macro generate_walker visit_types
+.macro generate_walker list
 \end{verbatim}
 \begin{desc}
-Given a list of types the tree walker should visit {\tt list}, generate
+Given a list {\tt list} of types the tree walker should visit, generate
 walker functions for these types.
+\par
+To ensure that the list that is passed to the macro is evaluated as
+a single parameter, it should be surrounded with quotes.
 \end{desc}
 For example:
 \begin{verbatim}
@@ -1101,11 +1121,13 @@ For example:
 .set visit_types ${call calc_treewalk "$(startnodes)" "$(actors)"}
 \end{verbatim}
 \subsection{Generating forward declarations}
+\begin{sloppypar}
 To generate forward declarations for all walker functions, the
 \verb'generate_walker_forwards' macro should be invoked.
 Since action functions should invoke their corresponding walker
 function, these forward declarations should be placed before the
 definition of the action functions.
+\end{sloppypar}
 \par
 For example:
 \begin{verbatim}
@@ -1130,8 +1152,8 @@ static int count_int_action( int n )
     return n;
 }
 \end{verbatim}
-In the walker function for {\tt int} will be empty, but it is good
-practice to call it anyway; if only to prevent a complaint about
+The walker function for {\tt int} will be empty, but it is good
+practice to call it anyway, if only to prevent a complaint about
 unused static functions.
 \subsection{Generating of the tree walker}
 After the action functions have been defined, the walker functions can
@@ -1159,6 +1181,346 @@ int count_ints( expr x )
     int n = 0;
 
 .call generate_descent_call "    " x expr expr
+    return n;
+}
+\end{verbatim}
+\section{The analyzer template}
+\label{s.analyzer}
+\index{analyzer}
+\index{template!analyzer}
+Although the tree walker template described in Section~\ref{s.treewalk}
+is very useful, there is a particular tree walking task that is better
+served by providing a specialized template, namely tree analysis.
+
+It is often necessary to traverse (``walk'') a tree of datastructures, to
+collect information about the leaves of the tree, and to combine partial
+results with a reduction operation.  Examples of such operations are:
+calculating the code size of a statement list, determining wether an
+expression is constant, and constructing a list of variables that are
+used in an expression. Analysis operations like this are easily generated
+by the analyzer template.
+
+In contrast to the tree walker template of Section~\ref{s.treewalk},
+actions on leave nodes can usually be generated by the template, although
+there is an `escape' to a user-defined function.
+
+\subsection{Global structure}
+An analyzer template will normally contain the components listed below.
+They should be placed in the order shown here:
+\begin{enumerate}
+\item Definition of the reduction operation and neutral element.
+\item Optionally, definition of a termination test.
+\item Definitions for the analyzer macros.
+\item Insertion of the analyzer template. This will define some
+ additional macros.
+\item Definition of the list of target types.
+\item Definition of the reduction operations for the target types.
+\item Generation of forward declarations of the analyzer functions.
+\item Definition of the action functions for `escaped' nodes.
+\item Generation of the analyzer functions.
+\item Definition of interface functions to the outside world.
+\end{enumerate}
+\subsection{Variables supplied by the user}
+The analyzer template requires that the user defines a number of
+variables.
+These variables must be defined before the template itself is inserted
+(see below).
+\par
+To illustrate the description of the macros, we construct a simple
+analyzer that returns the sum of all {\tt int} fields in a tree.
+
+\begin{verbatim}
+.set reduction_type <type>
+\end{verbatim}
+\begin{desc}
+The type of the reduction value we work on.
+\par
+For example:
+\begin{verbatim}
+.set reduction_type int
+\end{verbatim}
+\end{desc}
+
+\begin{verbatim}
+.set neutral_element <value>
+\end{verbatim}
+\begin{desc}
+The value of the neutral element of the reduction operation.
+This must be a value of the type that is set for \verb'reduction_type'.
+\par
+For example:
+\begin{verbatim}
+.set neutral_element (0)
+\end{verbatim}
+\end{desc}
+
+\begin{verbatim}
+.set analysis_name <name>
+\end{verbatim}
+\begin{desc}
+The name of the analysis to perform. This name is used as prefix for
+the tree traversal functions that are generated.
+\par
+For example:
+\begin{verbatim}
+.set analysis_name add
+\end{verbatim}
+\end{desc}
+
+\begin{verbatim}
+.set analyze_action_<type> reduction [<value>]
+.set analyze_action_<type> function <function_name>
+.set analyze_action_<type> constant <value>
+.set analyze_action_<type> ignore
+\end{verbatim}
+\begin{desc}
+\begin{sloppypar}
+For each target type, there should be a variable of the form
+\verb'analyze_action_<type>' to specify the kind of action to perform
+for this type.  The supported kinds of action are:
+\end{sloppypar}
+\begin{itemize}
+\item[{\tt reduction}] A reduction on all fields of the class, constructor
+type or tuple, or all elements of the list is done. If an optional
+value is given, this value is also incorporated in the reduction.
+\item[{\tt function}] The node is passed to a function that should be
+provided by the user. The name of the function to invoke must be provided
+as parameter. This function must have a formal parameter list
+as generated by the \verb'generate_formal_parameters' macro (see below).
+\item[{\tt constant}] The node has constant value {\tt value}. Recursion
+stops at this node, any fields or list elements are {\em not} visited.
+\item[{\tt ignore}] The node is ignored. Recursion stops at this node,
+any fields or list elements are {\em not} visited.
+\end{itemize}
+
+\par
+For example:
+\begin{verbatim}
+.set analyze_action_exprConst reduction
+.set analyze_action_exprPlus reduction 1
+.set analyze_action_exprSubtract constant 3
+.set analyze_action_foldexpr ignore
+.set analyze_action_int function add_int_action
+\end{verbatim}
+\end{desc}
+
+
+\subsection{Macros supplied by the user}
+The analyzer template requires that the user defines a number of macros.
+These macros must be defined before the template itself is included
+(see below).
+\par
+To illustrate the description of the macros, we continue the
+construction of a simple analyzer
+that returns the sum of all {\tt int} fields in a tree.
+\begin{verbatim}
+.macro generate_formal_parameters nm t
+\end{verbatim}
+\begin{desc}
+Given the name of the formal parameter {\tt nm} and its type {\tt t},
+construct and return the formal parameter list of the analysis functions.
+
+The signature should contain ``\verb'$t $(nm)''' somewhere in the list
+of parameters. Apart from that, the function can have any signature.
+\par
+For example:
+\begin{verbatim}
+.macro generate_formal_parameters nm t
+.return "( $t $(nm) )"
+.endmacro
+\end{verbatim}
+\end{desc}
+\begin{verbatim}
+.macro generate_actual_parameters nm should_type is_type
+\end{verbatim}
+\begin{desc}
+Given the name \verb'nm' of the variable that holds the datastructure
+we are walking on, the type \verb'should_type' of the formal parameter,
+and the type \verb'is_type' of the variable {\tt nm}, construct and
+return the the actual parameter list of the analyzer invocation.
+\par
+For example:
+\begin{verbatim}
+.macro generate_actual_parameters nm should_type is_type
+.if ${eq $(should_type) $(is_type)}
+.return "( $(nm) )"
+.else
+.return "( ($(should_type)) $(nm) )"
+.endif
+.endmacro
+\end{verbatim}
+\end{desc}
+\begin{verbatim}
+.macro generate_reduction_operation a b
+\end{verbatim}
+\begin{desc}
+Given two expressions {\tt a} and {\tt b}, construct and return an expression
+to evaluate the reduction of these expressions.
+\par
+For example:
+\begin{verbatim}
+.macro generate_reduction_operation a b
+.return "($a)+($b)"
+.endmacro
+\end{verbatim}
+\end{desc}
+\begin{verbatim}
+.macro generate_termination_test val
+\end{verbatim}
+\begin{desc}
+Given an expression representing the calculated value thus far, return
+an expression that evaluates to true if and only if there is no point
+in continuing the evaluation. If this macro is not defined, the analysis
+tree walk is never terminated prematurely.
+\par
+For example, if in the running example we are not interested in the
+result if one of the intermediate results is negative, we could define
+\verb'generate_termination_test' as follows:
+\begin{verbatim}
+.macro generate_termination_test val
+.return "(($(val))<0)"
+.endmacro
+\end{verbatim}
+The termination test is only intended to speed up analysis; it is not
+guaranteed to be used at any point.
+\par
+The termination test is particularly useful when a boolean reduction
+operation is done, since once an intermediate result is {\tt true} for
+a boolean `or' reduction, or {\tt false} for a boolean `and' reduction,
+we know further reduction is useless.
+\end{desc}
+\begin{verbatim}
+.macro generate_empty_walker_body indent var t
+\end{verbatim}
+\begin{desc}
+Given an indent \verb'indent', the name \verb'var' of the variable
+that holds the data structure we are walking on, and a type \verb't',
+generate a body for an empty function.
+
+Usually, this macro contains code to prevent compiler warnings about
+unused variables and parameters.  For example, this macro will usually
+contain the following line:
+\begin{verbatim}
+$(indent)(void) $(var);
+\end{verbatim}
+This will generate a properly indented source code line that casts the
+variable holding the data structure to void. Most compilers consider
+this a use of the variable.
+\par
+For example:
+\begin{verbatim}
+.macro generate_empty_analyzer_body indent var t
+$(indent)(void) $(var);
+.endmacro
+\end{verbatim}
+\end{desc}
+\subsection{Invoking the analyzer template}
+After the macros describe in the previous section have been defined,
+the analyzer template can be invoked. This is done as follows:
+\begin{verbatim}
+.insert tmcanalyze.t
+\end{verbatim}
+The template will check whether the variables and macros described above
+have been defined, and it will define the following macros:
+\begin{verbatim}
+.macro calc_analyzer starts targets
+\end{verbatim}
+\begin{desc}
+Given the list of types to start from {\tt starts}, and the list of types
+to visit {\tt targets}, return the list of types that must be visited.
+\par
+Note that both parameters of this macro could potentially consist of
+a list of types. Therefore expressions for these parameters should be
+surrounded by quotes, so that the list is not broken up.
+\end{desc}
+\begin{verbatim}
+.macro generate_analyzer_forwards list
+\end{verbatim}
+\begin{desc}
+Given a list {\tt list} of types the analyzer should visit, generate
+forward declarations for the walker functions for these types.
+\par
+To ensure that the list that is passed to the macro is evaluated as
+a single parameter, it should be surrounded with quotes.
+\end{desc}
+\begin{verbatim}
+.macro generate_analyzer list
+\end{verbatim}
+\begin{desc}
+Given a list {\tt list} of types the analyzer should visit, generate
+walker functions for these types.
+\par
+To ensure that the list that is passed to the macro is evaluated as a
+single parameter, it should be surrounded with quotes.
+\end{desc}
+For example:
+\begin{verbatim}
+.set 
+.set startnodes expr
+.set reduction_type int
+.set neutral_element (0)
+.set analysis_name add
+..
+.insert tmcanalyze.t
+..
+.set visit_types ${call calc_analyzer "$(startnodes)" "$(actors)"}
+\end{verbatim}
+\subsection{Generating forward declarations}
+\begin{sloppypar}
+To generate forward declarations for all analyzer functions, the
+\verb'generate_analyzer_forwards' macro should be invoked.
+Since action functions may invoke their corresponding generated analyzer
+function, these forward declarations should be placed before the
+definition of the action functions.
+\end{sloppypar}
+\par
+For example:
+\begin{verbatim}
+.call generate_analyzer_forwards "$(visit_types)"
+\end{verbatim}
+\subsection{Action functions}
+For nodes for which a {\tt function} action is specified, the user
+must specify the function that implements the analysis on this node,
+and provide an implementation of this function.  The function must have
+a formal parameter list that is compatible with the one generated by the
+\verb'generate_formal_parameters' macro, and must return the type that
+was specified in the variable \verb'reduction_type'.
+
+For example, for an analyzer that calculates the sum of all {\tt int}
+expressions in a tree, we can simply define an action
+\begin{verbatim}
+.set analyze_action_int function add_int_action
+\end{verbatim}
+and provide the following function to implement it:
+\begin{verbatim}
+static int add_int_action( int n )
+{
+    return n;
+}
+\end{verbatim}
+
+\subsection{Generating of the analyzer}
+After the action functions have been defined, the analyzer functions can
+be generated with a call to the macro \verb'generate_analyzer'.
+\par
+For example:
+\begin{verbatim}
+.call generate_analyzer "$(visit_types)"
+\end{verbatim}
+\subsection{Interfacing to the outside world}
+Analyzer functions often have additional parameters that represent
+the context during the traversal of the tree. It is therefore often
+useful to wrap the top-level analyzer function in an interface function
+that creates the context before traversal.
+\par
+The most convenient way to invoke the top-level analyzer function is to
+use the variables and macros that already have been defined for the analyzer.
+\par
+For example:
+\begin{verbatim}
+int count_ints( expr x )
+{
+    int n = $(analysis_name)${call generate_formal_parameters x expr expr};
     return n;
 }
 \end{verbatim}
