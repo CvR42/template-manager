@@ -18,8 +18,7 @@
 // Local definitions
 #include "cppcode.h"
 
-.insert tmcspec.t
+.insert spec.t
 .insert macros.t
-.insert tmcid.t
 .insert need.t
 .include tmcpp.ct

@@ -44,7 +44,7 @@ JUNK = tmp core makelog testerr testout config.log \
 
 TESTFILES = \
     cltest.ds test.ds \
-    tmcokerr tmcokout testin tmcspec.t cppcode.ct cppcode.ht \
+    okerr okout testin spec.t cppcode.ct cppcode.ht \
     walktest.ct walkin walkok
 
 FOREIGNFILES = makefile.tc config.htc config.hts
@@ -55,7 +55,7 @@ CONFIGUREFILES = configure config.hin Makefile.in configure.in
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
 
-TMMODULES = tmcpp.ct tmcpp.ht need.t cppwalk.t macros.t tmcid.t
+TMMODULES = tmcpp.ct tmcpp.ht need.t cppwalk.t macros.t
 
 TMCTMHDRS = cppcode.h
 
@@ -97,16 +97,16 @@ walktestrun: walktest walkin walkok
 tpltest: $(TESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o tpltest
 
-tpltestrun: tpltest testin tmcokout tmcokerr
+tpltestrun: tpltest testin okout okerr
 	./tpltest
-	diff testout tmcokout
-	diff testerr tmcokerr
+	diff testout okout
+	diff testerr okerr
 
-tmcinstall: need.t tmcpp.ct tmcpp.ht tmcid.t cppwalk.t
+tmcinstall: need.t tmcpp.ct tmcpp.ht cppwalk.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t tmcid.t need.t tmcpp.ct > tmp4242
+	cat macros.t need.t tmcpp.ct > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmcpp.ct
-	cat macros.t tmcid.t need.t tmcpp.ht > tmp4242
+	cat macros.t need.t tmcpp.ht > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmcpp.ht
 	rm -f tmp4242
 	$(INSTALL_DATA) cppwalk.t $(LOCALLIB)/cppwalk.t
@@ -134,10 +134,10 @@ depend: $(TMCTMHDRS) $(TMCTMSRCS)
 walktest.c: walktest.ct cltest.ds cppwalk.t
 	$(TM) cltest.ds walktest.ct > walktest.c
 
-cppcode.c: cppcode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
+cppcode.c: cppcode.ct tmcpp.ct spec.t cltest.ds need.t macros.t
 	$(TM) cltest.ds cppcode.ct > cppcode.c
 
-cppcode.h: cppcode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
+cppcode.h: cppcode.ht tmcpp.ht spec.t cltest.ds need.t macros.t
 	$(TM) cltest.ds cppcode.ht > cppcode.h
 
 stats:

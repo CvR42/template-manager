@@ -71,12 +71,12 @@ tpltest.exe: $(TESTOBJS)
 
 tpltestrun: tpltest.exe testin
 	tpltest.exe
-	diff testout tmcokout
-	diff testerr tmcokerr
+	diff testout okout
+	diff testerr okerr
 
 tmcinstall: need.t tmcpp.ct tmcpp.ht
-	copy /a macros.t+tmcid.t+need.t+tmcpp.ct $(LOCALLIB)\tmcpp.ct
-	copy /a macros.t+tmcid.t+need.t+tmcpp.ht $(LOCALLIB)\tmcpp.ht
+	copy /a macros.t+need.t+tmcpp.ct $(LOCALLIB)\tmcpp.ct
+	copy /a macros.t+need.t+tmcpp.ht $(LOCALLIB)\tmcpp.ht
 
 install: tmcinstall
 
@@ -96,10 +96,10 @@ empty:
 	del cppcode.h
 	del tpltest.exe
 
-cppcode.c: cppcode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t
+cppcode.c: cppcode.ct tmcpp.ct spec.t cltest.ds need.t macros.t
 	$(TM) cltest.ds cppcode.ct > cppcode.c
 
-cppcode.h: cppcode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t
+cppcode.h: cppcode.ht tmcpp.ht spec.t cltest.ds need.t macros.t
 	$(TM) cltest.ds cppcode.ht > cppcode.h
 
 .c.obj:
