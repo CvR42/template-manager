@@ -2,7 +2,7 @@
 \label{s.tm}
 The standard modules for the various languages are implemented
 with the text substitution language described in this section.
-\par
+
 One should only use the text substitution language directly if the available
 modules do not meet the requirements,
 since writing in this language is not exactly a pleasure.
@@ -19,9 +19,9 @@ Boolean functions return the string `\texttt{0}' for
 At places where a boolean expression is expected,
 the string `\texttt{0}' is {\it false},
 all other strings are {\it true}.
-\par
+
 A \defn{number} is a string of digits with an optional sign before it.
-\par
+
 A \defn{word} is either a string of non-blank characters, or a string of
 arbitrary characters surrounded by double quotes. A quoted string
 must end before the end of the line, and it may not contain
@@ -57,7 +57,7 @@ of the \verb'.include', the context is destroyed, and the old value of
 a variable (if it has a value in the old context) is visible again.
 This means that it usually is not necessary to worry about side-effects
 of macros or included files.
-\par
+
 Since in some cases it is desirable to allow side-effects, the
 \verb'.globalappend' and \verb'.globalset' commands are provided.
 These commands remove all current values of a variable from all
@@ -159,7 +159,7 @@ translation of all following lines up to the next unbalanced
 \texttt{.endforeach} for each of these values of \texttt{<var>}.
 The new value of the variable is only visible in the current context.
 See section~\ref{s.assignment} for a discussion of contexts.
-\par
+
 For example:
 \begin{showfile}
 \verbatiminput{foreach.xt}
@@ -187,13 +187,13 @@ After each iteration, increment the value of
 \texttt{<stride>}, or with 1 if no stride is specified.
 The new value of the variable is only visible in the current context.
 See section~\ref{s.assignment} for a discussion of contexts.
-\par
+
 The values 
 \texttt{<start>},
 \texttt{<end>},
 and \texttt{<stride>} (if specified), must be numerical.
 Stride must be 1 or greater.
-\par
+
 For example:
 \begin{showfile}
 \verbatiminput{for.xt}
@@ -218,7 +218,7 @@ If \texttt{<expr>} is {\it false},
 only translate all lines between the following unbalanced
 \texttt{.else} and \texttt{.endif}.
 If no \texttt{.else} is encountered, no translation is done.
-\par
+
 For example:
 \begin{showfile}
 \verbatiminput{if.xt}
@@ -248,7 +248,7 @@ execute the statement in the \verb'.default' section, if it exists.
 The list of words of a case statement may contain any number of words,
 including no words at all. There can be at most one \verb'.default'
 section. Note that more than one case can be executed for a switch value.
-\par
+
 For example:
 \begin{showfile}
 \verbatiminput{switch.xt}
@@ -288,12 +288,12 @@ Nested \texttt{.include} or \texttt{.insert} commands can occur to an arbitrary 
 No checking is done on recursion!
 All changes to variables that are done in this module are invisible after
 the \texttt{.include} has terminated.
-\par
+
 Before a \verb'.include' file is executed, a new variable context is
 created. This variable context is destroyed upon completion of execution
 of the file. This behaviour is useful for the invocation of standard
 translation modules.
-\par
+
 If the file cannot be opened, {\Tm} searches a list of directories for it.
 By default this list contains the directory of the variable
 \verb+libpath+, but the user may supply additional directories with the
@@ -310,12 +310,12 @@ It is not allowed to leave commands unterminated in \texttt{<filename>}.
 Nested \texttt{.include} or \texttt{.insert}
 commands can occur to an arbitrary depth.
 No checking is done on recursion!
-\par
+
 The variable settings that are done in an \texttt{.insert}
 file remain visible outside the file.
 This is useful for configuration files or other files that
 must make global changes to variables.
-\par
+
 If the file cannot be opened, {\Tm} searches a list of directories for it.
 By default this list contains the directory of the variable
 \verb+libpath+, but the user may supply additional directories with the
@@ -353,12 +353,12 @@ number of formal parameters, or else an error message is given. To pass
 a list of words to a formal parameter, surround it with double quotes.
 Before a macro is executed, a new execution context is created. This
 context is destroyed upon completion of the macro.
-\par
+
 During execution of the macro, \verb+.return+ commands may be given to
 record a return value for the macro, but in the \verb+.call+ command this
 value is ignored.  If you want to use it, use the
 \verb+${call <macro> <parm>..<parm>}+ form instead.
-\par
+
 For example:
 \begin{showfile}
 \verbatiminput{linemacro.xt}
@@ -382,7 +382,7 @@ Macros may return a list of words (see the \verb+.return+ command),
 and may be invoked with the line command \verb+.call+ or an expression
 of the form \verb+${call <macro> parm..parm}+.
 See the description of these commands for further details.
-\par
+
 For example (a \verb'$[]' expression evaluates a numerical expression):
 \begin{showfile}
 \verbatiminput{macro.xt}
@@ -405,7 +405,7 @@ Record the given values as return value of the current macro.
 Any previous return value is replaced by this one.
 Contrary to the \texttt{return} command in {\C}, this \verb+.return+
 command does \emph{not} terminate execution of the macro.
-\par
+
 See the example shown for the \verb'.macro' command for an example of the
 use of the \verb'.return' command.
 \end{desc}
@@ -419,7 +419,7 @@ is interpreted as the name of a variable.
 If `\texttt{\$<letter>}' or `\texttt{\$<digit>}' is encountered it is interpreted as
 a reference to a variable with name `\texttt{<letter>}' or \texttt{<digit>}
 respectively.
-\par
+
 For example:
 \begin{showfile}
 \verbatiminput{var.xt}
@@ -430,7 +430,7 @@ will produce:
 \end{showfile}
 Note that the result for `\verb+$bla+' is `\texttt{+la}', since the
 variable `\texttt{b}' is referenced, not the variable `\texttt{bla}'.
-\par
+
 If the characters `\texttt{\$\{}' are encountered the evaluated string up to
 the next unbalanced `\texttt{\}}' is interpreted as a function invocation,
 and the result of that function replaces the invocation string,
@@ -441,9 +441,9 @@ and the result of the evaluation of that expression replaces the expression,
 see section~\ref{s.intexpr}.
 If any other character is encountered after the `\texttt{\$}',
 it is copied literally.
-\par
+
 The following variables are predefined:
-\par
+
 \begin{desctab}
 \texttt{libpath}\index{libpath@\texttt{libpath}}
 &
@@ -481,7 +481,7 @@ The verbose flag.
 It is {\it true} if the flag \texttt{-v} has been given at the command line,
 else {\it false}.
 \end{desctab}
-\par
+
 The variables \texttt{listpre} and \texttt{listsuff} are used by the functions
 \verb+mklist+, \verb+stemname+ and \verb+deptype+ to construct list type
 names from elements names or vice versa.
@@ -504,7 +504,7 @@ get anything else than a number---but \texttt{eq} and \texttt{neq} work on strin
 Do {\it not} compare numbers with these functions
 since this is not safe (to these functions `\texttt{0}'
 is different from `\texttt{00}').
-\par
+
 \begin{desctab}
 \texttt{eq sa sb}\index{eq@\texttt{eq}}
 &
@@ -554,7 +554,7 @@ will produce:
 \end{showfile}
 \subsection{Arithmetic functions}
 All arithmetic functions only work on numbers.
-\par
+
 \nopagebreak
 \begin{desctab}
 \texttt{+ n1..nn}\index{+@\texttt{+}}
@@ -599,7 +599,7 @@ will produce:
 \end{showfile}
 \subsection{Boolean functions}
 \nopagebreak
-\par
+
 \begin{desctab}
 \texttt{and b1..bn}\index{and@\texttt{and}}
 &
@@ -679,7 +679,7 @@ will produce:
 \verbatiminput{textfn.out}
 \end{showfile}
 \subsection{List manipulation functions}
-\par
+
 \begin{desctab}
 \texttt{index w e..e}\index{index@\texttt{index}}
 &
@@ -753,13 +753,13 @@ These functions implement common operations on sets,
 although they do not require sets as parameters.
 However, if the input lists are not sets, some of the operations do not
 result in a set.
-\par
+
 Note that \texttt{comm} and \texttt{excl} require a separator between
 two groups of parameters, that cannot be used as a list element.
 For this the empty string (`\texttt{""}') is chosen,
 since it is unlikely that this will occur in a set.
 However, this means that the empty string cannot occur in a set.
-\par
+
 \begin{desctab}
 \texttt{comm a "" b}\index{comm@\texttt{comm}}
 &
@@ -794,7 +794,7 @@ will produce:
 The regular expressions in {\Tm} are based on the regular expressions
 used in {\Unix} shells.  A pattern must match the entire string.
 The following meta-characters are recognized:
-\par
+
 \begin{desctab}
 \verb'?' & Matches any character.  \\
 \verb'\'
@@ -813,9 +813,9 @@ it matches a character \emph{not} in the set. A shorthand like
 characters \verb!a! up to \verb!z!, inclusive. The special
 characters `\verb!]!' and `\verb!-!' have no special
 meaning if they appear as the first characters in the set.
-\par
+
 Examples:
-\par
+
 \begin{tabular}{ll}
 \verb![a-z]! & Any lower case alpha. \\
 \verb![^]-]! & Any char except `\verb!]!' and `\verb!-!'. \\
@@ -833,12 +833,12 @@ Matches what \texttt{form} matches,
 and assigns the matching pattern to one of the numbered patterns.
 The patterns are numbered from left to right by their opening bracket.
 \end{desctab}
-\par
+
 When patterns are substituted the substitution string can also have
 some meta-characters:
 
 \begin{desctab}
-\par
+
 \verb!&! & Is replaced by the entire matched pattern.  \\
 \verb!\d!
 &
@@ -851,7 +851,7 @@ it is empty. \verb!\0! is replaced by the entire matched pattern.
 \verb!\&! & Is replaced by `\verb!&!'.  \\
 \verb!\\! & Is replaced by `\verb!\!'. \\
 \end{desctab}
-\par
+
 \begin{desctab}
 \\
 \texttt{filt ps pr e..e}\index{filt@\texttt{filt}}
@@ -884,7 +884,7 @@ will produce:
 \subsection{Environment access functions}
 \index{environment access|(}
 \nopagebreak
-\par
+
 \begin{desctab}
 \texttt{getenv nm}\index{getenv@\texttt{getenv}}
 &
@@ -906,7 +906,7 @@ Given a list of file names,
 return a list
 of full names files that have been located using the search path,
 see the function {\verb+searchpath+}.
-\par
+
 If a file can not be found in the search path,
 the string \verb+?+ (a single question mark) is returned for that
 file name.
@@ -953,7 +953,7 @@ or {\it false} otherwise.
 Return {\it true} if macro \texttt{m} is defined,
 or {\it false} otherwise.
 \end{desctab}
-\par
+
 For example:
 \begin{showfile}
 \begin{verbatim}
@@ -970,7 +970,7 @@ may produce (depending on the value of the \verb+SHELL+ environment variable):
 \subsection{Time functions}
 \index{time functions|(}
 \nopagebreak
-\par
+
 \begin{desctab}
 \texttt{now}\index{now@\texttt{now}}
 &
@@ -1012,7 +1012,7 @@ by the listed string:
 \verb'%%' & \verb'%' \\
 \end{tabular}
 \end{center}
-\par
+
 By the default the format string \verb'%a %b %Y %H:%M:%S' is used.
 \\
 \texttt{processortime}\index{processortime@\texttt{processortime}}
@@ -1020,14 +1020,14 @@ By the default the format string \verb'%a %b %Y %H:%M:%S' is used.
 Return the current amount of processor time that has been consumed by the
 program as an integer number of milliseconds. Note that this is {\em
 not} the elapsed time.
-\par
+
 Internally, the function \verb'clock()' from the standard {\C} library is
 used. Although the returned time has a \emph{resolution} of milliseconds,
 it may have a much worse \emph{accuracy}. The accuracy is system-dependent,
 but typically there is an error of about 10ms.
 \\
 \end{desctab}
-\par
+
 For example, the input file:
 \begin{showfile}
 \verbatiminput{time.xt}
@@ -1094,7 +1094,7 @@ correct number of copies of \texttt{listpre}, and suffixing the
 type name with the correct number of copies of \texttt{listsuff}.
 This function is equivalent with the expression
 \verb'${mklist ${typelevel $t $e} ${typename $t $e}}'.
-\par
+
 Field \texttt{e} may belong to the given type or one of the superclasses
 of the type.
 \\
@@ -1121,7 +1121,7 @@ field names in the order returned by \texttt{allfields}.
 Given a type \texttt{t} and a field name \texttt{e}, return return the level
 of list bracketing of the field. Thus, a field of type \verb't' has list
 level 0, a field of type \verb'[t]' has list level 1, and so on.
-\par
+
 Field \texttt{e} may belong to the given type or one of the superclasses
 of the type.
 \\
@@ -1132,7 +1132,7 @@ Return the list of types defined in the data structure file.
 \texttt{typename t e}\index{typename@\texttt{typename}}
 &
 Given a type \texttt{t} and a field name \texttt{e}, return the type of that field.
-\par
+
 Field \texttt{e} may belong to the given type, or to one of the superclasses
 of the type.
 \\
@@ -1178,7 +1178,7 @@ of the defined types.
 \texttt{inherits t..t}\index{inherits@\texttt{inherits}}
 &
 Given a list of types, return the list of types this type inherits directly.
-\par
+
 If a type is inherited by several types, it will be listed several times.
 \\
 \texttt{inheritors t..t}\index{inheritors@\texttt{inheritors}}
@@ -1195,7 +1195,7 @@ return the list of types that inherit directly or indirectly from these types.
 &
 Given a list of types, return the list of types this type inherits directly
 or indirectly.
-\par
+
 If a type is inherited by several types, it will be listed several times.
 \\
 \end{desctab}
@@ -1210,7 +1210,7 @@ will produce (assuming the data structure definitions of page \pageref{plotds}):
 \subsection{Code generation service functions}
 These functions implement some of the complicated operations that
 are necessary during code generation. 
-\par
+
 One definition must be introduced:
 A type $t$ \defn{depends} on a type $s$ if $s$
 is used in at least one of the elements of $t$,
@@ -1218,17 +1218,17 @@ or if $t$ has a type in one of its elements that depends on $s$.
 Also,
 a list of a type depends on that type.
 Primitive types depend on nothing.
-\par
+
 For example:
 in the data structure on page \pageref{plotds} type \texttt{plot}
 depends on the single types \texttt{xypoint}, \texttt{int}, and \texttt{num},
 and on the list types \texttt{[xypoint]} and \texttt{[num]}.
-\par
+
 Several functions in this group refer to the {\Tm} variables \verb+listpre+
 and \verb+listsuff+ for a prefix and a suffix respectively to construct
 a list name from a single type name.
 If one of these variables is not defined, an empty string is assumed.
-\par
+
 \begin{desctab}
 \texttt{depsort t..t}\index{depsort@\texttt{depsort}}
 &
@@ -1239,9 +1239,9 @@ Thus, if a type \texttt{ta} uses a type \texttt{tb}, \texttt{tb} will
 be placed before \texttt{ta};
 this is in effect a topological sort.
 The function will complain about circularities.
-\par
+
 List types are considered to contain their element type.
-\par
+
 The function does not consider inheritance relations.
 \\
 \texttt{inheritsort t..t}\index{inheritsort@\texttt{inheritsort}}
@@ -1300,13 +1300,13 @@ the types \texttt{t} without visiting any of the types \texttt{b}.
 The list of starting types and the list of blocking types is separated
 by an empty string (\texttt{""}). If there is no empty string, there are
 no blocking types.
-\par
+
 The \defn{direct reach} of a class, tuple, constructor
 or constructor-base type are the types of its fields and inheritors;
 the direct reach of a list type is its element type, the direct reach
 of an alias type is the target type of the alias, and the direct reach
 of an atomic type is empty.
-\par
+
 The \defn{reach} of a type is the union of the type itself, the direct
 reach of the type, and the reach of the types in the direct reach of
 the type.  In other words, the reach is the transitive closure of the
@@ -1322,7 +1322,7 @@ will produce (assuming the data structure definitions of page \pageref{plotds}):
 \verbatiminput{service.out}
 \end{showfile}
 \subsection{Obsolete data structure access functions}
-\par
+
 These functions have been used in previous version of {\Tm} to retrieve
 information about the data structures.
 They have been replaced by the functions in the previous sections,
@@ -1333,10 +1333,10 @@ and should not be used in new templates.
 Given a type \texttt{t} and a field name \texttt{e}, return the type class
 of that field.  Possible type classes are \texttt{single} and \texttt{list}
 for a single element and a list of elements respectively.
-\par
+
 Field \texttt{e} may belong to the given type or one of the superclasses
 of the type.
-\par
+
 This function is obsolete; use \verb'typelevel' instead.
 \\
 \texttt{ttypelist}\index{ttypelist@\texttt{ttypelist}}
@@ -1364,13 +1364,13 @@ Equivalent to \texttt{typename}.
 Given a constructor type \texttt{t}, and a constructor name \texttt{c},
 return the list of element names of that constructor.
 If \texttt{t} is a tuple type, an error message is given.
-\par
+
 If a third parameter is given, and this parameter is the string
 \texttt{inherited}, the fields of the superclasses of this constructor are also
 listed. The fields are ordered `height first', so that the fields of
 superclasses are listed before the fields of the types that inherit these
 superclasses.
-\par
+
 This function is obsolete; use \verb'${fields c}' instead.
 \\
 \texttt{ctypeclass t c e}\index{ctypeclass@\texttt{ctypeclass}}
@@ -1380,7 +1380,7 @@ element name \texttt{e}, return the type class of that element.  Possible
 type classes are \texttt{single} and \texttt{list} for a single element and
 a list of elements respectively.  If \texttt{t} is a tuple type, an error
 message is given.
-\par
+
 This function is obsolete; use \verb'${typeclass c}' instead.
 \\
 \texttt{ctypellev t c e}\index{ctypellev@\texttt{ctypellev}}
@@ -1390,7 +1390,7 @@ Given a type \texttt{t}, a constructor \texttt{c} and a constructor element name
 an element of type \verb't' has list level 0, an element of type
 \verb'[t]' has list level 1, and so on.  If \texttt{t} is a tuple type,
 an error message is given.
-\par
+
 This function is obsolete; use \verb'${typelevel c}' instead.
 \\
 \texttt{ctypename t c e}\index{ctypename@\texttt{ctypename}}
@@ -1400,7 +1400,7 @@ a constructor \texttt{c}
 and a constructor element name \texttt{e},
 return the type of that element.
 If \texttt{t} is not a constructor base type, an error message is given.
-\par
+
 This function is obsolete; use \verb'${typename c}' instead.
 \\
 \end{desctab}
@@ -1442,6 +1442,7 @@ will produce:
 \begin{showfile}
 \verbatiminput{eval.out}
 \end{showfile}
+
 \section{Arithmetic expressions}
 \label{s.intexpr}
 \index{arithmetic expressions|(}
@@ -1482,8 +1483,11 @@ priority & symbol & function \\
 The integer `0' represents `false',
 all other integers represent `true'.
 Boolean operators always return `true' as `1'.
-Binary operators are right binding.
-That is,
+The binary operators \verb'+', \verb'-', \verb'*', \verb'/', and \verb'%' are
+left binding. That is:
+\[ a\ {\rm op}\ b\ {\rm op}\ c = (a\ {\rm op}\ b)\ {\rm op}\ c \]
+The remaining binary operators are right binding.
+That is:
 \[ a\ {\rm op}\ b\ {\rm op}\ c = a\ {\rm op}\ (b\ {\rm op}\ c) \]
 For example:
 \begin{showfile}
