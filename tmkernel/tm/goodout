@@ -235,6 +235,10 @@ subclasses:
 conslist:   
 fields:   
 types: ''
+virtual <all>: 'sublevel toplevel thing testclass expr'
+nonvirtual <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist SubNamedlistlist notuple Thing subclass exprConst exprPlus exprOrig bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr]'
+virtual and nonvirtual behave as they should
+virtual and nonvirtual behave as they should
 types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int int expr expr tmstring'
 subclasses <all>: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist Thing'
 conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thing'

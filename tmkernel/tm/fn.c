@@ -1319,18 +1319,12 @@ static ds findtype( ds_list dl, const tmstring t )
     return dl->arr[ix];
 }
 
-/* Given a type name, return TRUE if the type is virtual. */
-static tmstring fnisvirtual( const tmstring_list sl )
+static bool is_virtual( ds_list types, const tmstring type )
 {
-    bool ans;
+    bool ans = FALSE;
     unsigned int ix;
 
-    if( sl->sz != 1 ){
-	line_error( "'isvirtual' requires exactly one parameter" );
-	return new_tmstring( "" );
-    }
-    ans = FALSE;
-    ix = find_type_ix( allds, sl->arr[0] );
+    ix = find_type_ix( types, type );
     if( ix<allds->sz ){
 	ds d = allds->arr[ix];
 
@@ -1344,12 +1338,62 @@ static tmstring fnisvirtual( const tmstring_list sl )
 		break;
 
 	    case TAGDsClass:
-		ans = to_DsClass(d)->virtual;
+		ans = to_DsClass( d )->virtual;
 		break;
 
 	}
     }
+    return ans;
+}
+
+/* Given a type name, return TRUE if the type is virtual. */
+static tmstring fnisvirtual( const tmstring_list sl )
+{
+    bool ans = FALSE;
+
+    if( sl->sz == 1 ){
+	ans = is_virtual( allds, sl->arr[0] );
+    }
+    else {
+	line_error( "'isvirtual' requires exactly one parameter" );
+    }
     return newboolstr( ans );
+}
+
+/* Given a list of types, return the ones that are virtual. */
+static tmstring fnvirtual( const tmstring_list sl )
+{
+    unsigned int ix;
+    tmstring_list res;
+    tmstring ans;
+
+    res = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	if( is_virtual( allds, sl->arr[ix] ) ){
+	    res = append_tmstring_list( res, rdup_tmstring( sl->arr[ix] ) );
+	}
+    }
+    ans = flatstrings( res );
+    rfre_tmstring_list( res );
+    return ans;
+}
+
+/* Given a list of types, return the ones that are not virtual. */
+static tmstring fnnonvirtual( const tmstring_list sl )
+{
+    unsigned int ix;
+    tmstring_list res;
+    tmstring ans;
+
+    res = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	if( !is_virtual( allds, sl->arr[ix] ) ){
+	    res = append_tmstring_list( res, rdup_tmstring( sl->arr[ix] ) );
+	}
+    }
+    ans = flatstrings( res );
+    rfre_tmstring_list( res );
+    return ans;
 }
 
 /* Given a type name, return the metatype of this type.  */
@@ -2359,6 +2403,7 @@ static struct fnentry fntab[] = {
      { "min", fnmin },
      { "mklist", fnmklist },
      { "neq", fnstrneq },
+     { "nonvirtual", fnnonvirtual },
      { "not", fnnot },
      { "or", fnor },
      { "prefix", fnprefix },
@@ -2397,6 +2442,7 @@ static struct fnentry fntab[] = {
      { "typename", fntypename },
      { "types", fntypes },
      { "uniq", fnuniq },
+     { "virtual", fnvirtual },
      { "", fnplus }
 };
 
