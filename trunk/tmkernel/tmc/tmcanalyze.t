@@ -101,7 +101,7 @@
 .foreach t $(list)
 .set skip 0
 .if ${defined analyze_action_$t}
-.if ${member ${first $(analyze_action_$t)} constant}
+.if ${member ${first $(analyze_action_$t)} constant ignore}
 .set skip 1
 .endif
 .endif
@@ -140,7 +140,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .set action "$(analyze_action_$t)"
     /* Action: $(action) */
 .else
-    /* Action: (unspecified) */
+    /* Action: (unspecified, using reduction) */
 .set action reduction
 .endif
 .switch ${metatype $t}
@@ -256,6 +256,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .foreach f ${allfields $t}
 .set ft ${type $t $f}
 .if ${member $(ft) $(visit_types)}
+.if ${neq ${first $(analyze_action_$(ft))} ignore}
 .if ${defined analyze_action_$(ft)}
 .set field_action $(analyze_action_$(ft))
 .else
@@ -268,6 +269,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .endif
 	    _res = ${call generate_reduction_operation _res "$(impl)"};
 .set empty 0
+.endif
 .endif
 .endforeach
             break;
@@ -303,6 +305,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .foreach f ${allfields $t}
 .set ft ${type $t $f}
 .if ${member $(ft) $(visit_types)}
+.if ${neq ${first $(analyze_action_$(ft))} ignore}
 .if ${defined analyze_action_$(ft)}
 .set field_action $(analyze_action_$(ft))
 .else
@@ -320,6 +323,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
     _res = ${call generate_reduction_operation _res "$(impl)"};
 .endif
 .set empty 0
+.endif
 .endif
 .endforeach
 .endswitch
