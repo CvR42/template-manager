@@ -209,7 +209,6 @@ static int lexgetc( void )
 	    oldlineix = 0;
 	}
 	return linebuf[lineix++];
-	c = getc( dsfile );
     }
     return c;
 }
