@@ -1,0 +1,269 @@
+# Tm - an interface code generator.
+# Author: C. van Reeuwijk.
+#
+# All rights reserved.
+ 
+#  tm C support library makefile
+
+# This makefile uses the UNIX command 'uname' to determine on which
+# system it is running.
+#
+# To customize this Makefile for your system, run config in the
+# parent directory.
+#     LOCALLIB		place for local libraries (code or tm)
+#     LOCALINCLUDE	place for local include files
+#
+# Compilation for Atari ST and MSDOS/MS-Windows is done with other files,
+# see the README file for details.
+
+# The variables below are set by config
+LOCALLIB = @prefix@/lib
+LOCALINCLUDE = @prefix@/include
+CC = @CC@
+RANLIB=@RANLIB@
+INSTALL=@INSTALL@
+INSTALL_DATA=@INSTALL_DATA@
+
+DBUGFLAGS = -g -DLOGNEW -DSTAT
+
+# Name of archive of this library
+LIBNAME = libtmcpp.a
+LIBS = @LIBS@ $(LIBNAME)
+
+LDFLAGS =
+
+CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
+
+LINKER = @CC@
+
+INSTHFILES    = tmc.h
+
+TESTSRCS = testprog.c
+TESTFILES = testin goodout gooderr $(TESTSRCS)
+
+JUNK  = testprog testerr testout tmp core mon.out gmon.out \
+	tags makelog log dist.lst config.log
+
+SRCS	= $(LIBSRCS) $(TESTSRCS)
+
+HDRS = tmc.h
+
+
+LIBSRCS	 = \
+                badtag.c \
+                cmpdbl.c \
+                cmpstrtx.c \
+                cmptxt.c \
+                cpyblock.c \
+                delbtext.c \
+                errmsg.c \
+                escstr.c \
+                fatal.c \
+                fneedc.c \
+                fprdbl.c \
+                fprint.c \
+                fprlong.c \
+                fprschar.c \
+                fprsshrt.c \
+                fprstr.c \
+                fprsym.c \
+                fprtext.c \
+                fpruchar.c \
+                fpruint.c \
+                fprulong.c \
+                fprushrt.c \
+                fprwrd.c \
+                fscbool.c \
+                fsccbrac.c \
+                fsccons.c \
+                fscdbl.c \
+                fscescc.c \
+                fscflt.c \
+                fscint.c \
+                fsclong.c \
+                fscobrac.c \
+                fscschar.c \
+                fscspace.c \
+                fscsshrt.c \
+                fscstr.c \
+                fscsym.c \
+                fsctext.c \
+                fscuchar.c \
+                fscuint.c \
+                fscul.c \
+                fscushrt.c \
+                fscwrd.c \
+                insblock.c \
+                instext.c \
+                lncrstr.c \
+                lnfrestr.c \
+                lnfretxt.c \
+                lnfscstr.c \
+                lnfsctxt.c \
+                lnfscwrd.c \
+                lnnewstr.c \
+                lnnewtxt.c \
+                lnreastr.c \
+                lns2t.c \
+                lnsltxt.c \
+                lnt2s.c \
+                lognew.c \
+                lrduptxt.c \
+                newstr.c \
+                noroom.c \
+                prdbl.c \
+                print.c \
+                prlong.c \
+                propt.c \
+                prschar.c \
+                prsshrt.c \
+                prstr.c \
+                prsym.c \
+                prtext.c \
+                pruchar.c \
+                pruint.c \
+                prulong.c \
+                prushrt.c \
+                prwrd.c \
+                putctext.c \
+                putstext.c \
+                rduptxt.c \
+                reastr.c \
+                repltext.c \
+                s2t.c \
+                setrmtxt.c \
+                sltxt.c \
+                symbol.c \
+                t2s.c \
+                text.c \
+                tmcalloc.c \
+                tmmalloc.c \
+                tmreallc.c
+
+LIBOBJS	    = $(LIBSRCS:.c=.o)
+
+TESTOBJS      = testprog.o
+
+DOC	= README
+
+PROGS   =
+
+MAKEFILE = Makefile
+
+FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
+    config.hts makefile.tos
+
+CONFIGUREFILES = configure config.hin Makefile.in configure.in
+
+DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(FOREIGNFILES) \
+	    $(CONFIGUREFILES)
+
+$(LIBNAME): $(LIBOBJS)
+	rm -f $@
+	ar cr $@ $(LIBOBJS)
+	$(RANLIB) $@
+
+# Installation dependent make variables.
+
+help :
+	@echo " Possible make targets:"
+	@echo "all		Create local running programs."
+	@echo "clean		Free disk space."
+	@echo "distfiles	List distribution files."
+	@echo "install		Install relevant files."
+	@echo "test		Run tests."
+
+all: $(LIBNAME) testprog
+
+# Add rules for the programs themselves here.
+
+# An explicit rule is necessary to enforce debugging flags, including LOGNEW
+testprog.o: testprog.c
+	$(CC) -c $(CFLAGS) -I$(LOCALINCLUDE) $< -o $*.o
+
+testprog: $(TESTOBJS) $(LIBNAME)
+	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o testprog
+
+test: testprog testin
+	-./testprog
+	diff testout goodout
+	diff testerr gooderr
+
+install: $(LIBNAME)
+	-$(INSTALL) -d $(LOCALLIB)
+	-$(INSTALL) -d $(LOCALINCLUDE)
+	$(INSTALL_DATA) $(LIBNAME) $(LOCALLIB)/$(LIBNAME)
+	$(INSTALL_DATA) $(INSTHFILES) $(LOCALINCLUDE)
+
+tags: $(LIBSRCS) $(TESTSRCS)
+	ctags $(LIBSRCS) $(TESTSRCS)
+
+clean:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+
+distclean:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+	rm -f $(LIBNAME) testprog
+	rm -f cconfig.log config.status config.cache
+
+empty:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+	rm -f $(LIBNAME) testprog
+	rm -f cconfig.log config.status config.cache
+
+distfiles:
+	@echo $(DISTFILES) | tr ' ' '\012'
+
+distlist: $(DISTFILES)
+	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+
+.c.o:
+	$(CC) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
+
+depend:
+	mkmf -f $(MAKEFILE)
+
+###
+badtag.o: tmc.h config.h
+cmpdbl.o: tmc.h config.h
+errmsg.o: tmc.h config.h
+escstr.o: tmc.h config.h
+fatal.o: tmc.h config.h
+fneedc.o: tmc.h config.h
+fprdbl.o: tmc.h config.h
+fprint.o: tmc.h config.h
+fprsshrt.o: tmc.h config.h
+fprstr.o: tmc.h config.h
+fprsym.o: tmc.h config.h
+fprushrt.o: tmc.h config.h
+fsccbrac.o: tmc.h config.h
+fsccons.o: tmc.h config.h
+fscdbl.o: tmc.h config.h
+fscescc.o: tmc.h config.h
+fscflt.o: tmc.h config.h
+fscint.o: tmc.h config.h
+fscobrac.o: tmc.h config.h
+fscspace.o: tmc.h config.h
+fscsshrt.o: tmc.h config.h
+fscstr.o: tmc.h config.h
+fscushrt.o: tmc.h config.h
+lognew.o: tmc.h config.h
+newstr.o: tmc.h config.h
+lnfrestr.o: tmc.h config.h
+lnfscstr.o: tmc.h config.h
+lnnewstr.o: tmc.h config.h
+noroom.o: tmc.h config.h
+prdbl.o: tmc.h config.h
+print.o: tmc.h config.h
+propt.o: tmc.h config.h
+prsshrt.o: tmc.h config.h
+prstr.o: tmc.h config.h
+prsym.o: tmc.h config.h
+prushrt.o: tmc.h config.h
+symbol.o: tmc.h config.h
+testprog.o: tmc.h config.h
+tmcalloc.o: tmc.h config.h
+tmmalloc.o: tmc.h config.h
+tmreallc.o: tmc.h config.h
+t2s.o: tmc.h config.h
+lnt2s.o: tmc.h config.h
