@@ -56,6 +56,52 @@ if "" not done
 .endif
 ----
 
+switch:
+----
+.switch bla
+.endswitch
+--
+.switch bla
+.default
+Default of switch
+.endswitch
+--
+.switch bla
+.case bla
+Case 'bla'
+.default
+Default of switch
+.endswitch
+--
+.switch bla bla
+.case bla
+Case 'bla'
+.default
+Default of switch
+.endswitch
+--
+.switch bla
+Bad line
+.case bla
+Case 'bla'
+.default
+Default of switch
+.endswitch
+--
+.foreach v a b c d e f
+.switch $v
+.case a c
+$v: 1
+.case d
+$v: 2
+.case a d
+$v: 3
+.default
+$v: default
+.endswitch
+.endforeach
+----
+
 insert:
 ----
 .set var ladidah

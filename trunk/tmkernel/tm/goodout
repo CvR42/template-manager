@@ -30,6 +30,26 @@ if 0 not done
 if "" done
 ----
 
+switch:
+----
+--
+Default of switch
+--
+Case 'bla'
+--
+--
+Case 'bla'
+--
+a: 1
+a: 3
+b: default
+c: 1
+d: 2
+d: 3
+e: default
+f: default
+----
+
 insert:
 ----
 var = `ladidah'
@@ -178,7 +198,7 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '191'
+tpllineno: '237'
 1 bla
 testsub
 ----

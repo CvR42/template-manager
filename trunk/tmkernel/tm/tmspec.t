@@ -47,6 +47,7 @@
 .append wantdefs rfre_tplelm
 .append wantdefs rfre_tplelm_list
 .append wantdefs rdup_tplelm_list
+.append wantdefs rdup_tplelm
 .append wantdefs append_tplelm_list
 ..
 .append wantdefs stat_$(basename)
@@ -79,3 +80,7 @@
 .append wantdefs new_alternative_list
 .append wantdefs rfre_alternative_list
 .append wantdefs append_alternative_list
+..
+.append wantdefs new_switchcase
+.append wantdefs new_switchcase_list
+.append wantdefs append_switchcase_list
