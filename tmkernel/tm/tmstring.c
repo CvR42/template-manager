@@ -18,6 +18,7 @@
 #include "tmstring.h"
 #include "misc.h"
 #include "error.h"
+#include "config.h"
 
 /* Given a pointer to a tmstring 's' and a pointer to a character pointer 'w',
  * scan the tmstring for a 'word'.
@@ -37,6 +38,7 @@ const char *scanword( const char *s, char **w )
     const char *start;
     const char *end;
     size_t room;
+    unsigned int ix;
 
     while( isspace( *s ) ){
 	s++;
@@ -49,6 +51,9 @@ const char *scanword( const char *s, char **w )
 	s++;
 	start = s;
 	while( *s != DQUOTE && *s != '\0' ){
+	    if( *s == '\\' && IS_ESCAPABLE( s[1] ) ){
+		s++;
+	    }
 	    s++;
 	}
 	end = s;
@@ -68,8 +73,14 @@ const char *scanword( const char *s, char **w )
     }
     room = (size_t) (end-start);
     buf = create_tmstring( room+1 );
-    strncpy( buf, start, room );
-    buf[room] = '\0';
+    ix = 0;
+    while( start<end ){
+	if( *start == '\\' && start+1<end && IS_ESCAPABLE( start[1] ) ){
+	    start++;
+	}
+	buf[ix++] = *start++;
+    }
+    buf[ix] = '\0';
     *w = buf;
     return s;
 }
