@@ -781,12 +781,6 @@ static bool parse_ds( ds_list *dl )
 	    /* The LEXEOF is from the included file. */
 	    next_token();
 	}
-	if( curr_token==SEMI ){
-	    next_token();
-	}
-	else {
-	    yyerror( "';' expected" );
-	}
 	return TRUE;
     }
     if( curr_token!=NAME ){
@@ -862,12 +856,6 @@ static bool parse_ds( ds_list *dl )
 	}
 	return ok;
     }
-    if( curr_token!=SEMI ){
-	yyerror( "';' expected" );
-    }
-    else {
-	next_token();
-    }
     return ok;
 }
 
@@ -893,6 +881,12 @@ static ds_list parse_ds_list( void )
 	}
 	for( ix=0; ix<nw->sz; ix++ ){
 	    dl = add_ds_list( dl, nw->arr[ix] );
+	}
+	if( curr_token!=SEMI ){
+	    yyerror( "';' expected" );
+	}
+	else {
+	    next_token();
 	}
 	rfre_ds_list( nw );
     }

@@ -31,6 +31,7 @@ YYSTYPE yylval;
 static char yytext[256];
 char linebuf[LINESIZE] = "";
 unsigned int lineix = 0;
+unsigned int oldlineix = 0;
 
 /******************************************************
  *            SCANNING TREES                          *
@@ -205,6 +206,7 @@ static int lexgetc( void )
 		return EOF;
 	    }
 	    lineix = 0;
+	    oldlineix = 0;
 	}
 	return linebuf[lineix++];
 	c = getc( dsfile );
@@ -215,9 +217,13 @@ static int lexgetc( void )
 void show_parse_context( FILE *f )
 {
     unsigned int ix;
+    bool shown = FALSE;
 
     fputs( linebuf, f );
-    for( ix=0; ix<lineix; ix++ ){
+    if( oldlineix>lineix ){
+	oldlineix = lineix;
+    }
+    for( ix=0; ix<oldlineix; ix++ ){
 	if( linebuf[ix] == '\t' ){
 	    fputc( '\t', f );
 	}
@@ -225,7 +231,14 @@ void show_parse_context( FILE *f )
 	    fputc( ' ', f );
 	}
     }
-    fputs( "^\n", f );
+    for( ix=ix; ix<lineix; ix++ ){
+	fputc( '^', f );
+	shown = TRUE;
+    }
+    if( !shown ){
+	fputc( '^', f );
+    }
+    fputc( '\n', f );
 }
 
 /* Try to read a string. Return TRUE if this is successful, and set '*s'
@@ -389,6 +402,7 @@ again:
 	return LEXEOF;
     }
     lexungetc( c );
+    oldlineix = lineix;
     if( scanstring( &yylval.parstring ) ){
 	return STRING;
     }
