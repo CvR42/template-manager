@@ -23,7 +23,7 @@ INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 
 # -I flags for  .h files
-IPATH = -I$(LOCALINCLUDE)
+IPATH = -I../libtmc -I$(LOCALINCLUDE)
 PROG = tm
 
 CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION)
@@ -164,15 +164,10 @@ test: testin sub.ds test.ds testsub goodout gooderr $(TM)
 	diff testerr gooderr
 	diff testrdir goodrdir
 
-realdistfiles: $(DISTFILES)
-	touch tmcode.c tmcode.h
-
-distfiles:
-	@csh -c 'make realdistfiles >&! makelog'
+distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(DISTFILES)
-	touch tmcode.c tmcode.h
+distlist: $(MAKEFILE)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 gfiles: $(GENSRCS) $(GENHDRS)
