@@ -5,4 +5,4 @@
 ..
 .. file: tmcode.ht
 .insert tmspec.t
-.include calu.ht
+.include tmc.ht

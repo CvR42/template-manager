@@ -1,13 +1,13 @@
-/* Requirement analysis took 200 milliseconds. */
+/* Requirement analysis took 450 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /usr/local/lib/calu.ht ---- */
+/* ---- start of /usr/local/lib/tmc.ht ---- */
 /* External definitions (Version for array list).
 
-   template file:      /usr/local/lib/calu.ht
+   template file:      /usr/local/lib/tmc.ht
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta4
+   tm kernel version:  2.0-beta7
  */
 
 /* data structures */
@@ -25,23 +25,44 @@ typedef struct str_switchcase_list *switchcase_list;
 typedef struct str_tmstring_list *tmstring_list;
 typedef struct str_tplelm_list *tplelm_list;
 typedef struct str_var_list *var_list;
-typedef struct str_classComponent *classComponent;
-typedef struct str_alternative *alternative;
-typedef struct str_ds *ds;
+typedef struct str_Append *Append;
+typedef struct str_Appendfile *Appendfile;
+typedef struct str_CCAlternatives *CCAlternatives;
+typedef struct str_CCFields *CCFields;
+typedef struct str_CCSublist *CCSublist;
+typedef struct str_CCSuper *CCSuper;
+typedef struct str_Call *Call;
+typedef struct str_Case *Case;
+typedef struct str_Default *Default;
+typedef struct str_DsClass *DsClass;
+typedef struct str_DsConstructor *DsConstructor;
+typedef struct str_DsConstructorBase *DsConstructorBase;
+typedef struct str_DsTuple *DsTuple;
+typedef struct str_Error *Error;
+typedef struct str_Exit *Exit;
+typedef struct str_Foreach *Foreach;
+typedef struct str_GlobalAppend *GlobalAppend;
+typedef struct str_GlobalSet *GlobalSet;
+typedef struct str_If *If;
+typedef struct str_Include *Include;
+typedef struct str_Insert *Insert;
+typedef struct str_Macro *Macro;
+typedef struct str_Plain *Plain;
+typedef struct str_Redirect *Redirect;
+typedef struct str_Rename *Rename;
+typedef struct str_Return *Return;
+typedef struct str_Set *Set;
+typedef struct str_Switch *Switch;
+typedef struct str_While *While;
 typedef struct str_field *field;
 typedef struct str_macro *macro;
 typedef struct str_switchcase *switchcase;
-typedef struct str_tplelm *tplelm;
 typedef struct str_var *var;
+typedef struct str_classComponent *classComponent;
+typedef struct str_alternative *alternative;
+typedef struct str_ds *ds;
+typedef struct str_tplelm *tplelm;
 
-#define alternativeNIL (alternative)0
-#define classComponentNIL (classComponent)0
-#define dsNIL (ds)0
-#define fieldNIL (field)0
-#define macroNIL (macro)0
-#define switchcaseNIL (switchcase)0
-#define tplelmNIL (tplelm)0
-#define varNIL (var)0
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
 #define ds_listNIL (ds_list)0
@@ -51,6 +72,43 @@ typedef struct str_var *var;
 #define tmstring_listNIL (tmstring_list)0
 #define tplelm_listNIL (tplelm_list)0
 #define var_listNIL (var_list)0
+#define AppendNIL (Append)0
+#define AppendfileNIL (Appendfile)0
+#define CCAlternativesNIL (CCAlternatives)0
+#define CCFieldsNIL (CCFields)0
+#define CCSublistNIL (CCSublist)0
+#define CCSuperNIL (CCSuper)0
+#define CallNIL (Call)0
+#define CaseNIL (Case)0
+#define DefaultNIL (Default)0
+#define DsClassNIL (DsClass)0
+#define DsConstructorNIL (DsConstructor)0
+#define DsConstructorBaseNIL (DsConstructorBase)0
+#define DsTupleNIL (DsTuple)0
+#define ErrorNIL (Error)0
+#define ExitNIL (Exit)0
+#define ForeachNIL (Foreach)0
+#define GlobalAppendNIL (GlobalAppend)0
+#define GlobalSetNIL (GlobalSet)0
+#define IfNIL (If)0
+#define IncludeNIL (Include)0
+#define InsertNIL (Insert)0
+#define MacroNIL (Macro)0
+#define PlainNIL (Plain)0
+#define RedirectNIL (Redirect)0
+#define RenameNIL (Rename)0
+#define ReturnNIL (Return)0
+#define SetNIL (Set)0
+#define SwitchNIL (Switch)0
+#define WhileNIL (While)0
+#define alternativeNIL (alternative)0
+#define fieldNIL (field)0
+#define macroNIL (macro)0
+#define switchcaseNIL (switchcase)0
+#define varNIL (var)0
+#define classComponentNIL (classComponent)0
+#define dsNIL (ds)0
+#define tplelmNIL (tplelm)0
 
 typedef enum en_tags_classComponent {
     TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
@@ -61,289 +119,681 @@ typedef enum en_tags_ds {
 } tags_ds;
 
 typedef enum en_tags_tplelm {
-    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGAppendfile, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert, TAGCase, TAGDefault
+    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGRename, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGAppendfile, TAGMacro, TAGCall, TAGReturn, TAGInclude, TAGInsert, TAGCase, TAGDefault
 } tags_tplelm;
 
 
-/* Structure for constructor CCSuper */
-typedef struct str_CCSuper {
-    tmstring super;
-} C_CCSuper;
-
-/* Structure for constructor CCFields */
-typedef struct str_CCFields {
-    field_list fields;
-} C_CCFields;
-
-/* Structure for constructor CCAlternatives */
-typedef struct str_CCAlternatives {
-    alternative_list alternatives;
-} C_CCAlternatives;
-
-/* Structure for constructor CCSublist */
-typedef struct str_CCSublist {
-    classComponent_list components;
-} C_CCSublist;
-
-/* Constructor type classComponent */
-struct str_classComponent {
-    tags_classComponent tag;
-    union uni_classComponent {
-	C_CCSuper ue_CCSuper;
-	C_CCFields ue_CCFields;
-	C_CCAlternatives ue_CCAlternatives;
-	C_CCSublist ue_CCSublist;
-    } u;
+#ifdef __cplusplus
+/* Structure for tuple 'alternative'. */
+struct str_alternative {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-};
-
-struct str_alternative {
     tmstring label;
     classComponent component;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
 };
 
-/* Structure for constructor DsConstructorBase */
-typedef struct str_DsConstructorBase {
-    tmstring name;
-    tmstring_list inherits;
-    tmstring_list constructors;
-} C_DsConstructorBase;
-
-/* Structure for constructor DsTuple */
-typedef struct str_DsTuple {
-    tmstring name;
-    tmstring_list inherits;
-    field_list fields;
-} C_DsTuple;
-
-/* Structure for constructor DsClass */
-typedef struct str_DsClass {
-    tmstring name;
-    tmstring_list inherits;
-    field_list fields;
-    tmbool virtual;
-} C_DsClass;
-
-/* Structure for constructor DsConstructor */
-typedef struct str_DsConstructor {
-    tmstring name;
-    tmstring_list inherits;
-    field_list fields;
-} C_DsConstructor;
-
-/* Constructor type ds */
-struct str_ds {
-    tags_ds tag;
-    union uni_ds {
-	C_DsConstructorBase ue_DsConstructorBase;
-	C_DsTuple ue_DsTuple;
-	C_DsClass ue_DsClass;
-	C_DsConstructor ue_DsConstructor;
-    } u;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
+/* Structure for tuple 'field'. */
 struct str_field {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
     int level;
     tmstring name;
     tmstring type;
+};
+
+/* Structure for tuple 'macro'. */
+struct str_macro {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-};
-
-struct str_macro {
     uint lvl;
     tmstring name;
     tmstring orgfile;
     tmstring_list fpl;
     tplelm_list body;
+};
+
+/* Structure for tuple 'switchcase'. */
+struct str_switchcase {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-};
-
-struct str_switchcase {
     tmstring cases;
     tplelm_list action;
+};
+
+/* Structure for tuple 'var'. */
+struct str_var {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
+    uint lvl;
+    tmstring name;
+    tmstring val;
 };
 
-/* Structure for constructor Plain */
-typedef struct str_Plain {
-    int lno;
-    tmstring plainline;
-} C_Plain;
+/* Structure for class 'classComponent'. */
+class str_classComponent {
+public:
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_classComponent tag;
+};
 
-/* Structure for constructor Foreach */
-typedef struct str_Foreach {
+/* Structure for class 'CCAlternatives'. */
+class str_CCAlternatives: public str_classComponent {
+public:
+    alternative_list alternatives;
+};
+
+/* Structure for class 'CCFields'. */
+class str_CCFields: public str_classComponent {
+public:
+    field_list fields;
+};
+
+/* Structure for class 'CCSublist'. */
+class str_CCSublist: public str_classComponent {
+public:
+    classComponent_list components;
+};
+
+/* Structure for class 'CCSuper'. */
+class str_CCSuper: public str_classComponent {
+public:
+    tmstring super;
+};
+
+/* Structure for class 'ds'. */
+class str_ds {
+public:
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+};
+
+/* Structure for class 'DsClass'. */
+class str_DsClass: public str_ds {
+public:
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+    tmbool virtual;
+};
+
+/* Structure for class 'DsConstructor'. */
+class str_DsConstructor: public str_ds {
+public:
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+};
+
+/* Structure for class 'DsConstructorBase'. */
+class str_DsConstructorBase: public str_ds {
+public:
+    tmstring name;
+    tmstring_list inherits;
+    tmstring_list constructors;
+};
+
+/* Structure for class 'DsTuple'. */
+class str_DsTuple: public str_ds {
+public:
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+};
+
+/* Structure for class 'tplelm'. */
+class str_tplelm {
+public:
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+};
+
+/* Structure for class 'Append'. */
+class str_Append: public str_tplelm {
+public:
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Appendfile'. */
+class str_Appendfile: public str_tplelm {
+public:
+    int lno;
+    tmstring fname;
+    tplelm_list body;
+};
+
+/* Structure for class 'Call'. */
+class str_Call: public str_tplelm {
+public:
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Case'. */
+class str_Case: public str_tplelm {
+public:
+    int lno;
+    tmstring val;
+};
+
+/* Structure for class 'Default'. */
+class str_Default: public str_tplelm {
+public:
+    int lno;
+};
+
+/* Structure for class 'Error'. */
+class str_Error: public str_tplelm {
+public:
+    int lno;
+    tmstring str;
+};
+
+/* Structure for class 'Exit'. */
+class str_Exit: public str_tplelm {
+public:
+    int lno;
+    tmstring str;
+};
+
+/* Structure for class 'Foreach'. */
+class str_Foreach: public str_tplelm {
+public:
     int lno;
     tmstring felist;
-    tplelm_list felines;
-} C_Foreach;
+    tplelm_list body;
+};
 
-/* Structure for constructor While */
-typedef struct str_While {
+/* Structure for class 'GlobalAppend'. */
+class str_GlobalAppend: public str_tplelm {
+public:
     int lno;
-    tmstring whilecond;
-    tplelm_list whilelines;
-} C_While;
+    tmstring line;
+};
 
-/* Structure for constructor If */
-typedef struct str_If {
+/* Structure for class 'GlobalSet'. */
+class str_GlobalSet: public str_tplelm {
+public:
     int lno;
-    tmstring ifcond;
+    tmstring line;
+};
+
+/* Structure for class 'If'. */
+class str_If: public str_tplelm {
+public:
+    int lno;
+    tmstring cond;
     tplelm_list ifthen;
     tplelm_list ifelse;
-} C_If;
+};
 
-/* Structure for constructor Switch */
-typedef struct str_Switch {
+/* Structure for class 'Include'. */
+class str_Include: public str_tplelm {
+public:
+    int lno;
+    tmstring fname;
+};
+
+/* Structure for class 'Insert'. */
+class str_Insert: public str_tplelm {
+public:
+    int lno;
+    tmstring fname;
+};
+
+/* Structure for class 'Macro'. */
+class str_Macro: public str_tplelm {
+public:
+    int lno;
+    tmstring formals;
+    tplelm_list body;
+};
+
+/* Structure for class 'Plain'. */
+class str_Plain: public str_tplelm {
+public:
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Redirect'. */
+class str_Redirect: public str_tplelm {
+public:
+    int lno;
+    tmstring fname;
+    tplelm_list body;
+};
+
+/* Structure for class 'Rename'. */
+class str_Rename: public str_tplelm {
+public:
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Return'. */
+class str_Return: public str_tplelm {
+public:
+    int lno;
+    tmstring retval;
+};
+
+/* Structure for class 'Set'. */
+class str_Set: public str_tplelm {
+public:
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Switch'. */
+class str_Switch: public str_tplelm {
+public:
     int lno;
     tmstring val;
     switchcase_list cases;
     tplelm_list deflt;
-} C_Switch;
+};
 
-/* Structure for constructor Set */
-typedef struct str_Set {
+/* Structure for class 'While'. */
+class str_While: public str_tplelm {
+public:
     int lno;
-    tmstring setline;
-} C_Set;
-
-/* Structure for constructor GlobalSet */
-typedef struct str_GlobalSet {
-    int lno;
-    tmstring setline;
-} C_GlobalSet;
-
-/* Structure for constructor Append */
-typedef struct str_Append {
-    int lno;
-    tmstring appline;
-} C_Append;
-
-/* Structure for constructor GlobalAppend */
-typedef struct str_GlobalAppend {
-    int lno;
-    tmstring appline;
-} C_GlobalAppend;
-
-/* Structure for constructor Error */
-typedef struct str_Error {
-    int lno;
-    tmstring errstr;
-} C_Error;
-
-/* Structure for constructor Exit */
-typedef struct str_Exit {
-    int lno;
-    tmstring str;
-} C_Exit;
-
-/* Structure for constructor Redirect */
-typedef struct str_Redirect {
-    int lno;
-    tmstring fname;
+    tmstring cond;
     tplelm_list body;
-} C_Redirect;
+};
 
-/* Structure for constructor Appendfile */
-typedef struct str_Appendfile {
-    int lno;
-    tmstring fname;
-    tplelm_list body;
-} C_Appendfile;
-
-/* Structure for constructor Include */
-typedef struct str_Include {
-    int lno;
-    tmstring fname;
-} C_Include;
-
-/* Structure for constructor Macro */
-typedef struct str_Macro {
-    int lno;
-    tmstring formpar;
-    tplelm_list macbody;
-} C_Macro;
-
-/* Structure for constructor Call */
-typedef struct str_Call {
-    int lno;
-    tmstring callline;
-} C_Call;
-
-/* Structure for constructor Return */
-typedef struct str_Return {
-    int lno;
-    tmstring retval;
-} C_Return;
-
-/* Structure for constructor Insert */
-typedef struct str_Insert {
-    int lno;
-    tmstring fname;
-} C_Insert;
-
-/* Structure for constructor Case */
-typedef struct str_Case {
-    int lno;
-    tmstring val;
-} C_Case;
-
-/* Structure for constructor Default */
-typedef struct str_Default {
-    int lno;
-} C_Default;
-
-/* Constructor type tplelm */
-struct str_tplelm {
-    tags_tplelm tag;
-    union uni_tplelm {
-	C_Plain ue_Plain;
-	C_Foreach ue_Foreach;
-	C_While ue_While;
-	C_If ue_If;
-	C_Switch ue_Switch;
-	C_Set ue_Set;
-	C_GlobalSet ue_GlobalSet;
-	C_Append ue_Append;
-	C_GlobalAppend ue_GlobalAppend;
-	C_Error ue_Error;
-	C_Exit ue_Exit;
-	C_Redirect ue_Redirect;
-	C_Appendfile ue_Appendfile;
-	C_Include ue_Include;
-	C_Macro ue_Macro;
-	C_Call ue_Call;
-	C_Return ue_Return;
-	C_Insert ue_Insert;
-	C_Case ue_Case;
-	C_Default ue_Default;
-    } u;
+#else
+/* Structure for class 'Append'. */
+struct str_Append {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
 };
 
+/* Structure for class 'Appendfile'. */
+struct str_Appendfile {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring fname;
+    tplelm_list body;
+};
+
+/* Structure for class 'CCAlternatives'. */
+struct str_CCAlternatives {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_classComponent tag;
+    alternative_list alternatives;
+};
+
+/* Structure for class 'CCFields'. */
+struct str_CCFields {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_classComponent tag;
+    field_list fields;
+};
+
+/* Structure for class 'CCSublist'. */
+struct str_CCSublist {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_classComponent tag;
+    classComponent_list components;
+};
+
+/* Structure for class 'CCSuper'. */
+struct str_CCSuper {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_classComponent tag;
+    tmstring super;
+};
+
+/* Structure for class 'Call'. */
+struct str_Call {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Case'. */
+struct str_Case {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring val;
+};
+
+/* Structure for class 'Default'. */
+struct str_Default {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+};
+
+/* Structure for class 'DsClass'. */
+struct str_DsClass {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+    tmbool virtual;
+};
+
+/* Structure for class 'DsConstructor'. */
+struct str_DsConstructor {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+};
+
+/* Structure for class 'DsConstructorBase'. */
+struct str_DsConstructorBase {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    tmstring_list constructors;
+};
+
+/* Structure for class 'DsTuple'. */
+struct str_DsTuple {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+};
+
+/* Structure for class 'Error'. */
+struct str_Error {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring str;
+};
+
+/* Structure for class 'Exit'. */
+struct str_Exit {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring str;
+};
+
+/* Structure for class 'Foreach'. */
+struct str_Foreach {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring felist;
+    tplelm_list body;
+};
+
+/* Structure for class 'GlobalAppend'. */
+struct str_GlobalAppend {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'GlobalSet'. */
+struct str_GlobalSet {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'If'. */
+struct str_If {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring cond;
+    tplelm_list ifthen;
+    tplelm_list ifelse;
+};
+
+/* Structure for class 'Include'. */
+struct str_Include {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring fname;
+};
+
+/* Structure for class 'Insert'. */
+struct str_Insert {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring fname;
+};
+
+/* Structure for class 'Macro'. */
+struct str_Macro {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring formals;
+    tplelm_list body;
+};
+
+/* Structure for class 'Plain'. */
+struct str_Plain {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Redirect'. */
+struct str_Redirect {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring fname;
+    tplelm_list body;
+};
+
+/* Structure for class 'Rename'. */
+struct str_Rename {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Return'. */
+struct str_Return {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring retval;
+};
+
+/* Structure for class 'Set'. */
+struct str_Set {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Switch'. */
+struct str_Switch {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring val;
+    switchcase_list cases;
+    tplelm_list deflt;
+};
+
+/* Structure for class 'While'. */
+struct str_While {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring cond;
+    tplelm_list body;
+};
+
+/* Structure for tuple 'field'. */
+struct str_field {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    int level;
+    tmstring name;
+    tmstring type;
+};
+
+/* Structure for tuple 'macro'. */
+struct str_macro {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    uint lvl;
+    tmstring name;
+    tmstring orgfile;
+    tmstring_list fpl;
+    tplelm_list body;
+};
+
+/* Structure for tuple 'switchcase'. */
+struct str_switchcase {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring cases;
+    tplelm_list action;
+};
+
+/* Structure for tuple 'var'. */
 struct str_var {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
     uint lvl;
     tmstring name;
     tmstring val;
+};
+
+/* Structure for class 'classComponent'. */
+struct str_classComponent {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
+    tags_classComponent tag;
 };
+
+/* Structure for tuple 'alternative'. */
+struct str_alternative {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring label;
+    classComponent component;
+};
+
+/* Structure for class 'ds'. */
+struct str_ds {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+};
+
+/* Structure for class 'tplelm'. */
+struct str_tplelm {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+};
+
+#endif
 
 struct str_alternative_list {
     unsigned int sz;
@@ -426,187 +876,80 @@ struct str_var_list {
 #endif
 };
 
-
 /* Type casting macros. */
-#define to_alternative(e) (e)
-#define to_alternative(e) (e)
-#define to_CCSuper(e) (&(e->u.ue_CCSuper))
-#define CCSuper u.ue_CCSuper
-#define to_CCFields(e) (&(e->u.ue_CCFields))
-#define CCFields u.ue_CCFields
-#define to_CCAlternatives(e) (&(e->u.ue_CCAlternatives))
-#define CCAlternatives u.ue_CCAlternatives
-#define to_CCSublist(e) (&(e->u.ue_CCSublist))
-#define CCSublist u.ue_CCSublist
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define DsConstructorBase u.ue_DsConstructorBase
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define DsConstructorBase u.ue_DsConstructorBase
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define DsConstructorBase u.ue_DsConstructorBase
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define DsTuple u.ue_DsTuple
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define DsTuple u.ue_DsTuple
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define DsTuple u.ue_DsTuple
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define DsClass u.ue_DsClass
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define DsClass u.ue_DsClass
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define DsClass u.ue_DsClass
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define DsClass u.ue_DsClass
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define DsConstructor u.ue_DsConstructor
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define DsConstructor u.ue_DsConstructor
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define DsConstructor u.ue_DsConstructor
-#define to_field(e) (e)
-#define to_field(e) (e)
-#define to_field(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_switchcase(e) (e)
-#define to_switchcase(e) (e)
-#define to_Plain(e) (&(e->u.ue_Plain))
-#define Plain u.ue_Plain
-#define to_Plain(e) (&(e->u.ue_Plain))
-#define Plain u.ue_Plain
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define Foreach u.ue_Foreach
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define Foreach u.ue_Foreach
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define Foreach u.ue_Foreach
-#define to_While(e) (&(e->u.ue_While))
-#define While u.ue_While
-#define to_While(e) (&(e->u.ue_While))
-#define While u.ue_While
-#define to_While(e) (&(e->u.ue_While))
-#define While u.ue_While
-#define to_If(e) (&(e->u.ue_If))
-#define If u.ue_If
-#define to_If(e) (&(e->u.ue_If))
-#define If u.ue_If
-#define to_If(e) (&(e->u.ue_If))
-#define If u.ue_If
-#define to_If(e) (&(e->u.ue_If))
-#define If u.ue_If
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define Switch u.ue_Switch
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define Switch u.ue_Switch
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define Switch u.ue_Switch
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define Switch u.ue_Switch
-#define to_Set(e) (&(e->u.ue_Set))
-#define Set u.ue_Set
-#define to_Set(e) (&(e->u.ue_Set))
-#define Set u.ue_Set
-#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
-#define GlobalSet u.ue_GlobalSet
-#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
-#define GlobalSet u.ue_GlobalSet
-#define to_Append(e) (&(e->u.ue_Append))
-#define Append u.ue_Append
-#define to_Append(e) (&(e->u.ue_Append))
-#define Append u.ue_Append
-#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
-#define GlobalAppend u.ue_GlobalAppend
-#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
-#define GlobalAppend u.ue_GlobalAppend
-#define to_Error(e) (&(e->u.ue_Error))
-#define Error u.ue_Error
-#define to_Error(e) (&(e->u.ue_Error))
-#define Error u.ue_Error
-#define to_Exit(e) (&(e->u.ue_Exit))
-#define Exit u.ue_Exit
-#define to_Exit(e) (&(e->u.ue_Exit))
-#define Exit u.ue_Exit
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define Redirect u.ue_Redirect
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define Redirect u.ue_Redirect
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define Redirect u.ue_Redirect
-#define to_Appendfile(e) (&(e->u.ue_Appendfile))
-#define Appendfile u.ue_Appendfile
-#define to_Appendfile(e) (&(e->u.ue_Appendfile))
-#define Appendfile u.ue_Appendfile
-#define to_Appendfile(e) (&(e->u.ue_Appendfile))
-#define Appendfile u.ue_Appendfile
-#define to_Include(e) (&(e->u.ue_Include))
-#define Include u.ue_Include
-#define to_Include(e) (&(e->u.ue_Include))
-#define Include u.ue_Include
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define Macro u.ue_Macro
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define Macro u.ue_Macro
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define Macro u.ue_Macro
-#define to_Call(e) (&(e->u.ue_Call))
-#define Call u.ue_Call
-#define to_Call(e) (&(e->u.ue_Call))
-#define Call u.ue_Call
-#define to_Return(e) (&(e->u.ue_Return))
-#define Return u.ue_Return
-#define to_Return(e) (&(e->u.ue_Return))
-#define Return u.ue_Return
-#define to_Insert(e) (&(e->u.ue_Insert))
-#define Insert u.ue_Insert
-#define to_Insert(e) (&(e->u.ue_Insert))
-#define Insert u.ue_Insert
-#define to_Case(e) (&(e->u.ue_Case))
-#define Case u.ue_Case
-#define to_Case(e) (&(e->u.ue_Case))
-#define Case u.ue_Case
-#define to_Default(e) (&(e->u.ue_Default))
-#define Default u.ue_Default
-#define to_var(e) (e)
-#define to_var(e) (e)
-#define to_var(e) (e)
+#define to_Append(e) ((Append)e)
+#define to_Appendfile(e) ((Appendfile)e)
+#define to_CCAlternatives(e) ((CCAlternatives)e)
+#define to_CCFields(e) ((CCFields)e)
+#define to_CCSublist(e) ((CCSublist)e)
+#define to_CCSuper(e) ((CCSuper)e)
+#define to_Call(e) ((Call)e)
+#define to_Case(e) ((Case)e)
+#define to_Default(e) ((Default)e)
+#define to_DsClass(e) ((DsClass)e)
+#define to_DsConstructor(e) ((DsConstructor)e)
+#define to_DsConstructorBase(e) ((DsConstructorBase)e)
+#define to_DsTuple(e) ((DsTuple)e)
+#define to_Error(e) ((Error)e)
+#define to_Exit(e) ((Exit)e)
+#define to_Foreach(e) ((Foreach)e)
+#define to_GlobalAppend(e) ((GlobalAppend)e)
+#define to_GlobalSet(e) ((GlobalSet)e)
+#define to_If(e) ((If)e)
+#define to_Include(e) ((Include)e)
+#define to_Insert(e) ((Insert)e)
+#define to_Macro(e) ((Macro)e)
+#define to_Plain(e) ((Plain)e)
+#define to_Redirect(e) ((Redirect)e)
+#define to_Rename(e) ((Rename)e)
+#define to_Return(e) ((Return)e)
+#define to_Set(e) ((Set)e)
+#define to_Switch(e) ((Switch)e)
+#define to_While(e) ((While)e)
+#define to_alternative(e) ((alternative)e)
+#define to_field(e) ((field)e)
+#define to_macro(e) ((macro)e)
+#define to_switchcase(e) ((switchcase)e)
+#define to_var(e) ((var)e)
+#define to_classComponent(e) ((classComponent)e)
+#define to_ds(e) ((ds)e)
+#define to_tplelm(e) ((tplelm)e)
 
+/* new_<type> routines */
 #ifdef LOGNEW
-#define new_alternative(label,component) real_new_alternative(label,component,__FILE__,__LINE__)
-#define new_CCSuper(super) real_new_CCSuper(super,__FILE__,__LINE__)
-#define new_CCFields(fields) real_new_CCFields(fields,__FILE__,__LINE__)
+#define new_Append(lno,line) real_new_Append(lno,line,__FILE__,__LINE__)
+#define new_Appendfile(lno,fname,body) real_new_Appendfile(lno,fname,body,__FILE__,__LINE__)
 #define new_CCAlternatives(alternatives) real_new_CCAlternatives(alternatives,__FILE__,__LINE__)
+#define new_CCFields(fields) real_new_CCFields(fields,__FILE__,__LINE__)
 #define new_CCSublist(components) real_new_CCSublist(components,__FILE__,__LINE__)
-#define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
-#define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,__FILE__,__LINE__)
+#define new_CCSuper(super) real_new_CCSuper(super,__FILE__,__LINE__)
+#define new_Call(lno,line) real_new_Call(lno,line,__FILE__,__LINE__)
+#define new_Case(lno,val) real_new_Case(lno,val,__FILE__,__LINE__)
+#define new_Default(lno) real_new_Default(lno,__FILE__,__LINE__)
 #define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,__FILE__,__LINE__)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
+#define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
+#define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,__FILE__,__LINE__)
+#define new_Error(lno,str) real_new_Error(lno,str,__FILE__,__LINE__)
+#define new_Exit(lno,str) real_new_Exit(lno,str,__FILE__,__LINE__)
+#define new_Foreach(lno,felist,body) real_new_Foreach(lno,felist,body,__FILE__,__LINE__)
+#define new_GlobalAppend(lno,line) real_new_GlobalAppend(lno,line,__FILE__,__LINE__)
+#define new_GlobalSet(lno,line) real_new_GlobalSet(lno,line,__FILE__,__LINE__)
+#define new_If(lno,cond,ifthen,ifelse) real_new_If(lno,cond,ifthen,ifelse,__FILE__,__LINE__)
+#define new_Include(lno,fname) real_new_Include(lno,fname,__FILE__,__LINE__)
+#define new_Insert(lno,fname) real_new_Insert(lno,fname,__FILE__,__LINE__)
+#define new_Macro(lno,formals,body) real_new_Macro(lno,formals,body,__FILE__,__LINE__)
+#define new_Plain(lno,line) real_new_Plain(lno,line,__FILE__,__LINE__)
+#define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,__FILE__,__LINE__)
+#define new_Rename(lno,line) real_new_Rename(lno,line,__FILE__,__LINE__)
+#define new_Return(lno,retval) real_new_Return(lno,retval,__FILE__,__LINE__)
+#define new_Set(lno,line) real_new_Set(lno,line,__FILE__,__LINE__)
+#define new_Switch(lno,val,cases,deflt) real_new_Switch(lno,val,cases,deflt,__FILE__,__LINE__)
+#define new_While(lno,cond,body) real_new_While(lno,cond,body,__FILE__,__LINE__)
+#define new_alternative(label,component) real_new_alternative(label,component,__FILE__,__LINE__)
 #define new_field(level,name,type) real_new_field(level,name,type,__FILE__,__LINE__)
 #define new_macro(lvl,name,orgfile,fpl,body) real_new_macro(lvl,name,orgfile,fpl,body,__FILE__,__LINE__)
 #define new_switchcase(cases,action) real_new_switchcase(cases,action,__FILE__,__LINE__)
-#define new_Plain(lno,plainline) real_new_Plain(lno,plainline,__FILE__,__LINE__)
-#define new_Foreach(lno,felist,felines) real_new_Foreach(lno,felist,felines,__FILE__,__LINE__)
-#define new_While(lno,whilecond,whilelines) real_new_While(lno,whilecond,whilelines,__FILE__,__LINE__)
-#define new_If(lno,ifcond,ifthen,ifelse) real_new_If(lno,ifcond,ifthen,ifelse,__FILE__,__LINE__)
-#define new_Switch(lno,val,cases,deflt) real_new_Switch(lno,val,cases,deflt,__FILE__,__LINE__)
-#define new_Set(lno,setline) real_new_Set(lno,setline,__FILE__,__LINE__)
-#define new_GlobalSet(lno,setline) real_new_GlobalSet(lno,setline,__FILE__,__LINE__)
-#define new_Append(lno,appline) real_new_Append(lno,appline,__FILE__,__LINE__)
-#define new_GlobalAppend(lno,appline) real_new_GlobalAppend(lno,appline,__FILE__,__LINE__)
-#define new_Error(lno,errstr) real_new_Error(lno,errstr,__FILE__,__LINE__)
-#define new_Exit(lno,str) real_new_Exit(lno,str,__FILE__,__LINE__)
-#define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,__FILE__,__LINE__)
-#define new_Appendfile(lno,fname,body) real_new_Appendfile(lno,fname,body,__FILE__,__LINE__)
-#define new_Include(lno,fname) real_new_Include(lno,fname,__FILE__,__LINE__)
-#define new_Macro(lno,formpar,macbody) real_new_Macro(lno,formpar,macbody,__FILE__,__LINE__)
-#define new_Call(lno,callline) real_new_Call(lno,callline,__FILE__,__LINE__)
-#define new_Return(lno,retval) real_new_Return(lno,retval,__FILE__,__LINE__)
-#define new_Insert(lno,fname) real_new_Insert(lno,fname,__FILE__,__LINE__)
-#define new_Case(lno,val) real_new_Case(lno,val,__FILE__,__LINE__)
-#define new_Default(lno) real_new_Default(lno,__FILE__,__LINE__)
 #define new_var(lvl,name,val) real_new_var(lvl,name,val,__FILE__,__LINE__)
 #define new_alternative_list() real_new_alternative_list(__FILE__,__LINE__)
 #define new_classComponent_list() real_new_classComponent_list(__FILE__,__LINE__)
@@ -625,171 +968,40 @@ struct str_var_list {
 #endif
 
 #ifdef LOGNEW
-extern alternative real_new_alternative( tmstring, classComponent, const char *_f, const int _l );
-#else
-extern alternative new_alternative( tmstring, classComponent );
-#endif
-#ifdef LOGNEW
-extern classComponent real_new_CCSuper( tmstring, const char *, const int );
-#else
-extern classComponent new_CCSuper( tmstring );
-#endif
-#ifdef LOGNEW
-extern classComponent real_new_CCFields( field_list, const char *, const int );
-#else
-extern classComponent new_CCFields( field_list );
-#endif
-#ifdef LOGNEW
-extern classComponent real_new_CCAlternatives( alternative_list, const char *, const int );
-#else
-extern classComponent new_CCAlternatives( alternative_list );
-#endif
-#ifdef LOGNEW
-extern classComponent real_new_CCSublist( classComponent_list, const char *, const int );
-#else
-extern classComponent new_CCSublist( classComponent_list );
-#endif
-#ifdef LOGNEW
-extern ds real_new_DsConstructorBase( tmstring, tmstring_list, tmstring_list, const char *, const int );
-#else
-extern ds new_DsConstructorBase( tmstring, tmstring_list, tmstring_list );
-#endif
-#ifdef LOGNEW
-extern ds real_new_DsTuple( tmstring, tmstring_list, field_list, const char *, const int );
-#else
-extern ds new_DsTuple( tmstring, tmstring_list, field_list );
-#endif
-#ifdef LOGNEW
-extern ds real_new_DsClass( tmstring, tmstring_list, field_list, tmbool, const char *, const int );
-#else
-extern ds new_DsClass( tmstring, tmstring_list, field_list, tmbool );
-#endif
-#ifdef LOGNEW
-extern ds real_new_DsConstructor( tmstring, tmstring_list, field_list, const char *, const int );
-#else
-extern ds new_DsConstructor( tmstring, tmstring_list, field_list );
-#endif
-#ifdef LOGNEW
-extern field real_new_field( int, tmstring, tmstring, const char *_f, const int _l );
-#else
-extern field new_field( int, tmstring, tmstring );
-#endif
-#ifdef LOGNEW
-extern macro real_new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list, const char *_f, const int _l );
-#else
-extern macro new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern switchcase real_new_switchcase( tmstring, tplelm_list, const char *_f, const int _l );
-#else
-extern switchcase new_switchcase( tmstring, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Plain( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Plain( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Foreach( int, tmstring, tplelm_list, const char *, const int );
-#else
-extern tplelm new_Foreach( int, tmstring, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_While( int, tmstring, tplelm_list, const char *, const int );
-#else
-extern tplelm new_While( int, tmstring, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_If( int, tmstring, tplelm_list, tplelm_list, const char *, const int );
-#else
-extern tplelm new_If( int, tmstring, tplelm_list, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Switch( int, tmstring, switchcase_list, tplelm_list, const char *, const int );
-#else
-extern tplelm new_Switch( int, tmstring, switchcase_list, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Set( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Set( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_GlobalSet( int, tmstring, const char *, const int );
-#else
-extern tplelm new_GlobalSet( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Append( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Append( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_GlobalAppend( int, tmstring, const char *, const int );
-#else
-extern tplelm new_GlobalAppend( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Error( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Error( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Exit( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Exit( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Redirect( int, tmstring, tplelm_list, const char *, const int );
-#else
-extern tplelm new_Redirect( int, tmstring, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Appendfile( int, tmstring, tplelm_list, const char *, const int );
-#else
-extern tplelm new_Appendfile( int, tmstring, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Include( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Include( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Macro( int, tmstring, tplelm_list, const char *, const int );
-#else
-extern tplelm new_Macro( int, tmstring, tplelm_list );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Call( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Call( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Return( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Return( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Insert( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Insert( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Case( int, tmstring, const char *, const int );
-#else
-extern tplelm new_Case( int, tmstring );
-#endif
-#ifdef LOGNEW
-extern tplelm real_new_Default( int, const char *, const int );
-#else
-extern tplelm new_Default( int );
-#endif
-#ifdef LOGNEW
-extern var real_new_var( uint, tmstring, tmstring, const char *_f, const int _l );
-#else
-extern var new_var( uint, tmstring, tmstring );
-#endif
-#ifdef LOGNEW
+extern Append real_new_Append( int, tmstring, const char *, const int );
+extern Appendfile real_new_Appendfile( int, tmstring, tplelm_list, const char *, const int );
+extern CCAlternatives real_new_CCAlternatives( alternative_list, const char *, const int );
+extern CCFields real_new_CCFields( field_list, const char *, const int );
+extern CCSublist real_new_CCSublist( classComponent_list, const char *, const int );
+extern CCSuper real_new_CCSuper( tmstring, const char *, const int );
+extern Call real_new_Call( int, tmstring, const char *, const int );
+extern Case real_new_Case( int, tmstring, const char *, const int );
+extern Default real_new_Default( int, const char *, const int );
+extern DsClass real_new_DsClass( tmstring, tmstring_list, field_list, tmbool, const char *, const int );
+extern DsConstructor real_new_DsConstructor( tmstring, tmstring_list, field_list, const char *, const int );
+extern DsConstructorBase real_new_DsConstructorBase( tmstring, tmstring_list, tmstring_list, const char *, const int );
+extern DsTuple real_new_DsTuple( tmstring, tmstring_list, field_list, const char *, const int );
+extern Error real_new_Error( int, tmstring, const char *, const int );
+extern Exit real_new_Exit( int, tmstring, const char *, const int );
+extern Foreach real_new_Foreach( int, tmstring, tplelm_list, const char *, const int );
+extern GlobalAppend real_new_GlobalAppend( int, tmstring, const char *, const int );
+extern GlobalSet real_new_GlobalSet( int, tmstring, const char *, const int );
+extern If real_new_If( int, tmstring, tplelm_list, tplelm_list, const char *, const int );
+extern Include real_new_Include( int, tmstring, const char *, const int );
+extern Insert real_new_Insert( int, tmstring, const char *, const int );
+extern Macro real_new_Macro( int, tmstring, tplelm_list, const char *, const int );
+extern Plain real_new_Plain( int, tmstring, const char *, const int );
+extern Redirect real_new_Redirect( int, tmstring, tplelm_list, const char *, const int );
+extern Rename real_new_Rename( int, tmstring, const char *, const int );
+extern Return real_new_Return( int, tmstring, const char *, const int );
+extern Set real_new_Set( int, tmstring, const char *, const int );
+extern Switch real_new_Switch( int, tmstring, switchcase_list, tplelm_list, const char *, const int );
+extern While real_new_While( int, tmstring, tplelm_list, const char *, const int );
+extern alternative real_new_alternative( tmstring, classComponent, const char *, const int );
+extern field real_new_field( int, tmstring, tmstring, const char *, const int );
+extern macro real_new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list, const char *, const int );
+extern switchcase real_new_switchcase( tmstring, tplelm_list, const char *, const int );
+extern var real_new_var( uint, tmstring, tmstring, const char *, const int );
 extern alternative_list real_new_alternative_list( const char *file, const int line );
 extern classComponent_list real_new_classComponent_list( const char *file, const int line );
 extern ds_list real_new_ds_list( const char *file, const int line );
@@ -800,6 +1012,40 @@ extern tmstring_list real_new_tmstring_list( const char *file, const int line );
 extern tplelm_list real_new_tplelm_list( const char *file, const int line );
 extern var_list real_new_var_list( const char *file, const int line );
 #else
+extern Append new_Append( int, tmstring );
+extern Appendfile new_Appendfile( int, tmstring, tplelm_list );
+extern CCAlternatives new_CCAlternatives( alternative_list );
+extern CCFields new_CCFields( field_list );
+extern CCSublist new_CCSublist( classComponent_list );
+extern CCSuper new_CCSuper( tmstring );
+extern Call new_Call( int, tmstring );
+extern Case new_Case( int, tmstring );
+extern Default new_Default( int );
+extern DsClass new_DsClass( tmstring, tmstring_list, field_list, tmbool );
+extern DsConstructor new_DsConstructor( tmstring, tmstring_list, field_list );
+extern DsConstructorBase new_DsConstructorBase( tmstring, tmstring_list, tmstring_list );
+extern DsTuple new_DsTuple( tmstring, tmstring_list, field_list );
+extern Error new_Error( int, tmstring );
+extern Exit new_Exit( int, tmstring );
+extern Foreach new_Foreach( int, tmstring, tplelm_list );
+extern GlobalAppend new_GlobalAppend( int, tmstring );
+extern GlobalSet new_GlobalSet( int, tmstring );
+extern If new_If( int, tmstring, tplelm_list, tplelm_list );
+extern Include new_Include( int, tmstring );
+extern Insert new_Insert( int, tmstring );
+extern Macro new_Macro( int, tmstring, tplelm_list );
+extern Plain new_Plain( int, tmstring );
+extern Redirect new_Redirect( int, tmstring, tplelm_list );
+extern Rename new_Rename( int, tmstring );
+extern Return new_Return( int, tmstring );
+extern Set new_Set( int, tmstring );
+extern Switch new_Switch( int, tmstring, switchcase_list, tplelm_list );
+extern While new_While( int, tmstring, tplelm_list );
+extern alternative new_alternative( tmstring, classComponent );
+extern field new_field( int, tmstring, tmstring );
+extern macro new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list );
+extern switchcase new_switchcase( tmstring, tplelm_list );
+extern var new_var( uint, tmstring, tmstring );
 extern alternative_list new_alternative_list( void );
 extern classComponent_list new_classComponent_list( void );
 extern ds_list new_ds_list( void );
@@ -844,9 +1090,6 @@ extern void rfre_tplelm( tplelm );
 extern void print_ds_list( TMPRINTSTATE *, const ds_list );
 extern void print_tmstring_list( TMPRINTSTATE *, const tmstring_list );
 #ifdef LOGNEW
-#else
-#endif
-#ifdef LOGNEW
 extern ds real_rdup_ds( const ds, const char *_f, const int _l );
 extern tplelm real_rdup_tplelm( const tplelm, const char *_f, const int _l );
 extern field_list real_rdup_field_list( const field_list, const char *_f, const int _l );
@@ -859,11 +1102,7 @@ extern field_list rdup_field_list( const field_list );
 extern tmstring_list rdup_tmstring_list( const tmstring_list );
 extern tplelm_list rdup_tplelm_list( const tplelm_list );
 #endif
-#ifdef LOGNEW
-#else
-#endif
-extern void flush_tm( void );
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
-/* ---- end of /usr/local/lib/calu.ht ---- */
-/* Code generation required 280 milliseconds. */
+/* ---- end of /usr/local/lib/tmc.ht ---- */
+/* Code generation required 680 milliseconds. */

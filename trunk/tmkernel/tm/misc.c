@@ -49,28 +49,7 @@ void ckfreopen( const char *nm, const char *acc, FILE *f )
 /* Given a type 't', return a pointer to its name tmstring. */
 const tmstring get_type_name( const ds t )
 {
-    tmstring nm;
-
-    nm = tmstringNIL;
-    switch( t->tag ){
-	case TAGDsConstructorBase:
-	    nm = to_DsConstructorBase(t)->name;
-	    break;
-
-	case TAGDsTuple:
-	    nm = to_DsTuple(t)->name;
-	    break;
-
-	case TAGDsClass:
-	    nm = to_DsClass(t)->name;
-	    break;
-
-	case TAGDsConstructor:
-	    nm = to_DsConstructor(t)->name;
-	    break;
-
-    }
-    return nm;
+    return t->name;
 }
 
 /* Given a list of types 'types', search for type with name 't'.
