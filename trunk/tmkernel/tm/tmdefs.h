@@ -25,7 +25,9 @@
 #define PATHSEPSTR "/"
 #endif
 
+#ifndef __cplusplus
 typedef int bool;
+#endif
 
 #define CHARNIL (char *)0
 

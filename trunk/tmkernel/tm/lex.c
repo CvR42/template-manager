@@ -44,12 +44,12 @@ unsigned int oldlineix = 0;
  */
 
 struct sctnode {
-    struct sctnode *next;   /* next possibility in list */
-    int sctchar;            /* char to match            */
-    struct sctnode *sub;    /* subtree to use on match. */
-    bool valid;             /* is acceptable token?     */
-    lextok tokval;          /* token value for yacc     */
-    char *toknm;            /* token name for debugging */
+    struct sctnode *next;	/* next possibility in list */
+    int sctchar;		/* char to match            */
+    struct sctnode *sub;	/* subtree to use on match. */
+    bool valid;			/* is acceptable token?     */
+    lextok tokval;		/* token value for yacc     */
+    const char *toknm;		/* token name for debugging */
 };
 
 #define SCTNIL (struct sctnode *)0
@@ -65,15 +65,15 @@ struct sctnode *toktree;
  */
 static struct sctnode *newsctnode( struct sctnode *nxt, int c )
 {
-    struct sctnode *new;
+    struct sctnode *nw;
 
-    new = TM_MALLOC( struct sctnode *, sizeof( struct sctnode ) );
+    nw = TM_MALLOC( struct sctnode *, sizeof( struct sctnode ) );
     newsctnodecnt++;
-    new->next    = nxt;
-    new->sctchar = c;
-    new->sub     = SCTNIL;
-    new->valid   = FALSE;
-    return new;
+    nw->next    = nxt;
+    nw->sctchar = c;
+    nw->sub     = SCTNIL;
+    nw->valid   = FALSE;
+    return nw;
 }
 
 /* Recursively free scan tree node 'n'. */
@@ -96,7 +96,7 @@ static struct sctnode *addtok(
     struct sctnode *tree,
     const char *str,
     lextok val,
-    char *nm
+    const char *nm
 )
 {
     struct sctnode *tp;
@@ -125,9 +125,9 @@ static struct sctnode *addtok(
 
 /* A structure to describe tokens and reserved words */
 struct tok {
-    char *tokstr;   /* the string to match. */
-    lextok tokval;  /* associated token value for yacc */
-    char *toknm;    /* name for debugging */
+    const char *tokstr;		/* the string to match. */
+    lextok tokval;		/* associated token value for yacc */
+    const char *toknm;		/* name for debugging */
 };
 
 #define TOKNIL (struct tok *) 0;
@@ -306,7 +306,7 @@ static bool scantoken(
     const struct sctnode *tree,
     char *buf,
     lextok *tokval,
-    char **toknm
+    const char **toknm
 )
 {
     int c;
@@ -377,7 +377,7 @@ static void skipcomment( void )
 lextok yylex( void )
 {
     int c;
-    char *toknm;
+    const char *toknm;
     lextok tokval;
 
 again:
@@ -398,6 +398,7 @@ again:
     if( isspace( c ) ) goto again;
     if( c == EOF ){
 	yytext[0] = '\0';
+	oldlineix = lineix;
 	lexshow(EOF,"EOF");
 	return LEXEOF;
     }

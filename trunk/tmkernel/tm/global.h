@@ -11,9 +11,9 @@
 extern FILE *tracestream;
 extern FILE *statstream;
 
-extern char *tplfilename;
+extern tmstring tplfilename;
 extern int tpllineno;
-extern char *dsfilename;
+extern tmstring dsfilename;
 extern FILE *dsfile;
 extern int dslineno;
 extern ds_list allds;

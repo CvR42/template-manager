@@ -16,7 +16,7 @@
 #include "global.h"
 #include "misc.h"
 
-/* Requirement analysis took 420 milliseconds. */
+/* Requirement analysis took 400 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ct ---- */
@@ -26,7 +26,7 @@
    template file:      /usr/local/lib/tmc.ct
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta13
+   tm kernel version:  2.0-beta14
  */
 
 #ifndef FIRSTROOM
@@ -288,7 +288,7 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #undef new_DsAlias
 #define new_DsAlias(name,inherits) real_new_DsAlias(name,inherits,_f,_l)
 #undef new_DsClass
-#define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,_f,_l)
+#define new_DsClass(name,inherits,fields,isvirtual) real_new_DsClass(name,inherits,fields,isvirtual,_f,_l)
 #undef new_DsConstructor
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,_f,_l)
 #undef new_DsConstructorBase
@@ -791,9 +791,9 @@ DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits )
 
 /* Allocate a new instance of class 'DsClass'. */
 #ifdef LOGNEW
-DsClass real_new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_virtual, const char *_f, const int _l )
+DsClass real_new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_isvirtual, const char *_f, const int _l )
 #else
-DsClass new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_virtual )
+DsClass new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_isvirtual )
 #endif
 {
     DsClass nw;
@@ -803,7 +803,7 @@ DsClass new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fie
     nw->name = p_name;
     nw->inherits = p_inherits;
     nw->fields = p_fields;
-    nw->virtual = p_virtual;
+    nw->isvirtual = p_isvirtual;
     newcnt_DsClass++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1223,9 +1223,9 @@ alternative new_alternative( tmstring p_label, classComponent p_component )
 
 /* Allocate a new instance of tuple 'field'. */
 #ifdef LOGNEW
-field real_new_field( int p_level, tmstring p_name, tmstring p_type, const char *_f, const int _l )
+field real_new_field( uint p_level, tmstring p_name, tmstring p_type, const char *_f, const int _l )
 #else
-field new_field( int p_level, tmstring p_name, tmstring p_type )
+field new_field( uint p_level, tmstring p_name, tmstring p_type )
 #endif
 {
     field nw;
@@ -1306,588 +1306,112 @@ var new_var( uint p_lvl, tmstring p_name, tmstring p_val )
  *    Freeing routines                            *
  **************************************************/
 
-/* Free an element 'e' of tuple type 'switchcase'. */
-static void fre_switchcase( switchcase e )
+static void fre_alternative_list( alternative_list );
+static void fre_classComponent_list( classComponent_list );
+static void fre_ds_list( ds_list );
+static void fre_field_list( field_list );
+static void fre_macro_list( macro_list );
+static void fre_tmstring_list( tmstring_list );
+static void fre_tplelm_list( tplelm_list );
+static void fre_var_list( var_list );
+static void fre_switchcase_list( switchcase_list );
+static void fre_macro( macro );
+static void fre_alternative( alternative );
+static void fre_field( field );
+static void fre_var( var );
+static void fre_Append( Append );
+static void fre_Appendfile( Appendfile );
+static void fre_CCAlternatives( CCAlternatives );
+static void fre_CCFields( CCFields );
+static void fre_CCSublist( CCSublist );
+static void fre_CCSuper( CCSuper );
+static void fre_Call( Call );
+static void fre_Case( Case );
+static void fre_Default( Default );
+static void fre_DeleteType( DeleteType );
+static void fre_DsAlias( DsAlias );
+static void fre_DsClass( DsClass );
+static void fre_DsConstructor( DsConstructor );
+static void fre_DsConstructorBase( DsConstructorBase );
+static void fre_DsTuple( DsTuple );
+static void fre_Error( Error );
+static void fre_Exit( Exit );
+static void fre_Foreach( Foreach );
+static void fre_GlobalAppend( GlobalAppend );
+static void fre_GlobalSet( GlobalSet );
+static void fre_If( If );
+static void fre_Include( Include );
+static void fre_Insert( Insert );
+static void fre_Macro( Macro );
+static void fre_Plain( Plain );
+static void fre_Redirect( Redirect );
+static void fre_Rename( Rename );
+static void fre_Return( Return );
+static void fre_Set( Set );
+static void fre_Switch( Switch );
+static void fre_While( While );
+static void fre_switchcase( switchcase );
+/* Free an element 'e' of tuple type 'macro'. */
+static void fre_macro( macro e )
 {
-    if( e == switchcaseNIL ){
+    if( e == macroNIL ){
 	return;
     }
-    frecnt_switchcase++;
+    frecnt_macro++;
 #ifdef LOGNEW
     tm_fre_logid( e->lognew_id );
 #endif
     TM_FREE( e );
 }
 
-/* Free an element 'e' of class type 'While'. */
-static void fre_While( While e )
+/* Free an element 'e' of tuple type 'alternative'. */
+static void fre_alternative( alternative e )
 {
-    if( e == WhileNIL ){
+    if( e == alternativeNIL ){
 	return;
     }
-    switch( e->tag ){
-	case TAGWhile:
-	    frecnt_While++;
+    frecnt_alternative++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+    tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
+    TM_FREE( e );
 }
 
-/* Free an element 'e' of class type 'Switch'. */
-static void fre_Switch( Switch e )
+/* Free an element 'e' of tuple type 'field'. */
+static void fre_field( field e )
 {
-    if( e == SwitchNIL ){
+    if( e == fieldNIL ){
 	return;
     }
-    switch( e->tag ){
-	case TAGSwitch:
-	    frecnt_Switch++;
+    frecnt_field++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+    tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
+    TM_FREE( e );
 }
 
-/* Free an element 'e' of class type 'Set'. */
-static void fre_Set( Set e )
+/* Free an element 'e' of tuple type 'var'. */
+static void fre_var( var e )
 {
-    if( e == SetNIL ){
+    if( e == varNIL ){
 	return;
     }
-    switch( e->tag ){
-	case TAGSet:
-	    frecnt_Set++;
+    frecnt_var++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+    tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
+    TM_FREE( e );
 }
 
-/* Free an element 'e' of class type 'Return'. */
-static void fre_Return( Return e )
+/* Free an element 'e' of class type 'Append'. */
+static void fre_Append( Append e )
 {
-    if( e == ReturnNIL ){
+    if( e == AppendNIL ){
 	return;
     }
     switch( e->tag ){
-	case TAGReturn:
-	    frecnt_Return++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Rename'. */
-static void fre_Rename( Rename e )
-{
-    if( e == RenameNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGRename:
-	    frecnt_Rename++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Redirect'. */
-static void fre_Redirect( Redirect e )
-{
-    if( e == RedirectNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGRedirect:
-	    frecnt_Redirect++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Plain'. */
-static void fre_Plain( Plain e )
-{
-    if( e == PlainNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGPlain:
-	    frecnt_Plain++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Macro'. */
-static void fre_Macro( Macro e )
-{
-    if( e == MacroNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGMacro:
-	    frecnt_Macro++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Insert'. */
-static void fre_Insert( Insert e )
-{
-    if( e == InsertNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGInsert:
-	    frecnt_Insert++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Include'. */
-static void fre_Include( Include e )
-{
-    if( e == IncludeNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGInclude:
-	    frecnt_Include++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'If'. */
-static void fre_If( If e )
-{
-    if( e == IfNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGIf:
-	    frecnt_If++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'GlobalSet'. */
-static void fre_GlobalSet( GlobalSet e )
-{
-    if( e == GlobalSetNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGGlobalSet:
-	    frecnt_GlobalSet++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'GlobalAppend'. */
-static void fre_GlobalAppend( GlobalAppend e )
-{
-    if( e == GlobalAppendNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGGlobalAppend:
-	    frecnt_GlobalAppend++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Foreach'. */
-static void fre_Foreach( Foreach e )
-{
-    if( e == ForeachNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGForeach:
-	    frecnt_Foreach++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Exit'. */
-static void fre_Exit( Exit e )
-{
-    if( e == ExitNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGExit:
-	    frecnt_Exit++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Error'. */
-static void fre_Error( Error e )
-{
-    if( e == ErrorNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGError:
-	    frecnt_Error++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'DsTuple'. */
-static void fre_DsTuple( DsTuple e )
-{
-    if( e == DsTupleNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDsTuple:
-	    frecnt_DsTuple++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'DsConstructorBase'. */
-static void fre_DsConstructorBase( DsConstructorBase e )
-{
-    if( e == DsConstructorBaseNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDsConstructorBase:
-	    frecnt_DsConstructorBase++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'DsConstructor'. */
-static void fre_DsConstructor( DsConstructor e )
-{
-    if( e == DsConstructorNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDsConstructor:
-	    frecnt_DsConstructor++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'DsClass'. */
-static void fre_DsClass( DsClass e )
-{
-    if( e == DsClassNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDsClass:
-	    frecnt_DsClass++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'DsAlias'. */
-static void fre_DsAlias( DsAlias e )
-{
-    if( e == DsAliasNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDsAlias:
-	    frecnt_DsAlias++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'DeleteType'. */
-static void fre_DeleteType( DeleteType e )
-{
-    if( e == DeleteTypeNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDeleteType:
-	    frecnt_DeleteType++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Default'. */
-static void fre_Default( Default e )
-{
-    if( e == DefaultNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDefault:
-	    frecnt_Default++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Case'. */
-static void fre_Case( Case e )
-{
-    if( e == CaseNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCase:
-	    frecnt_Case++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'Call'. */
-static void fre_Call( Call e )
-{
-    if( e == CallNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCall:
-	    frecnt_Call++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'CCSuper'. */
-static void fre_CCSuper( CCSuper e )
-{
-    if( e == CCSuperNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCCSuper:
-	    frecnt_CCSuper++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'CCSublist'. */
-static void fre_CCSublist( CCSublist e )
-{
-    if( e == CCSublistNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCCSublist:
-	    frecnt_CCSublist++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'CCFields'. */
-static void fre_CCFields( CCFields e )
-{
-    if( e == CCFieldsNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCCFields:
-	    frecnt_CCFields++;
-#ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
-#endif
-	    TM_FREE( e );
-	    break;
-
-	default:
-	    FATALTAG( e->tag );
-    }
-}
-
-/* Free an element 'e' of class type 'CCAlternatives'. */
-static void fre_CCAlternatives( CCAlternatives e )
-{
-    if( e == CCAlternativesNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCCAlternatives:
-	    frecnt_CCAlternatives++;
+	case TAGAppend:
+	    frecnt_Append++;
 #ifdef LOGNEW
 	    tm_fre_logid( e->lognew_id );
 #endif
@@ -1919,15 +1443,15 @@ static void fre_Appendfile( Appendfile e )
     }
 }
 
-/* Free an element 'e' of class type 'Append'. */
-static void fre_Append( Append e )
+/* Free an element 'e' of class type 'CCAlternatives'. */
+static void fre_CCAlternatives( CCAlternatives e )
 {
-    if( e == AppendNIL ){
+    if( e == CCAlternativesNIL ){
 	return;
     }
     switch( e->tag ){
-	case TAGAppend:
-	    frecnt_Append++;
+	case TAGCCAlternatives:
+	    frecnt_CCAlternatives++;
 #ifdef LOGNEW
 	    tm_fre_logid( e->lognew_id );
 #endif
@@ -1939,52 +1463,573 @@ static void fre_Append( Append e )
     }
 }
 
-/* Free an element 'e' of tuple type 'var'. */
-static void fre_var( var e )
+/* Free an element 'e' of class type 'CCFields'. */
+static void fre_CCFields( CCFields e )
 {
-    if( e == varNIL ){
+    if( e == CCFieldsNIL ){
 	return;
     }
-    frecnt_var++;
+    switch( e->tag ){
+	case TAGCCFields:
+	    frecnt_CCFields++;
 #ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
+	    tm_fre_logid( e->lognew_id );
 #endif
-    TM_FREE( e );
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
 }
 
-/* Free an element 'e' of tuple type 'field'. */
-static void fre_field( field e )
+/* Free an element 'e' of class type 'CCSublist'. */
+static void fre_CCSublist( CCSublist e )
 {
-    if( e == fieldNIL ){
+    if( e == CCSublistNIL ){
 	return;
     }
-    frecnt_field++;
+    switch( e->tag ){
+	case TAGCCSublist:
+	    frecnt_CCSublist++;
 #ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
+	    tm_fre_logid( e->lognew_id );
 #endif
-    TM_FREE( e );
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
 }
 
-/* Free an element 'e' of tuple type 'alternative'. */
-static void fre_alternative( alternative e )
+/* Free an element 'e' of class type 'CCSuper'. */
+static void fre_CCSuper( CCSuper e )
 {
-    if( e == alternativeNIL ){
+    if( e == CCSuperNIL ){
 	return;
     }
-    frecnt_alternative++;
+    switch( e->tag ){
+	case TAGCCSuper:
+	    frecnt_CCSuper++;
 #ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
+	    tm_fre_logid( e->lognew_id );
 #endif
-    TM_FREE( e );
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
 }
 
-/* Free an element 'e' of tuple type 'macro'. */
-static void fre_macro( macro e )
+/* Free an element 'e' of class type 'Call'. */
+static void fre_Call( Call e )
 {
-    if( e == macroNIL ){
+    if( e == CallNIL ){
 	return;
     }
-    frecnt_macro++;
+    switch( e->tag ){
+	case TAGCall:
+	    frecnt_Call++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Case'. */
+static void fre_Case( Case e )
+{
+    if( e == CaseNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGCase:
+	    frecnt_Case++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Default'. */
+static void fre_Default( Default e )
+{
+    if( e == DefaultNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDefault:
+	    frecnt_Default++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'DeleteType'. */
+static void fre_DeleteType( DeleteType e )
+{
+    if( e == DeleteTypeNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDeleteType:
+	    frecnt_DeleteType++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'DsAlias'. */
+static void fre_DsAlias( DsAlias e )
+{
+    if( e == DsAliasNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDsAlias:
+	    frecnt_DsAlias++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'DsClass'. */
+static void fre_DsClass( DsClass e )
+{
+    if( e == DsClassNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDsClass:
+	    frecnt_DsClass++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'DsConstructor'. */
+static void fre_DsConstructor( DsConstructor e )
+{
+    if( e == DsConstructorNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDsConstructor:
+	    frecnt_DsConstructor++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'DsConstructorBase'. */
+static void fre_DsConstructorBase( DsConstructorBase e )
+{
+    if( e == DsConstructorBaseNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDsConstructorBase:
+	    frecnt_DsConstructorBase++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'DsTuple'. */
+static void fre_DsTuple( DsTuple e )
+{
+    if( e == DsTupleNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDsTuple:
+	    frecnt_DsTuple++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Error'. */
+static void fre_Error( Error e )
+{
+    if( e == ErrorNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGError:
+	    frecnt_Error++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Exit'. */
+static void fre_Exit( Exit e )
+{
+    if( e == ExitNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGExit:
+	    frecnt_Exit++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Foreach'. */
+static void fre_Foreach( Foreach e )
+{
+    if( e == ForeachNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGForeach:
+	    frecnt_Foreach++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'GlobalAppend'. */
+static void fre_GlobalAppend( GlobalAppend e )
+{
+    if( e == GlobalAppendNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGGlobalAppend:
+	    frecnt_GlobalAppend++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'GlobalSet'. */
+static void fre_GlobalSet( GlobalSet e )
+{
+    if( e == GlobalSetNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGGlobalSet:
+	    frecnt_GlobalSet++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'If'. */
+static void fre_If( If e )
+{
+    if( e == IfNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGIf:
+	    frecnt_If++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Include'. */
+static void fre_Include( Include e )
+{
+    if( e == IncludeNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGInclude:
+	    frecnt_Include++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Insert'. */
+static void fre_Insert( Insert e )
+{
+    if( e == InsertNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGInsert:
+	    frecnt_Insert++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Macro'. */
+static void fre_Macro( Macro e )
+{
+    if( e == MacroNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGMacro:
+	    frecnt_Macro++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Plain'. */
+static void fre_Plain( Plain e )
+{
+    if( e == PlainNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGPlain:
+	    frecnt_Plain++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Redirect'. */
+static void fre_Redirect( Redirect e )
+{
+    if( e == RedirectNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGRedirect:
+	    frecnt_Redirect++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Rename'. */
+static void fre_Rename( Rename e )
+{
+    if( e == RenameNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGRename:
+	    frecnt_Rename++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Return'. */
+static void fre_Return( Return e )
+{
+    if( e == ReturnNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGReturn:
+	    frecnt_Return++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Set'. */
+static void fre_Set( Set e )
+{
+    if( e == SetNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGSet:
+	    frecnt_Set++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'Switch'. */
+static void fre_Switch( Switch e )
+{
+    if( e == SwitchNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGSwitch:
+	    frecnt_Switch++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of class type 'While'. */
+static void fre_While( While e )
+{
+    if( e == WhileNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGWhile:
+	    frecnt_While++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
+/* Free an element 'e' of tuple type 'switchcase'. */
+static void fre_switchcase( switchcase e )
+{
+    if( e == switchcaseNIL ){
+	return;
+    }
+    frecnt_switchcase++;
 #ifdef LOGNEW
     tm_fre_logid( e->lognew_id );
 #endif
@@ -2622,7 +2667,7 @@ static void rfre_field( field e )
     if( e == fieldNIL ){
 	return;
     }
-    rfre_int( e->level );
+    rfre_uint( e->level );
     rfre_tmstring( e->name );
     rfre_tmstring( e->type );
     fre_field( e );
@@ -2871,7 +2916,7 @@ static void rfre_DsClass( DsClass e )
 	    rfre_tmstring( e->name );
 	    rfre_tmstring_list( e->inherits );
 	    rfre_field_list( e->fields );
-	    rfre_tmbool( e->virtual );
+	    rfre_tmbool( e->isvirtual );
 	    fre_DsClass( e );
 	    break;
 
@@ -3467,7 +3512,7 @@ static void print_field( TMPRINTSTATE *st, const field t )
 	return;
     }
     tm_opentuple( st );
-    print_int( st, t->level );
+    print_uint( st, t->level );
     print_tmstring( st, t->name );
     print_tmstring( st, t->type );
     tm_closetuple( st );
@@ -3512,7 +3557,7 @@ static void print_DsClass( TMPRINTSTATE *st, const DsClass t )
 	    print_tmstring( st, t->name );
 	    print_tmstring_list( st, t->inherits );
 	    print_field_list( st, t->fields );
-	    print_tmbool( st, t->virtual );
+	    print_tmbool( st, t->isvirtual );
 	    tm_closecons( st );
 	    break;
 
@@ -3876,14 +3921,14 @@ static field real_rdup_field( const field e, const char *_f, const int _l )
 static field rdup_field( const field e )
 #endif
 {
-    int i_level;
+    uint i_level;
     tmstring i_name;
     tmstring i_type;
 
     if( e == fieldNIL ){
 	return fieldNIL;
     }
-    i_level = rdup_int( e->level );
+    i_level = rdup_uint( e->level );
     i_name = rdup_tmstring( e->name );
     i_type = rdup_tmstring( e->type );
     return new_field( i_level, i_name, i_type );
@@ -4025,7 +4070,7 @@ static DsClass rdup_DsClass( const DsClass e )
     tmstring i_name;
     tmstring_list i_inherits;
     field_list i_fields;
-    tmbool i_virtual;
+    tmbool i_isvirtual;
 
     if( e == DsClassNIL ){
 	return DsClassNIL;
@@ -4033,8 +4078,8 @@ static DsClass rdup_DsClass( const DsClass e )
     i_name = rdup_tmstring( e->name );
     i_inherits = rdup_tmstring_list( e->inherits );
     i_fields = rdup_field_list( e->fields );
-    i_virtual = rdup_tmbool( e->virtual );
-    return new_DsClass( i_name, i_inherits, i_fields, i_virtual );
+    i_isvirtual = rdup_tmbool( e->isvirtual );
+    return new_DsClass( i_name, i_inherits, i_fields, i_isvirtual );
 }
 
 /* Recursively duplicate a class DsConstructor element 'e'. */
@@ -5272,4 +5317,4 @@ int get_balance_tm( void )
 }
 
 /* ---- end of /usr/local/lib/tmc.ct ---- */
-/* Code generation required 770 milliseconds. */
+/* Code generation required 760 milliseconds. */

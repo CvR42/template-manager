@@ -75,7 +75,7 @@ static unsigned int hashval( const char *s )
    Return pointer to variable, or varNIL if not found.
  */
 static bool findlocmacro(
-    const tmstring nm,
+    const char *nm,
     unsigned int *hvp,
     unsigned int *ixp
 )
@@ -101,7 +101,7 @@ static bool findlocmacro(
 /* Search in all contexts for variable with name 'nm'. Return pointer to
    struct macro of variable, or varNIL if not found.
  */
-macro findmacro( const tmstring nm )
+macro findmacro( const char *nm )
 {
     macro_list l;
     unsigned int hv;
@@ -117,9 +117,9 @@ macro findmacro( const tmstring nm )
     return macroNIL;
 }
 
-char *match_macros( const tmstring pat, tmstring_list *matches )
+const char *match_macros( const char *pat, tmstring_list *matches )
 {
-    tmstring errm = ref_comp( pat );
+    const char *errm = ref_comp( pat );
     unsigned int hv;
 
     if( errm != NULL ){
@@ -143,9 +143,9 @@ char *match_macros( const tmstring pat, tmstring_list *matches )
     return NULL;
 }
 
-char *match_vars( const tmstring pat, tmstring_list *matches )
+const char *match_vars( const char *pat, tmstring_list *matches )
 {
-    tmstring errm = ref_comp( pat );
+    const char *errm = ref_comp( pat );
     unsigned int hv;
 
     if( errm != NULL ){
@@ -173,8 +173,8 @@ char *match_vars( const tmstring pat, tmstring_list *matches )
  * exists, overwrite it, else create a new one.
  */
 void setmacro(
-    const tmstring nm,
-    const tmstring fnm,
+    const char *nm,
+    const char *fnm,
     const tmstring_list fpl,
     const tplelm_list body
 )
@@ -209,7 +209,7 @@ void setmacro(
 /* Search in current context level 'lvl' for variable with name 'nm'.
    Return pointer to struct var of variable, or varNIL if not found.
  */
-static var findlocvar( const tmstring nm )
+static var findlocvar( const char *nm )
 {
     var_list l;
     unsigned int hv;
@@ -230,7 +230,7 @@ static var findlocvar( const tmstring nm )
 /* Search in all contexts for variable with name 'nm'. Return pointer to
    struct var of variable, or varNIL if not found.
  */
-static var findvar( const tmstring nm )
+static var findvar( const char *nm )
 {
     var_list l;
     unsigned int hv;
@@ -250,7 +250,7 @@ static var findvar( const tmstring nm )
    If variable 'nm' exists, overwrite old value, else create a
    new variable with the given value.
  */
-void setvar( const tmstring nm, const tmstring v )
+void setvar( const char *nm, const char *v )
 {
     unsigned int hv;
     var nwvar;
@@ -277,7 +277,7 @@ void setvar( const tmstring nm, const tmstring v )
 /* Given the hash value of a variable, and the name of the variable,
  * remove this variable from all contexts.
  */
-static void zapvar( const unsigned int hv, const tmstring nm )
+static void zapvar( const unsigned int hv, const char *nm )
 {
     var_list vl;
     unsigned int ix;
@@ -299,7 +299,7 @@ static void zapvar( const unsigned int hv, const tmstring nm )
  * Zap old variables in all contexts, and put this one in the topmost
  * context.
  */
-void globalsetvar( const tmstring nm, const tmstring v )
+void globalsetvar( const char *nm, const char *v )
 {
     unsigned int hv;
     var nwvar;
@@ -368,7 +368,7 @@ void flushvar( void )
 /* Search for variable with name 'nm'. Return pointer to the value of
    'nm', or NULL of not found.
  */
-tmstring getvar( const tmstring nm )
+tmstring getvar( const char *nm )
 {
     var v;
 

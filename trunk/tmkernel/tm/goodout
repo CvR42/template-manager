@@ -158,7 +158,7 @@ prefix:  'pfx_a pfx_b pfx_c pfx_d pfx_e pfx_f' 'pfx_a' ''
 suffix:  'a_sfx b_sfx c_sfx d_sfx e_sfx f_sfx' 'a_sfx' ''
 len:     '6' '1' '0'
 sort:    'a a b b c c d d e e f f' '-1 1 12 2' ''
-sizesort:'Top expr orig Thing thing TopNone notuple SubNamed Toptuple exprOrig exprPlus subclass sublevel subtuple toplevel aliastype exprConst testclass aliastype2 subNamedlist SubNamedlistlist' '1 2 -1 12' ''
+sizesort:'Top expr orig Thing thing number TopNone notuple SubNamed Toptuple exprOrig exprPlus subclass sublevel subtuple toplevel aliastype exprConst testclass aliastype2 subNamedlist SubNamedlistlist' '1 2 -1 12' ''
 uniq:    'a b c d e f' '-1 1 12 2' ''
 rev:     'f e d c b a' ''
 ----
@@ -235,28 +235,28 @@ conslist:
 fields:   
 allfields:   
 types: ''
-alias <aliases>: 'expr expr'
-alias <mklist 2 aliases>: '[[aliastype]] [[aliastype2]]'
-alias <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr expr expr bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [aliastype] [aliastype2]'
+alias <aliases>: 'int expr expr'
+alias <mklist 2 aliases>: '[[number]] [[aliastype]] [[aliastype2]]'
+alias <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr int expr expr bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [number] [aliastype] [aliastype2]'
 fields <all>: 'file line la lb tup tl tn n thinglist thinglistlist a b n a b lbl'
 allfields <all>: 'file line file line tl tn la lb file line tl tn tup file line tl tn file line tl tn file line tl tn n file line tl tn thinglist file line tl tn file line tl tn thinglistlist file line tl tn file line tl tn a b file line a b file line n file line a b file line a b lbl file line file line file line'
-metatype <all>: 'tuple constructor constructor constructor tuple constructor constructor constructorbase constructor tuple constructorbase constructorbase constructor class class class class class class alias alias atom list list list list list list list list list list list list list list list list list list list list list'
+metatype <all>: 'tuple constructor constructor constructor tuple constructor constructor constructorbase constructor tuple constructorbase constructorbase constructor class class class class class class alias alias alias atom list list list list list list list list list list list list list list list list list list list list list list'
 virtual <all>: 'sublevel toplevel thing testclass expr'
-nonvirtual <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist SubNamedlistlist notuple Thing subclass exprConst exprPlus exprOrig aliastype aliastype2 bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [aliastype] [aliastype2]'
+nonvirtual <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist SubNamedlistlist notuple Thing subclass exprConst exprPlus exprOrig number aliastype aliastype2 bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [number] [aliastype] [aliastype2]'
 virtual and nonvirtual behave as they should
 virtual and nonvirtual behave as they should
-types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int int expr expr tmstring'
-alltypes <all>: 'string int string int [thing] int [sublevel] [[sublevel]] string int [thing] int subtuple string int [thing] int string int [thing] int string int [thing] int int string int [thing] int [thing] string int [thing] int string int [thing] int [[thing]] string int [thing] int string int [thing] int [[int]] int string int [[int]] int string int int string int expr expr string int [[int]] int tmstring string int string int string int'
+types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int number expr expr tmstring'
+alltypes <all>: 'string int string int [thing] int [sublevel] [[sublevel]] string int [thing] int subtuple string int [thing] int string int [thing] int string int [thing] int int string int [thing] int [thing] string int [thing] int string int [thing] int [[thing]] string int [thing] int string int [thing] int [[int]] int string int [[int]] int string int number string int expr expr string int [[int]] int tmstring string int string int string int'
 subclasses <all>: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig aliastype2 Top Toptuple TopNone sublevel aliastype SubNamed subNamedlist SubNamedlistlist Thing'
 conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thing'
 metatype:  atom atom atom atom list
 
 =-=-=-=
-typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr aliastype aliastype2'
+typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr number aliastype aliastype2'
 tuplelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
 classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
-aliases: 'aliastype aliastype2'
+aliases: 'number aliastype aliastype2'
     conslist orig: ''
     inherits orig: ''
     inheritors orig: 'subtuple subclass expr'
@@ -690,8 +690,8 @@ aliases: 'aliastype aliastype2'
 	type exprConst line: 'int'
 	ttypeclass exprConst n: 'single'
 	typelevel exprConst n: 0
-	typename exprConst n: 'int'
-	type exprConst n: 'int'
+	typename exprConst n: 'number'
+	type exprConst n: 'number'
     conslist exprPlus: ''
     inherits exprPlus: 'expr'
     inheritors exprPlus: ''
@@ -763,6 +763,15 @@ aliases: 'aliastype aliastype2'
 	typelevel expr line: 0
 	typename expr line: 'int'
 	type expr line: 'int'
+    conslist number: ''
+    inherits number: 'int'
+    inheritors number: ''
+    superclasses number: 'int'
+    subclasses number: ''
+    isvirtual number: '0'
+    metatype number: 'alias'
+    fields number: ''
+    allfields number: ''
     conslist aliastype: ''
     inherits aliastype: 'aliastype2'
     inheritors aliastype: ''
@@ -803,8 +812,8 @@ Datastructure dependency
 ----
 Testing error handling:
 Type sorting:
-depsort: [int int_list orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig aliastype2 aliastype ]
-inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig aliastype2 aliastype ]
+depsort: [int int_list orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprPlus exprOrig number exprConst aliastype2 aliastype ]
+inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig number aliastype2 aliastype ]
 ----
 
 String manipulation functions:
@@ -990,6 +999,6 @@ Eval
 
 Delete all alias types
 ----------------------
-Before: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr aliastype aliastype2
+Before: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr number aliastype aliastype2
 After: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr
 

@@ -638,8 +638,8 @@ static tmstring fnsuffix( const tmstring_list sl )
 
 static int sortcmp( const void *pa, const void *pb )
 {
-     const char **sa = (const char **) pa;
-     const char **sb = (const char **) pb;
+     const tmstring *sa = (const tmstring *) pa;
+     const tmstring *sb = (const tmstring *) pb;
 
      return strcmp( *sa, *sb );
 }
@@ -658,8 +658,8 @@ static tmstring fnsort( const tmstring_list sl )
 
 static int sizesortcmp( const void *pa, const void *pb )
 {
-     const char **sa = (const char **) pa;
-     const char **sb = (const char **) pb;
+     const tmstring *sa = (const tmstring *) pa;
+     const tmstring *sb = (const tmstring *) pb;
      size_t sza;
      size_t szb;
 
@@ -812,7 +812,7 @@ static tmstring fnuniq( const tmstring_list sl )
 static tmstring fnfilt( const tmstring_list sl )
 {
     tmstring ans;
-    tmstring errm;
+    const char *errm;
     char buf[STRBUFSIZE];
     unsigned int ix;
     tmstring_list nl;
@@ -822,7 +822,7 @@ static tmstring fnfilt( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
-    if( errm != tmstringNIL ){
+    if( errm != (char *) NULL ){
 	(void) strcpy( errarg, errm );
 	line_error( "bad regular expression" );
 	return new_tmstring( "" );
@@ -846,7 +846,7 @@ static tmstring fnfilt( const tmstring_list sl )
 static tmstring fnsubs( const tmstring_list sl )
 {
     tmstring ans;
-    tmstring errm;
+    const char *errm;
     char buf[STRBUFSIZE];
     unsigned int ix;
     tmstring_list nl;
@@ -856,7 +856,7 @@ static tmstring fnsubs( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
-    if( errm != tmstringNIL ){
+    if( errm != (char *) NULL ){
 	(void) strcpy( errarg, errm );
 	line_error( "bad regular expression" );
 	return new_tmstring( "" );
@@ -883,7 +883,7 @@ static tmstring fnsubs( const tmstring_list sl )
 static tmstring fnrmlist( const tmstring_list sl )
 {
     tmstring ans;
-    tmstring errm;
+    const char *errm;
     unsigned int ix;
     tmstring_list nl;
 
@@ -892,7 +892,7 @@ static tmstring fnrmlist( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
-    if( errm != tmstringNIL ){
+    if( errm != (char *) NULL ){
 	(void) strcpy( errarg, errm );
 	line_error( "bad regular expression" );
 	return new_tmstring( "" );
@@ -1041,8 +1041,8 @@ static tmstring fnlisttypes( const tmstring_list sl )
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1073,8 +1073,8 @@ static tmstring fndelisttypes( const tmstring_list sl )
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1104,8 +1104,8 @@ static tmstring fnsingletypes( const tmstring_list sl )
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1138,8 +1138,8 @@ static tmstring fnstemname( const tmstring_list sl )
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1157,12 +1157,12 @@ static tmstring fnstemname( const tmstring_list sl )
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	tmstring old = rdup_tmstring( sl->arr[ix] );
-	tmstring new = get_element_type( pre, suff, old );
+	tmstring nw = get_element_type( pre, suff, old );
 
-	while( new != tmstringNIL ){
+	while( nw != tmstringNIL ){
 	    rfre_tmstring( old );
-	    old = new;
-	    new = get_element_type( pre, suff, old );
+	    old = nw;
+	    nw = get_element_type( pre, suff, old );
 	}
 	nl = append_tmstring_list( nl, old );
     }
@@ -1178,8 +1178,8 @@ static tmstring fnmklist( const tmstring_list sl )
     int n;
     tmstring_list nl;
     unsigned int ix;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1199,7 +1199,7 @@ static tmstring fnmklist( const tmstring_list sl )
     for( ix=1; ix<sl->sz; ix++ ){
 	nl = append_tmstring_list(
 	    nl, 
-	    mklistnm( pre, sl->arr[ix], suff, n )
+	    mklistnm( pre, sl->arr[ix], suff, (unsigned int) n )
 	);
     }
     ans = flatstrings( nl );
@@ -1435,7 +1435,7 @@ static bool is_virtual( ds_list types, const tmstring type )
 		break;
 
 	    case TAGDsClass:
-		ans = to_DsClass( d )->virtual;
+		ans = to_DsClass( d )->isvirtual;
 		break;
 
 	}
@@ -1537,8 +1537,8 @@ static tmstring calc_metaname(
 /* Given a type name, return the metatype of this type.  */
 static tmstring fnmetatype( const tmstring_list sl )
 {
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
     unsigned int ix;
     tmstring_list res;
     tmstring ans;
@@ -1770,7 +1770,7 @@ static tmstring fntypelevel( const tmstring_list sl )
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return newintstr( e->level );
+    return newuintstr( e->level );
 }
 
 /* Given a list of types, return the types of the fields of these types,
@@ -1780,8 +1780,8 @@ static tmstring fntypelevel( const tmstring_list sl )
  */
 static tmstring fnalltypes( const tmstring_list tl )
 {
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
     unsigned int tix;
     tmstring_list nl;
     tmstring ans;
@@ -1826,8 +1826,8 @@ static tmstring fnalltypes( const tmstring_list tl )
  */
 static tmstring fntypes( const tmstring_list tl )
 {
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
     unsigned int tix;
     tmstring_list nl;
     tmstring ans;
@@ -1894,8 +1894,8 @@ static tmstring fntypes( const tmstring_list tl )
 static tmstring fntype( const tmstring_list sl )
 {
     field e;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     if( sl->sz != 2 ){
 	line_error( "'type' requires a type and an element name" );
@@ -2083,7 +2083,7 @@ static tmstring fnctypellev( const tmstring_list sl )
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return newintstr( e->level );
+    return newuintstr( e->level );
 }
 
 /* Given a type name 't' and a list of types 'tl', return 'TRUE' if
@@ -2104,15 +2104,15 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 	tmstring base = get_element_type( pre, suff, t );
 
 	while( base != tmstringNIL ){
-	    tmstring new;
+	    tmstring nw;
 
 	    if( member_tmstring_list( base, tl ) ){
 		rfre_tmstring( base );
 		return TRUE;
 	    }
-	    new = get_element_type( pre, suff, base );
+	    nw = get_element_type( pre, suff, base );
 	    rfre_tmstring( base );
-	    base = new;
+	    base = nw;
 	}
     }
     ix = find_type_ix( allds, t );
@@ -2189,8 +2189,8 @@ static tmstring fndepsort( tmstring_list sl )
     tmstring t;
     tmstring baddies;
     tmstring ans;
-    char *pre;
-    char *suff;
+    const char *pre;
+    const char *suff;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -2350,7 +2350,7 @@ static tmstring fndefined( const tmstring_list sl )
 static tmstring fnmatchmacro( const tmstring_list sl )
 {
     tmstring ans;
-    char *errm;
+    const char *errm;
     tmstring_list nl;
 
     if( sl->sz != 1 ){
@@ -2359,7 +2359,7 @@ static tmstring fnmatchmacro( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     errm = match_macros( sl->arr[0], &nl );
-    if( errm != NULL ){
+    if( errm != (char *) NULL ){
 	(void) strcpy( errarg, errm );
 	line_error( "bad regular expression" );
 	rfre_tmstring_list( nl );
@@ -2376,7 +2376,7 @@ static tmstring fnmatchmacro( const tmstring_list sl )
 static tmstring fnmatchvar( const tmstring_list sl )
 {
     tmstring ans;
-    char *errm;
+    const char *errm;
     tmstring_list nl;
 
     if( sl->sz != 1 ){
@@ -2529,7 +2529,7 @@ static tmstring fnisinenv( const tmstring_list sl )
 /* access of environment variables */
 static tmstring fngetenv( const tmstring_list sl )
 {
-    char *v;
+    const char *v;
 
     if( sl->sz != 1 ){
 	line_error( "'getenv' requires exactly one parameter" );
@@ -2569,7 +2569,7 @@ typedef tmstring (*charfn)( tmstring_list );
 
 /* structure to describe an entry in the table of functions */
 struct fnentry {
-    char *fnname;
+    const char *fnname;
     charfn fncode;
 };
 
