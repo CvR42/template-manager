@@ -23,14 +23,14 @@ New in version 1.2:
   types, but why should *I* always be the one to yield.
   The worst thing is that the AIX typedefs are not used anywhere.
 
-- Fixed bug in tmtext freeing that caused errors of the lognew administration
-  under MS-Windows.
+- Fixed a bug in tmtext freeing that caused errors of the lognew
+  administration on some systems.
 
 - An embarrasingly big bug in delete_<type>_list() of the linked list
   template was fixed: the function only worked for the first element in
   the list. Whoops.
 
-- Installation now uses the 'install' command, and will create directories
+- Installation now uses the 'install' command, and creates directories
   that aren't there. In the previous versions, installation went wrong
   (often without warning), if the target directories didn't exist. Thanks
   to all the people that pointed this out.
@@ -39,6 +39,10 @@ New in version 1.2:
   fixed. (Whitespace before a '@' symbol was not skipped.) Thanks to
   Dainel Schlachta <schlacht@emacs.central.de> for pointing this out.
 
+- LOGNEW handling has been cleaned up considerably, so that the origin
+  of more memory leaks is traced back to user code.
+
+- 'Tm -h' now prints the version number of the package it is part of.
 
 New in version 1.1.3:
 - The Tm functions 'conslist' and 'telmlist' are more strict: they
