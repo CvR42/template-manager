@@ -2,22 +2,22 @@
 General
 -------
 
-This directory contains the sources for the Tm C support library.
-That is, these routines provide support for the Tm C templates
-in the directory 'tmc'.
+This directory contains the sources for the Tm C++ support library.
+That is, these routines provide support for the Tm C++ templates
+in the directory 'tmcpp'.
 
 Please read this file before installing the program.
 
-You must have compiled and installed this Tm C support library before you
+You must have compiled and installed this Tm C++ support library before you
 can compile and install the other components of the kernel Tm package.
 Please install this before you try to compile other components.
 Alternatively, you can use the Makefile in the parent directory; this will
 compile everything in the correct order.
 
-Tm requires an ANSI C compiler.
+Tm requires an ANSI C++ compiler.
 
 The library has been compiled and tested on the following systems:
- - SunOS 4.1.3 with the GNU C compiler
+ - SunOS 4.1.3 with the GNU C++ compiler
  - MS-Windows 3.1 and 95 with the Borland C++ compiler version 4.5 and 5.0
 
 Older versions have been compiled on lots of other UNIX systems, but
@@ -36,7 +36,7 @@ configuration header file.  You do this by simply typing
 
 at the command prompt. This will set reasonable defaults for the compilation.
 See below if you want the change the installation directory or the
-command to invoke the C compiler.
+command to invoke the C++ compiler.
 
 After than you can make all compilation targets with
 
@@ -72,8 +72,8 @@ Changing compilation options
 
 The configure script will determine on what kind of system you are,
 and will adapt a number of parameters accordingly. If the configure
-script can find the GNU C compiler (gcc), it will use that, else it
-will use the standard C compiler on your system (cc). To over-ride
+script can find the GNU C++ compiler (g++), it will use that, else it
+will use the standard C++ compiler on your system (cc). To over-ride
 this behavior, you can give configure an value for the compiler
 variable `CC' by setting it in the environment.  For example (assuming
 you use the csh(1)):
