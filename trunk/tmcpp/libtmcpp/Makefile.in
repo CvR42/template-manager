@@ -50,6 +50,7 @@ HDRS = tmcpp.h
 
 
 LIBSRCS	 = \
+                apptext.c \
                 badtag.c \
                 cmpdbl.c \
                 cmpstrtx.c \
