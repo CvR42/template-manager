@@ -34,6 +34,10 @@ expr =
     exprPlus: { a:expr, b:expr }
     ;
 
+internalExpr = expr +
+    exprSubtract: { a:expr, b:expr }
+    ;
+
 smt = { line:int } +
 	SmtAssign: { lhs:expr, rhs:expr } |
 	SmtIf: { cond:expr, thencode:[smt], elsecode:[smt] } ;
