@@ -1,4 +1,16 @@
-New version 2.0.1
+New in version 2.0.4
+
+- More functions in the C template are now declared with const_
+prefix.
+
+
+New in version 2.0.3
+
+- The C template now also generates a const_ variant of each type.
+This allows variables and parameters to be declared const-correctly.
+
+
+New in version 2.0.1
 
 - The software is now compiled with -O6 if gcc is used.
 
@@ -10,9 +22,11 @@ New version 2.0.1
 - Fixed a bug the C Tm library function to read a string, that might leave
 the terminating '\0' of that string beyond the allocated room.
 
-New version 2.0
+
+New in version 2.0
 
 - No significant changes.
+
 
 New Version 2.0 beta 29
 
