@@ -37,7 +37,7 @@ JUNK = tmp core makelog stestprog$(EXT) testmass$(EXT) testout testtmp stamp.t \
 
 TESTFILES = test.ds testdata testconf.t
 
-DISTFILES = $(TMMODULES) $(TESTFILES) $(TESTSRCS) $(DOC) $(MAKEFILE)
+DISTFILES = $(TMMODULES) $(TESTFILES) $(TESTSRCS) $(DOC) Makefile.in
 
 TMMODULES = pasgvar.pt pasvar.pt pascode.pt pastype.pt pasneed.t paslib.pt \
 	    paslib.ht pascode.ht
