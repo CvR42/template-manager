@@ -1,0 +1,16 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. File: testcode.ht
+.. Test of tm pascal library
+.insert testconf.t
+.. Note: in the installed version of the templates this is
+.. not necessary.
+.insert pasneed.t
+
+.include paslib.ht
+.include pascode.ht

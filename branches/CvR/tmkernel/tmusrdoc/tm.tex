@@ -1,0 +1,1177 @@
+\chapter{The text substitution language}
+\label{s.tm}
+The standard modules for the various languages are implemented
+with the text substitution language described in this section.
+\par
+One should only use the text substitution language directly if the available
+modules do not meet the requirements,
+since writing in this language is not exactly a pleasure.
+The casual user of {\Tm} is expected to use only the standard modules that
+are included in the {\Tm} package.
+For this purpose it is sufficient to know
+the {\tt .include} command (to invoke the modules),
+the {\tt .insert} command (to insert configuration files),
+the {\tt .set} command (to set some parameters for the modules),
+and the {\tt ..} command (to add comments to the {\Tm} input).
+\section{Conventions}
+Boolean functions return the string `{\tt 0}' for
+{\it false} \/or the string `{\tt 1}' for {\it true}.
+At places where a boolean expression is expected,
+the string `{\tt 0}' is {\it false},
+all other strings are {\it true}.
+\par
+A \dfn{number} is a string of digits with an optional sign before it.
+\par
+A word is either a string of non-blank characters, or a string of
+arbitrary characters surrounded by double quotes. A quoted string
+must end before the end of the line, and it may not contain
+double quote characters.
+Thus,
+the following lines each contain one word:
+\begin{verbatim}
+a
+word
+"this is quoted and therefore treated as one word"
+\end{verbatim}
+\section{Line commands}
+Each time a dot (`{\tt .}') is encountered as the first character of a line,
+that line is interpreted as a
+{\tt {\Tm}} command.
+If the second character of the line is also a dot,
+the line is comment, and is completely ignored.
+Otherwise the first word after the dot
+(possibly preceded by some spaces and tabs)
+is interpreted as the line command,
+and the remainder of the line is interpreted as a list of parameters
+that is interpreted each time the command is encountered.
+Evaluation of the parameters does {\em not} \/occur for termination commands
+({\tt .endif}, {\tt .endforeach}, {\tt .endwhile}).
+\par
+The following line commands are supported:
+\begin{verbatim}
+.append <var> <val>..<val>
+\end{verbatim}
+\begin{desc}
+\index{.append@\verb+.append+}
+Append the given list of values after the current values of variable
+{\tt <var>}.
+\end{desc}
+\begin{verbatim}
+.call <macro> <parm>..<parm>
+\end{verbatim}
+\begin{desc}
+Invoke macro \verb+<macro>+ with the given list of parameters.
+Before execution of the macro, the formal parameters of the macro
+are set to the values in the parameter list.
+The number of parameters must match the number of formal parameters,
+or else an error message is given.
+To pass a list of words to a formal parameter,
+surround it with double quotes.
+Macros `see' the variable values and macros that are in effect at the moment
+of execution of the macro.
+All changes that are made to variables or macros within a macro
+are invisible outside the macro.
+\par
+During execution of the macro \verb+.return+ commands may be given
+to record a return value for the macro, but in the \verb+.call+ command
+this value is ignored.
+If you want to use it,
+use the \verb+${call <macro> <parm>..<parm>}+ form instead.
+\end{desc}
+\begin{verbatim}
+.error <line>
+\end{verbatim}
+\begin{desc}
+\index{.error@\verb+.error+}
+Write {\tt <line>} to the error output stream.
+This is useful for debugging or error messages.
+\end{desc}
+\begin{verbatim}
+.exit <n>
+\end{verbatim}
+\begin{desc}
+\index{.exit@\verb+.exit+}
+Stop {\Tm} immediately with exit code {\tt <n>}.
+This is usually used to halt upon fatal errors in a template.
+\end{desc}
+\begin{verbatim}
+.expandinherits <nm>..<nm>
+\end{verbatim}
+\begin{desc}
+\label{s.expandinherits}
+\index{.expandinherits@\verb+.expandinherits+}\index{inherits!expanding}
+Given a list of types, replace the internal datastructure description of
+each type with a new version were inherit references have been expanded.
+\par
+In the expanded version of a datastructure, all references to
+inherited types have been removed, and all of the fields of the
+directly or indirectly inherited types have been inserted in front of
+the existing fields of the tuple or constructors.
+This expansion is only possible for inheritance from tuple types, not
+from constructor or primitive types.
+\par
+Since the inherit references are removed,
+subsequent invocations of \verb'.expandinherits' for the same
+type do not alter the data structure descriptions any more.
+\par
+For example, the data structure definitions
+\begin{verbatim}
+serial == ( serialno:int );
+
+tag == serial + ( name:tmstring );
+
+expr ::= tag +
+    ExprPlus a:expr b:expr |
+    ExprNeg v:expr |
+    ExprConst n:int;
+\end{verbatim}
+are expanded by \verb'.expandinherits tag expr' to:
+\begin{verbatim}
+serial == ( serialno:int );
+
+tag == ( serialno, name:tmstring );
+
+expr ::=
+    ExprPlus serialno:int name:tmstring a:expr b:expr |
+    ExprNeg serialno:int name:tmstring v:expr |
+    ExprConst serialno:int name:tmstring n:int;
+\end{verbatim}
+\end{desc}
+\begin{verbatim}
+.foreach <var> <val>..<val>
+\end{verbatim}
+\begin{desc}
+\index{.foreach@\verb+.foreach+}
+Set variable {\tt <var>} to each of the values {\tt <val>} and do a
+repeated translation of all following lines up to the next unbalanced
+{\tt .endforeach}
+for each of these values of {\tt <var>}.
+\end{desc}
+\begin{verbatim}
+.if <expr>
+\end{verbatim}
+\begin{desc}
+\index{.if@\verb+.if+}
+Evaluate {\tt <expr>}.
+If {\tt <expr>} is {\it true},
+translate the following lines up to the next unbalanced
+{\tt .else} or {\tt .endif}
+and if relevant skip all lines between {\tt .else} and {\tt .endif}.
+
+If {\tt <expr>} is {\it false},
+only translate all lines between the following unbalanced
+{\tt .else} and {\tt .endif}.
+If no {\tt .else} is encountered, no translation is done.
+\end{desc}
+\begin{verbatim}
+.include <filename>
+\end{verbatim}
+\begin{desc}
+\index{.include@\verb+.include+}
+Use the {\Tm} commands in {\tt <filename>} as if they were inserted at
+this position.
+It is not allowed to leave commands unterminated in {\tt <filename>}.
+Nested {\tt .include} or {\tt .insert} commands can occur to an arbitrary depth.
+No checking is done on recursion!
+All changes to variables that are done in this module are invisible after
+the {\tt .include} has terminated.
+\par
+All changes to variables that are done in the {\tt .include}-ed file
+are discarded after translation of the file. Thus, as far as the invoking
+file is concerned, an {\tt .include}-ed file does not change any variables.
+This is useful for the invocation of standard translation modules.
+\par
+If the file cannot be opened, {\Tm} searches a list of directories for it.
+By default this list contains the directory of the variable
+\verb+libpath+, but the user may supply additional directories with the
+\verb+-I+ command line option.
+\end{desc}
+\begin{verbatim}
+.insert <filename>
+\end{verbatim}
+\begin{desc}
+\index{.insert@\verb+.insert+}
+Use the {\Tm} commands in {\tt <filename>} as if they were inserted at
+this position.
+It is not allowed to leave commands unterminated in {\tt <filename>}.
+Nested {\tt .include} or {\tt .insert}
+commands can occur to an arbitrary depth.
+No checking is done on recursion!
+\par
+The variable settings that are done in an {\tt .insert}
+file remain visible outside the file.
+This is useful for configuration files or other files that
+must make global changes to variables.
+\par
+If the file cannot be opened, {\Tm} searches a list of directories for it.
+By default this list contains the directory of the variable
+\verb+libpath+, but the user may supply additional directories with the
+\verb+-I+ command line option.
+\end{desc}
+\begin{verbatim}
+.macro <name> <parm>..<parm>
+\end{verbatim}
+\begin{desc}
+Define a new macro \verb+<name>+ with the given list of formal parameters.
+Any previous macro of this name is replaced by the new definition.
+The body of the macro consists of the lines after the
+\verb+.macro+ up to the next unbalanced \verb+.endmacro+.
+A macro may contain any {\Tm} command, including other \verb+.macro+
+definitions.
+Macros may return a list of words (see the \verb+.return+ command),
+and may be invoked with the line command \verb+.call+ or an expression
+of the form \verb+${call <macro> parm..parm}+.
+See the description of these commands for further details.
+\end{desc}
+\begin{verbatim}
+.redirect <filename>
+\end{verbatim}
+\begin{desc}
+\index{.redirect@\verb+.redirect+}
+Redirect the output up to the balancing \verb'.endredirect' to the given
+file.
+The parameter list of the \verb'.redirect' command must evaluate to
+exactly one filename.
+\end{desc}
+\begin{verbatim}
+.return <val>..<val>
+\end{verbatim}
+\begin{desc}
+Record the given values as return value of the current macro.
+Any previous return value is replaced by this one.
+Contrary to the {\tt return} command in {\C}, this \verb+.return+
+command does {\em not} \/terminate execution of the macro.
+\end{desc}
+\begin{verbatim}
+.set <var> <val>..<val>
+\end{verbatim}
+\begin{desc}
+\index{.set@\verb+.set+}
+Set variable {\tt <var>} to the given list of values.
+\end{desc}
+\begin{verbatim}
+.while <expr>
+\end{verbatim}
+\begin{desc}
+\index{.while@\verb+.while+}
+Evaluate {\tt <expr>} and translate the subsequent lines up to the next
+unbalanced {\tt .endwhile} if {\tt <expr>} is {\it true}.
+Repeat this until {\tt <expr>} is {\it false}.
+\end{desc}
+For example:
+\begin{verbatim}
+.set l 1
+.foreach n 2 3 4 5
+.append l $n
+.endforeach
+$l
+\end{verbatim}
+(where \verb+$n+ denotes a reference to variable \verb+n+) will produce:
+\begin{verbatim}
+1 2 3 4 5
+\end{verbatim}
+And an other example (the meaning of \verb+${}+ and \verb+$[]+ expressions
+will be explained in sections~\ref{s.fn} and~\ref{s.intexpr}):
+\begin{verbatim}
+.. Example macro: calculate !n
+.macro fac n
+.if $[$n<2]
+.return 1
+.else
+.return $[$n*${call fac $[$n-1]}]
+.endif
+.endmacro
+.. Now test it out:
+.foreach n 1 2 4 5 7
+$n! = ${call fac $n}
+.endforeach
+\end{verbatim}
+Will result in:
+\begin{verbatim}
+1! = 1
+2! = 2
+4! = 24
+5! = 120
+7! = 5040
+\end{verbatim}
+\section{Variables}
+Variables are referenced with the expression
+{\tt \$(<varname>)} or optionally {\tt \$<letter>} for single character
+variables.
+Each time the characters `{\tt \$(}' are encountered,
+the evaluated string up to the next unbalanced `{\tt )}' 
+is interpreted as the name of a variable.
+If `{\tt \$<letter>}' or `{\tt \$<digit>}' is encountered it is interpreted as
+a reference to a variable with name `{\tt <letter>}' or {\tt <digit>}
+respectively.
+\par
+For example:
+\begin{verbatim}
+.set b +
+.set bla b
+$b, $(b), $bla, $(bla), $($(bla))
+\end{verbatim}
+will produce:
+\begin{verbatim}
++, +, +la, b, +
+\end{verbatim}
+Note that the result for `\verb+$bla+' is `{\tt +la}', since the
+variable `{\tt b}' is referenced, not the variable `{\tt bla}'.
+\par
+If the characters `{\tt \$\{}' are encountered the evaluated string up to
+the next unbalanced `{\tt \}}' is interpreted as a function invocation,
+and the result of that function replaces the invocation string,
+see section~\ref{s.fn}.
+If the characters `{\tt \$[}' are encountered the evaluated string up
+to the next unbalanced `{\tt ]}' is interpreted as an integer expression,
+and the result of the evaluation of that expression replaces the expression,
+see section~\ref{s.intexpr}.
+If any other character is encountered after the `{\tt \$}',
+it is copied literally.
+\par
+The following variables are predefined:
+\par
+\begin{desctab}
+{\tt libpath}\index{libpath@{\tt libpath}}
+&
+The absolute directory path of the library of standard modules.
+This may differ between installations,
+so use this variable to locate the library, or let {\Tm} locate
+it using its search path.
+By default Tm uses a built-in path, but you can change this by setting
+the environment variable TMLIBPATH\index{TMLIBPATH@\verb'TMLIBPATH'}.
+\\
+{\tt pathsep}\index{pathsep@{\tt pathsep}}
+&
+The character used as separation character between elements in a directory
+path. This is operating system dependent.
+\\
+{\tt kernel-version}\index{kernel-version@{\tt kernel-version}}\index{version!Tm kernel version number}
+\index{Tm kernel!version number}
+&
+The version number of the {\Tm} kernel, of which {\Tm} itself is a part.
+\\
+{\tt tmvers}\index{tmvers@{\tt tmvers}}\index{version!Tm version number}
+\index{Tm!version number}
+&
+The version number of {\Tm} itself.
+Not that this version number is different from the version number of the
+kernel, of which {\Tm} is a part.
+{\tt tmvers} is an integer, and is used in templates to determine whether
+the version of {\Tm} that is executing the template is recent enough.
+{\tt tmkernel-version} is a string, and is used to label the generated
+code.
+\\
+{\tt verbose}\index{verbose@{\tt verbose}}
+&
+The verbose flag.
+It is {\it true} \/if the flag {\tt -v} has been given at the command line,
+else {\it false}.
+\end{desctab}
+\par
+The variables {\tt listpre} and {\tt listsuff} are used by the functions
+\verb+mklist+, \verb+stemname+ and \verb+deptype+ to construct list type
+names from elements names or vice versa.
+\section{Functions}
+\label{s.fn}
+Functions are invoked with the expression
+\begin{verbatim}
+${<fnname> <par>..<par>}
+\end{verbatim}
+Each time the characters `{\tt \$\{}' are encountered,
+the string up to the next unbalanced `{\tt \}}' is evaluated,
+and the resulting string is
+interpreted as a function invocation consisting of a function with the name
+{\tt <fnname>} possibly followed by a number of parameter words.
+\subsection{Comparison functions}
+Most comparison functions only work on numbers---and will complain if they
+get anything else than a number---but {\tt eq} and {\tt neq} work on strings.
+Do {\it not} \/compare numbers with these functions
+since this is not safe (to these functions `{\tt 0}'
+is different from `{\tt 00}').
+\par
+\begin{desctab}
+{\tt eq sa sb}\index{eq@{\tt eq}}
+&
+Return {\it true} \/if the string $\verb'sa' = \verb'sb'$.
+Strings are equal if they are of the same length and are have the
+same character at the same position in the string.
+To compare numbers use {\tt ==}.
+\\
+{\tt neq sa sb}\index{neq@{\tt neq}}
+&
+Return {\it true} \/if the string ${\tt sa} \not= {\tt sb}$.
+To compare numbers use \verb'!='.
+\\
+{\tt == na nb}\index{==@{\tt ==}}
+&
+Return {\it true} \/if ${\tt na} = {\tt nb}$.
+To compare strings use {\tt eq}.
+\\
+\verb '!= na nb'\index{"!=@{\tt "!=}}
+&
+Return {\it true} \/if ${\tt na} \not= {\tt nb}$.
+To compare strings use {\tt neq}.
+\\
+{\tt < na nb}\index{<@{\tt <}}
+&
+Return {\it true} \/if ${\tt na} < {\tt nb}$.
+\\
+{\tt <= na nb}\index{<=@{\tt <=}}
+&
+Return {\it true} \/if ${\tt na} \leq {\tt nb}$.
+\\
+{\tt > na nb}\index{>@{\tt >}}
+&
+Return {\it true} \/if ${\tt na} > {\tt nb}$.
+\\
+{\tt >= na nb}\index{>=@{\tt >=}}
+&
+Return {\it true} \/if ${\tt na} \geq {\tt nb}$.
+\end{desctab}
+For example:
+\begin{verbatim}
+${eq bla bla}, ${eq 00 0}, ${== 00 0}, ${< 1 2}, ${< 2 1}
+\end{verbatim}
+will produce:
+\begin{verbatim}
+1, 0, 1, 1, 0
+\end{verbatim}
+\subsection{Arithmetic functions}
+All arithmetic functions only work on numbers.
+\par
+\nopagebreak
+\begin{desctab}
+{\tt + n1..nn}\index{+@{\tt +}}
+&
+Return ${\tt n1} + \cdots + {\tt nn}$.
+The sum of an empty list is 0.
+\\
+{\tt - na nb}\index{-@{\tt -}}
+&
+Return ${\tt na} - {\tt nb}$.
+\\
+{\tt * n1..nn}\index{*@{\tt *}}
+&
+Return ${\tt n1} \times \cdots \times {\tt nn}$.
+The product of an empty list is 1.
+\\
+{\tt / na nb}\index{/@{\tt /}}
+&
+Return ${\tt na} / {\tt nb}$.
+\\
+{\tt \% na nb}\index{"%@\verb+%+}
+&
+Return the remainder of the division of {\tt na} by {\tt nb}.
+\\
+{\tt max n1..nn}\index{max@{\tt max}}
+&
+Return the maximum of ${\tt n1} \cdots {\tt nn}$.
+The list must contain at least 1 element.
+\\
+{\tt min n1..nn}\index{min@{\tt min}}
+&
+Return the minimum of ${\tt n1} \cdots {\tt nn}$.
+The list must contain at least 1 element.
+\end{desctab}
+For example:
+\begin{verbatim}
+${+ 1 2 3 4}, ${max 1 2 3 4}
+\end{verbatim}
+will produce:
+\begin{verbatim}
+10, 4
+\end{verbatim}
+\subsection{Boolean functions}
+\nopagebreak
+\par
+\begin{desctab}
+{\tt and b1..bn}\index{and@{\tt and}}
+&
+Return {\it true} \/if all of {\tt b1} {\ldots} {\tt bn} are {\it true},
+or else {\it false}.
+The {\tt and} of an empty list is {\it true}.
+\\
+{\tt not b}\index{not@{\tt not}}
+&
+Return {\it true} \/if {\tt b} is {\it false}, or else {\it true}.
+\\
+{\tt or b1..bn}\index{or@{\tt or}}
+&
+Return {\it true} \/if one of {\tt b1}
+{\ldots} {\tt bn} is {\it true},
+or else {\it false}.
+The {\tt or} of an empty list is {\it false}.
+\end{desctab}
+For example:
+\begin{verbatim}
+.foreach a 0 1
+.foreach b 0 1
+.foreach c 0 1
+$a $b $c | ${and $a $b $c} | ${or $a $b $c} | ${not $c}
+.endforeach
+.endforeach
+.endforeach
+\end{verbatim}
+will produce:
+\begin{verbatim}
+0 0 0 | 0 | 0 | 1
+0 0 1 | 0 | 1 | 0
+0 1 0 | 0 | 1 | 1
+0 1 1 | 0 | 1 | 0
+1 0 0 | 0 | 1 | 1
+1 0 1 | 0 | 1 | 0
+1 1 0 | 0 | 1 | 1
+1 1 1 | 1 | 1 | 0
+\end{verbatim}
+\subsection{String functions}
+\par
+\nopagebreak
+\begin{desctab}
+{\tt capitalize e..e}\index{capitalize@{\tt capitalize}}
+&
+Return the given words with the first character of each word converted
+to upper case.
+\\
+{\tt strpad w len pw}\index{strpad@{\tt strpad}}
+&
+Return word {\tt w} made to length {\tt len} either by truncation or padding
+at the end with copies of {\tt pw}.
+\\
+{\tt strlen w}\index{strlen@{\tt strlen}}
+&
+Return the number of characters in word {\tt w}.
+\\
+{\tt strindex c w}\index{strindex@{\tt strindex}}
+&
+Return the index of the first occurrence of character {\tt c} in word {\tt w},
+counting from 1, or 0 if {\tt c} does not occur in {\tt w}.
+\\
+{\tt tolower e..e}\index{tolower@{\tt tolower}}
+&
+Return the given words with all upper case characters converted to lower case.
+\\
+{\tt toupper e..e}\index{toupper@{\tt toupper}}
+&
+Return the given words with all lower case characters converted to upper case.
+\end{desctab}
+For example:
+\begin{verbatim}
+.set s a list of WORDS
+.set w bicycle
+${len $s}, ${tolower $s}, ${toupper $s}, ${capitalize $s}
+${strindex c $w}, ${strpad $w 15 -=}, ${strpad $w 3 -}
+\end{verbatim}
+will produce:
+\begin{verbatim}
+4, a list of words, A LIST OF WORDS, A List Of WORDS
+3, bicycle-=-=-=-=, bic
+\end{verbatim}
+\subsection{List manipulation functions}
+\par
+\begin{desctab}
+{\tt index w e..e}\index{index@{\tt index}}
+&
+Search for the first occurrence of word {\tt w} in the list of elements.
+Return the index of that position counting from 1 upwards,
+or 0 if {\tt w} does not occur in the list.
+\\
+{\tt member w e..e}\index{member@{\tt member}}
+&
+Return {\it true} \/if word \verb'w' occurs in the list of elements,
+or {\it false} \/if it does not.
+\\
+{\tt shift e..e}\index{shift@{\tt shift}}
+&
+Return the given list with the first element deleted.
+The {\tt shift} of an empty list is empty.
+\\
+{\tt first e..e}\index{first@{\tt first}}
+&
+Return the first element of the given list.
+The first element of an empty list is empty.
+\\
+{\tt seplist s e..e}\index{seplist@{\tt seplist}}
+&
+Given a separator {\tt s} and a list of elements,
+create a new string that
+consists of all the elements in the list separated by a copy of {\tt s}.
+{\em Note}:
+the elements in the new list are {\em only} \/separated by the given separator,
+no additional spaces are added, in contrast to other functions that
+return a list.
+\\
+{\tt prefix pf e..e}\index{prefix@{\tt prefix}}
+&
+Given a prefix {\tt pf} and a list of elements,
+create a new list that
+consists of all the elements in the list prefixed by a copy of {\tt pf}.
+\\
+{\tt suffix sf e..e}\index{suffix@{\tt suffix}}
+&
+Given a suffix {\tt sf} and a list of elements,
+create a new list that
+consists of all the elements in the list suffixed by a copy of {\tt sf}.
+\\
+{\tt len e..e}\index{len@{\tt len}}
+&
+Return the number of elements in the given list.
+\\
+{\tt sort e..e}\index{sort@{\tt sort}}
+&
+Return a copy of the given list that is lexicographically sorted.
+\\
+{\tt rev e..e}\index{rev@{\tt rev}}
+&
+Reverse the elements in the list.
+\end{desctab}
+For example:
+\begin{verbatim}
+.set l a long list of nice and different words
+index: ${index of $l}, ${index bla $l}
+member: ${member of $l}, ${member bla $l}
+shift: ${shift $l}
+first: ${first $l}
+seplist: ${seplist - $l}
+prefix: ${prefix z $l}
+suffix: ${suffix z $l}
+len: ${len $l}
+sort: ${sort $l}
+rev: ${rev $l}
+\end{verbatim}
+will produce:
+\begin{verbatim}
+index: 4, 0
+member: 1, 0
+shift: long list of nice and different words
+first: a
+seplist: a-long-list-of-nice-and-different-words
+prefix: za zlong zlist zof znice zand zdifferent zwords
+suffix: az longz listz ofz nicez andz differentz wordsz
+len: 8
+sort: a and different list long nice of words
+rev: words different and nice of list long a
+\end{verbatim}
+\subsection{Set operations}
+\nopagebreak
+These functions implement common operations on sets,
+although they do not require sets as parameters.
+However, if the input lists are not sets, some of the operations do not
+result in a set.
+\par
+Note that {\tt comm} and {\tt excl} require a separator between
+two groups of parameters, that cannot be used as a list element.
+For this the empty string (`{\tt ""}') is chosen,
+since it is unlikely that this will occur in a set.
+However, this means that the empty string cannot occur in a set.
+\par
+\begin{desctab}
+{\tt comm a "" b}\index{comm@{\tt comm}}
+&
+Both {\tt a} and {\tt b} are lists of elements.
+Return a copy of all elements in {\tt a} that also occur in {\tt b}.
+This can be used as a `set intersection' operation.
+\\
+{\tt excl a "" b}\index{excl@{\tt excl}}
+&
+Both {\tt a} and {\tt b} are lists of elements.
+Return a copy of all elements in {\tt a} that do not occur in {\tt b}.
+This can be used as a `set difference' operation.
+\\
+{\tt uniq e1..en}\index{uniq@{\tt uniq}}
+&
+Return a copy of the given list that is lexicographically sorted,
+and where all duplicate elements are deleted.
+This function can be used as a `set union' operation.
+\\
+\end{desctab}
+For example:
+\begin{verbatim}
+.set a a b c d
+.set b c d e f
+{${comm $a "" $b}}, {${excl $a "" $b}}, {${uniq $a $b}}
+\end{verbatim}
+will produce:
+\begin{verbatim}
+{c d}, {a b}, {a b c d e f}
+\end{verbatim}
+\subsection{Regular expressions}
+\nopagebreak
+\par
+The regular expressions in {\Tm} are based on the regular expressions
+as used in {\Unix} shells.
+A pattern must match the entire string.
+The following meta-characters are recognized:
+\par
+\begin{desctab}
+\verb'?' & Matches any character.  \\
+\verb'\'
+&
+Matches the character following it.
+It is used as an escape character for all
+meta-characters, including itself. When used
+in a set (see below), it is treated as an ordinary character.
+\\
+{\tt [set]}
+&
+Matches one of the characters in the set.
+If the first character in the set is `\verb!^!',
+it matches a character {\em not} \/in the set. A shorthand like
+\verb!a-z! is used to specify a set of
+characters \verb!a! up to \verb!z!, inclusive. The special
+characters `\verb!]!' and `\verb!-!' have no special
+meaning if they appear as the first characters in the set.
+\par
+Examples:
+\par
+\begin{tabular}{ll}
+\verb![a-z]! & Any lower case alpha. \\
+\verb![^]-]! & Any char except `\verb!]!' and `\verb!-!'. \\
+\verb![^A-Z]! & Any char except upper case alpha. \\
+\verb![a-zA-Z]! & Any alpha.
+\end{tabular}
+\\
+\verb!*!
+&
+Matches the longest possible span of zero or more arbitrary characters.
+\\
+\verb!(form)!
+&
+Matches what {\tt form} matches,
+and assigns the matching pattern to one of the numbered patterns.
+The patterns are numbered from left to right by their opening bracket.
+\end{desctab}
+\par
+When patterns are substituted the substitution string can also have
+some meta-characters:
+
+\begin{desctab}
+\par
+\verb!&! & Is replaced by the entire matched pattern.  \\
+\verb!\d!
+&
+Is replaced by numbered pattern number `{\tt d}' as matched by
+`{\tt (form)}'.
+If the numbered pattern was not assigned in the original string,
+it is empty. \verb!\0! is replaced by the entire matched pattern.
+\\
+\verb!\&! & Is replaced by `\verb!&!'.  \\
+\verb!\\! & Is replaced by `\verb!\!'. \\
+\end{desctab}
+\par
+\begin{desctab}
+\\
+{\tt filt ps pr e..e}\index{filt@{\tt filt}}
+&
+Given a search pattern {\tt ps} and a replacement pattern {\tt pr},
+try to match all elements {\tt e} with {\tt ps},
+and for each matching element return a copy of {\tt pr}
+with the proper substitutions for any {\tt \&} and \verb!\d!.
+\\
+{\tt rmlist pat e..e}\index{rmlist@{\tt rmlist}}
+&
+Remove all elements matching {\tt pat} from the list.
+\\
+{\tt subs ps pr e..e}\index{subs@{\tt subs}}
+&
+Given a search pattern {\tt ps} and a replacement pattern {\tt pr},
+copy all elements {\tt e},
+and replace all elements matching {\tt ps} with {\tt pr}
+with the proper substitutions for any {\tt \&} and \verb!\d!.
+All elements that do not match {\tt ps} are copied without change.
+\end{desctab}
+For example:
+\begin{verbatim}
+.set l bla blup burp zwoing
+[${filt b(*)p &(\1) $l}], [${rmlist b*p $l}]
+[${subs b(*)p &(\1) $l}], [${subs b(*)p \&(\1) $l}]
+\end{verbatim}
+will produce:
+\begin{verbatim}
+[blup(lu) burp(ur)], [bla zwoing]
+[bla blup(lu) burp(ur) zwoing], [bla &(lu) &(ur) zwoing]
+\end{verbatim}
+\subsection{Environment access functions}
+\nopagebreak
+\par
+\begin{desctab}
+{\tt getenv nm}\index{getenv@{\tt getenv}}
+&
+Return the value of environment variable {\tt nm}.
+If the variable does not exist an empty string is returned.
+\\
+{\tt isinenv nm}\index{isinenv@{\tt isinenv}}
+&
+Determine whether environment variable {\tt nm} exists.
+Return {\it true}\/ if it exists, or {\it false} \/if it does not.
+\\
+{\tt dsfilename}\index{dsfilename@{\tt dsfilename}}
+&
+Return the name of the file that describes the data structures.
+\\
+{\tt searchfile fn..fn}\index{searchfile@{\tt searchfile}}
+&
+Given a list of file names,
+return a list
+of full names files that have been located using the search path,
+see the function {\verb+searchpath+}.
+\par
+If file can not be found in the search path,
+the string \verb+?+ (a single question mark) is returned for that
+file name.
+\\
+{\tt searchpath}\index{searchpath@{\tt searchpath}}
+&
+Return the search path for \verb+.include+ and \verb+.insert+ files.
+By default,
+the search path contains 
+the directory the variable \verb+libpath+ is set to.
+If additional
+directories are specified with the \verb+-I+ option,
+they are appended to the list.
+\\
+{\tt tplfilename}\index{tplfilename@{\tt tplfilename}}
+&
+Return the name of the current template file.
+\\
+{\tt tpllineno}\index{tpllineno@{\tt tpllineno}}
+&
+Return the current line number in the current template file.
+\\
+{\tt defined v}\index{defined@{\tt defined}}
+&
+Return {\it true} \/if variable {\tt v} is defined,
+or {\it false} \/otherwise.
+\end{desctab}
+\par
+For example:
+\begin{verbatim}
+${getenv SHELL}
+\end{verbatim}
+may produce (depending on the value of the \verb+SHELL+ environment variable):
+\begin{verbatim}
+/bin/csh
+\end{verbatim}
+\subsection{Data structure access functions}
+\par
+These functions are used to retrieve information about the data structure
+file that was passed to {\Tm}.
+\par
+\begin{desctab}
+{\tt typelist}\index{typelist@{\tt typelist}}
+&
+Return the list of types defined in the data structure file.
+\\
+{\tt inherits t}\index{inherits@{\tt inherits}}
+&
+Given a type {\tt t},
+return the list of types from which this type inherits.
+\\
+{\tt ttypelist}\index{ttypelist@{\tt ttypelist}}
+&
+Return the list of {\em tuple} types defined in the data structure file.
+\\
+{\tt ctypelist}\index{ctypelist@{\tt ctypelist}}
+&
+Return the list of {\em constructor} \/types defined in the data structure file.
+\\
+{\tt telmlist t}\index{telmlist@{\tt telmlist}}
+&
+Given a tuple type {\tt t},
+return the list of element names of that tuple.
+If {\tt t} is a constructor type, an error message is given.
+\\
+{\tt ttypeclass t e}\index{ttypeclass@{\tt ttypeclass}}
+&
+Given a tuple type {\tt t}
+and a tuple element name {\tt e},
+return the type class of that element.
+Possible type classes are {\tt single} and {\tt list}
+for a single element and a list of elements respectively.
+If {\tt t} is a constructor type, an error message is given.
+\\
+{\tt ttypellev t e}\index{ttypellev@{\tt ttypellev}}
+&
+Given a tuple type {\tt t} and a tuple element name {\tt e},
+return return the level of list bracketing of the element. Thus,
+an element of type \verb't' has list level 0, an element of type
+\verb'[t]' has list level 1, and so on.
+If {\tt t} is a constructor type, an error message is given.
+\\
+{\tt ttypename t e}\index{ttypename@{\tt ttypename}}
+&
+Given a tuple type {\tt t} and a tuple element name {\tt e},
+return the type of that element.
+If {\tt t} is a constructor type, an error message is given.
+\\
+{\tt conslist t}\index{conslist@{\tt conslist}}
+&
+Given a constructor type {\tt t},
+return the list of constructors of that type.
+If {\tt t} is a tuple type, an error message is given.
+\\
+{\tt celmlist t c}\index{celmlist@{\tt celmlist}}
+&
+Given a constructor type {\tt t} and a constructor name {\tt c},
+return the list of element names of that constructor.
+If {\tt t} is a tuple type, an error message is given.
+\\
+{\tt ctypeclass t c e}\index{ctypeclass@{\tt ctypeclass}}
+&
+Given a constructor type {\tt t},
+a constructor {\tt c}
+and a constructor element name {\tt e},
+return the type class of that element.
+Possible type classes are {\tt single} and {\tt list}
+for a single element and a list of elements respectively.
+If {\tt t} is a tuple type, an error message is given.
+\\
+{\tt ctypellev t c e}\index{ctypellev@{\tt ctypellev}}
+&
+Given a type {\tt t},
+a constructor {\tt c}
+and a constructor element name {\tt e},
+return return the level of list bracketing of the element. Thus,
+an element of type \verb't' has list level 0, an element of type
+\verb'[t]' has list level 1, and so on.
+If {\tt t} is a tuple type, an error message is given.
+\\
+{\tt ctypename t c e}\index{ctypename@{\tt ctypename}}
+&
+Given a type {\tt t},
+a constructor {\tt c}
+and a constructor element name {\tt e},
+return the type of that element.
+If {\tt t} is a tuple type, an error message is given.
+\\
+\end{desctab}
+For example:
+\begin{verbatim}
+Constructors:
+.foreach t ${ctypelist}
+'$t' is a constructor type with constructors:
+.foreach c ${conslist $t}
+ '$c', with elements:
+.foreach e ${celmlist $t $c}
+  '$e', type '${ctypename $t $c $e}', list level ${ctypellev $t $c $e}
+.endforeach
+.endforeach
+.endforeach
+
+Tuples:
+.foreach t ${ttypelist}
+'$t' is a tuple type with elements:
+.foreach e ${telmlist $t}
+ '$e', type '${ttypename $t $e}', list level ${ttypellev $t $e}
+.endforeach
+.endforeach
+\end{verbatim}
+will produce (assuming the data structure definitions of page \pageref{plotds}):
+\begin{verbatim}
+Constructors:
+'plot' is a constructor type with constructors:
+ 'XYPlot', with elements:
+  'xycolor', type 'int', list level 0
+  'points', type 'xypoint', list level 1
+ 'YPlot', with elements:
+  'ycolor', type 'int', list level 0
+  'xstart', type 'num', list level 0
+  'xend', type 'num', list level 0
+  'points', type 'num', list level 1
+
+Tuples:
+'xypoint' is a tuple type with elements:
+ 'x', type 'num', list level 0
+ 'y', type 'num', list level 0
+\end{verbatim}
+\subsection{Code generation service functions}
+These functions implement some of the complicated operations that
+are necessary during code generation. 
+\par
+One definition must be introduced:
+A type $t$ {\em depends} \/on a type $s$ if $s$
+is used in at least one of the elements of $t$,
+or if $t$ has a type in one of its elements that depends on $s$.
+Also,
+a list of a type depends on that type.
+Primitive types depend on nothing.
+\par
+For example:
+in the data structure on page \pageref{plotds} type {\tt plot}
+depends on the single types {\tt xypoint}, {\tt int}, and {\tt num},
+and on the list types {\tt [xypoint]} and {\tt [num]}.
+\par
+Several functions in this group refer to the {\Tm} variables \verb+listpre+
+and \verb+listsuff+ for a prefix and a suffix respectively to construct
+a list name from a single type name.
+If one of these variables is not defined, an empty string is assumed.
+\par
+\begin{desctab}
+{\tt deptype g t1..tn}\index{deptype@{\tt deptype}}
+&
+Given a list of types {\tt t1} $\cdots$ {\tt tn},
+return the list of {\em defined} types these types depend on.
+If {\tt g} is {\tt single}, return the single types,
+if {\tt g} is {\tt list}, return the list types.
+For nested lists (lists with a list level higher than one),
+the list name is mentioned plus all lower list levels.
+The list names are constructed using the {\Tm} variables \verb+listpre+
+and \verb+listsuff+.
+\par
+Thus, if one of the dependent types is a type \verb+foo+ with list
+level 2, and the list types are requested, \verb+[foo]+ and
+\verb+foo+ are returned (with suitable definitions of \verb+listpre+
+and \verb+listsuff+ of course).
+\\
+{\tt depsort t1..tn}\index{depsort@{\tt depsort}}
+&
+Given a list of types {\tt t1} $\cdots$ {\tt tn},
+rearrange them so that all tuple types that use a certain type
+are placed after the type itself.
+Thus, if a tuple type {\tt ta} uses a type {\tt tb}, {\tt tb} will
+be placed before {\tt ta};
+this is in effect a topological sort.
+The function will complain about circularities.
+\par
+Using this function it is not necessary to introduce forward declarations
+for tuple types and the manipulation functions on tuple types.
+The function does not consider the types that are used in constructors,
+since these may contain inherent circularities.
+\\
+{\tt mklist n e..e}\index{mklist@{\tt mklist}}
+&
+Given a list level {\tt n} and a list of type names {\tt e},
+construct a list name for the given list level by prefixing {\tt n}
+copies of the list prefix in variable \verb+listpre+ and suffixing
+{\tt n} copies of the list suffix in the variable \verb+listsuff+.
+\\
+{\tt stemname e..e}\index{stemname@{\tt stemname}}
+&
+Given a list of list type names {\tt e},
+return a list of stem names.
+All pairs of list prefixes and suffices are stripped from all
+the type names.
+The list prefix is taken from the variable \verb+listpre+,
+the list suffix is taken from the variable \verb+listsuff+.
+If both are empty the list is returned unchanged.
+\end{desctab}
+For example:
+\begin{verbatim}
+.set listpre <
+.set listsuff >
+[${deptype single plot}], [${deptype single xypoint}]
+[${mklist 3 a z}]
+[${stemname <<a>> <<b> <c>> d <e>}]
+\end{verbatim}
+will produce (assuming the data structure definitions of page \pageref{plotds}):
+\begin{verbatim}
+[plot xypoint], [xypoint]
+[<<<a>>> <<<z>>>]
+[a <b c> d e]
+\end{verbatim}
+\subsection{Deferred evaluation}
+\begin{desctab}
+{\tt call m p1..pn}\index{call@{\tt call}}
+&
+Given a macro name \verb+m+ and a list of parameters \verb+p1..pn+,
+invoke macro with the given list of parameters.
+Before execution,
+the formal parameters of the macro are set to the values in the parameter list.
+To pass a list of words to a formal parameter,
+it must be surrounded by double quotes.
+The number of parameters must match the number of formal parameters,
+or else an error message is given.
+Note that each parameter word corresponds to one formal parameter.
+Macros `see' the variable values and macros that are in effect at the moment
+of execution of the macro.
+All changes that are made to variables or macros within a macro
+are invisible outside the macro.
+During execution of the macro at least one \verb+.return+ command must be
+given to record a return value for the macro.
+The macro is not allowed to generate output, and therefore may only contain
+line commands.
+If you want to generate output, 
+use the \verb+.call <macro> <parm>..<parm>+ form instead.
+\\
+{\tt eval e1..en}\index{eval@{\tt eval}}
+&
+Given a list of expressions \verb+e1..en+, evaluate all expressions,
+and return them in a list.
+\\
+\end{desctab}
+For example:
+\begin{verbatim}
+.set x $$[12+45]
+x=$x, e = ${eval $x}
+\end{verbatim}
+will result in
+\begin{verbatim}
+x=$[12+45], e = 57
+\end{verbatim}
+\section{Arithmetic expressions}
+\label{s.intexpr}
+\index{arithmetic expressions|(}
+Integer expressions have the form
+\begin{verbatim}
+$[<expr>]
+\end{verbatim}
+Each time the characters `{\tt \$[}' are encountered,
+the string up to the next unbalanced `{\tt ]}' is evaluated,
+and the resulting string is
+interpreted as an integer expression.
+The following operators are available, where the number in the first column
+indicates priority; the lower the number, the stronger an operator binds:
+\begin{quote}
+\begin{tabular}{lll}
+priority & symbol & function \\
+0 & \verb'()' & Priority brackets. \\
+1 & \verb'-' & Unary minus. \\
+1 & \verb'!' & Boolean not. \\
+1 & \verb'+' & Unary plus. \\
+2 & \verb'*' & Multiplication. \\
+2 & \verb'/' & Division. \\
+2 & \verb'%' & Modulus. \\
+3 & \verb'+' & Addition. \\
+3 & \verb'-' & Subtraction.\\
+4 & \verb'!=' & Not equal to. \\
+4 & \verb'==' & Equal to. \\
+4 & \verb'<=' & Less or equal. \\
+4 & \verb'<' & Less. \\
+4 & \verb'>=' & Greater or equal. \\
+4 & \verb'>' & Greater. \\
+5 & \verb'&' & Boolean and. \\
+5 & \verb'|' & Boolean or. \\
+\end{tabular}
+\end{quote}
+The integer `0' represents `false',
+all other integers represent `true'.
+Boolean functions always return `1' as `true'.
+The operators $+$, $-$, $\%$, $*$ and $/$ are right binding.
+That is,
+\[ a\ {\rm op}\ b\ {\rm op}\ c = a\ {\rm op}\ (b\ {\rm op}\ c) \]
+For example:
+\begin{verbatim}
+.set n 42
+$[$n*$n], $[$n&1], $[1>2], $[00==0], $[2/2/2]
+\end{verbatim}
+will produce:
+\begin{verbatim}
+1764, 1, 0, 1, 2
+\end{verbatim}
+\index{arithmetic expressions|)}
+\section{An example of a template}
+Assuming that the file {\tt plot.ds} contains the data structure description
+of page \pageref{plotds},
+and the file {\tt macdemo.t} has the following contents:
+\begin{flushleft}
+\verbatiminput{macdemo.t}
+\end{flushleft}
+The command
+\begin{verbatim}
+    tm plot.ds macdemo.t
+\end{verbatim}
+will give the output:
+\par
+\begin{flushleft}
+\verbatiminput{macdemo.out}
+\end{flushleft}

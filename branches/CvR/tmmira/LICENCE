@@ -1,0 +1,267 @@
+                            Template Manager
+                            Tk Miranda template
+                      Copyright and Legal Information
+
+
+This document describes the rights and obligations of anyone using the
+Template Manager, also known as `Tm'. It applies to all files of Tm:
+source files, executable (binary) files, libraries, documentation, and
+templates contained in the official Tm distribution. Together these are
+referred to as `the distribution' or `the software package'. In this
+document `I' refers to the author of Tm, Kees van Reeuwijk.
+
+THIS FILE MUST ACCOMPANY ALL OFFICIAL OR CUSTOM TEMPLATE MANAGER FILES.
+IT MAY NOT BE MODIFIED. THIS INFORMATION APPLIES TO ALL USE OF THE
+SOFTWARE ANYWHERE. THIS DOCUMENT SUPERSEDES ALL PREVIOUS LICENSES OR
+DISTRIBUTION POLICIES.
+
+
+                        ACKNOWLEDGING YOUR USE OF TM
+
+Although I don't want to make money from Tm, I would like to know who is
+using it, and what they think of it. Send me an email, or - better still
+- send me a postcard. So, if you like the program, do the following:
+
+1. Get a nice postcard. I like to see the world in picture postcards, so
+   pick one that will show me what it looks like where you live.
+
+2. Write on it what you think of the program, or just say 'hi'.
+
+3. Mail it to:
+       Kees van Reeuwijk
+       Bart Verhallenplein 154
+       3122 TH  Schiedam
+       The Netherlands
+
+Yes, I could have made this postcard-ware, but I am getting quite alergic
+to people spreading around bad software and making claims about other
+people's moral obligations.
+
+So, I do it like this. The only moral obligation you have is that you do
+not make money of my software, or pretend it is your property. Apart from
+that I am happy if you just use the software, although I really
+appreciate it if you send me the postcard.
+
+
+                        USAGE OF THE SOFTWARE
+
+All files in this software package are copyrighted and may only be
+distributed and/or modified according to the guidelines listed below. The
+intention of the guidelines is to make Tm freely available to as many
+people as possible, while preventing that other people gain materially or
+immaterially from the distribution of the software.
+
+You are free to use the Template manager and all associated files in this
+package to generate files. The creator of the generated files retains all
+rights to the generated files and may use them for any purpose commercial
+or noncommercial.
+
+You are also granted the right to use any of the example files included
+in the 'tmusrdoc' directory of the distribution when generating your own
+files. You are not allowed to use the files in the other directories for
+purposes other than compiling (parts of) the template manager or support
+libraries. You may look at these files for inspiration, but you may not
+be the basis of any of your own software.
+
+You are also granted the right to use the support library in the
+directory 'libtmc' for any purpose commercial or noncommerical, provided
+that the resulting product is significantly different from the support
+library itself.
+
+Finally, you are granted the right to use the templates in the directory
+'tmc' for generating source files. You retain all rights to the generated
+files and may use them for any purpose commercial or noncommercial.
+
+                       DISTRIBUTION OF THE SOFTWARE
+
+The Tm Kernel consists of a single package containing all the sources. It
+is packaged as a compressed tar file, and as a zip file. Apart from that
+I intend to provide compiled versions of the software for the
+MSDOS/MS-Windows platform, and for the Atari ST.
+
+Next to the Tm Kernel, I intend to provide other templates and support
+libraries. These will be provided in separate packages.
+
+It is allowed to distribute the package, provided that the following
+conditions are met:
+
+- No portion of this package may be separated from the package and
+  distributed separately other than under the conditions specified in the
+  guidelines in this document.
+
+- This package may be bundled in other software packages according to the
+  conditions specified in the guidelines in this document.
+
+- This package may be included in software compilations using media such
+  as, but not limited to, floppy disk, CD-ROM, tape backup, optical
+  disks, hard disks, or memory cards. There are specific rules and
+  guidelines listed below for the provider to follow in order to legally
+  offer Tm with a software compilation.
+
+- You are not allowed to change the archiving method of these packages
+  without my explicit permission. You may rename the archives only to
+  meet the file name conventions of your system or to avoid file name
+  duplications but you should keep file names as similar to the originals
+  as possible.
+
+- Distributors must provide at least the source code package of the Tm
+  kernel: the other packages are optional. You must include clear and
+  obvious information on how to obtain the Tm packages you do not
+  provide.
+
+- Noncommercial distribution (such as a user copying the software for a
+  personal friend or colleague and not charging money or services for
+  that copy) has no other restrictions. This does not include nonprofit
+  organizations or computer clubs. These groups should use the
+  Shareware/Freeware distribution company rules below.
+
+- I reserve the right to withdraw distribution privileges from any group,
+  individual, or organization for any reason.
+
+
+                      MODIFYING THE SOFTWARE
+
+You are allowed to modify and compile the source for your own personal
+use in any fashion you see fit. What you do with the software in your own
+home is your business.
+
+If you want to distribute a modified version of the software,
+documentation or other parts of the package (here after referred to as a
+"custom version") you must follow the guidelines listed below. These
+guidelines are intended to clearly distinguish a custom version from
+official distributions.
+
+You may not incorporate any portion of the Tm source code in any software
+other than a custom version of Tm. However, authors who contribute source
+to Tm still retain all rights to their contributed code.
+
+You are encouraged to send me enhancements and bug fixes (including new
+templates), but I am in no way required to use them. By sending material
+to me, you assert that you have the right to distribute it. You are
+authorizing me to use the materials any way I like. You still retains
+rights to the donated material, but by donating you grant equal rights to
+me. I do not have to use the material, but if I do, you do not acquire
+any rights related to Tm. I will give you credit if appropriate.
+
+
+              CONDITIONS FOR DISTRIBUTION OF CUSTOM VERSIONS
+
+You may distribute custom compiled versions only if you comply with the
+following conditions. These conditions also apply to custom documentation
+based on my files.
+
+- In source code, templates and generated code it should be obvious that
+  they are customized, and who is responsible for the custimization.
+
+- Make all of your modifications to Tm freely and publicly available.
+
+- You must provide all Tm support for all users who use your custom
+  version.
+
+- You must clearly document all modifications that you have made to the
+  program that you are distributing.
+
+- Include clear and obvious information on how to obtain the official Tm
+  packages.
+
+- Include contact and support information for your version in a place
+  that is easily accessible.
+
+- Include all copyright and legal information for the official version.
+
+- Include a copy of this document.
+
+
+                    CONDITIONS FOR COMMERCIAL BUNDLING
+
+Vendors wishing to bundle the Tm software with commercial software
+(including shareware) or with publications must first obtain explicit
+permission from me. This includes any commercial software or
+publications, such as, but not limited to, magazines, journals, books,
+newspapers, or newsletters in print or machine readable form.
+
+I will decide if such distribution will be allowed on an individual
+basis, and I may impose certain restrictions as I see fit. The minimum
+terms are given below. Other conditions may be imposed.
+
+- Buyers of your product must not be led to believe that they must pay
+  for Tm. Any mention of Tm on the package, in advertising or in
+  instruction manuals must be clearly marked with a disclaimer that Tm is
+  free software and can be obtained for free or nominal cost from various
+  sources.
+
+- Include clear and obvious information on how to obtain the official
+  Tm kernel.
+
+- Include a copy of this document.
+
+- You must provide all Tm support for all users who acquired Tm through
+  your product.
+
+- Include contact and support information for your product.
+
+
+         CONDITIONS FOR SHAREWARE/FREEWARE DISTRIBUTION COMPANIES
+
+Shareware and freeware distribution companies may distribute the packages
+under the following conditions:
+- This section only applies to distributors of software collections.
+  Anyone wishing to bundle the package with a shareware product must use
+  the commercial bundling rules above.
+
+- You must notify me that you are distributing Tm and must provide me
+  with information on how to contact you should any support issues arise.
+
+- Distribution on any is permitted if the total cost to the user is no
+  more than $0.10 per megabyte of data, with a minimum of $5. For
+  example, a CD-ROM with 600 meg could cost no more than $60.00, and a
+  floppy disk with 1.44 megabyte could cost no more than $5.
+
+  All prices are in U.S. dollars.
+
+- You are not allowed to put parts of the distribution on separate disks
+  and charge for separate disks if those parts of the distribution will
+  fit on one disk. If more than one disk is needed to store the
+  distribution then more than one disk may be used and charged for.
+
+
+                 CONDITIONS FOR ON-LINE SERVICES AND BBS'S
+
+On-line services and BBS's may distribute Tm under the following conditions:
+
+- All parts of the distribution must be easily available on the service
+  and should be grouped together in a similar on-line area.
+
+- It is strongly requested that BBS operators remove prior versions of Tm
+  to avoid user confusion and simplify my support efforts.
+
+- The on-line service or BBS may only charge standard usage rates for the
+  downloading of this software. A premium may not be charged for this
+  package.
+
+                                DISCLAIMER
+
+This software is provided as is without any guarantees or warranty.
+Although I have attempted to find and correct any bugs in the package, I
+am not responsible for any damage or losses of any kind caused by the use
+or misuse of the package. I am under no obligation to provide service,
+corrections, or upgrades to this package.
+
+
+                                CONTACTING ME
+
+If you have any problems with the software, I would like to hear about
+them. Also, if you have any comments, questions or enhancements, please
+contact me at the address below.
+
+   Kees van Reeuwijk
+   Bart Verhallenplein 154
+   3122 TH  Schiedam
+   The Netherlands
+   Internet: reeuwijk@cp.tn.tudelft.nl
+
+
+Acknowledgements:
+
+The text of this document is based on the legal documentation of the
+program Persistence of Vision version 2.2.
