@@ -138,7 +138,7 @@ tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t
 	cat macros.t tmcid.t need.t tmc.ht > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmc.ht
 	rm -f tmp4242
-	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.ht
+	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.t
 
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
