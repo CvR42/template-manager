@@ -235,6 +235,9 @@ conslist:
 fields:   
 allfields:   
 types: ''
+alias <aliases>: 'expr'
+alias <mklist 2 aliases>: '[[expr]]'
+alias <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr expr bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [expr]'
 fields <all>: 'file line la lb tup tl tn n thinglist thinglistlist a b n a b lbl'
 allfields <all>: 'file line file line tl tn la lb file line tl tn tup file line tl tn file line tl tn file line tl tn n file line tl tn thinglist file line tl tn file line tl tn thinglistlist file line tl tn file line tl tn a b file line a b file line n file line a b file line a b lbl file line'
 metatype <all>: 'tuple constructor constructor constructor tuple constructor constructor constructorbase constructor tuple constructorbase constructorbase constructor class class class class class class alias atom list list list list list list list list list list list list list list list list list list list list'

@@ -274,6 +274,9 @@ types: '${types}'
 .set listpre [
 .set listsuff ]
 .set l ${typelist} bla ${mklist 1 ${typelist}}
+alias <aliases>: '${alias ${aliases}}'
+alias <mklist 2 aliases>: '${alias ${mklist 2 ${aliases}}}'
+alias <all>: '${alias $l}'
 fields <all>: '${fields $l}'
 allfields <all>: '${allfields $l}'
 metatype <all>: '${metatype $l}'
