@@ -12,10 +12,9 @@
 #include "tmc.h"
 
 /* definition of 'print' for a 'tmstring' */
-void fprint_tmstring( FILE *f, const tmstring s_parm )
+void fprint_tmstring( FILE *f, tmconststring s )
 {
     int c;
-    tmstring s = s_parm;
 
     if( s == tmstringNIL ){
 	fputc( '@', f );
