@@ -5,8 +5,8 @@ MAKEFILE = Makefile
 
 # The Tm directories that may require compilation, testing or installation
 DIRLIST=tmpas pasdoc
-CONFIGUREFILES = Makefile.in configure configure.in install-sh
-DISTFILES = $(CONFIGUREFILES) README CHANGES LICENCE .cvsignore
+CONFIGUREFILES = Makefile.in configure configure.ac install-sh
+DISTFILES = $(CONFIGUREFILES) README CHANGES gpl.txt .cvsignore autoconfall
 JUNK = distlist
 
 help:
@@ -45,3 +45,15 @@ empty:
 distlist: $(MAKEFILE) $(DIRLIST)
 	echo $(DISTFILES) | tr ' ' '\012' > distlist
 	for i in $(DIRLIST); do cd $$i; $(MAKE) distlist; cd ..; sed -e "s/^/$$i\//" $$i/distlist >> distlist; done
+
+# ----- Configuration
+
+configure: configure.ac
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
