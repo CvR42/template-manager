@@ -394,7 +394,6 @@ static void test_tmtext( TMPRINTSTATE *st )
     tmtext *t2;
     tmtext *nw;
     int stop;
-    int i;
     tmtext *sbuf[10];
 
     for( int i=0; i<10; i++ ){
@@ -705,7 +704,6 @@ int main( void )
 {
     tmstring str;
     tmstring scstr;
-    int ix;
     TMPRINTSTATE *st;
     int lev;
 

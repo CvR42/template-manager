@@ -19,7 +19,7 @@
 # The variables below are set by config
 LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
-CC = @CC@
+CXX = @CXX@
 RANLIB=@RANLIB@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
@@ -34,9 +34,9 @@ LDFLAGS =
 
 CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
 
-LINKER = @CC@
+LINKER = @CXX@
 
-INSTHFILES    = tmc.h
+INSTHFILES    = tmcpp.h
 
 TESTSRCS = testprog.c
 TESTFILES = testin goodout gooderr $(TESTSRCS)
@@ -46,7 +46,7 @@ JUNK  = testprog testerr testout tmp core mon.out gmon.out \
 
 SRCS	= $(LIBSRCS) $(TESTSRCS)
 
-HDRS = tmc.h
+HDRS = tmcpp.h
 
 
 LIBSRCS	 = \
@@ -167,7 +167,7 @@ all: $(LIBNAME) testprog
 
 # An explicit rule is necessary to enforce debugging flags, including LOGNEW
 testprog.o: testprog.c
-	$(CC) -c $(CFLAGS) -I$(LOCALINCLUDE) $< -o $*.o
+	$(CXX) -c $(CFLAGS) -I$(LOCALINCLUDE) $< -o $*.o
 
 testprog: $(TESTOBJS) $(LIBNAME)
 	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o testprog
@@ -206,52 +206,52 @@ distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 .c.o:
-	$(CC) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
+	$(CXX) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
 
 depend:
 	mkmf -f $(MAKEFILE)
 
 ###
-badtag.o: tmc.h config.h
-cmpdbl.o: tmc.h config.h
-errmsg.o: tmc.h config.h
-escstr.o: tmc.h config.h
-fatal.o: tmc.h config.h
-fneedc.o: tmc.h config.h
-fprdbl.o: tmc.h config.h
-fprint.o: tmc.h config.h
-fprsshrt.o: tmc.h config.h
-fprstr.o: tmc.h config.h
-fprsym.o: tmc.h config.h
-fprushrt.o: tmc.h config.h
-fsccbrac.o: tmc.h config.h
-fsccons.o: tmc.h config.h
-fscdbl.o: tmc.h config.h
-fscescc.o: tmc.h config.h
-fscflt.o: tmc.h config.h
-fscint.o: tmc.h config.h
-fscobrac.o: tmc.h config.h
-fscspace.o: tmc.h config.h
-fscsshrt.o: tmc.h config.h
-fscstr.o: tmc.h config.h
-fscushrt.o: tmc.h config.h
-lognew.o: tmc.h config.h
-newstr.o: tmc.h config.h
-lnfrestr.o: tmc.h config.h
-lnfscstr.o: tmc.h config.h
-lnnewstr.o: tmc.h config.h
-noroom.o: tmc.h config.h
-prdbl.o: tmc.h config.h
-print.o: tmc.h config.h
-propt.o: tmc.h config.h
-prsshrt.o: tmc.h config.h
-prstr.o: tmc.h config.h
-prsym.o: tmc.h config.h
-prushrt.o: tmc.h config.h
-symbol.o: tmc.h config.h
-testprog.o: tmc.h config.h
-tmcalloc.o: tmc.h config.h
-tmmalloc.o: tmc.h config.h
-tmreallc.o: tmc.h config.h
-t2s.o: tmc.h config.h
-lnt2s.o: tmc.h config.h
+badtag.o: tmcpp.h config.h
+cmpdbl.o: tmcpp.h config.h
+errmsg.o: tmcpp.h config.h
+escstr.o: tmcpp.h config.h
+fatal.o: tmcpp.h config.h
+fneedc.o: tmcpp.h config.h
+fprdbl.o: tmcpp.h config.h
+fprint.o: tmcpp.h config.h
+fprsshrt.o: tmcpp.h config.h
+fprstr.o: tmcpp.h config.h
+fprsym.o: tmcpp.h config.h
+fprushrt.o: tmcpp.h config.h
+fsccbrac.o: tmcpp.h config.h
+fsccons.o: tmcpp.h config.h
+fscdbl.o: tmcpp.h config.h
+fscescc.o: tmcpp.h config.h
+fscflt.o: tmcpp.h config.h
+fscint.o: tmcpp.h config.h
+fscobrac.o: tmcpp.h config.h
+fscspace.o: tmcpp.h config.h
+fscsshrt.o: tmcpp.h config.h
+fscstr.o: tmcpp.h config.h
+fscushrt.o: tmcpp.h config.h
+lognew.o: tmcpp.h config.h
+newstr.o: tmcpp.h config.h
+lnfrestr.o: tmcpp.h config.h
+lnfscstr.o: tmcpp.h config.h
+lnnewstr.o: tmcpp.h config.h
+noroom.o: tmcpp.h config.h
+prdbl.o: tmcpp.h config.h
+print.o: tmcpp.h config.h
+propt.o: tmcpp.h config.h
+prsshrt.o: tmcpp.h config.h
+prstr.o: tmcpp.h config.h
+prsym.o: tmcpp.h config.h
+prushrt.o: tmcpp.h config.h
+symbol.o: tmcpp.h config.h
+testprog.o: tmcpp.h config.h
+tmcalloc.o: tmcpp.h config.h
+tmmalloc.o: tmcpp.h config.h
+tmreallc.o: tmcpp.h config.h
+t2s.o: tmcpp.h config.h
+lnt2s.o: tmcpp.h config.h

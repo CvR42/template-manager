@@ -3,4 +3,4 @@ get_balance_tmstring(): 0
 tmtext::get_balance(): 0
 tmstring            :    355 allocated,    355 freed.
 tmtext              :     37 allocated,     37 freed.
-testprog.c(771): *** fatal error: test of 'tm_fatal'
+testprog.c(769): *** fatal error: test of 'tm_fatal'
