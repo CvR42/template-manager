@@ -8,7 +8,7 @@
    template file:      /usr/local/lib/tmc.ht
    datastructure file: calc.ds
    tm version:         36
-   tm kernel version:  2.0-beta3
+   tm kernel version:  2.0-beta4
  */
 
 /* data structures */
@@ -128,7 +128,7 @@ struct str_statement_list {
 #define to_statement(e) ((statement)e)
 #define to_expr(e) ((expr)e)
 
-/* constructors. */
+/* new_<type> routines */
 #ifdef LOGNEW
 #define new_ExprConst(n) real_new_ExprConst(n,__FILE__,__LINE__)
 #define new_ExprNegate(x) real_new_ExprNegate(x,__FILE__,__LINE__)
@@ -142,49 +142,25 @@ struct str_statement_list {
 
 #ifdef LOGNEW
 extern ExprConst real_new_ExprConst( int, const char *, const int );
-#else
-extern ExprConst new_ExprConst( int );
-#endif
-#ifdef LOGNEW
 extern ExprNegate real_new_ExprNegate( expr, const char *, const int );
-#else
-extern ExprNegate new_ExprNegate( expr );
-#endif
-#ifdef LOGNEW
 extern ExprPlus real_new_ExprPlus( expr, expr, const char *, const int );
-#else
-extern ExprPlus new_ExprPlus( expr, expr );
-#endif
-#ifdef LOGNEW
 extern ExprSymbol real_new_ExprSymbol( tmstring, const char *, const int );
-#else
-extern ExprSymbol new_ExprSymbol( tmstring );
-#endif
-#ifdef LOGNEW
 extern ExprTimes real_new_ExprTimes( expr, expr, const char *, const int );
-#else
-extern ExprTimes new_ExprTimes( expr, expr );
-#endif
-#ifdef LOGNEW
 extern statement real_new_statement( tmstring, expr, const char *, const int );
-#else
-extern statement new_statement( tmstring, expr );
-#endif
-#ifdef LOGNEW
 extern statement_list real_new_statement_list( const char *file, const int line );
 #else
+extern ExprConst new_ExprConst( int );
+extern ExprNegate new_ExprNegate( expr );
+extern ExprPlus new_ExprPlus( expr, expr );
+extern ExprSymbol new_ExprSymbol( tmstring );
+extern ExprTimes new_ExprTimes( expr, expr );
+extern statement new_statement( tmstring, expr );
 extern statement_list new_statement_list( void );
 #endif
 extern statement_list append_statement_list( statement_list, statement );
 extern void rfre_statement_list( statement_list );
 extern void rfre_expr( expr );
 extern void print_statement_list( TMPRINTSTATE *, const statement_list );
-#ifdef LOGNEW
-#else
-#endif
-#ifdef LOGNEW
-#else
-#endif
 #ifdef LOGNEW
 extern int real_fscan_statement_list( FILE *, statement_list *, const char *, const int );
 #else
@@ -193,4 +169,4 @@ extern int fscan_statement_list( FILE *, statement_list * );
 extern void stat_calc( FILE * );
 extern int get_balance_calc( void );
 /* ---- end of /usr/local/lib/tmc.ht ---- */
-/* Code generation required 110 milliseconds. */
+/* Code generation required 120 milliseconds. */
