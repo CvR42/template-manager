@@ -65,6 +65,10 @@ const tmstring get_type_name( const ds t )
 	    nm = t->DsClass.name;
 	    break;
 
+	case TAGDsConstructor:
+	    nm = t->DsConstructor.name;
+	    break;
+
     }
     return nm;
 }
@@ -105,6 +109,7 @@ unsigned int find_field_ix( const field_list fl, const char *nm )
     return fl->sz;
 }
 
+#if 0
 /* Given a list of constructors 'cl', search for constructor with name 'nm'.
  * Return the index of that constructor in the list, or cl->sz if not
  * found.
@@ -122,6 +127,7 @@ unsigned int find_constructor_ix( const constructor_list cl, const char *nm )
     }
     return cl->sz;
 }
+#endif
 
 /* Search for tmstring 's' in the list 'l' and return TRUE if
    found or FALSE otherwise.
@@ -181,6 +187,11 @@ field find_field( const ds_list types, const char *type, const char *nm )
 	    inherits = t->DsClass.inherits;
 	    break;
 
+	case TAGDsConstructor:
+	    fl = t->DsConstructor.fields;
+	    inherits = t->DsConstructor.inherits;
+	    break;
+
     }
     if( fl != field_listNIL ){
 	pos = find_field_ix( fl, nm );
@@ -206,6 +217,10 @@ static const tmstring_list extract_inherits_type( const ds d )
 
 	case TAGDsClass:
 	    ans = d->DsClass.inherits;
+	    break;
+
+	case TAGDsConstructor:
+	    ans = d->DsConstructor.inherits;
 	    break;
 
     }
@@ -316,6 +331,10 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
 
 	case TAGDsClass:
 	    el = d->DsClass.fields;
+	    break;
+
+	case TAGDsConstructor:
+	    el = d->DsConstructor.fields;
 	    break;
 
 	case TAGDsCons:

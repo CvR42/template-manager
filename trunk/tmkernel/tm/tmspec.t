@@ -18,12 +18,12 @@
 .append wantdefs rfre_ds_list
 .append wantdefs print_ds_list
 ..
-.append wantdefs new_constructor
-.append wantdefs rfre_constructor
-.append wantdefs new_constructor_list
-.append wantdefs rdup_constructor_list
-.append wantdefs rdup_constructor
-.append wantdefs append_constructor_list
+..append wantdefs new_constructor
+..append wantdefs rfre_constructor
+..append wantdefs new_constructor_list
+..append wantdefs rdup_constructor_list
+..append wantdefs rdup_constructor
+..append wantdefs append_constructor_list
 ..
 .append wantdefs new_field_list
 .append wantdefs new_field
@@ -37,6 +37,7 @@
 .append wantdefs rdup_tmstring_list
 .append wantdefs print_tmstring_list
 .append wantdefs append_tmstring_list
+.append wantdefs concat_tmstring_list
 .append wantdefs delete_tmstring_list
 .append wantdefs extract_tmstring_list
 .append wantdefs insert_tmstring_list

@@ -24,7 +24,7 @@
 
    template file:      /usr/local/lib/calu.ct
    datastructure file: tm.ds
-   tm version:         35
+   tm version:         36
    tm kernel version:  *** development -- not for distribution ***
  */
 
@@ -37,8 +37,6 @@ static long newcnt_alternative_list = 0;
 static long frecnt_alternative_list = 0;
 static long newcnt_classComponent_list = 0;
 static long frecnt_classComponent_list = 0;
-static long newcnt_constructor_list = 0;
-static long frecnt_constructor_list = 0;
 static long newcnt_ds_list = 0;
 static long frecnt_ds_list = 0;
 static long newcnt_field_list = 0;
@@ -62,14 +60,14 @@ static long newcnt_CCAlternatives = 0;
 static long frecnt_CCAlternatives = 0;
 static long newcnt_CCSublist = 0;
 static long frecnt_CCSublist = 0;
-static long newcnt_constructor = 0;
-static long frecnt_constructor = 0;
 static long newcnt_DsCons = 0;
 static long frecnt_DsCons = 0;
 static long newcnt_DsTuple = 0;
 static long frecnt_DsTuple = 0;
 static long newcnt_DsClass = 0;
 static long frecnt_DsClass = 0;
+static long newcnt_DsConstructor = 0;
+static long frecnt_DsConstructor = 0;
 static long newcnt_field = 0;
 static long frecnt_field = 0;
 static long newcnt_macro = 0;
@@ -134,8 +132,6 @@ static short int cacheix_alternative_list = 0;
 static alternative_list cache_alternative_list[CACHESZ]; 
 static short int cacheix_classComponent_list = 0;
 static classComponent_list cache_classComponent_list[CACHESZ]; 
-static short int cacheix_constructor_list = 0;
-static constructor_list cache_constructor_list[CACHESZ]; 
 static short int cacheix_ds_list = 0;
 static ds_list cache_ds_list[CACHESZ]; 
 static short int cacheix_field_list = 0;
@@ -152,8 +148,6 @@ static short int cacheix_alternative = 0;
 static alternative cache_alternative[CACHESZ];
 static short int cacheix_classComponent = 0;
 static classComponent cache_classComponent[CACHESZ];
-static short int cacheix_constructor = 0;
-static constructor cache_constructor[CACHESZ];
 static short int cacheix_ds = 0;
 static ds cache_ds[CACHESZ];
 static short int cacheix_field = 0;
@@ -218,24 +212,6 @@ static classComponent_list setroom_classComponent_list( classComponent_list l, c
     }
     else {
 	l->arr = TM_REALLOC( classComponent *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * constructor_list 'l'.
- */
-static constructor_list setroom_constructor_list( constructor_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( constructor *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( constructor *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -364,14 +340,14 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #define new_CCFields(fields) real_new_CCFields(fields,_f,_l)
 #define new_CCAlternatives(alternatives) real_new_CCAlternatives(alternatives,_f,_l)
 #define new_CCSublist(components) real_new_CCSublist(components,_f,_l)
-#undef new_constructor
-#define new_constructor(name,fields) real_new_constructor(name,fields,_f,_l)
 #undef new_DsCons
 #undef new_DsTuple
 #undef new_DsClass
+#undef new_DsConstructor
 #define new_DsCons(name,inherits,constructors) real_new_DsCons(name,inherits,constructors,_f,_l)
 #define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,_f,_l)
-#define new_DsClass(name,virtual,inherits,fields) real_new_DsClass(name,virtual,inherits,fields,_f,_l)
+#define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,_f,_l)
+#define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,_f,_l)
 #undef new_field
 #define new_field(level,name,type) real_new_field(level,name,type,_f,_l)
 #undef new_macro
@@ -410,8 +386,6 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #define new_alternative_list() real_new_alternative_list(_f,_l)
 #undef new_classComponent_list
 #define new_classComponent_list() real_new_classComponent_list(_f,_l)
-#undef new_constructor_list
-#define new_constructor_list() real_new_constructor_list(_f,_l)
 #undef new_ds_list
 #define new_ds_list() real_new_ds_list(_f,_l)
 #undef new_field_list
@@ -489,41 +463,6 @@ classComponent_list new_classComponent_list( void )
 #endif
 #ifdef STAT
     newcnt_classComponent_list++;
-#endif
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
-#ifdef LOGNEW
-constructor_list real_new_constructor_list( const char *_f, const int _l )
-#else
-constructor_list new_constructor_list( void )
-#endif
-{
-    constructor_list nw;
-
-#ifdef USECACHE
-    if( cacheix_constructor_list > 0 ){
-	nw = cache_constructor_list[--cacheix_constructor_list];
-    }
-    else {
-#endif
-	nw = TM_MALLOC( constructor_list, sizeof(*nw) );
-#ifdef USECACHE
-    }
-#endif
-    nw->sz = 0;
-#if FIRSTROOM==0
-    nw->arr = (constructor *) 0;
-    nw->room = 0;
-#else
-    nw->arr = TM_MALLOC( constructor *, FIRSTROOM*sizeof(constructor) );
-    nw->room = FIRSTROOM;
-#endif
-#ifdef STAT
-    newcnt_constructor_list++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -887,38 +826,9 @@ classComponent new_CCSublist( classComponent_list p_components )
 }
 
 #ifdef LOGNEW
-constructor real_new_constructor( tmstring p_name, field_list p_fields, const char *_f, const int _l )
+ds real_new_DsCons( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constructors, const char *_f, const int _l )
 #else
-constructor new_constructor( tmstring p_name, field_list p_fields )
-#endif
-{
-    constructor nw;
-
-#ifdef USECACHE
-    if( cacheix_constructor > 0 ){
-	nw = cache_constructor[--cacheix_constructor];
-    }
-    else {
-#endif
-	nw = TM_MALLOC( constructor, sizeof(*nw) );
-#ifdef USECACHE
-    }
-#endif
-    nw->name = p_name;
-    nw->fields = p_fields;
-#ifdef STAT
-    newcnt_constructor++;
-#endif
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
-#ifdef LOGNEW
-ds real_new_DsCons( tmstring p_name, tmstring_list p_inherits, constructor_list p_constructors, const char *_f, const int _l )
-#else
-ds new_DsCons( tmstring p_name, tmstring_list p_inherits, constructor_list p_constructors )
+ds new_DsCons( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constructors )
 #endif
 {
     ds nw;
@@ -978,9 +888,9 @@ ds new_DsTuple( tmstring p_name, tmstring_list p_inherits, field_list p_fields )
 }
 
 #ifdef LOGNEW
-ds real_new_DsClass( tmstring p_name, tmbool p_virtual, tmstring_list p_inherits, field_list p_fields, const char *_f, const int _l )
+ds real_new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_virtual, const char *_f, const int _l )
 #else
-ds new_DsClass( tmstring p_name, tmbool p_virtual, tmstring_list p_inherits, field_list p_fields )
+ds new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_virtual )
 #endif
 {
     ds nw;
@@ -997,11 +907,42 @@ ds new_DsClass( tmstring p_name, tmbool p_virtual, tmstring_list p_inherits, fie
 #endif
     nw->tag = TAGDsClass;
     nw->DsClass.name = p_name;
-    nw->DsClass.virtual = p_virtual;
     nw->DsClass.inherits = p_inherits;
     nw->DsClass.fields = p_fields;
+    nw->DsClass.virtual = p_virtual;
 #ifdef STAT
     newcnt_DsClass++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+ds real_new_DsConstructor( tmstring p_name, tmstring_list p_inherits, field_list p_fields, const char *_f, const int _l )
+#else
+ds new_DsConstructor( tmstring p_name, tmstring_list p_inherits, field_list p_fields )
+#endif
+{
+    ds nw;
+
+#ifdef USECACHE
+    if( cacheix_ds > 0 ){
+	nw = cache_ds[--cacheix_ds];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( ds, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGDsConstructor;
+    nw->DsConstructor.name = p_name;
+    nw->DsConstructor.inherits = p_inherits;
+    nw->DsConstructor.fields = p_fields;
+#ifdef STAT
+    newcnt_DsConstructor++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1592,27 +1533,6 @@ static void fre_classComponent( classComponent e )
     TM_FREE( e );
 }
 
-/* Free an element 'e' of type 'constructor'. */
-static void fre_constructor( constructor e )
-{
-    if( e == constructorNIL ){
-	return;
-    }
-#ifdef STAT
-    frecnt_constructor++;
-#endif
-#ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
-#endif
-#ifdef USECACHE
-    if( cacheix_constructor<CACHESZ ){
-	cache_constructor[cacheix_constructor++] = e;
-	return;
-    }
-#endif
-    TM_FREE( e );
-}
-
 /* Free an element 'e' of type 'ds'. */
 static void fre_ds( ds e )
 {
@@ -1634,6 +1554,10 @@ static void fre_ds( ds e )
 
 	case TAGDsClass:
 	    frecnt_DsClass++;
+	    break;
+
+	case TAGDsConstructor:
+	    frecnt_DsConstructor++;
 	    break;
 
 	default:
@@ -1840,30 +1764,6 @@ static void fre_classComponent_list( classComponent_list l )
     TM_FREE( l );
 }
 
-/* Free a list of constructor elements 'l'. */
-static void fre_constructor_list( constructor_list l )
-{
-    if( l == constructor_listNIL ){
-	return;
-    }
-#ifdef LOGNEW
-    tm_fre_logid( l->lognew_id );
-#endif
-#ifdef STAT
-    frecnt_constructor_list++;
-#endif
-    if( l->room!=0 ){
-	TM_FREE( l->arr );
-    }
-#ifdef USECACHE
-    if( cacheix_constructor_list<CACHESZ ){
-	cache_constructor_list[cacheix_constructor_list++] = l;
-	return;
-    }
-#endif
-    TM_FREE( l );
-}
-
 /* Free a list of ds elements 'l'. */
 static void fre_ds_list( ds_list l )
 {
@@ -2029,17 +1929,6 @@ classComponent_list append_classComponent_list( classComponent_list l, classComp
 {
     if( l->sz >= l->room ){
 	l = setroom_classComponent_list( l, 1+(l->sz)+(l->sz) );
-    }
-    l->arr[l->sz] = e;
-    l->sz++;
-    return l;
-}
-
-/* Append a constructor element 'e' to list 'l', and return the new list. */
-constructor_list append_constructor_list( constructor_list l, constructor e )
-{
-    if( l->sz >= l->room ){
-	l = setroom_constructor_list( l, 1+(l->sz)+(l->sz) );
     }
     l->arr[l->sz] = e;
     l->sz++;
@@ -2219,11 +2108,33 @@ field_list concat_field_list( field_list la, field_list lb )
     return la;
 }
 
+/* Concatenate tmstring list 'lb' after tmstring list 'la'.
+   The list descriptor of list 'lb' is freed,
+   since its contents has been moved to 'la'.
+ */
+tmstring_list concat_tmstring_list( tmstring_list la, tmstring_list lb )
+{
+    unsigned int cnt;
+    tmstring *sp;
+    tmstring *dp;
+
+    la = setroom_tmstring_list( la, la->sz+lb->sz );
+    cnt = lb->sz;
+    sp = lb->arr;
+    dp = &la->arr[la->sz];
+    while( cnt!=0 ){
+	*dp++ = *sp++;
+	cnt--;
+    }
+    la->sz += lb->sz;
+    fre_tmstring_list( lb );
+    return la;
+}
+
 /**************************************************
  *    Recursive freeing routines                  *
  **************************************************/
 
-static void rfre_constructor_list( constructor_list );
 
 static void rfre_alternative( alternative );
 static void rfre_field( field );
@@ -2241,7 +2152,7 @@ void rfre_ds( ds e )
 	case TAGDsCons:
 	    rfre_tmstring( e->DsCons.name );
 	    rfre_tmstring_list( e->DsCons.inherits );
-	    rfre_constructor_list( e->DsCons.constructors );
+	    rfre_tmstring_list( e->DsCons.constructors );
 	    break;
 
 	case TAGDsTuple:
@@ -2252,9 +2163,15 @@ void rfre_ds( ds e )
 
 	case TAGDsClass:
 	    rfre_tmstring( e->DsClass.name );
-	    rfre_tmbool( e->DsClass.virtual );
 	    rfre_tmstring_list( e->DsClass.inherits );
 	    rfre_field_list( e->DsClass.fields );
+	    rfre_tmbool( e->DsClass.virtual );
+	    break;
+
+	case TAGDsConstructor:
+	    rfre_tmstring( e->DsConstructor.name );
+	    rfre_tmstring_list( e->DsConstructor.inherits );
+	    rfre_field_list( e->DsConstructor.fields );
 	    break;
 
 	default:
@@ -2305,19 +2222,6 @@ static void rfre_alternative( alternative e )
     rfre_tmstring( e->label );
     rfre_classComponent( e->component );
     fre_alternative( e );
-}
-
-/* Recursively free an element 'e' of type 'constructor'
-   and all elements in it.
- */
-void rfre_constructor( constructor e )
-{
-    if( e == constructorNIL ){
-	return;
-    }
-    rfre_tmstring( e->name );
-    rfre_field_list( e->fields );
-    fre_constructor( e );
 }
 
 /* Recursively free an element 'e' of type 'field'
@@ -2483,20 +2387,6 @@ void rfre_classComponent_list( classComponent_list e )
     fre_classComponent_list( e );
 }
 
-/* Recursively free a list of elements 'e' of type constructor. */
-static void rfre_constructor_list( constructor_list e )
-{
-    unsigned int ix;
-
-    if( e == constructor_listNIL ){
-	return;
-    }
-    for( ix=0; ix<e->sz; ix++ ){
-	rfre_constructor( e->arr[ix] );
-    }
-    fre_constructor_list( e );
-}
-
 /* Recursively free a list of elements 'e' of type ds. */
 void rfre_ds_list( ds_list e )
 {
@@ -2585,11 +2475,9 @@ void rfre_var_list( var_list e )
  *    print_<type> and print_<type>_list routines *
  **************************************************/
 
-static void print_constructor_list( TMPRINTSTATE *st, const constructor_list );
 static void print_field_list( TMPRINTSTATE *st, const field_list );
 
 static void print_ds( TMPRINTSTATE *st, const ds );
-static void print_constructor( TMPRINTSTATE *st, const constructor );
 static void print_field( TMPRINTSTATE *st, const field );
 
 /* Print an element 't' of type 'ds'
@@ -2607,7 +2495,7 @@ static void print_ds( TMPRINTSTATE *st, const ds t )
 	    tm_printword( st, "DsCons" );
 	    print_tmstring( st, t->DsCons.name );
 	    print_tmstring_list( st, t->DsCons.inherits );
-	    print_constructor_list( st, t->DsCons.constructors );
+	    print_tmstring_list( st, t->DsCons.constructors );
 	    break;
 
 	case TAGDsTuple:
@@ -2620,30 +2508,22 @@ static void print_ds( TMPRINTSTATE *st, const ds t )
 	case TAGDsClass:
 	    tm_printword( st, "DsClass" );
 	    print_tmstring( st, t->DsClass.name );
-	    print_tmbool( st, t->DsClass.virtual );
 	    print_tmstring_list( st, t->DsClass.inherits );
 	    print_field_list( st, t->DsClass.fields );
+	    print_tmbool( st, t->DsClass.virtual );
+	    break;
+
+	case TAGDsConstructor:
+	    tm_printword( st, "DsConstructor" );
+	    print_tmstring( st, t->DsConstructor.name );
+	    print_tmstring_list( st, t->DsConstructor.inherits );
+	    print_field_list( st, t->DsConstructor.fields );
 	    break;
 
 	default:
 	    FATALTAG( (int) t->tag );
     }
     tm_closecons( st );
-}
-
-/* Print an element 't' of type 'constructor'
-   using print optimizer.
- */
-static void print_constructor( TMPRINTSTATE *st, const constructor t )
-{
-    if( t == constructorNIL ){
-	tm_printword( st, "@" );
-	return;
-    }
-    tm_opentuple( st );
-    print_tmstring( st, t->name );
-    print_field_list( st, t->fields );
-    tm_closetuple( st );
 }
 
 /* Print an element 't' of type 'field'
@@ -2660,24 +2540,6 @@ static void print_field( TMPRINTSTATE *st, const field t )
     print_tmstring( st, t->name );
     print_tmstring( st, t->type );
     tm_closetuple( st );
-}
-
-/* Print a list of elements 'l' of type 'constructor'
-   using print optimizer.
- */
-static void print_constructor_list( TMPRINTSTATE *st, const constructor_list l )
-{
-    unsigned int ix;
-
-    if( l == constructor_listNIL ){
-	tm_printword( st, "@" );
-	return;
-    }
-    tm_openlist( st );
-    for( ix=0; ix<l->sz; ix++ ){
-	print_constructor( st, l->arr[ix] );
-    }
-    tm_closelist( st );
 }
 
 /* Print a list of elements 'l' of type 'ds'
@@ -2741,12 +2603,8 @@ void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list l )
 #ifdef LOGNEW
 #undef rdup_ds
 #define rdup_ds(e) real_rdup_ds(e,_f,_l)
-#undef rdup_constructor
-#define rdup_constructor(e) real_rdup_constructor(e,_f,_l)
 #define rdup_field(e) real_rdup_field(e,_f,_l)
 #define rdup_tplelm(e) real_rdup_tplelm(e,_f,_l)
-#undef rdup_constructor_list
-#define rdup_constructor_list(l) real_rdup_constructor_list(l,_f,_l)
 #undef rdup_field_list
 #define rdup_field_list(l) real_rdup_field_list(l,_f,_l)
 #undef rdup_tmstring_list
@@ -2778,11 +2636,11 @@ ds rdup_ds( const ds e )
 	{
 	    tmstring i_name;
 	    tmstring_list i_inherits;
-	    constructor_list i_constructors;
+	    tmstring_list i_constructors;
 
 	    i_name = rdup_tmstring( e->DsCons.name );
 	    i_inherits = rdup_tmstring_list( e->DsCons.inherits );
-	    i_constructors = rdup_constructor_list( e->DsCons.constructors );
+	    i_constructors = rdup_tmstring_list( e->DsCons.constructors );
 	    return new_DsCons( i_name, i_inherits, i_constructors );
 	}
 
@@ -2801,39 +2659,33 @@ ds rdup_ds( const ds e )
 	case TAGDsClass:
 	{
 	    tmstring i_name;
+	    tmstring_list i_inherits;
+	    field_list i_fields;
 	    tmbool i_virtual;
+
+	    i_name = rdup_tmstring( e->DsClass.name );
+	    i_inherits = rdup_tmstring_list( e->DsClass.inherits );
+	    i_fields = rdup_field_list( e->DsClass.fields );
+	    i_virtual = rdup_tmbool( e->DsClass.virtual );
+	    return new_DsClass( i_name, i_inherits, i_fields, i_virtual );
+	}
+
+	case TAGDsConstructor:
+	{
+	    tmstring i_name;
 	    tmstring_list i_inherits;
 	    field_list i_fields;
 
-	    i_name = rdup_tmstring( e->DsClass.name );
-	    i_virtual = rdup_tmbool( e->DsClass.virtual );
-	    i_inherits = rdup_tmstring_list( e->DsClass.inherits );
-	    i_fields = rdup_field_list( e->DsClass.fields );
-	    return new_DsClass( i_name, i_virtual, i_inherits, i_fields );
+	    i_name = rdup_tmstring( e->DsConstructor.name );
+	    i_inherits = rdup_tmstring_list( e->DsConstructor.inherits );
+	    i_fields = rdup_field_list( e->DsConstructor.fields );
+	    return new_DsConstructor( i_name, i_inherits, i_fields );
 	}
 
 	default:
 	    FATALTAG( (int) e->tag );
     }
     return dsNIL;
-}
-
-/* Recursively duplicate a constructor element 'e'. */
-#ifdef LOGNEW
-constructor real_rdup_constructor( const constructor e, const char *_f, const int _l )
-#else
-constructor rdup_constructor( const constructor e )
-#endif
-{
-    tmstring i_name;
-    field_list i_fields;
-
-    if( e == constructorNIL ){
-	return constructorNIL;
-    }
-    i_name = rdup_tmstring( e->name );
-    i_fields = rdup_field_list( e->fields );
-    return new_constructor( i_name, i_fields );
 }
 
 /* Recursively duplicate a field element 'e'. */
@@ -3023,31 +2875,6 @@ static tplelm rdup_tplelm( const tplelm e )
 	    FATALTAG( (int) e->tag );
     }
     return tplelmNIL;
-}
-
-/* Recursively duplicate constructor list 'l'. */
-#ifdef LOGNEW
-constructor_list real_rdup_constructor_list( const constructor_list l, const char *_f, const int _l )
-#else
-constructor_list rdup_constructor_list( const constructor_list l )
-#endif
-{
-    unsigned int ix;
-    constructor_list nw;
-    constructor *ar;
-    constructor *or;
-
-    if( l == constructor_listNIL ){
-	return constructor_listNIL;
-    }
-    nw = setroom_constructor_list( new_constructor_list(), l->sz );
-    ar = nw->arr;
-    or = l->arr;
-    for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_constructor( *or++ );
-    }
-    nw->sz = l->sz;
-    return nw;
 }
 
 /* Recursively duplicate field list 'l'. */
@@ -3254,10 +3081,6 @@ void flush_tm()
 	TM_FREE( cache_classComponent_list[ix] );
     }
     cacheix_classComponent_list = 0;
-    for( ix=0; ix<cacheix_constructor_list; ix++ ){
-	TM_FREE( cache_constructor_list[ix] );
-    }
-    cacheix_constructor_list = 0;
     for( ix=0; ix<cacheix_ds_list; ix++ ){
 	TM_FREE( cache_ds_list[ix] );
     }
@@ -3290,10 +3113,6 @@ void flush_tm()
 	TM_FREE( cache_classComponent[ix] );
     }
     cacheix_classComponent = 0;
-    for( ix=0; ix<cacheix_constructor; ix++ ){
-	TM_FREE( cache_constructor[ix] );
-    }
-    cacheix_constructor = 0;
     for( ix=0; ix<cacheix_ds; ix++ ){
 	TM_FREE( cache_ds[ix] );
     }
@@ -3364,14 +3183,6 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
-	"constructor",
-	newcnt_constructor,
-	frecnt_constructor,
-	((newcnt_constructor==frecnt_constructor)? "": "<-")
-    );
-    fprintf(
-	f,
-	tm_allocfreed,
 	"DsCons",
 	newcnt_DsCons,
 	frecnt_DsCons,
@@ -3392,6 +3203,14 @@ void stat_tm( FILE *f )
 	newcnt_DsClass,
 	frecnt_DsClass,
 	((newcnt_DsClass==frecnt_DsClass)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"DsConstructor",
+	newcnt_DsConstructor,
+	frecnt_DsConstructor,
+	((newcnt_DsConstructor==frecnt_DsConstructor)? "": "<-")
     );
     fprintf(
 	f,
@@ -3542,13 +3361,6 @@ void stat_tm( FILE *f )
 	newcnt_classComponent_list,
 	frecnt_classComponent_list,
 	((newcnt_classComponent_list==frecnt_classComponent_list)? "": "<-")
-    );
-    fprintf(
-	f,
-	tm_allocfreed, "constructor_list",
-	newcnt_constructor_list,
-	frecnt_constructor_list,
-	((newcnt_constructor_list==frecnt_constructor_list)? "": "<-")
     );
     fprintf(
 	f,
