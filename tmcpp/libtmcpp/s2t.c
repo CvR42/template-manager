@@ -8,7 +8,7 @@
 #include "tmcpp.h"
 
 // Construct a text from a string
-tmtext::tmtext( const char *s ): arr(0), curpos(0), sz(0), room(0)
+tmtext::tmtext( const char *s ): room(0), arr(0), curpos(0), sz(0)
 {
     append( s );
     curpos = 0;
