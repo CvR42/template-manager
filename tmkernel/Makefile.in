@@ -13,11 +13,14 @@ JUNK = dist.lst
 help:
 	@echo "possible targets:"
 	@echo "all      Compile, test and install all sources."
-	@echo "test     Test all sources."
+	@echo "check    Test all sources."
 	@echo "install  Install all compilation results."
 	@echo "clean    Delete intermediate files."
 	@echo "empty    Delete files that can be re-generated. * Use only after a successful install *"
 	@echo "distlist	Create a list of files to distribute."
+
+check:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) check; cd ..; done
 
 test:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done

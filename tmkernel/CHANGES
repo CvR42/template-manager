@@ -1,3 +1,8 @@
+New Version 2.0 beta 29
+
+- Fixed a bug that caused 'not set' expressions in Tm regular expressions
+to match the '\0' character that terminates a string.
+
 New in version 2.0:
 
 - 'inheritsort': a Tm function that sorts a list of types so that
