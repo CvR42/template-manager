@@ -1,1 +1,1 @@
-char libpath[]="/usr/local/lib";
+char libpath[]="/home/blob/users/reeuwijk/lab/lib";
