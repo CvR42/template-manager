@@ -199,12 +199,18 @@ public:
     long sz;
     long room;
 
+public:
+    inline long size() const { return sz; }
+    inline long capacity() const { return room; }
     tmtext( const long sz=32 );
     tmtext( const tmtext &c );
     tmtext( const char *s );
     virtual ~tmtext();
     void reserve( const long rm );
     virtual tmtext *clone() const { return new tmtext( *this ); }
+    void insert( const long pos_parm, const tmtext *nw );
+    void erase( const long from, const long to );
+    inline void erase() { sz=0; curpos=0; }
     virtual void destroy() { delete this; }
     static void stat( FILE *f );
     static int get_balance();
@@ -212,9 +218,7 @@ public:
 
 extern int cmp_tmtext( const tmtext *ta, const tmtext *tb );
 #define tmtextNIL ((tmtext *)0)
-extern tmtext *delblock_tmtext( tmtext *t, const long from, const long to );
 extern tmtext *replace_tmtext( tmtext *t, const long from, const long to, const tmtext *nw );
-extern tmtext *insert_tmtext( tmtext *t, const long pos_parm, const tmtext *nw );
 extern int cmp_string_tmtext( const char *s, const tmtext *t );
 extern tmstring tmtext_to_tmstring( const tmtext *t );
 extern tmtext *puts_tmtext( const char *s, tmtext *t );
