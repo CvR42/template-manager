@@ -227,7 +227,7 @@ public:
     virtual void destroy() { delete this; }
     tmtext *slice( const size_type from, const size_type to ) const;
     tmtext *replace( const size_type from, const size_type to, const tmtext *nw );
-    tmtext *replace( const size_type from, const size_type to, const tmtext *nw, const size_type nw_from, size_type const long nw_to );
+    tmtext *replace( const size_type from, const size_type to, const tmtext *nw, const size_type nw_from, const size_type nw_to );
     static void stat( FILE *f );
     static int get_balance();
 };
