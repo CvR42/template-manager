@@ -65,7 +65,7 @@ static char tm_badcons[] = "bad constructor for %s: '%s'";
 .if ${member stat_$(basename) $(need_misc)}
 #ifdef STAT
 .foreach t $(need_stat)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 static long int newcnt_$t = 0, frecnt_$t = 0;
 .else
 .foreach c ${conslist $t}
@@ -85,11 +85,11 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 
 #ifdef LOGNEW
 .foreach t $(need_new)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 .if ${member $t $(want_new)}
 #undef new_$t
 .endif
-#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} _f _l})
+#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} _f _l})
 .else
 .if ${member $t $(want_new)}
 .foreach c ${conslist $t}
@@ -97,7 +97,7 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 .endforeach
 .endif
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} _f _l})
+#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} _f _l})
 .endforeach
 .endif
 .endforeach
@@ -109,13 +109,13 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 .else
 .set stat "static "
 .endif
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 /* Allocate a new instance of tuple type '$t' */
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew "${telmlist $t}" "ttypename $t" "ttypellev $t"}
+.set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
 $(stat)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto "${telmlist $t}" "ttypename $t" "ttypellev $t"}
+.set tl ${call ansi_nproto $t "${fields $t inherited}"}
 $(stat)$t new_$t( $(tl) )
 #endif
 {
@@ -127,7 +127,7 @@ $(stat)$t new_$t( $(tl) )
 .foreach link $(links)
     nw->$(link) = ${subs next(*) $t\1 $(link)}_listNIL;
 .endforeach
-.foreach e ${telmlist $t}
+.foreach e ${fields $t inherited}
     nw->$e = p_$e;
 .endforeach
 .if ${member stat_$(basename) $(need_misc)}
@@ -144,10 +144,10 @@ $(stat)$t new_$t( $(tl) )
 .foreach c ${conslist $t}
 /* Allocate a new instance of constructor '$c'. */
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew "${celmlist $t $c}" "ctypename $t $c" "ctypellev $t $c"}
+.set tl ${call ansi_nproto_lognew $c "${fields $c inherited}"}
 $(stat)$t real_new_$c( $(tl) )
 #else
-.set tl ${call ansi_nproto "${celmlist $t $c}" "ctypename $t $c" "ctypellev $t $c"}
+.set tl ${call ansi_nproto $c "${fields $c inherited}"}
 $(stat)$t new_$c( $(tl) )
 #endif
 {
@@ -160,7 +160,7 @@ $(stat)$t new_$c( $(tl) )
     nw->$(link) = ${subs next(*) $t\1 $(link)}_listNIL;
 .endforeach
     nw->tag = TAG$c;
-.foreach e ${celmlist $t $c}
+.foreach e ${fields $c inherited}
     nw->$c.$e = p_$e;
 .endforeach
 .if ${member stat_$(basename) $(need_misc)}
@@ -215,7 +215,7 @@ $(stat)void fre_$t( $t e )
 #ifdef LOGNEW
     tm_fre_logid( e->lognew_id );
 #endif
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 .if ${member stat_$(basename) $(need_misc)}
 #ifdef STAT
     frecnt_$t++;
@@ -282,17 +282,17 @@ $(stat)void rfre_$t( $t e )
     if( e == $tNIL ){
 	return;
     }
-.if ${member $t ${ttypelist}}
-.foreach e ${telmlist $t}
-    rfre_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( e->$e );
+.if ${member $t ${tuplelist}}
+.foreach e ${fields $t inherited}
+    rfre_${type $t $e}( e->$e );
 .endforeach
 .else
 .if ${len ${conslist $t}}
     switch( e->tag ){
 .foreach c ${conslist $t}
 	case TAG$c:
-.foreach e ${celmlist $t $c}
-	    rfre_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( e->$c.$e );
+.foreach e ${fields $c inherited}
+	    rfre_${type $c $e}( e->$c.$e );
 .endforeach
 	    break;
 
@@ -531,11 +531,11 @@ $(stat)void print_$t( TMPRINTSTATE *st, const $t t )
 	tm_printword( st, "@" );
 	return;
     }
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 .. tuple type
     tm_opentuple( st );
-.foreach e ${telmlist $t}
-    print_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( st, t->$e );
+.foreach e ${fields $t inherited}
+    print_${type $t $e}( st, t->$e );
 .endforeach
     tm_closetuple( st );
 .else
@@ -545,8 +545,8 @@ $(stat)void print_$t( TMPRINTSTATE *st, const $t t )
 .foreach c ${conslist $t}
 	case TAG$c:
 	    tm_printword( st, "$c" );
-.foreach e ${celmlist $t $c}
-	    print_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( st, t->$c.$e );
+.foreach e ${fields $c inherited}
+	    print_${type $c $e}( st, t->$c.$e );
 .endforeach
 	    break;
 
@@ -601,16 +601,16 @@ $(stat)void fprint_$t( FILE *f, const $t t )
 	fputs( "@ ", f );
 	return;
     }
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
     putc( '(', f );
 .set first 1
-.foreach e ${telmlist $t}
+.foreach e ${fields $t inherited}
 .if $(first)
 .set first 0
 .else
     fputs( ",\n", f );
 .endif
-    fprint_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( f, t->$e );
+    fprint_${type $t $e}( f, t->$e );
 .endforeach
     fputs( ")\n", f );
 .else
@@ -620,9 +620,9 @@ $(stat)void fprint_$t( FILE *f, const $t t )
 .foreach c ${conslist $t}
 	case TAG$c:
 	    fputs( "$c", f );
-.foreach e ${celmlist $t $c}
+.foreach e ${fields $c inherited}
 	    putc( ' ', f );
-	    fprint_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( f, t->$c.$e );
+	    fprint_${type $c $e}( f, t->$c.$e );
 .endforeach
 	    break;
 
@@ -697,18 +697,18 @@ $(stat)$t real_rdup_$t( const $t e, const char *_f, const int _l )
 $(stat)$t rdup_$t( const $t e )
 #endif
 {
-.if ${member $t ${ttypelist}}
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} i_$e;
+.if ${member $t ${tuplelist}}
+.foreach e ${fields $t inherited}
+    ${type $t $e} i_$e;
 .endforeach
 
     if( e == $tNIL ){
 	return $tNIL;
     }
-.foreach e ${telmlist $t}
-    i_$e = rdup_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( e->$e );
+.foreach e ${fields $t inherited}
+    i_$e = rdup_${type $t $e}( e->$e );
 .endforeach
-    return new_$t( ${seplist ", " ${prefix "i_" ${telmlist $t}}} );
+    return new_$t( ${seplist ", " ${prefix "i_" ${fields $t inherited}}} );
 .else
     if( e == $tNIL ){
 	return $tNIL;
@@ -718,14 +718,14 @@ $(stat)$t rdup_$t( const $t e )
 .foreach c ${conslist $t}
 	case TAG$c:
 	{
-.foreach e ${celmlist $t $c}
-	    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} i_$e;
+.foreach e ${fields $c inherited}
+	    ${type $c $e} i_$e;
 .endforeach
 
-.foreach e ${celmlist $t $c}
-	    i_$e = rdup_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( e->$c.$e );
+.foreach e ${fields $c inherited}
+	    i_$e = rdup_${type $c $e}( e->$c.$e );
 .endforeach
-	    return new_$c( ${seplist ", " ${prefix "i_" ${celmlist $t $c}}} );
+	    return new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
 	}
 
 .endforeach
@@ -848,7 +848,7 @@ $(stat)$t_list slice_$t_list(
 .else
 .set stat "static "
 .endif
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 .. cmp tuple
 /* Compare two $t tuples. */
 $(stat)int cmp_$t( const $t a, const $t b )
@@ -867,8 +867,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 	return 1;
     }
 .set first 1
-.foreach e ${telmlist $t}
-.set tn ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.foreach e ${fields $t inherited}
 .if $(first)
 .set first 0
 .else
@@ -876,7 +875,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 	return res;
     }
 .endif
-    res = cmp_$(tn)( a->$e, b->$e );
+    res = cmp_${type $t $e}( a->$e, b->$e );
 .endforeach
     return res;
 }
@@ -908,8 +907,8 @@ $(stat)int cmp_$t( const $t a, const $t b )
 .foreach c ${conslist $t}
 	case TAG$c:
 .set first 1
-.foreach e ${celmlist $t $c}
-.set tn ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.set tn ${type $c $e}
 .if $(first)
 .set first 0
 .else
@@ -993,7 +992,7 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 .else
 .set stat "static "
 .endif
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
 .. tuple type
 /* Read a tuple of type '$t' from file 'f',
    and create an instance of a C structure for it.
@@ -1005,14 +1004,14 @@ $(stat)int real_fscan_$t( FILE *f, $t *p, const char *_f, const int _l )
 $(stat)int fscan_$t( FILE *f, $t *p )
 #endif
 {
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} l_$e;
+.foreach e ${fields $t inherited}
+    ${type $t $e} l_$e;
 .endforeach
     int c;
     int err;
 
-.foreach e ${telmlist $t}
-    l_$e = ${mklist ${ttypellev $t $e} ${ttypename $t $e}}NIL;
+.foreach e ${fields $t inherited}
+    l_$e = ${type $t $e}NIL;
 .endforeach
     *p = $tNIL;
     if( tm_fscanspace( f ) ){
@@ -1028,7 +1027,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 	return 1;
     }
 .set first 1
-.foreach e ${telmlist $t}
+.foreach e ${fields $t inherited}
 .if $(first)
 .set first 0
 .else
@@ -1036,12 +1035,11 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 	err = tm_fneedc( f, ',' );
     }
 .endif
-.set tn ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
     if( !err ){
-	err = fscan_$(tn)( f, &l_$e );
+	err = fscan_${type $t $e}( f, &l_$e );
     }
 .endforeach
-    *p = new_$t( ${seplist ", " ${prefix " l_" ${telmlist $t}}} );
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
     if( err ){
 	return 1;
     }
@@ -1097,18 +1095,18 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 .set els
 .foreach c ${conslist $t}
     $(els)if( strcmp( word, "$c" ) == 0 ){
-.foreach e ${celmlist $t $c}
-	${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} l_$e;
+.foreach e ${fields $c inherited}
+	${type $c $e} l_$e;
 .endforeach
 
-.foreach e ${celmlist $t $c}
-.set tn ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.set tn ${type $c $e}
 	l_$e = $(tn)NIL;
 	if( !err ){
 	    err = fscan_$(tn)( f, &l_$e );
 	}
 .endforeach
-	*p = new_$c( ${seplist ", " ${prefix " l_" ${celmlist $t $c}}} );
+	*p = new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
     }
 .set els "else "
 .endforeach
@@ -1205,7 +1203,7 @@ void stat_$(basename)( FILE *f )
 {
 #ifdef STAT
 .foreach t $(need_stat)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
     fprintf(f,tm_allocfreed,"$t",newcnt_$t,frecnt_$t,((newcnt_$t==frecnt_$t)? "": "<-"));
 .else
 .foreach c ${conslist $t}
@@ -1249,7 +1247,7 @@ int get_balance_$(basename)( void )
     }
 .endforeach
 .foreach t $(need_stat)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist}}
     if( newcnt_$t<frecnt_$t ){
         return -1;
     }

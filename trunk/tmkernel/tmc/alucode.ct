@@ -22,5 +22,6 @@
 
 .insert aluspec.t
 .insert macros.t
-.insert aluneed.t
+.insert aluid.t
+.insert need.t
 .include calu.ct
