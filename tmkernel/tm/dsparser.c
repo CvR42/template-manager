@@ -92,14 +92,12 @@ static ds_list add_constructor_list( ds_list l, const ds c )
  */
 static ds merge_cons_types( const ds a, const ds b )
 {
-    tmstring_list la;
-    tmstring_list lb;
     tmstring_list ila;
     tmstring_list ilb;
     unsigned int ix;
 
-    la = rdup_tmstring_list( to_DsConstructorBase(a)->constructors );
-    lb = rdup_tmstring_list( to_DsConstructorBase(b)->constructors );
+    tmstring_list la = rdup_tmstring_list( to_DsConstructorBase(a)->constructors );
+    tmstring_list lb = rdup_tmstring_list( to_DsConstructorBase(b)->constructors );
     la = concat_tmstring_list( la, lb );
     ila = rdup_tmstring_list( a->inherits );
     ilb = b->inherits;

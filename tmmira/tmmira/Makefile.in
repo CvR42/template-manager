@@ -13,7 +13,7 @@ MAKEFILE = Makefile
 TM = tm
 MIRA = mira
 
-DISTFILES = $(DOC) $(CODE) $(MAKEFILE) $(TEST)
+DISTFILES = $(DOC) $(CODE) $(MAKEFILE) $(TEST) .cvsignore
 
 PREFIX = @prefix@
 

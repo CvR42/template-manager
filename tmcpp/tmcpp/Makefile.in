@@ -50,7 +50,7 @@ TESTFILES = \
 FOREIGNFILES = makefile.tc config.htc config.hts
 
 # Files for configuration
-CONFIGUREFILES = configure config.hin Makefile.in configure.in
+CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
 
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)

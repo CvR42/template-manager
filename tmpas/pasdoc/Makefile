@@ -20,7 +20,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(AUXFILES) $(TOPFILE).bbl $(TOPFILE).lot $(TOPFILE).lof \
        $(TOPFILE).toc distlist
 
-DISTFILES = $(TEXFILES) $(MAKEFILE) goodwords plot.ds pasdemo.pt
+DISTFILES = $(TEXFILES) $(MAKEFILE) goodwords plot.ds pasdemo.pt .cvsignore
 
 help:
 	@echo Possible targets:
