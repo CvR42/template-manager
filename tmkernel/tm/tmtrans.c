@@ -31,7 +31,6 @@
 #include "tmtrans.h"
 #include "var.h"
 #include "srchfile.h"
-#include "expand.h"
 
 /* tags for command table */
 typedef enum en_tmcommands {
