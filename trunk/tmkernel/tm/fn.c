@@ -43,14 +43,14 @@
 /* -- numerical functions -- */
 
 /* max */
-static tmstring fnmax( tmstring_list sl )
+static tmstring fnmax( const tmstring_list sl )
 {
     int max;
     int n;
     unsigned int ix;
 
     if( sl->sz<1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'max' requires at least one parameter" );
 	return( newintstr( 0 ) );
     }
     max = atoi( sl->arr[0] );
@@ -64,14 +64,14 @@ static tmstring fnmax( tmstring_list sl )
 }
 
 /* min */
-static tmstring fnmin( tmstring_list sl )
+static tmstring fnmin( const tmstring_list sl )
 {
     int min;
     int n;
     unsigned int ix;
 
     if( sl->sz<1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'min' requires at least one parameter" );
 	return( newintstr( 0 ) );
     }
     min = atoi( sl->arr[0] );
@@ -85,7 +85,7 @@ static tmstring fnmin( tmstring_list sl )
 }
 
 /* addition */
-static tmstring fnplus( tmstring_list sl )
+static tmstring fnplus( const tmstring_list sl )
 {
     int sum;
     unsigned int ix;
@@ -99,12 +99,12 @@ static tmstring fnplus( tmstring_list sl )
 }
 
 /* subtraction */
-static tmstring fnsubtract( tmstring_list sl )
+static tmstring fnsubtract( const tmstring_list sl )
 {
     int a;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "'subtract' requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -114,7 +114,7 @@ static tmstring fnsubtract( tmstring_list sl )
 }
 
 /* multiplication */
-static tmstring fntimes( tmstring_list sl )
+static tmstring fntimes( const tmstring_list sl )
 {
     int prod;
     unsigned int ix;
@@ -128,12 +128,12 @@ static tmstring fntimes( tmstring_list sl )
 }
 
 /* division */
-static tmstring fndiv( tmstring_list sl )
+static tmstring fndiv( const tmstring_list sl )
 {
     int a;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "division requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -143,12 +143,12 @@ static tmstring fndiv( tmstring_list sl )
 }
 
 /* modulus */
-static tmstring fnmod( tmstring_list sl )
+static tmstring fnmod( const tmstring_list sl )
 {
     int a;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "modulus requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -160,12 +160,12 @@ static tmstring fnmod( tmstring_list sl )
 /* -- comparison functions -- */
 
 /* < */
-static tmstring fnless( tmstring_list sl )
+static tmstring fnless( const tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -175,12 +175,12 @@ static tmstring fnless( tmstring_list sl )
 }
 
 /* <= */
-static tmstring fnlesseq( tmstring_list sl )
+static tmstring fnlesseq( const tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -190,12 +190,12 @@ static tmstring fnlesseq( tmstring_list sl )
 }
 
 /* > */
-static tmstring fngreater( tmstring_list sl )
+static tmstring fngreater( const tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -205,12 +205,12 @@ static tmstring fngreater( tmstring_list sl )
 }
 
 /* >= */
-static tmstring fngreatereq( tmstring_list sl )
+static tmstring fngreatereq( const tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -220,12 +220,12 @@ static tmstring fngreatereq( tmstring_list sl )
 }
 
 /* == */
-static tmstring fneq( tmstring_list sl )
+static tmstring fneq( const tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -235,12 +235,12 @@ static tmstring fneq( tmstring_list sl )
 }
 
 /* != */
-static tmstring fnneq( tmstring_list sl )
+static tmstring fnneq( const tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
@@ -250,12 +250,12 @@ static tmstring fnneq( tmstring_list sl )
 }
 
 /* strcmp */
-static tmstring fnstrcmp( tmstring_list sl )
+static tmstring fnstrcmp( const tmstring_list sl )
 {
     int cmp;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
@@ -265,12 +265,12 @@ static tmstring fnstrcmp( tmstring_list sl )
 }
 
 /* eq */
-static tmstring fnstreq( tmstring_list sl )
+static tmstring fnstreq( const tmstring_list sl )
 {
     int cmp;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
@@ -278,12 +278,12 @@ static tmstring fnstreq( tmstring_list sl )
 }
 
 /* neq */
-static tmstring fnstrneq( tmstring_list sl )
+static tmstring fnstrneq( const tmstring_list sl )
 {
     int cmp;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
@@ -293,13 +293,13 @@ static tmstring fnstrneq( tmstring_list sl )
 /* -- tmstring functions -- */
 
 /* len */
-static tmstring fnlen( tmstring_list sl )
+static tmstring fnlen( const tmstring_list sl )
 {
     return newintstr( (int) sl->sz );
 }
 
 /* strpad */
-static tmstring fnstrpad( tmstring_list sl )
+static tmstring fnstrpad( const tmstring_list sl )
 {
     tmstring w;
     tmstring wp;
@@ -309,7 +309,7 @@ static tmstring fnstrpad( tmstring_list sl )
     tmstring bufp;
 
     if( sl->sz != 3 ){
-	line_error( "bad number of parameters" );
+	line_error( "'pad' requires exactly three parameters" );
 	return new_tmstring( "" );
     }
     buf = new_tmstring( "" );
@@ -341,7 +341,7 @@ static tmstring fnstrpad( tmstring_list sl )
 }
 
 /* strlen */
-static tmstring fnstrlen( tmstring_list sl )
+static tmstring fnstrlen( const tmstring_list sl )
 {
     int l;
 
@@ -355,7 +355,7 @@ static tmstring fnstrlen( tmstring_list sl )
 }
 
 /* capitalize */
-static tmstring fncapitalize( tmstring_list sl )
+static tmstring fncapitalize( const tmstring_list sl )
 {
     char *np;
     tmstring ans;
@@ -375,7 +375,7 @@ static tmstring fncapitalize( tmstring_list sl )
 }
 
 /* toupper */
-static tmstring fntoupper( tmstring_list sl )
+static tmstring fntoupper( const tmstring_list sl )
 {
     char *np;
     tmstring ans;
@@ -398,7 +398,7 @@ static tmstring fntoupper( tmstring_list sl )
 }
 
 /* tolower */
-static tmstring fntolower( tmstring_list sl )
+static tmstring fntolower( const tmstring_list sl )
 {
     char *np;
     tmstring ans;
@@ -421,13 +421,13 @@ static tmstring fntolower( tmstring_list sl )
 }
 
 /* strindex <c> <word> */
-static tmstring fnstrindex( tmstring_list sl )
+static tmstring fnstrindex( const tmstring_list sl )
 {
     int n;
     char *ixp;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "'strindex' requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     ixp = strchr( sl->arr[1], sl->arr[0][0] );
@@ -439,13 +439,13 @@ static tmstring fnstrindex( tmstring_list sl )
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnindex( tmstring_list sl )
+static tmstring fnindex( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
 
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'index' requires at least one parameter" );
 	return( new_tmstring( "0" ) );
     }
     estr = sl->arr[0];
@@ -464,14 +464,14 @@ static tmstring fnindex( tmstring_list sl )
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnmember( tmstring_list sl )
+static tmstring fnmember( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
     bool found = FALSE;
 
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'member' requires at least one parameter" );
 	return( new_tmstring( "0" ) );
     }
     estr = sl->arr[0];
@@ -485,14 +485,14 @@ static tmstring fnmember( tmstring_list sl )
 }
 
 /* seplist <str> <list> */
-static tmstring fnseplist( tmstring_list sl )
+static tmstring fnseplist( const tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
 
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'seplist' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -505,7 +505,7 @@ static tmstring fnseplist( tmstring_list sl )
 }
 
 /* prefix <pf> <list> */
-static tmstring fnprefix( tmstring_list sl )
+static tmstring fnprefix( const tmstring_list sl )
 {
     tmstring pfstr;
     tmstring ans;
@@ -517,7 +517,7 @@ static tmstring fnprefix( tmstring_list sl )
 
     buf = new_tmstring( "" );
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'prefix' requires at least one parameter" );
 	return buf;
     }
     pfstr = sl->arr[0];
@@ -542,7 +542,7 @@ static tmstring fnprefix( tmstring_list sl )
 }
 
 /* suffix <sf> <list> */
-static tmstring fnsuffix( tmstring_list sl )
+static tmstring fnsuffix( const tmstring_list sl )
 {
     tmstring sfstr;
     tmstring ans;
@@ -554,7 +554,7 @@ static tmstring fnsuffix( tmstring_list sl )
 
     buf = new_tmstring( "" );
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'suffix' requires at least one parameter" );
 	return buf;
     }
     sfstr = sl->arr[0];
@@ -587,7 +587,7 @@ static int sortcmp( const void *pa, const void *pb )
 }
 
 /* sort e1..en */
-static tmstring fnsort( tmstring_list sl )
+static tmstring fnsort( const tmstring_list sl )
 {
     tmstring ans;
     int (*cmpf)( const void *, const void * );
@@ -599,7 +599,7 @@ static tmstring fnsort( tmstring_list sl )
 }
 
 /* rev e1..en */
-static tmstring fnrev( tmstring_list sl )
+static tmstring fnrev( const tmstring_list sl )
 {
     unsigned int lix;
     unsigned int rix;
@@ -620,7 +620,7 @@ static tmstring fnrev( tmstring_list sl )
 }
 
 /* comm a "" b */
-static tmstring fncomm( tmstring_list sl )
+static tmstring fncomm( const tmstring_list sl )
 {
     unsigned int aix;
     unsigned int bix;
@@ -656,7 +656,7 @@ static tmstring fncomm( tmstring_list sl )
 }
 
 /* excl a "" b */
-static tmstring fnexcl( tmstring_list sl )
+static tmstring fnexcl( const tmstring_list sl )
 {
     unsigned int aix;
     unsigned int bix;
@@ -694,7 +694,7 @@ static tmstring fnexcl( tmstring_list sl )
 }
 
 /* uniq e1..en */
-static tmstring fnuniq( tmstring_list sl )
+static tmstring fnuniq( const tmstring_list sl )
 {
     tmstring_list nl;
     tmstring ans;
@@ -721,7 +721,7 @@ static tmstring fnuniq( tmstring_list sl )
    find all elements matching 'findpat' and replace them
    by 'newpat'. Do not copy elements that don't match.
  */
-static tmstring fnfilt( tmstring_list sl )
+static tmstring fnfilt( const tmstring_list sl )
 {
     tmstring ans;
     tmstring errm;
@@ -730,7 +730,7 @@ static tmstring fnfilt( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz < 2 ){
-	line_error( "missing parameter" );
+	line_error( "'filt' requires at least two parameters" );
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
@@ -755,7 +755,7 @@ static tmstring fnfilt( tmstring_list sl )
    find all elements matching 'findpat' and replace them
    by 'newpat'. Copy elements that don't match.
  */
-static tmstring fnsubs( tmstring_list sl )
+static tmstring fnsubs( const tmstring_list sl )
 {
     tmstring ans;
     tmstring errm;
@@ -764,7 +764,7 @@ static tmstring fnsubs( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz < 2 ){
-	line_error( "missing parameter" );
+	line_error( "'subs' requires at least two parameters" );
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
@@ -792,7 +792,7 @@ static tmstring fnsubs( tmstring_list sl )
    find all elements matching 'findpat' and delete them.
    Copy elements that don't match.
  */
-static tmstring fnrmlist( tmstring_list sl )
+static tmstring fnrmlist( const tmstring_list sl )
 {
     tmstring ans;
     tmstring errm;
@@ -800,7 +800,7 @@ static tmstring fnrmlist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz < 1 ){
-	line_error( "missing parameter" );
+	line_error( "'rmlist' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
@@ -821,7 +821,7 @@ static tmstring fnrmlist( tmstring_list sl )
 }
 
 /* first */
-static tmstring fnfirst( tmstring_list sl )
+static tmstring fnfirst( const tmstring_list sl )
 {
     tmstring ans;
 
@@ -835,7 +835,7 @@ static tmstring fnfirst( tmstring_list sl )
 }
 
 /* shift */
-static tmstring fnshift( tmstring_list sl )
+static tmstring fnshift( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
@@ -853,7 +853,7 @@ static tmstring fnshift( tmstring_list sl )
 /* -- logic functions -- */
 
 /* and */
-static tmstring fnand( tmstring_list sl )
+static tmstring fnand( const tmstring_list sl )
 {
     bool flag;
     unsigned int ix;
@@ -867,7 +867,7 @@ static tmstring fnand( tmstring_list sl )
 }
 
 /* or */
-static tmstring fnor( tmstring_list sl )
+static tmstring fnor( const tmstring_list sl )
 {
     bool flag;
     unsigned int ix;
@@ -881,7 +881,7 @@ static tmstring fnor( tmstring_list sl )
 }
 
 /* not */
-static tmstring fnnot( tmstring_list sl )
+static tmstring fnnot( const tmstring_list sl )
 {
     bool a;
 
@@ -897,7 +897,7 @@ static tmstring fnnot( tmstring_list sl )
 /* -- datastructure access & file name access -- */
 
 /* stemname <list> */
-static tmstring fnstemname( tmstring_list sl )
+static tmstring fnstemname( const tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -944,7 +944,7 @@ static tmstring fnstemname( tmstring_list sl )
 }
 
 /* mklist <n> <list> */
-static tmstring fnmklist( tmstring_list sl )
+static tmstring fnmklist( const tmstring_list sl )
 {
     tmstring ans;
     tmstring buf;
@@ -967,7 +967,7 @@ static tmstring fnmklist( tmstring_list sl )
     }
     buf = new_tmstring( "" );
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'mklist' requires at least one parameter" );
 	return buf;
     }
     cknumpar( sl->arr[0] );
@@ -998,7 +998,7 @@ static tmstring fnmklist( tmstring_list sl )
 }
 
 /* Construct a list of types. */
-static tmstring fntypelist( tmstring_list sl )
+static tmstring fntypelist( const tmstring_list sl )
 {
     ds d;
     tmstring vp;
@@ -1007,7 +1007,7 @@ static tmstring fntypelist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'typelist' does not need any parameters" );
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1021,7 +1021,7 @@ static tmstring fntypelist( tmstring_list sl )
 }
 
 /* Construct a list of constructor types. */
-static tmstring fnctypelist( tmstring_list sl )
+static tmstring fnctypelist( const tmstring_list sl )
 {
     ds d;
     tmstring vp;
@@ -1030,7 +1030,7 @@ static tmstring fnctypelist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ctypelist' does not need any parameters" );
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1055,7 +1055,7 @@ static tmstring fnctypelist( tmstring_list sl )
 }
 
 /* Construct a list of tuple types. */
-static tmstring fnttypelist( tmstring_list sl )
+static tmstring fnttypelist( const tmstring_list sl )
 {
     ds d;
     tmstring vp;
@@ -1064,7 +1064,7 @@ static tmstring fnttypelist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ttypelist' does not need any parameters" );
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1139,13 +1139,13 @@ static field findfield( field_list el, const tmstring nm )
 }
 
 /* Given a type name, return the inherits of this type.  */
-static tmstring fninherits( tmstring_list sl )
+static tmstring fninherits( const tmstring_list sl )
 {
     ds d;
     tmstring ans;
 
     if( sl->sz != 1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'inherits' does not need any parameters" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1169,7 +1169,7 @@ static tmstring fninherits( tmstring_list sl )
 /* Construct a list of fields for given tuple type.
  * A constructor type is incorrect.
  */
-static tmstring fntelmlist( tmstring_list sl )
+static tmstring fntelmlist( const tmstring_list sl )
 {
     ds d;
     field_list el;
@@ -1180,7 +1180,7 @@ static tmstring fntelmlist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz != 1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'telmlist' does not need any parameters" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1208,14 +1208,14 @@ static tmstring fntelmlist( tmstring_list sl )
 /* Given a tuple type name and element name, return the
    type name of the given element.
  */
-static tmstring fnttypename( tmstring_list sl )
+static tmstring fnttypename( const tmstring_list sl )
 {
     ds d;
     field_list el;
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ttypename' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1237,14 +1237,14 @@ static tmstring fnttypename( tmstring_list sl )
 
    Possible type classes are: `single' and `list'.
  */
-static tmstring fnttypeclass( tmstring_list sl )
+static tmstring fnttypeclass( const tmstring_list sl )
 {
     ds d;
     field_list el;
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ttypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1262,14 +1262,14 @@ static tmstring fnttypeclass( tmstring_list sl )
 /* Given a type name and element name, return the
    list level of the given element.
  */
-static tmstring fnttypellev( tmstring_list sl )
+static tmstring fnttypellev( const tmstring_list sl )
 {
     ds d;
     field_list el;
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ttypellev' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1285,7 +1285,7 @@ static tmstring fnttypellev( tmstring_list sl )
 }
 
 /* construct a list of constructors for given type */
-static tmstring fnconslist( tmstring_list sl )
+static tmstring fnconslist( const tmstring_list sl )
 {
     ds d;
     constructor_list cl;
@@ -1296,7 +1296,7 @@ static tmstring fnconslist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz != 1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'conslist' requires a type name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1322,7 +1322,7 @@ static tmstring fnconslist( tmstring_list sl )
 }
 
 /* construct a list of fields for given type */
-static tmstring fncelmlist( tmstring_list sl )
+static tmstring fncelmlist( const tmstring_list sl )
 {
     ds d;
     constructor_list cl;
@@ -1335,7 +1335,7 @@ static tmstring fncelmlist( tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz != 2 ){
-	line_error( "bad number of parameters" );
+	line_error( "'conslist' requires a type and a constructor name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1367,7 +1367,7 @@ static tmstring fncelmlist( tmstring_list sl )
    It is not possible to determine whether it is a list of elements
    or not from this list.
  */
-static tmstring fnctypename( tmstring_list sl )
+static tmstring fnctypename( const tmstring_list sl )
 {
     ds d;
     constructor_list cl;
@@ -1376,7 +1376,7 @@ static tmstring fnctypename( tmstring_list sl )
     field e;
 
     if( sl->sz != 3 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ctypename' requires a type, a constructor and a field name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1403,7 +1403,7 @@ static tmstring fnctypename( tmstring_list sl )
     single
     list
  */
-static tmstring fnctypeclass( tmstring_list sl )
+static tmstring fnctypeclass( const tmstring_list sl )
 {
     ds d;
     constructor_list cl;
@@ -1412,7 +1412,7 @@ static tmstring fnctypeclass( tmstring_list sl )
     field e;
 
     if( sl->sz != 3 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ctypeclass' requires a type, a constructor and a field name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1436,7 +1436,7 @@ static tmstring fnctypeclass( tmstring_list sl )
    list level of the given element.
 
  */
-static tmstring fnctypellev( tmstring_list sl )
+static tmstring fnctypellev( const tmstring_list sl )
 {
     ds d;
     constructor_list cl;
@@ -1445,7 +1445,7 @@ static tmstring fnctypellev( tmstring_list sl )
     field e;
 
     if( sl->sz != 3 ){
-	line_error( "bad number of parameters" );
+	line_error( "'ctypellev' requires a type, a constructor and a field name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1546,7 +1546,7 @@ static void markdep(
    the given types.
    The top level types are assumed to be 'single'.
  */
-static tmstring fndeptype( tmstring_list sl )
+static tmstring fndeptype( const tmstring_list sl )
 {
     bool *marked;
     int *levels;
@@ -1562,7 +1562,7 @@ static tmstring fndeptype( tmstring_list sl )
     int lev;
 
     if( sl->sz<1 ){
-	line_error( "missing expression" );
+	line_error( "'ctypellev' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     if( strcmp( sl->arr[0], "single" ) == 0 ){
@@ -1711,34 +1711,34 @@ static tmstring fndepsort( tmstring_list sl )
     return ans;
 }
 
-static tmstring fndsfilename( tmstring_list sl )
+static tmstring fndsfilename( const tmstring_list sl )
 {
 
     if( sl->sz!=0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'dsfilename' does not need any parameters" );
     }
     return new_tmstring( dsfilename );
 }
 
-static tmstring fntplfilename( tmstring_list sl )
+static tmstring fntplfilename( const tmstring_list sl )
 {
 
     if( sl->sz!=0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'tplfilename' does not need any parameters" );
     }
     return new_tmstring( tplfilename );
 }
 
-static tmstring fntpllineno( tmstring_list sl )
+static tmstring fntpllineno( const tmstring_list sl )
 {
 
     if( sl->sz != 0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'tpllineno' does not need any parameters" );
     }
     return newintstr( tpllineno );
 }
 
-static tmstring fndefined( tmstring_list sl )
+static tmstring fndefined( const tmstring_list sl )
 {
     char *v;
 
@@ -1752,7 +1752,7 @@ static tmstring fndefined( tmstring_list sl )
 /* -- nested evaluation: 'call' and 'eval' -- */
 
 /* Evaluate the given parameters again. */
-static tmstring fneval( tmstring_list sl )
+static tmstring fneval( const tmstring_list sl )
 {
     tmstring_list nl;
     tmstring ans;
@@ -1832,10 +1832,10 @@ static tmstring fncall( tmstring_list orgsl )
 /* -- OS interface -- */
 
 /* Return the search path */
-static tmstring fnsearchpath( tmstring_list sl )
+static tmstring fnsearchpath( const tmstring_list sl )
 {
     if( sl->sz!=0 ){
-	line_error( "bad number of parameters" );
+	line_error( "'searchpath' does not need any parameters" );
     }
     return flatstrings( searchpath );
 }
@@ -1846,7 +1846,7 @@ static tmstring fnsearchpath( tmstring_list sl )
  * list with '?'.
  * The access mode is assumed to be 'r'.
  */
-static tmstring fnsearchfile( tmstring_list sl )
+static tmstring fnsearchfile( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
@@ -1867,12 +1867,12 @@ static tmstring fnsearchfile( tmstring_list sl )
 }
 
 /* See if an environment variable is set. */
-static tmstring fnisinenv( tmstring_list sl )
+static tmstring fnisinenv( const tmstring_list sl )
 {
     char *v;
 
     if( sl->sz != 1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'isinenv' requires exactly one parameter" );
 	return( new_tmstring( "0" ) );
     }
     v = getenv( sl->arr[0] );
@@ -1880,12 +1880,12 @@ static tmstring fnisinenv( tmstring_list sl )
 }
 
 /* access of environment variables */
-static tmstring fngetenv( tmstring_list sl )
+static tmstring fngetenv( const tmstring_list sl )
 {
     char *v;
 
     if( sl->sz != 1 ){
-	line_error( "bad number of parameters" );
+	line_error( "'getenv' requires exactly one parameter" );
 	return( "" );
     }
     v = getenv( sl->arr[0] );

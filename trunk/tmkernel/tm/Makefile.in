@@ -124,6 +124,10 @@ install: $(PROG)
 	-$(INSTALL) -d $(LOCALBIN)
 	$(INSTALL) $(PROG) $(LOCALBIN)/$(PROG)
 
+distclean:
+	rm -f $(OBJS) $(JUNK) $(PROG)
+	rm -f config.status config.cache config.h
+
 empty:
 	rm -f $(OBJS) $(JUNK) $(PROG)
 	rm -f config.status config.cache config.h

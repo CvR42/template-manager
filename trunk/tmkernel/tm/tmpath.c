@@ -1,1 +1,1 @@
-char libpath[]="/home/gargamel/reeuwijk/rama/lib";
+char libpath[]="/usr/local/lib";
