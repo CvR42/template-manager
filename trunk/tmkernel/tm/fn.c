@@ -1193,6 +1193,9 @@ static tmstring fnconstructorlist( const tmstring_list sl )
 	    case TAGDsClass:
 		break;
 
+	    case TAGDsAlias:
+		break;
+
 	    case TAGDsConstructor:
 		nl = append_tmstring_list( nl, new_tmstring( to_DsConstructor(d)->name ) );
 		break;
@@ -1225,6 +1228,9 @@ static tmstring fnctypelist( const tmstring_list sl )
 		break;
 
 	    case TAGDsTuple:
+		break;
+
+	    case TAGDsAlias:
 		break;
 
 	    case TAGDsClass:
@@ -1261,6 +1267,7 @@ static tmstring fntuplelist( const tmstring_list sl )
 	    case TAGDsConstructorBase:
 	    case TAGDsConstructor:
 	    case TAGDsClass:
+	    case TAGDsAlias:
 		break;
 
 	}
@@ -1289,6 +1296,7 @@ static tmstring fnclasslist( const tmstring_list sl )
 	    case TAGDsTuple:
 	    case TAGDsConstructorBase:
 	    case TAGDsConstructor:
+	    case TAGDsAlias:
 		break;
 
 	    case TAGDsClass:
@@ -1334,6 +1342,7 @@ static bool is_virtual( ds_list types, const tmstring type )
 		break;
 
 	    case TAGDsTuple:
+	    case TAGDsAlias:
 	    case TAGDsConstructor:
 		break;
 
@@ -1427,6 +1436,9 @@ static tmstring fnmetatype( const tmstring_list sl )
 
 	    case TAGDsTuple:
 		return new_tmstring( "tuple" );
+
+	    case TAGDsAlias:
+		return new_tmstring( "alias" );
 
 	    case TAGDsClass:
 		return new_tmstring( "class" );
@@ -1649,6 +1661,9 @@ static tmstring fntypes( const tmstring_list tl )
 
 	    switch( d->tag ){
 		case TAGDsConstructorBase:
+		    break;
+
+		case TAGDsAlias:
 		    break;
 
 		case TAGDsTuple:
@@ -1930,6 +1945,12 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
     d = allds->arr[ix];
     switch( d->tag ){
 	case TAGDsConstructorBase:
+	    break;
+
+	case TAGDsAlias:
+	    if( member_tmstring_list( to_DsAlias(d)->target, tl ) ){
+		return TRUE;
+	    }
 	    break;
 
 	case TAGDsTuple:

@@ -10,7 +10,9 @@ ds = { name:tmstring, inherits:[tmstring] } +
     DsConstructorBase: { constructors:[tmstring] } |
     DsTuple: { fields:[field] } |
     DsClass: { fields:[field], virtual:tmbool } |
-    DsConstructor: { fields:[field] };
+    DsConstructor: { fields:[field] } |
+    DsAlias: { target:tmstring }
+    ;
 
 classComponent =
     CCSuper: { super:tmstring } |
