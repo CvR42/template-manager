@@ -19,4 +19,4 @@ extern tmstring sepstrings( const tmstring_list sl, const tmstring sep );
 extern tmstring flatstrings( const tmstring_list sl );
 extern bool isfalsestr( const tmstring s );
 extern bool istruestr( const tmstring s );
-tmstring mklistnm( const char *pre, const tmstring tnm, const char *suff );
+tmstring mklistnm( const char *pre, const tmstring tnm, const char *suff, const unsigned int level );

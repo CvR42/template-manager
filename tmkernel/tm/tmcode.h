@@ -602,6 +602,7 @@ extern ds_list delete_ds_list( ds_list, const unsigned int );
 extern macro_list delete_macro_list( macro_list, const unsigned int );
 extern tmstring_list delete_tmstring_list( tmstring_list, const unsigned int );
 extern var_list delete_var_list( var_list, const unsigned int );
+extern tmstring_list extract_tmstring_list( tmstring_list, const unsigned int, tmstring *, int * );
 extern ds_list concat_ds_list( ds_list, ds_list );
 extern field_list concat_field_list( field_list, field_list );
 extern void rfre_alternative_list( alternative_list );

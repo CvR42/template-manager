@@ -181,36 +181,63 @@ tpllineno: '190'
 1 bla
 testsub
 ----
-
-Mode `'
 Datastructure access functions:
-----
+
+mklist: test a test a test a  
+stemname: a b] [c [d] [e]] a[f] [[g]]
+mklist: test a [test [a [[[[[test [[[[[a  
+stemname: a b] c d] e]] a[f] g]]
+mklist: test a [test] [a] [[[[[test]]]]] [[[[[a]]]]]  
+stemname: a b] [c d e] a[f] g
+mklist: test a test] a] test]]]]] a]]]]]  
+stemname: a b [c [d [e a[f [[g
+inherits:  
+inheritors:  
+superclasses:  
+subclasses:  
+conslist:   
+fields:   
+Mode `':
+=-=-=-=
 typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
-ttypelist: 'orig subtuple notuple'
+tuplelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
-classtypelist: 'subclass testclass'
+classlist: 'subclass testclass'
     conslist orig: ''
     inherits orig: ''
+    inheritors orig: 'subtuple subclass'
+    superclasses orig: ''
+    subclasses orig: 'subtuple subclass sublevel notuple toplevel'
     isvirtual orig: '0'
     fields orig : 'file line'
-	fieldtypeclass orig file: 'single'
-	fieldtypellev orig file: 0
-	fieldtypename orig file: 'string'
-	fieldtypeclass orig line: 'single'
-	fieldtypellev orig line: 0
-	fieldtypename orig line: 'int'
+	ttypeclass orig file: 'single'
+	typelevel orig file: 0
+	typename orig file: 'string'
+	type orig file: 'string'
+	ttypeclass orig line: 'single'
+	typelevel orig line: 0
+	typename orig line: 'int'
+	type orig line: 'int'
     conslist subtuple: ''
     inherits subtuple: 'orig'
+    inheritors subtuple: 'sublevel notuple toplevel'
+    superclasses subtuple: 'orig'
+    subclasses subtuple: 'sublevel notuple toplevel'
     isvirtual subtuple: '0'
     fields subtuple : 'tl tn'
-	fieldtypeclass subtuple tl: 'list'
-	fieldtypellev subtuple tl: 1
-	fieldtypename subtuple tl: 'thing'
-	fieldtypeclass subtuple tn: 'single'
-	fieldtypellev subtuple tn: 0
-	fieldtypename subtuple tn: 'int'
+	ttypeclass subtuple tl: 'list'
+	typelevel subtuple tl: 1
+	typename subtuple tl: 'thing'
+	type subtuple tl: 'thing_list'
+	ttypeclass subtuple tn: 'single'
+	typelevel subtuple tn: 0
+	typename subtuple tn: 'int'
+	type subtuple tn: 'int'
     conslist sublevel: 'SubNamed SubNamedlist SubNamedlistlist'
     inherits sublevel: 'toplevel subtuple'
+    inheritors sublevel: ''
+    superclasses sublevel: 'orig subtuple toplevel orig subtuple'
+    subclasses sublevel: ''
     isvirtual sublevel: '0'
         celmlist: 'n'
             ctypeclass sublevel SubNamed n: 'single'
@@ -227,10 +254,16 @@ classtypelist: 'subclass testclass'
     fields sublevel : ''
     conslist notuple: ''
     inherits notuple: 'subtuple'
+    inheritors notuple: ''
+    superclasses notuple: 'orig subtuple'
+    subclasses notuple: ''
     isvirtual notuple: '0'
     fields notuple : ''
     conslist toplevel: 'Top Toptuple TopNone'
     inherits toplevel: 'subtuple'
+    inheritors toplevel: 'sublevel'
+    superclasses toplevel: 'orig subtuple'
+    subclasses toplevel: 'sublevel'
     isvirtual toplevel: '0'
         celmlist: 'la lb'
             ctypeclass toplevel Top la: 'list'
@@ -247,34 +280,34 @@ classtypelist: 'subclass testclass'
     fields toplevel : ''
     conslist thing: 'Thing'
     inherits thing: ''
+    inheritors thing: ''
+    superclasses thing: ''
+    subclasses thing: ''
     isvirtual thing: '0'
         celmlist: ''
     fields thing : ''
     conslist subclass: ''
     inherits subclass: 'testclass orig'
+    inheritors subclass: ''
+    superclasses subclass: 'testclass orig'
+    subclasses subclass: ''
     isvirtual subclass: '0'
     fields subclass : ''
     conslist testclass: ''
     inherits testclass: ''
+    inheritors testclass: 'subclass'
+    superclasses testclass: ''
+    subclasses testclass: 'subclass'
     isvirtual testclass: '0'
     fields testclass : 'a b'
-	fieldtypeclass testclass a: 'single'
-	fieldtypellev testclass a: 0
-	fieldtypename testclass a: 'int'
-	fieldtypeclass testclass b: 'single'
-	fieldtypellev testclass b: 0
-	fieldtypename testclass b: 'int'
-mklist: test a test a test a  
-stemname: a b] [c [d] [e]] a[f] [[g]]
-mklist: test a [test [a [[[[[test [[[[[a  
-stemname: a b] c d] e]] a[f] g]]
-mklist: test a [test] [a] [[[[[test]]]]] [[[[[a]]]]]  
-stemname: a b] [c d e] a[f] g
-mklist: test a test] a] test]]]]] a]]]]]  
-stemname: a b [c [d [e a[f [[g
-inherits:  
-conslist:   
-fields:   
+	ttypeclass testclass a: 'list'
+	typelevel testclass a: 2
+	typename testclass a: 'int'
+	type testclass a: 'int_list_list'
+	ttypeclass testclass b: 'single'
+	typelevel testclass b: 0
+	typename testclass b: 'int'
+	type testclass b: 'int'
 ----
 
 Datastructure dependency
@@ -302,41 +335,55 @@ Testing error handling:
 Type sorting:
 depsort: [int orig subtuple sublevel notuple toplevel thing subclass testclass]
 ----
-Mode `inherited'
-Datastructure access functions:
-----
+Mode `inherited':
+=-=-=-=
 typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
-ttypelist: 'orig subtuple notuple'
+tuplelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
-classtypelist: 'subclass testclass'
+classlist: 'subclass testclass'
     conslist orig: ''
     inherits orig: ''
+    inheritors orig: 'subtuple subclass'
+    superclasses orig: ''
+    subclasses orig: 'subtuple subclass sublevel notuple toplevel'
     isvirtual orig: '0'
     fields orig inherited: 'file line'
-	fieldtypeclass orig file: 'single'
-	fieldtypellev orig file: 0
-	fieldtypename orig file: 'string'
-	fieldtypeclass orig line: 'single'
-	fieldtypellev orig line: 0
-	fieldtypename orig line: 'int'
+	ttypeclass orig file: 'single'
+	typelevel orig file: 0
+	typename orig file: 'string'
+	type orig file: 'string'
+	ttypeclass orig line: 'single'
+	typelevel orig line: 0
+	typename orig line: 'int'
+	type orig line: 'int'
     conslist subtuple: ''
     inherits subtuple: 'orig'
+    inheritors subtuple: 'sublevel notuple toplevel'
+    superclasses subtuple: 'orig'
+    subclasses subtuple: 'sublevel notuple toplevel'
     isvirtual subtuple: '0'
     fields subtuple inherited: 'file line tl tn'
-	fieldtypeclass subtuple file: 'single'
-	fieldtypellev subtuple file: 0
-	fieldtypename subtuple file: 'string'
-	fieldtypeclass subtuple line: 'single'
-	fieldtypellev subtuple line: 0
-	fieldtypename subtuple line: 'int'
-	fieldtypeclass subtuple tl: 'list'
-	fieldtypellev subtuple tl: 1
-	fieldtypename subtuple tl: 'thing'
-	fieldtypeclass subtuple tn: 'single'
-	fieldtypellev subtuple tn: 0
-	fieldtypename subtuple tn: 'int'
+	ttypeclass subtuple file: 'single'
+	typelevel subtuple file: 0
+	typename subtuple file: 'string'
+	type subtuple file: 'string'
+	ttypeclass subtuple line: 'single'
+	typelevel subtuple line: 0
+	typename subtuple line: 'int'
+	type subtuple line: 'int'
+	ttypeclass subtuple tl: 'list'
+	typelevel subtuple tl: 1
+	typename subtuple tl: 'thing'
+	type subtuple tl: 'thing_list'
+	ttypeclass subtuple tn: 'single'
+	typelevel subtuple tn: 0
+	typename subtuple tn: 'int'
+	type subtuple tn: 'int'
     conslist sublevel: 'SubNamed SubNamedlist SubNamedlistlist'
     inherits sublevel: 'toplevel subtuple'
+    inheritors sublevel: ''
+    superclasses sublevel: 'orig subtuple toplevel orig subtuple'
+    subclasses sublevel: ''
     isvirtual sublevel: '0'
         celmlist: 'n'
             ctypeclass sublevel SubNamed n: 'single'
@@ -351,48 +398,66 @@ classtypelist: 'subclass testclass'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
             ctypename sublevel SubNamedlistlist thinglistlist: 'thing'
     fields sublevel inherited: 'file line tl tn file line tl tn'
-	fieldtypeclass sublevel file: 'single'
-	fieldtypellev sublevel file: 0
-	fieldtypename sublevel file: 'string'
-	fieldtypeclass sublevel line: 'single'
-	fieldtypellev sublevel line: 0
-	fieldtypename sublevel line: 'int'
-	fieldtypeclass sublevel tl: 'list'
-	fieldtypellev sublevel tl: 1
-	fieldtypename sublevel tl: 'thing'
-	fieldtypeclass sublevel tn: 'single'
-	fieldtypellev sublevel tn: 0
-	fieldtypename sublevel tn: 'int'
-	fieldtypeclass sublevel file: 'single'
-	fieldtypellev sublevel file: 0
-	fieldtypename sublevel file: 'string'
-	fieldtypeclass sublevel line: 'single'
-	fieldtypellev sublevel line: 0
-	fieldtypename sublevel line: 'int'
-	fieldtypeclass sublevel tl: 'list'
-	fieldtypellev sublevel tl: 1
-	fieldtypename sublevel tl: 'thing'
-	fieldtypeclass sublevel tn: 'single'
-	fieldtypellev sublevel tn: 0
-	fieldtypename sublevel tn: 'int'
+	ttypeclass sublevel file: 'single'
+	typelevel sublevel file: 0
+	typename sublevel file: 'string'
+	type sublevel file: 'string'
+	ttypeclass sublevel line: 'single'
+	typelevel sublevel line: 0
+	typename sublevel line: 'int'
+	type sublevel line: 'int'
+	ttypeclass sublevel tl: 'list'
+	typelevel sublevel tl: 1
+	typename sublevel tl: 'thing'
+	type sublevel tl: 'thing_list'
+	ttypeclass sublevel tn: 'single'
+	typelevel sublevel tn: 0
+	typename sublevel tn: 'int'
+	type sublevel tn: 'int'
+	ttypeclass sublevel file: 'single'
+	typelevel sublevel file: 0
+	typename sublevel file: 'string'
+	type sublevel file: 'string'
+	ttypeclass sublevel line: 'single'
+	typelevel sublevel line: 0
+	typename sublevel line: 'int'
+	type sublevel line: 'int'
+	ttypeclass sublevel tl: 'list'
+	typelevel sublevel tl: 1
+	typename sublevel tl: 'thing'
+	type sublevel tl: 'thing_list'
+	ttypeclass sublevel tn: 'single'
+	typelevel sublevel tn: 0
+	typename sublevel tn: 'int'
+	type sublevel tn: 'int'
     conslist notuple: ''
     inherits notuple: 'subtuple'
+    inheritors notuple: ''
+    superclasses notuple: 'orig subtuple'
+    subclasses notuple: ''
     isvirtual notuple: '0'
     fields notuple inherited: 'file line tl tn'
-	fieldtypeclass notuple file: 'single'
-	fieldtypellev notuple file: 0
-	fieldtypename notuple file: 'string'
-	fieldtypeclass notuple line: 'single'
-	fieldtypellev notuple line: 0
-	fieldtypename notuple line: 'int'
-	fieldtypeclass notuple tl: 'list'
-	fieldtypellev notuple tl: 1
-	fieldtypename notuple tl: 'thing'
-	fieldtypeclass notuple tn: 'single'
-	fieldtypellev notuple tn: 0
-	fieldtypename notuple tn: 'int'
+	ttypeclass notuple file: 'single'
+	typelevel notuple file: 0
+	typename notuple file: 'string'
+	type notuple file: 'string'
+	ttypeclass notuple line: 'single'
+	typelevel notuple line: 0
+	typename notuple line: 'int'
+	type notuple line: 'int'
+	ttypeclass notuple tl: 'list'
+	typelevel notuple tl: 1
+	typename notuple tl: 'thing'
+	type notuple tl: 'thing_list'
+	ttypeclass notuple tn: 'single'
+	typelevel notuple tn: 0
+	typename notuple tn: 'int'
+	type notuple tn: 'int'
     conslist toplevel: 'Top Toptuple TopNone'
     inherits toplevel: 'subtuple'
+    inheritors toplevel: 'sublevel'
+    superclasses toplevel: 'orig subtuple'
+    subclasses toplevel: 'sublevel'
     isvirtual toplevel: '0'
         celmlist: 'la lb'
             ctypeclass toplevel Top la: 'list'
@@ -407,60 +472,68 @@ classtypelist: 'subclass testclass'
             ctypename toplevel Toptuple tup: 'subtuple'
         celmlist: ''
     fields toplevel inherited: 'file line tl tn'
-	fieldtypeclass toplevel file: 'single'
-	fieldtypellev toplevel file: 0
-	fieldtypename toplevel file: 'string'
-	fieldtypeclass toplevel line: 'single'
-	fieldtypellev toplevel line: 0
-	fieldtypename toplevel line: 'int'
-	fieldtypeclass toplevel tl: 'list'
-	fieldtypellev toplevel tl: 1
-	fieldtypename toplevel tl: 'thing'
-	fieldtypeclass toplevel tn: 'single'
-	fieldtypellev toplevel tn: 0
-	fieldtypename toplevel tn: 'int'
+	ttypeclass toplevel file: 'single'
+	typelevel toplevel file: 0
+	typename toplevel file: 'string'
+	type toplevel file: 'string'
+	ttypeclass toplevel line: 'single'
+	typelevel toplevel line: 0
+	typename toplevel line: 'int'
+	type toplevel line: 'int'
+	ttypeclass toplevel tl: 'list'
+	typelevel toplevel tl: 1
+	typename toplevel tl: 'thing'
+	type toplevel tl: 'thing_list'
+	ttypeclass toplevel tn: 'single'
+	typelevel toplevel tn: 0
+	typename toplevel tn: 'int'
+	type toplevel tn: 'int'
     conslist thing: 'Thing'
     inherits thing: ''
+    inheritors thing: ''
+    superclasses thing: ''
+    subclasses thing: ''
     isvirtual thing: '0'
         celmlist: ''
     fields thing inherited: ''
     conslist subclass: ''
     inherits subclass: 'testclass orig'
+    inheritors subclass: ''
+    superclasses subclass: 'testclass orig'
+    subclasses subclass: ''
     isvirtual subclass: '0'
     fields subclass inherited: 'a b file line'
-	fieldtypeclass subclass a: 'single'
-	fieldtypellev subclass a: 0
-	fieldtypename subclass a: 'int'
-	fieldtypeclass subclass b: 'single'
-	fieldtypellev subclass b: 0
-	fieldtypename subclass b: 'int'
-	fieldtypeclass subclass file: 'single'
-	fieldtypellev subclass file: 0
-	fieldtypename subclass file: 'string'
-	fieldtypeclass subclass line: 'single'
-	fieldtypellev subclass line: 0
-	fieldtypename subclass line: 'int'
+	ttypeclass subclass a: 'list'
+	typelevel subclass a: 2
+	typename subclass a: 'int'
+	type subclass a: 'int_list_list'
+	ttypeclass subclass b: 'single'
+	typelevel subclass b: 0
+	typename subclass b: 'int'
+	type subclass b: 'int'
+	ttypeclass subclass file: 'single'
+	typelevel subclass file: 0
+	typename subclass file: 'string'
+	type subclass file: 'string'
+	ttypeclass subclass line: 'single'
+	typelevel subclass line: 0
+	typename subclass line: 'int'
+	type subclass line: 'int'
     conslist testclass: ''
     inherits testclass: ''
+    inheritors testclass: 'subclass'
+    superclasses testclass: ''
+    subclasses testclass: 'subclass'
     isvirtual testclass: '0'
     fields testclass inherited: 'a b'
-	fieldtypeclass testclass a: 'single'
-	fieldtypellev testclass a: 0
-	fieldtypename testclass a: 'int'
-	fieldtypeclass testclass b: 'single'
-	fieldtypellev testclass b: 0
-	fieldtypename testclass b: 'int'
-mklist: test a test_list a_list test_list_list_list_list_list a_list_list_list_list_list  
-stemname: a b] [c [d] [e]] a[f] [[g]]
-mklist: test a [test_list [a_list [[[[[test_list_list_list_list_list [[[[[a_list_list_list_list_list  
-stemname: a b] [c [d] [e]] a[f] [[g]]
-mklist: test a [test] [a] [[[[[test]]]]] [[[[[a]]]]]  
-stemname: a b] [c d e] a[f] g
-mklist: test a test] a] test]]]]] a]]]]]  
-stemname: a b [c [d [e a[f [[g
-inherits:  
-conslist:   
-fields:   
+	ttypeclass testclass a: 'list'
+	typelevel testclass a: 2
+	typename testclass a: 'int'
+	type testclass a: 'int_list_list'
+	ttypeclass testclass b: 'single'
+	typelevel testclass b: 0
+	typename testclass b: 'int'
+	type testclass b: 'int'
 ----
 
 Datastructure dependency

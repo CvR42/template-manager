@@ -3207,6 +3207,37 @@ var_list delete_var_list( var_list l, const unsigned int pos )
 }
 
 /**************************************************
+ *    extract_<type>_list routines                 *
+ **************************************************/
+
+
+/* Extract 'tmstring' element at position 'pos' in list 'l'. */
+tmstring_list extract_tmstring_list(
+    tmstring_list l,
+    const unsigned int pos,
+    tmstring *e,
+    int *valid
+)
+{
+    unsigned int ix;
+
+    if( l == tmstring_listNIL ){
+	FATAL( tm_nilptr );
+    }
+    if( pos >= l->sz ){
+	*valid = 0;
+	return l;
+    }
+    *valid = 1;
+    *e = l->arr[pos];
+    l->sz--;
+    for( ix=pos; ix<l->sz; ix++ ){
+	l->arr[ix] = l->arr[ix+1];
+    }
+    return l;
+}
+
+/**************************************************
  *    Miscellaneous routines                      *
  **************************************************/
 /* Flush the allocation caches. */

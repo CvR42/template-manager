@@ -38,6 +38,7 @@
 .append wantdefs print_tmstring_list
 .append wantdefs append_tmstring_list
 .append wantdefs delete_tmstring_list
+.append wantdefs extract_tmstring_list
 .append wantdefs insert_tmstring_list
 ..
 .append wantdefs new_tplelm

@@ -192,34 +192,8 @@ tpllineno: '${ tpllineno }'
 ${eq ${first $(path)} $(libpath)} ${shift $(path)}
 ${searchfile testsub}
 ----
-
-.foreach mode "" inherited
-Mode `$(mode)'
 Datastructure access functions:
-----
-typelist: '${typelist}'
-ttypelist: '${ttypelist}'
-ctypelist: '${ctypelist}'
-classtypelist: '${classtypelist}'
-.foreach t ${typelist}
-    conslist $t: '${conslist $t }'
-    inherits $t: '${inherits $t }'
-    isvirtual $t: '${isvirtual $t }'
-.foreach c ${conslist $t}
-        celmlist: '${celmlist $t $c}'
-.foreach e ${celmlist $t $c}
-            ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
-	    ctypellev $t $c $e: ${ctypellev $t $c $e}
-            ctypename $t $c $e: '${ctypename $t $c $e }'
-.endforeach
-.endforeach
-    fields $t $(mode): '${fields $t $(mode)}'
-.foreach e ${fields $t $(mode)}
-	fieldtypeclass $t $e: '${fieldtypeclass $t $e }'
-	fieldtypellev $t $e: ${fieldtypellev $t $e}
-	fieldtypename $t $e: '${fieldtypename $t $e }'
-.endforeach
-.endforeach
+
 mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
 stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
 .set listpre [
@@ -232,8 +206,43 @@ stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
 mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
 stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
 inherits: ${inherits} ${inherits iserniet}
+inheritors: ${inheritors} ${inheritors iserniet}
+superclasses: ${superclasses} ${superclasses iserniet}
+subclasses: ${subclasses} ${subclasses iserniet}
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
 fields: ${fields} ${fields bla bla} ${fields notatype}
+.foreach mode "" inherited
+Mode `$(mode)':
+=-=-=-=
+.set listpre
+.set listsuff _list
+typelist: '${typelist}'
+tuplelist: '${tuplelist}'
+ctypelist: '${ctypelist}'
+classlist: '${classlist}'
+.foreach t ${typelist}
+    conslist $t: '${conslist $t }'
+    inherits $t: '${inherits $t }'
+    inheritors $t: '${inheritors $t }'
+    superclasses $t: '${superclasses $t }'
+    subclasses $t: '${subclasses $t }'
+    isvirtual $t: '${isvirtual $t }'
+.foreach c ${conslist $t}
+        celmlist: '${celmlist $t $c}'
+.foreach e ${celmlist $t $c}
+            ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
+	    ctypellev $t $c $e: ${ctypellev $t $c $e}
+            ctypename $t $c $e: '${ctypename $t $c $e }'
+.endforeach
+.endforeach
+    fields $t $(mode): '${fields $t $(mode)}'
+.foreach e ${fields $t $(mode)}
+	ttypeclass $t $e: '${ttypeclass $t $e }'
+	typelevel $t $e: ${typelevel $t $e}
+	typename $t $e: '${typename $t $e}'
+	type $t $e: '${type $t $e}'
+.endforeach
+.endforeach
 ----
 
 Datastructure dependency

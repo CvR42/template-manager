@@ -35,4 +35,5 @@ int prstat = FALSE;
 int sevaltr = FALSE;
 int vartr = FALSE;
 int lextr = FALSE;
+int noerrorline = FALSE;
 tmstring_list searchpath = tmstring_listNIL;

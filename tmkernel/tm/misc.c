@@ -191,17 +191,10 @@ field find_class_field( const ds_list types, const char *type, const char *nm )
     return find_class_field_super( types, inherits, nm );
 }
 
-const tmstring_list extract_inherits( const ds_list types, const char *type )
+static const tmstring_list extract_inherits_type( const ds d )
 {
-    unsigned int ix;
-    ds d;
     tmstring_list ans = tmstring_listNIL;
 
-    ix = find_type_ix( types, type );
-    if( ix>=types->sz ){
-	return ans;
-    }
-    d = types->arr[ix];
     switch( d->tag ){
 	case TAGDsCons:
 	    ans = d->DsCons.inherits;
@@ -217,6 +210,86 @@ const tmstring_list extract_inherits( const ds_list types, const char *type )
 
     }
     return ans;
+}
+
+const tmstring_list extract_inherits( const ds_list types, const char *type )
+{
+    unsigned int ix;
+
+    ix = find_type_ix( types, type );
+    if( ix>=types->sz ){
+	return tmstring_listNIL;
+    }
+    return extract_inherits_type( types->arr[ix] );
+}
+
+/* Given a pointer to a string list 'res', a list of types 'types'
+ * and a type name 'type', collect into '*res' the transitive closure
+ * of the types that inherit 'type'.
+ */
+void collect_subclasses( tmstring_list *res, const ds_list types, const tmstring type )
+{
+    tmstring_list queue;
+
+    queue = new_tmstring_list();
+    collect_inheritors( &queue, types, type );
+    while( queue->sz>0 ){
+	tmstring nm;
+	int valid;
+
+	queue = extract_tmstring_list( queue, 0, &nm, &valid );
+	if( valid ){
+	    if( !member_tmstring_list( nm, *res ) ){
+		collect_inheritors( &queue, types, nm );
+		*res = append_tmstring_list( *res, nm );
+	    }
+	    else {
+		rfre_tmstring( nm );
+	    }
+	}
+    }
+    rfre_tmstring_list( queue );
+}
+
+/* Given a pointer to a string list 'res', a list of types 'types'
+ * and a type name 'type', collect into '*res' the transitive closure
+ * of the types where 'type' inherits from.
+ */
+void collect_superclasses( tmstring_list *res, const ds_list types, const char *type )
+{
+    unsigned int ix;
+    const tmstring_list inherits = extract_inherits( types, type );
+
+    if( inherits == tmstring_listNIL ){
+	return;
+    }
+    for( ix=0; ix<inherits->sz; ix++ ){
+	const tmstring t = inherits->arr[ix];
+
+	collect_superclasses( res, types, t );
+	*res = append_tmstring_list( *res, rdup_tmstring( t ) );
+    }
+}
+
+/* Given a pointer to a string list 'res', a list of types 'types'
+ * and a type name 'type', collect into '*res' the types that inherit
+ * 'type'.
+ */
+void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring type )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<types->sz; ix++ ){
+	const ds d = types->arr[ix];
+	const tmstring_list inherits = extract_inherits_type( d );
+
+	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
+	    *res = append_tmstring_list(
+		*res,
+		rdup_tmstring( get_type_name( d ) )
+	    );
+	}
+    }
 }
 
 /* Given a pointer to a string list 'fields', a list of types 'types'

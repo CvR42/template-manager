@@ -26,4 +26,5 @@ extern int prstat;
 extern int sevaltr;
 extern int vartr;
 extern int lextr;
+extern int noerrorline;
 extern tmstring_list searchpath;
