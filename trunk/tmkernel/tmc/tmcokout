@@ -16,11 +16,11 @@
 ]
 ]
 )
-,(TopTuple (subtuple 59 [(Thing 5)
+,(TopTuple [(Thing 5)
 ,(Thing 9)
 ]
- 22)
-)
+,
+22)
 ,(TopNone)
 ,(TopNone)
 ,(TopNone)
@@ -42,12 +42,17 @@
 ]
 ]
 )
-,(TopTuple (subtuple 59 [(Thing 5)
+,(TopTuple [(Thing 5)
 ,(Thing 9)
 ]
- 22)
-)
+,
+22)
 ]
+(label 42)
+(Thing 22)
+(exprPlus (exprConst 42)
+ (exprConst 5)
+)
 [
     TopNone,
     TopNone,
@@ -65,7 +70,7 @@
 	    ]
 	]
     ),
-    (TopTuple (subtuple 59 [(Thing 5), (Thing 9)] 22)),
+    (TopTuple ([(Thing 5), (Thing 9)], 22)),
     TopNone,
     TopNone,
     TopNone,
@@ -84,7 +89,10 @@
 	    ]
 	]
     ),
-    (TopTuple (subtuple 59 [(Thing 5), (Thing 9)] 22))
+    (TopTuple ([(Thing 5), (Thing 9)], 22))
 ]
+(label 42)
+(Thing 22)
+(exprPlus (exprConst 42) (exprConst 5))
 bracket level: 0
 get_balance_ds()=1

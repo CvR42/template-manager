@@ -19,7 +19,7 @@ emptytuple == ();
 
 label = { labelval:int };
 
-subtuple = label + { tl:[thing], tn:int };
+subtuple == ( tl:[thing], tn:int );
 
 sublevel ::= label +
     SubNamed n:int |

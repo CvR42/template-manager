@@ -30,5 +30,5 @@
 	    ]
 	]
     ),
-    (TopTuple subtuple 59 [Thing 5, Thing 9] 22)
+    (TopTuple ([Thing 5, Thing 9], 22))
 ]

@@ -11,6 +11,10 @@
 .append wantdefs rfre_label
 .append wantdefs new_thing
 .append wantdefs rfre_thing
+.append wantdefs print_label
+.append wantdefs print_thing
+.append wantdefs fprint_label
+.append wantdefs fprint_thing
 .append wantdefs rdup_toplevel
 .append wantdefs new_toplevel
 .append wantdefs cmp_toplevel
