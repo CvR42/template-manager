@@ -21,6 +21,7 @@ LOCALMAN = @prefix@/man
 LIBS = @LIBS@ ../libtmc/libtmc.a
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
+UNINSTALL = rm -f
 
 # -I flags for  .h files
 IPATH = -I../libtmc -I$(LOCALINCLUDE)
@@ -127,6 +128,9 @@ $(PROG): $(OBJS)
 install: $(PROG)
 	-$(INSTALL) -d $(LOCALBIN)
 	$(INSTALL) $(PROG) $(LOCALBIN)/$(PROG)
+
+uninstall:
+	$(UNINSTALL) $(LOCALBIN)/$(PROG)
 
 distclean:
 	rm -f $(OBJS) $(JUNK) $(PROG)
