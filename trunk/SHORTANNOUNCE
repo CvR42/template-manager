@@ -12,3 +12,16 @@ The main change is that it now available from a new website:
 Also, there are some bugfixes and some new functionality, in particular
 in the Tm template language.
 
+- In libtmc, made cmp_tmsymbol() use strcmp(), since ordering based on
+  pointer value is non-portable.
+- Some changes to the Tm macro language:
+  * Added a '.for' command
+  * Changed the '-' and '/' operator in '$[]' expressions to be left binding.
+    Thus, $[3-2-1] is now equivalent to $[(3-2)-1]. This is more in line with
+    standard mathematical practice.
+  * Division/modulus by zero in template expressions is now detected.
+- Fixed a bug in constructor/classname parsing in a fscan_<type>()
+  support function in libtmc.
+- cmp_tmsymbol() now uses strcmp instead of comparing pointers.
+- Even more bracketing in macros in headers.
+
