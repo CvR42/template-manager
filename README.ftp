@@ -23,7 +23,7 @@ The available packages
 =-=-=-=-=-=-=-=-=-=-=-
 
 The Tm packages are available for downloading by anonymous ftp from the site
-ftp.cp.tn.tudelft.nl in the directory /pub/cp/software/Tm. (If you are
+ftp.cp.tn.tudelft.nl in the directory /pub/software/Tm. (If you are
 reading this on the ftp site you already knew that :-)).
 
 You are unlikely to need all files in the Tm distribution, so please make
@@ -56,10 +56,10 @@ tmmira-1.0.1.tar.gz	A Miranda template for Tm. Please note that
 			It unpacks in the directory tmmira-1.0.1.
 articles		A directory with some articles on Tm.
 
-To see what is new in these distribution files, read file CHANGES.tmkernel,
-CHANGES.tmpas or CHANGES.tmmira.
+To see what is new in these distribution files, read the file
+CHANGES.tmkernel, CHANGES.tmpas or CHANGES.tmmira.
 
-I plan to add files that contains a pre-compiled version of the kernel
+I plan to add files that contain a pre-compiled version of the kernel
 for MSDOS and a pre-compiled version of the kernel for Atari ST.
 
 Unpacking
