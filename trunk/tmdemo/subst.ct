@@ -1,6 +1,6 @@
-.. File: rewrite.ct
+.. File: subst.ct
 ..
-.. Tree walker for rewriting operations.
+.. Substitute known variables in expressions.
 ..
 .. Return 'walk' or 'action', depending on the contents of 'actors'
 .macro walkername t

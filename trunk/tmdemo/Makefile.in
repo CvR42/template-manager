@@ -82,7 +82,7 @@ JUNK          = sedlint y.output lint testerr testout index.sed \
 MAKESTATES    = refman
 
 # Files for configuration
-CONFIGUREFILES = configure Makefile.in configure.in
+CONFIGUREFILES = configure Makefile.in configure.in .cvsignore
 
 DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) calcopt.c \
     $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES) $(PARSESRC)
