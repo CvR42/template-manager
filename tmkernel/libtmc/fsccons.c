@@ -21,12 +21,12 @@ int tm_fscancons( FILE *f, char *buf, const int sz )
 	return 1;
     }
     c = getc( f );
-    while( isalnum( c ) && n<sz ){
+    while( (isalnum( c ) || c == '_') && n<sz ){
 	*p++ = c;
 	c = getc( f );
 	n++;
     }
-    if( isalnum( c ) ){
+    if( isalnum( c ) || c == '_' ){
 	buf[sz-1] = '\0';
 	(void) sprintf(
 	    tm_errmsg,
