@@ -19,7 +19,7 @@
 /* data structures */
 
 .. Definition of all list types.
-.foreach t ${sizesort $(need_ds_list)}
+.foreach t ${depsort $(need_ds_list)}
 typedef struct str_$t_list {
     unsigned int sz;
     unsigned int room;
@@ -48,10 +48,6 @@ typedef struct str_C_$c *C_$c;
 .endforeach
 
 .foreach t ${comm $(need_ds) "" ${ctypelist}}
-.foreach c ${conslist $t}
-#define $c(ds) (*((ds).u.ue_$c))
-.endforeach
-
 .if ${len ${conslist $t}}
 typedef enum en_tags_$t {
     ${seplist ", " ${prefix TAG ${conslist $t}}}
@@ -93,7 +89,7 @@ typedef struct str_$t {
 } $t;
 
 .endif
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist} ${classlist}}
 typedef struct str_$t {
 .foreach e ${fields $t inherited}
     ${type $t $e} $e;
@@ -124,9 +120,30 @@ struct str_C_$c {
 .endforeach
 .endforeach
 
+/* Type casting macros */
+.foreach t $(need_ds)                                        
+.if ${member $t ${tuplelist}}                                      
+.foreach e ${fields $t}
+#define $t(e) (&e)  
+.endforeach
+.endif    
+.if ${member $t ${classlist}}                                      
+.foreach e ${fields $t}
+#define $t(e) (&e)  
+.endforeach
+.endif    
+.if ${member $t ${ctypelist}}                            
+.foreach c ${conslist $t}                                     
+.foreach e ${fields $c}             
+#define $c(e) ((e).u.ue_$c)
+.endforeach              
+.endforeach                                              
+.endif                           
+.endforeach     
+
 #ifdef LOGNEW
 .foreach t $(want_new)
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist} ${classlist}}
 #define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
 .else
 .foreach c ${conslist $t}
@@ -162,7 +179,7 @@ struct str_C_$c {
 
 .. new_<cons> and new_<type> routines
 .foreach t $(want_new)
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .set tl
 .foreach e ${fields $t inherited}
 .append tl ${type $t $e}

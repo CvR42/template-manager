@@ -8,7 +8,7 @@
 	    (
 		|| Some comment
 		SubNamedlist
-		42
+		12
 		|| Some comment
 		[
 		    Thing 42,
@@ -16,17 +16,19 @@
 		    || Some comment
 		    ,
 		    Thing -1,
-		    Thing 12345
+		    @
 		]
 		|| Some comment
 	    ),
 	    || Some comment
-	    SubNamedlist 7 []
+	    SubNamedlist -3 @
 	])
-	[[
-	    SubNamed 66 -144,
-	    SubNamedlist 88 [Thing -1, Thing -1, Thing -1]
-	]]
+	[
+	    [
+		SubNamed 122 -144,
+		SubNamedlist 122 [Thing -1, Thing -1, Thing -1]
+	    ]
+	]
     ),
-    (TopTuple (9, [Thing 5, Thing 9], 22))
+    (TopTuple subtuple 59 [Thing 5, Thing 9] 22)
 ]

@@ -38,9 +38,8 @@
    tm kernel version:  $(kernel-version)
  */
 
-#if defined( __TOS__ ) && defined( __PUREC__ ) && !defined( const )
-/* Pure C on Atari ST cannot cope with const and passed structures. */
-#define const
+#ifndef FIRSTROOM
+#define FIRSTROOM 0
 #endif
 
 .if $(statcode)
@@ -51,10 +50,11 @@ static long frecnt_$t_list = 0;
 .endforeach
 
 .foreach t $(need_stat)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 static long newcnt_$t = 0;
 static long frecnt_$t = 0;
-.else
+.endif
+.if ${member $t ${ctypelist}}
 .foreach c ${conslist $t}
 static long newcnt_$c = 0;
 static long frecnt_$c = 0;
@@ -71,13 +71,8 @@ static char tm_srcfile[] = __FILE__;
 #ifdef STAT
 static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
 #endif
+
 .endif
-
-#ifndef FIRSTROOM
-/* Default initial room in arrays. */
-#define FIRSTROOM 0
-#endif
-
 #ifndef FATAL
 #define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
 #endif
@@ -118,7 +113,7 @@ $(stic_$t)$t null_$t( void )
 #ifdef LOGNEW
     nw.lognew_id = -1;
 #endif
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .if ${len ${fields $t inherited}}
 .foreach e ${fields $t inherited}
     nw.$e = null_${type $t $e}();
@@ -201,12 +196,13 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 
 #ifdef LOGNEW
 .foreach t $(need_new)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .if ${member $t $(want_new)}
 #undef new_$t
 .endif
 #define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} _f _l})
-.else
+.endif
+.if ${member $t ${ctypelist}}
 .if ${member $t $(want_new)}
 .foreach c ${conslist $t}
 #undef new_$c
@@ -267,7 +263,7 @@ $(stic_$t)$t_list new_$t_list( void )
 .set stic_$t
 .endforeach
 .foreach t $(need_new)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .. new_<tuple>
 #ifdef LOGNEW
 .set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
@@ -280,7 +276,7 @@ $(stic_$t)$t new_$t( $(tl) )
     $t nw;
 
 .foreach e ${fields $t inherited}
-    nw.$e = p_$e;
+    $t(nw)->$e = p_$e;
 .endforeach
 .if $(statcode)
 #ifdef STAT
@@ -293,7 +289,8 @@ $(stic_$t)$t new_$t( $(tl) )
     return nw;
 }
 
-.else
+.endif
+.if ${member $t ${ctypelist}}
 .. new_<cons>
 .foreach c ${conslist $t}
 #ifdef LOGNEW
@@ -342,7 +339,7 @@ $(stic_$t)$t new_$c( $(tl) )
 .set stic_$t
 .endforeach
 .foreach t $(need_fre)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .. fre_<tuple>
 /* Free an element 'e' of type '$t'. */
 $(stic_$t)void fre_$t( $t e )
@@ -359,7 +356,8 @@ $(stic_$t)void fre_$t( $t e )
 #endif
 }
 
-.else
+.endif
+.if ${member $t ${ctypelist}}
 .. fre_<cons>
 /* Free an element 'e' of type '$t'. */
 $(stic_$t)void fre_$t( $t e )
@@ -428,7 +426,7 @@ $(stic_$t)void fre_$t_list( $t_list l )
 .set stic_$t
 .endforeach
 .foreach t $(need_append_list)
-/* Append a $t element 'e' to list 'l'. */
+/* Append a $t element 'e' to list 'l', and return the new list. */
 $(stic_$t)$t_list append_$t_list( $t_list l, $t e )
 {
     unsigned int sz;
@@ -491,19 +489,17 @@ $(stic_$t)$t_list reverse_$t_list( $t_list l )
 $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 {
     unsigned int ix;
-    unsigned int sz;
     $t *p;
     unsigned int the_pos = pos;
 
-    sz = l.sz;
-    if( sz >= l.room ){
-	l = setroom_$t_list( l, 1+sz+sz );
+    if( l.sz >= l.room ){
+	l = setroom_$t_list( l, 1+l.sz+l.sz );
     }
-    if( the_pos>sz ){
-	the_pos = sz;
+    if( the_pos>l.sz ){
+	the_pos = l.sz;
     }
     p = l.arr;
-    for( ix=sz; ix>the_pos; ix-- ){
+    for( ix=l.sz; ix>the_pos; ix-- ){
 	p[ix] = p[ix-1];
     }
     l.sz++;
@@ -556,7 +552,7 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 .. Forward declarations
 .call ansi_static rfre_list "void rfre_$$t_list( $$t_list )"
 .call ansi_static rfre "void rfre_$$t( $$t )"
-.foreach t $(need_rfre)
+.foreach t ${depsort $(need_rfre)}
 .set stic_$t "static "
 .endforeach
 .foreach t $(want_rfre)
@@ -566,16 +562,17 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 /* Recursively free an element 'e' of type '$t'
    and all elements in it.
  */
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 $(stic_$t)void rfre_$t( $t e )
 {
 .foreach e ${fields $t inherited}
-    rfre_${type $t $e}( e.$e );
+    rfre_${type $t $e}( $t( e )->$e );
 .endforeach
     fre_$t( e );
 }
 
-.else
+.endif
+.if ${member $t ${ctypelist}}
 $(stic_$t)void rfre_$t( $t e )
 {
 .if ${len ${conslist $t}}
@@ -583,7 +580,7 @@ $(stic_$t)void rfre_$t( $t e )
 .foreach c ${conslist $t}
 	case TAG$c:
 .foreach e ${fields $c inherited}
-	    rfre_${type $c $e}( $c(e).$e );
+	    rfre_${type $c $e}( $c(e)->$e );
 .endforeach
 	    break;
 
@@ -635,13 +632,13 @@ $(stic_$t)void rfre_$t_list( $t_list e )
  */
 $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 {
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .if ${not ${len ${fields $t inherited}}}
     (void) t;
 .endif
     tm_opentuple( st );
 .foreach e ${fields $t inherited}
-    print_${type $t $e}( st, t.$e );
+    print_${type $t $e}( st, $t(t)->$e );
 .endforeach
     tm_closetuple( st );
 .else
@@ -652,7 +649,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 	case TAG$c:
 	    tm_printword( st, "$c" );
 .foreach e ${fields $c inherited}
-	    print_${type $c $e}( st, $c(t).$e );
+	    print_${type $c $e}( st, $c(t)->$e );
 .endforeach
 	    break;
 
@@ -708,7 +705,7 @@ $(stic_$t)void print_$t_list( TMPRINTSTATE *st, const $t_list l )
 $(stic_$t)void fprint_$t( FILE *f, const $t t )
 {
     putc( '(', f );
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .if ${not ${len ${fields $t inherited}}}
     (void) t;
 .endif
@@ -719,7 +716,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .else
     fputs( ",\n", f );
 .endif
-    fprint_${type $t $e}( f, t.$e );
+    fprint_${type $t $e}( f, $t( t )->$e );
 .endforeach
 .else
 .if ${len ${conslist $t}}
@@ -729,7 +726,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 	    fputs( "$c", f );
 .foreach e ${fields $c inherited}
 	    putc( ' ', f );
-	    fprint_${type $c $e}( f, $c(t).$e );
+	    fprint_${type $c $e}( f, $c(t)->$e );
 .endforeach
 	    break;
 
@@ -806,7 +803,7 @@ $(stic_$t)$t real_rdup_$t( const $t e, const char *_f, const int _l )
 $(stic_$t)$t rdup_$t( const $t e )
 #endif
 {
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .if ${not ${len ${fields $t inherited}}}
     (void) e;
 .endif
@@ -815,7 +812,7 @@ $(stic_$t)$t rdup_$t( const $t e )
 .endforeach
 
 .foreach e ${fields $t inherited}
-    i_$e = rdup_${type $t $e}( e.$e );
+    i_$e = rdup_${type $t $e}( $t( e )->$e );
 .endforeach
     return new_$t( ${seplist ", " ${prefix "i_" ${fields $t inherited}}} );
 .else
@@ -832,10 +829,9 @@ $(stic_$t)$t rdup_$t( const $t e )
 .endforeach
 
 .foreach e ${fields $c inherited}
-	    i_$e = rdup_${type $c $e}( $c(e).$e );
+	    i_$e = rdup_${type $c $e}( $c(e)->$e );
 .endforeach
-	    nw = new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
-	    break;
+	    return new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
 	}
 
 .endforeach
@@ -897,6 +893,7 @@ $(stic_$t)$t_list rdup_$t_list( const $t_list l )
 #define slice_$t_list(l,b,e) real_slice_$t_list(l,b,e,_f,_l)
 .endforeach
 #endif
+.. Forward declarations
 .foreach t $(need_slice_list)
 .set stic_$t "static "
 .endforeach
@@ -912,7 +909,7 @@ $(stic_$t)$t_list rdup_$t_list( const $t_list l )
 $(stic_$t)$t_list real_slice_$t_list(
     const $t_list l,
     const unsigned int b,
-    const unsigned int e,
+    const unsigned int parm_e,
     const char *_f,
     const int _l
 )
@@ -920,24 +917,23 @@ $(stic_$t)$t_list real_slice_$t_list(
 $(stic_$t)$t_list slice_$t_list(
     const $t_list l,
     const unsigned int b,
-    const unsigned int e
+    const unsigned int parm_e
 )
 #endif
 {
     unsigned int ix;
     $t_list nw;
-    unsigned int e1;
+    unsigned int e = parm_e;
 
     nw = new_$t_list();
-    e1 = e;
-    if( e1>l.sz ){
-	e1 = l.sz;
+    if( e>l.sz ){
+	e = l.sz;
     }
-    if( b>e1 ){
+    if( b>e ){
 	FATAL( tm_badslice );
     }
-    nw = setroom_$t_list( nw, e1-b );
-    for( ix=b; ix<e1; ix++ ){
+    nw = setroom_$t_list( nw, e-b );
+    for( ix=b; ix<e; ix++ ){
 	nw = append_$t_list( nw, rdup_$t( l.arr[ix] ) );
     }
     return nw;
@@ -957,7 +953,7 @@ $(stic_$t)$t_list slice_$t_list(
 .else
 .set stat "static "
 .endif
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .. cmp_<tuple>
 /* Compare two $t tuples. */
 $(stat)int cmp_$t( const $t a, const $t b )
@@ -974,7 +970,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 	return res;
     }
 .endif
-    res = cmp_$(tn)( a.$e, b.$e );
+    res = cmp_$(tn)( $t( a )->$e, $t( b )->$e );
 .endforeach
 .if $(first)
     (void) a;
@@ -984,7 +980,8 @@ $(stat)int cmp_$t( const $t a, const $t b )
     return res;
 }
 
-.else
+.endif
+.if ${member $t ${ctypelist}}
 .. cmp_<cons>
 /* Compare two $t constructors. */
 $(stat)int cmp_$t( const $t a, const $t b )
@@ -1001,13 +998,14 @@ $(stat)int cmp_$t( const $t a, const $t b )
 	case TAG$c:
 .set first 1
 .foreach e ${fields $c inherited}
-.set tn ${type $c $e}
 .if $(first)
 .set first 0
 .else
-	    if( res != 0 ) break;
+	    if( res != 0 ){
+		break;
+	    }
 .endif
-	    res = cmp_$(tn)( $c(a).$e, $c(b).$e );
+	    res = cmp_${type $c $e}( $c(a)->$e, $c(b)->$e );
 .endforeach
 	    break;
 
@@ -1073,8 +1071,8 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 #define fscan_$t_list(f,lp) real_fscan_$t_list(f,lp,_f,_l)
 .endforeach
 .. Forward declarations
-.call ansi_static fscan_list "int real_fscan_$$t_list( FILE *, $$t_list *, const char *, const int )"
-.call ansi_static fscan "int real_fscan_$$t( FILE *, $$t *, const char *, const int )"
+.call ansi_static fscan_list "int real_fscan_$$t_list( FILE *, $$t_list *, const char *_f, const int _l )"
+.call ansi_static fscan "int real_fscan_$$t( FILE *, $$t *, const char *_f, const int _l )"
 #else
 .. Forward declarations
 .call ansi_static fscan_list "int fscan_$$t_list( FILE *f, $$t_list *p )"
@@ -1087,7 +1085,7 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 .set stic_$t
 .endforeach
 .foreach t $(need_fscan)
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist}}
 .. tuple type
 /* Read a tuple of type $t
    from file 'f' and allocate space for it.
@@ -1118,9 +1116,13 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .if $(first)
 .set first 0
 .else
-    if( !err ) err = tm_fneedc( f, ',' );
+    if( !err ){
+	err = tm_fneedc( f, ',' );
+    }
 .endif
-    if( !err ) err = fscan_$(tn)( f, &l_$e );
+    if( !err ){
+	err = fscan_$(tn)( f, &l_$e );
+    }
 .endforeach
     *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
     if( err ){
@@ -1129,7 +1131,55 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     return tm_fneedc( f, ')' );
 }
 
+.endif
+.if ${member $t ${classlist}}
+.. class type
+/* Read a class $t
+   from file 'f' and allocate space for it.
+   Set the pointer 'p' to point to that structure.
+ */
+#ifdef LOGNEW
+$(stic_$t)int real_fscan_$t( FILE *f, $t *p, const char *_f, const int _l )
+#else
+$(stic_$t)int fscan_$t( FILE *f, $t *p )
+#endif
+{
+    int err;
+.foreach e ${fields $t inherited}
+    ${type $t $e} l_$e;
+.endforeach
+
+    *p = null_$t();
+    if( tm_fscanspace( f ) ){
+	return 1;
+    }
+    err = tm_fneedc( f, '(' );
+    if( err ){
+	return 1;
+    }
+.set first 1
+.foreach e ${fields $t inherited}
+.set tn ${type $t $e}
+.if $(first)
+.set first 0
 .else
+    if( !err ){
+	err = tm_fneedc( f, ',' );
+    }
+.endif
+    if( !err ){
+	err = fscan_$(tn)( f, &l_$e );
+    }
+.endforeach
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
+    if( err ){
+	return 1;
+    }
+    return tm_fneedc( f, ')' );
+}
+
+.endif
+.if ${member $t ${ctypelist}}
 /* Read an instance of a datastructure of type $t.
    from file 'f' and allocate space for it. Set the pointer 'p' to
    point to that structure.
@@ -1180,7 +1230,9 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 
 .foreach e ${fields $c inherited}
 .set tn ${type $c $e}
-	if( !err) err = fscan_$(tn)( f, &l_$e );
+	if( !err ){
+	    err = fscan_$(tn)( f, &l_$e );
+	}
 .endforeach
 	*p = new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
     }
@@ -1244,7 +1296,9 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     }
     ungetc( c, f );
     for(;;){
-	if( !err ) err = fscan_$t( f, &nw );
+	if( !err ){
+	    err = fscan_$t( f, &nw );
+	}
 	*p = append_$t_list( *p, nw );
 	if( err || tm_fscanspace( f ) ){
 	    return 1;
@@ -1270,7 +1324,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
  *    delete_<type>_list routines                 *
  **************************************************/
 
-.call ansi_static delete_list "$$t_list delete_$$t_list( $$t_list, unsigned int )"
+.call ansi_static delete_list "$$t_list delete_$$t_list( $$t_list, const unsigned int )"
 .foreach t $(need_delete_list)
 .set stic_$t "static "
 .endforeach
@@ -1301,7 +1355,7 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
  *    extract_<type>_list routines                 *
  **************************************************/
 
-.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, unsigned int, $t *, int * )"
+.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, $$t *, int * )"
 .foreach t $(need_extract_list)
 .set stic_$t "static "
 .endforeach
@@ -1309,7 +1363,7 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
 .set stic_$t
 .endforeach
 .foreach t $(need_extract_list)
-/* Delete '$t' element at position 'pos' in list 'l'. */
+/* Extract '$t' element at position 'pos' in list 'l'. */
 $(stic_$t)$t_list extract_$t_list(
     $t_list l,
     const unsigned int pos,
@@ -1344,9 +1398,17 @@ void stat_$(basename)( FILE *f )
 {
 #ifdef STAT
 .foreach t $(need_stat)
-.if ${member $t ${ttypelist}}
-    fprintf(f,tm_allocfreed,"$t",newcnt_$t,frecnt_$t,((newcnt_$t==frecnt_$t)? "": "<-") );
-.else
+.if ${member $t ${tuplelist} ${classlist}}
+    fprintf(
+	f,
+	tm_allocfreed,
+	"$t",
+	newcnt_$t,
+	frecnt_$t,
+	((newcnt_$t==frecnt_$t)? "": "<-")
+    );
+.endif
+.if ${member $t ${ctypelist}}
 .foreach c ${conslist $t}
     fprintf(f,tm_allocfreed,"$c",newcnt_$c,frecnt_$c,((newcnt_$c==frecnt_$c)? "": "<-") );
 .endforeach
@@ -1381,14 +1443,15 @@ int get_balance_$(basename)( void )
     }
 .endforeach
 .foreach t $(need_stat)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${tuplelist} ${classlist}}
     if( newcnt_$t<frecnt_$t ){
         return -1;
     }
     if( newcnt_$t>frecnt_$t ){
         res = 1;
     }
-.else
+.endif
+.if ${member $t ${ctypelist}}
 .foreach c ${conslist $t}
     if( newcnt_$c<frecnt_$c ){
         return -1;
