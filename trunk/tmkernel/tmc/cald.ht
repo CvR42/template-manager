@@ -41,7 +41,7 @@ typedef struct str_$t_list {
 .. mind the use of pointers to (yet) undefined types.
 .foreach t ${comm ${ctypelist} "" $(need_ds)}
 .foreach c ${conslist $t}
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
 typedef struct str_C_$c *C_$c;
 .endif
 .endforeach
@@ -67,7 +67,7 @@ typedef int tags_$t;
 .if ${member $t ${ctypelist}}
 .. Constructor type
 .foreach c ${conslist $t}
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
 .set makeunion 1
 .endif
 .endforeach
@@ -77,7 +77,7 @@ typedef struct str_$t {
     union uni_$t {
 .foreach c ${conslist $t}
 .. Constructors with 0 elements do not have a structure..
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
 	C_$c ue_$c;
 .endif
 .endforeach
@@ -91,10 +91,10 @@ typedef struct str_$t {
 .endif
 .if ${member $t ${tuplelist} ${classlist}}
 typedef struct str_$t {
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} $e;
 .endforeach
-.if ${not ${len ${fields $t inherited}}}
+.if ${not ${len ${allfields $t}}}
     int _dummy_field;
 .endif
 #ifdef LOGNEW
@@ -111,7 +111,7 @@ typedef struct str_$t {
 .if ${len ${fields $c}}
 /* Structure for constructor $c */
 struct str_C_$c {
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
     ${type $c $e} $e;
 .endforeach
 };
@@ -144,10 +144,10 @@ struct str_C_$c {
 #ifdef LOGNEW
 .foreach t $(want_new)
 .if ${member $t ${tuplelist} ${classlist}}
-#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
+#define new_$t(${seplist , ${allfields $t}}) real_new_$t(${seplist , ${allfields $t} __FILE__ __LINE__})
 .else
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} __FILE__ __LINE__})
+#define new_$c(${seplist , ${allfields $c}}) real_new_$c(${seplist , ${allfields $c} __FILE__ __LINE__})
 .endforeach
 .endif
 .endforeach
@@ -181,7 +181,7 @@ struct str_C_$c {
 .foreach t $(want_new)
 .if ${member $t ${tuplelist} ${classlist}}
 .set tl
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .append tl ${type $t $e}
 .endforeach
 #ifdef LOGNEW
@@ -200,7 +200,7 @@ extern $t new_$t( ${seplist ", " $(tl)} );
 .else
 .foreach c ${conslist $t}
 .set tl
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 .append tl ${type $c $e}
 .endforeach
 #ifdef LOGNEW
