@@ -9,6 +9,12 @@
 .set wantdefs
 .append wantdefs ${prefix new_ ${subclasses expr thing}}
 .append wantdefs new_label
+.append wantdefs fprint_label
+.append wantdefs fprint_thing
+.append wantdefs fprint_expr
+.append wantdefs print_label
+.append wantdefs print_thing
+.append wantdefs print_expr
 .append wantdefs rfre_label
 .append wantdefs rfre_thing
 .append wantdefs rfre_expr

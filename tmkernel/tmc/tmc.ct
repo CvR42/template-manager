@@ -589,7 +589,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .case tuple
     tm_opentuple( st );
 .foreach e ${fields $t inherited}
-    print_${type $t $e}( st, $t(t)->$e );
+    print_${type $t $e}( st, t->$e );
 .endforeach
     tm_closetuple( st );
 .case constructor class constructorbase
@@ -686,12 +686,11 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .else
     fputs( ",\n", f );
 .endif
-    fprint_${type $t $e}( f, $t( t )->$e );
+    fprint_${type $t $e}( f, t->$e );
 .endforeach
 .case constructor constructorbase class
 .if ${len ${subclasses $t}}
     switch( t->tag ){
-.foreach c ${subclasses $t}
 .if ${isvirtual $t}
 .else
 	case TAG$t:
@@ -704,6 +703,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 	    break;
 
 .endif
+.foreach c ${subclasses $t}
 	case TAG$c:
 	    fprint_$c( f, ($c) t );
 	    break;

@@ -8,8 +8,12 @@
 .set wantdefs 
 .set verbose
 .append wantdefs new_label
-.append wantdefs rfre_label
 .append wantdefs new_thing
+.append wantdefs print_label
+.append wantdefs print_thing
+.append wantdefs fprint_label
+.append wantdefs fprint_thing
+.append wantdefs rfre_label
 .append wantdefs rfre_thing
 .append wantdefs new_toplevel_list
 .append wantdefs append_toplevel_list
