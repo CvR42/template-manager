@@ -1,10 +1,5 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: lex.c
  * Lexical analyzer for Tm datastructure definitions.
  */
 

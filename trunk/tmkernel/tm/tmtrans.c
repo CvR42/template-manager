@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: tmtrans.c
+/* File: $Id$
  *
  * Translate input file into output file given datastructure
  * description.

@@ -1,10 +1,5 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: tmlibpath.h
- * declare character array of standard library path.
+ * Declare character array of standard library path.
  */
 extern char libpath[];

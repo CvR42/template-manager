@@ -1,12 +1,7 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: tmdefs.h
-   datastructures and other definitions of tm: datastructure
-   and definition and manipulation routine generator.
+ * Datastructures and other definitions of Tm: datastructure
+ * and definition and manipulation routine generator.
  */
 
 #include <stdio.h>

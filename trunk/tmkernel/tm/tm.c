@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* file: $Id$
  *
- * All rights reserved.
- */
-
-/* file: tm.c
-   main for 'tm': datastructure generation
+ * main for 'tm': datastructure generation
  */
 
 #include <assert.h>

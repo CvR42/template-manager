@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: lex.h
-   Description of exported objects of lex.c
+ * Description of exported objects of lex.c
  */
 
 typedef enum en_lextok {

@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: flag.c
+/* File: $Id$
  *
  * Handle debugging flags.
  */
