@@ -4,7 +4,7 @@ AC_INIT(xxtest.c)
 dnl Checks for programs.
 AC_PROG_CC
 if test "$GCC" = "yes"; then
-  CFLAGS="-O2  -Wall -W -Wtraditional -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
+  CFLAGS="-O2  -Wall -W -Wno-long-long -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
 fi
 AC_PROG_LN_S
 AC_PROG_INSTALL
