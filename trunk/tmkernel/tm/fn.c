@@ -2564,14 +2564,31 @@ static tmstring fntpllineno( const tmstring_list sl )
     return newintstr( tpllineno );
 }
 
+/* Return true iff the given argument is the name of a variable. */
 static tmstring fndefined( const tmstring_list sl )
 {
     char *v;
 
-    if( sl->sz<1 ){
+    if( sl->sz != 1 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
+	line_error( "'defined' requires exactly one parameter" );
 	return newboolstr( 0 );
     }
     v = getvar( sl->arr[0] );
+    return newboolstr( v != CHARNIL );
+}
+
+/* Return true iff the given argument is the name of a defined macro. */
+static tmstring fndefinedmacro( const tmstring_list sl )
+{
+    macro v;
+
+    if( sl->sz != 1 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
+	line_error( "'definedmacro' requires exactly one parameter" );
+	return newboolstr( 0 );
+    }
+    v = findmacro( sl->arr[0] );
     return newboolstr( v != CHARNIL );
 }
 
@@ -2882,6 +2899,7 @@ static struct fnentry fntab[] = {
      { "ctypellev", fnctypellev },
      { "ctypename", fnctypename },
      { "defined", fndefined },
+     { "definedmacro", fndefinedmacro },
      { "delisttypes", fndelisttypes },
      { "depsort", fndepsort },
      { "dsfilename", fndsfilename },
