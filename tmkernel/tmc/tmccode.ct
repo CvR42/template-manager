@@ -13,6 +13,8 @@
 /* Standard tm library */
 #include <tmc.h>
 
+#define TMC_CHECKED_CAST
+
 /* Local definitions */
 #include "tmccode.h"
 

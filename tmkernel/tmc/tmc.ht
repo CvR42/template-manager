@@ -56,6 +56,10 @@ typedef const struct str_$t *const_$t;
 #define $t_listNIL ($t_list)0
 .endforeach
 
+.. taggedtypes contains a list of all types that have a TAG<type>
+.. entry.
+.set taggedtypes
+..
 .set tl
 .foreach t ${singletypes ${excl $(need_ds) "" ${tuplelist}}}
 .append tl ${call rootclass $t}
@@ -73,6 +77,7 @@ typedef enum en_tags_$t {
     TAG$e,
 .endif
 .endforeach
+.append taggedtypes $l
 } tags_$t;
 .else
 typedef int tags_$t;
@@ -188,10 +193,22 @@ struct str_$t_list {
 
 .endforeach
 /* Type casting macros. */
+#ifdef TMC_CHECKED_CAST
+.foreach t $(need_ds)
+.if ${member $t $(taggedtypes)}
+#define to_$t(e) ((e)->tag==TAG$t?(($t)e):($t)0)
+#define to_const_$t(e) ((e)->tag==TAG$t?((const_$t)e):(const_$t)0)
+.else
+#define to_$t(e) (($t)e)
+#define to_const_$t(e) ((const_$t)e)
+.endif
+.endforeach
+#else
 .foreach t $(need_ds)
 #define to_$t(e) (($t)e)
 #define to_const_$t(e) ((const_$t)e)
 .endforeach
+#endif
 
 .. new_<type> routines
 #ifdef LOGNEW
@@ -277,7 +294,7 @@ extern $t_list new_$t_list( void );
 .. setroom_<type>_list functions.
 .. For this library they are dummy functions.
 .foreach t $(want_setroom_list)
-extern $t_list setroom_$t_list( $t_list, unsigned int );
+extern $t_list setroom_$t_list( $t_list, const unsigned int );
 .endforeach
 ..
 .. append_<type>_list() routines.
