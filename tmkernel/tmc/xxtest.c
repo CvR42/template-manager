@@ -193,6 +193,8 @@ int main( void )
     ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
     ds = concat_toplevel_list( ds, dscopy );
+    ds = extractlist_toplevel_list( ds, 2, 5, &dscopy );
+    ds = insertlist_toplevel_list( ds, 2, dscopy );
     /* 'dscopy' is not freed to test lognew routines. */
     dscopy = slice_toplevel_list( ds, 1, 1000 );
     l = rdup_toplevel_list( ds );
@@ -222,9 +224,6 @@ int main( void )
     fprintf( outfile, "get_balance_ds()=%d\n", get_balance_ds() );
     stat_ds( stderr );
     report_lognew( stderr );
-#ifndef CODEtmc
-    flush_ds();
-#endif
     flush_lognew();
     fclose( infile );
     fclose( outfile );
