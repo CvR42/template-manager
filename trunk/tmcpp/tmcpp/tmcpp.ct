@@ -1053,11 +1053,13 @@ void $t_list::erase( const size_type pos )
 	return;
     }
 .if ${not ${member $t $(valuetypes)}}
+    if( arr[pos] != $tNIL ){
 .if ${member $t $(legacytypes)}
-    rfre_$t( arr[pos] );
+	rfre_$t( arr[pos] );
 .else
-    arr[pos]->destroy();
+	arr[pos]->destroy();
 .endif
+    }
 .endif
     sz--;
     for( size_type ix=pos; ix<sz; ix++ ){
@@ -1078,11 +1080,13 @@ void $t_list::erase( const size_type from, const size_type to )
     }
 .if ${not ${member $t $(valuetypes)}}
     for( size_type ix=from; ix<real_to; ix++ ){
+	if( arr[ix] != $tNIL ){
 .if ${member $t $(legacytypes)}
-	rfre_$t( arr[ix] );
+	    rfre_$t( arr[ix] );
 .else
-	arr[ix]->destroy();
+	    arr[ix]->destroy();
 .endif
+	}
     }
 .endif
     size_type dist = real_to-from;
