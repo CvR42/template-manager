@@ -50,6 +50,7 @@ Switchcase == ( cases:tmstring, action:[tplelm] );
 
 tplelm = { lno:int } +
     Plain: { line:tmstring } |
+    For: { parms:tmstring, body:[tplelm] } |
     Foreach: { felist:tmstring, body:[tplelm] } |
     While: { cond:tmstring, body:[tplelm] } |
     If: { cond:tmstring, ifthen:[tplelm], ifelse:[tplelm] } |

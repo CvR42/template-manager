@@ -4,6 +4,13 @@ testin: variable not found: iserniet
 testin: missing close bracket: ')'
 testin: no case matches, and there is no .default: value 'bla'
 testin: A switch command requires exactly one parameter: it has 2 parameters
+testin: stride cannot be negative or zero
+testin: too few parameter for `for' command
+testin: too few parameter for `for' command
+testin: too few parameter for `for' command
+testin: malformed number: 'a'
+testin: malformed number: 'a'
+testin: stride cannot be negative or zero
 testsub: variable not found: blablabla
 testsub: variable not found: blablabla
 
