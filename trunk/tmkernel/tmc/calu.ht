@@ -37,12 +37,17 @@ typedef struct str_$t *$t;
 .endforeach
 
 .foreach t ${comm $(need_ds) "" ${ctypelist}}
-.if ${len ${conslist $t}}
+.set l ${conslist $t}
+.if ${len $l}
 typedef enum en_tags_$t {
-.foreach e ${conslist $t}
+.set lastelm ${first ${rev $l}}
+.foreach e $l
+.if ${eq $e $(lastelm)}
+    TAG$e
+.else
     TAG$e,
+.endif
 .endforeach
-    __badtag_$t
 } tags_$t;
 .else
 typedef int tags_$t;
