@@ -16,11 +16,12 @@
 ]
 ]
 )
-,(TopTuple [(Thing 5)
+,(TopTuple ([(Thing 5)
 ,(Thing 9)
 ]
 ,
 22)
+)
 ,(TopNone)
 ,(TopNone)
 ,(TopNone)
@@ -42,11 +43,12 @@
 ]
 ]
 )
-,(TopTuple [(Thing 5)
+,(TopTuple ([(Thing 5)
 ,(Thing 9)
 ]
 ,
 22)
+)
 ]
 (label 42)
 (Thing 22)
