@@ -16,7 +16,7 @@
 #include "global.h"
 #include "misc.h"
 
-/* Requirement analysis took 430 milliseconds. */
+/* Requirement analysis took 420 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ct ---- */
@@ -26,7 +26,7 @@
    template file:      /usr/local/lib/tmc.ct
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta11
+   tm kernel version:  2.0-beta13
  */
 
 #ifndef FIRSTROOM
@@ -52,6 +52,7 @@ static long newcnt_CCSuper = 0, frecnt_CCSuper = 0;
 static long newcnt_Call = 0, frecnt_Call = 0;
 static long newcnt_Case = 0, frecnt_Case = 0;
 static long newcnt_Default = 0, frecnt_Default = 0;
+static long newcnt_DeleteType = 0, frecnt_DeleteType = 0;
 static long newcnt_DsAlias = 0, frecnt_DsAlias = 0;
 static long newcnt_DsClass = 0, frecnt_DsClass = 0;
 static long newcnt_DsConstructor = 0, frecnt_DsConstructor = 0;
@@ -282,8 +283,10 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_Case(lno,val) real_new_Case(lno,val,_f,_l)
 #undef new_Default
 #define new_Default(lno) real_new_Default(lno,_f,_l)
+#undef new_DeleteType
+#define new_DeleteType(lno,line) real_new_DeleteType(lno,line,_f,_l)
 #undef new_DsAlias
-#define new_DsAlias(name,inherits,target) real_new_DsAlias(name,inherits,target,_f,_l)
+#define new_DsAlias(name,inherits) real_new_DsAlias(name,inherits,_f,_l)
 #undef new_DsClass
 #define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,_f,_l)
 #undef new_DsConstructor
@@ -746,11 +749,31 @@ Default new_Default( int p_lno )
     return nw;
 }
 
+/* Allocate a new instance of class 'DeleteType'. */
+#ifdef LOGNEW
+DeleteType real_new_DeleteType( int p_lno, tmstring p_line, const char *_f, const int _l )
+#else
+DeleteType new_DeleteType( int p_lno, tmstring p_line )
+#endif
+{
+    DeleteType nw;
+
+    nw = TM_MALLOC( DeleteType, sizeof(*nw) );
+    nw->tag = TAGDeleteType;
+    nw->lno = p_lno;
+    nw->line = p_line;
+    newcnt_DeleteType++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
 /* Allocate a new instance of class 'DsAlias'. */
 #ifdef LOGNEW
-DsAlias real_new_DsAlias( tmstring p_name, tmstring_list p_inherits, tmstring p_target, const char *_f, const int _l )
+DsAlias real_new_DsAlias( tmstring p_name, tmstring_list p_inherits, const char *_f, const int _l )
 #else
-DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits, tmstring p_target )
+DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits )
 #endif
 {
     DsAlias nw;
@@ -759,7 +782,6 @@ DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits, tmstring p_targe
     nw->tag = TAGDsAlias;
     nw->name = p_name;
     nw->inherits = p_inherits;
-    nw->target = p_target;
     newcnt_DsAlias++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1717,6 +1739,26 @@ static void fre_DsAlias( DsAlias e )
     }
 }
 
+/* Free an element 'e' of class type 'DeleteType'. */
+static void fre_DeleteType( DeleteType e )
+{
+    if( e == DeleteTypeNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDeleteType:
+	    frecnt_DeleteType++;
+#ifdef LOGNEW
+	    tm_fre_logid( e->lognew_id );
+#endif
+	    TM_FREE( e );
+	    break;
+
+	default:
+	    FATALTAG( e->tag );
+    }
+}
+
 /* Free an element 'e' of class type 'Default'. */
 static void fre_Default( Default e )
 {
@@ -2354,6 +2396,7 @@ static void rfre_CCSuper( CCSuper );
 static void rfre_Call( Call );
 static void rfre_Case( Case );
 static void rfre_Default( Default );
+static void rfre_DeleteType( DeleteType );
 static void rfre_DsAlias( DsAlias );
 static void rfre_DsClass( DsClass );
 static void rfre_DsConstructor( DsConstructor );
@@ -2503,6 +2546,10 @@ void rfre_tplelm( tplelm e )
 
 	case TAGGlobalAppend:
 	    rfre_GlobalAppend( (GlobalAppend) e );
+	    break;
+
+	case TAGDeleteType:
+	    rfre_DeleteType( (DeleteType) e );
 	    break;
 
 	case TAGError:
@@ -2771,6 +2818,26 @@ static void rfre_Default( Default e )
     }
 }
 
+/* Recursively free an element 'e' of class type 'DeleteType'
+ * and all elements in it.
+ */
+static void rfre_DeleteType( DeleteType e )
+{
+    if( e == DeleteTypeNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDeleteType:
+	    rfre_int( e->lno );
+	    rfre_tmstring( e->line );
+	    fre_DeleteType( e );
+	    break;
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+}
+
 /* Recursively free an element 'e' of class type 'DsAlias'
  * and all elements in it.
  */
@@ -2783,7 +2850,6 @@ static void rfre_DsAlias( DsAlias e )
 	case TAGDsAlias:
 	    rfre_tmstring( e->name );
 	    rfre_tmstring_list( e->inherits );
-	    rfre_tmstring( e->target );
 	    fre_DsAlias( e );
 	    break;
 
@@ -3422,7 +3488,6 @@ static void print_DsAlias( TMPRINTSTATE *st, const DsAlias t )
 	    tm_printword( st, "DsAlias" );
 	    print_tmstring( st, t->name );
 	    print_tmstring_list( st, t->inherits );
-	    print_tmstring( st, t->target );
 	    tm_closecons( st );
 	    break;
 
@@ -3597,6 +3662,7 @@ static void print_field_list( TMPRINTSTATE *st, const field_list l )
 #define rdup_Call(e) real_rdup_Call(e,_f,_l)
 #define rdup_Case(e) real_rdup_Case(e,_f,_l)
 #define rdup_Default(e) real_rdup_Default(e,_f,_l)
+#define rdup_DeleteType(e) real_rdup_DeleteType(e,_f,_l)
 #define rdup_DsAlias(e) real_rdup_DsAlias(e,_f,_l)
 #define rdup_DsClass(e) real_rdup_DsClass(e,_f,_l)
 #define rdup_DsConstructor(e) real_rdup_DsConstructor(e,_f,_l)
@@ -3633,6 +3699,7 @@ static Appendfile real_rdup_Appendfile( const Appendfile, const char *, const in
 static Call real_rdup_Call( const Call, const char *, const int );
 static Case real_rdup_Case( const Case, const char *, const int );
 static Default real_rdup_Default( const Default, const char *, const int );
+static DeleteType real_rdup_DeleteType( const DeleteType, const char *, const int );
 static DsAlias real_rdup_DsAlias( const DsAlias, const char *, const int );
 static DsClass real_rdup_DsClass( const DsClass, const char *, const int );
 static DsConstructor real_rdup_DsConstructor( const DsConstructor, const char *, const int );
@@ -3663,6 +3730,7 @@ static Appendfile rdup_Appendfile( const Appendfile );
 static Call rdup_Call( const Call );
 static Case rdup_Case( const Case );
 static Default rdup_Default( const Default );
+static DeleteType rdup_DeleteType( const DeleteType );
 static DsAlias rdup_DsAlias( const DsAlias );
 static DsClass rdup_DsClass( const DsClass );
 static DsConstructor rdup_DsConstructor( const DsConstructor );
@@ -3758,6 +3826,9 @@ tplelm rdup_tplelm( const tplelm e )
 
 	case TAGGlobalAppend:
 	    return (tplelm) rdup_GlobalAppend( (GlobalAppend) e );
+
+	case TAGDeleteType:
+	    return (tplelm) rdup_DeleteType( (DeleteType) e );
 
 	case TAGError:
 	    return (tplelm) rdup_Error( (Error) e );
@@ -3908,6 +3979,24 @@ static Default rdup_Default( const Default e )
     return new_Default( i_lno );
 }
 
+/* Recursively duplicate a class DeleteType element 'e'. */
+#ifdef LOGNEW
+static DeleteType real_rdup_DeleteType( const DeleteType e, const char *_f, const int _l )
+#else
+static DeleteType rdup_DeleteType( const DeleteType e )
+#endif
+{
+    int i_lno;
+    tmstring i_line;
+
+    if( e == DeleteTypeNIL ){
+	return DeleteTypeNIL;
+    }
+    i_lno = rdup_int( e->lno );
+    i_line = rdup_tmstring( e->line );
+    return new_DeleteType( i_lno, i_line );
+}
+
 /* Recursively duplicate a class DsAlias element 'e'. */
 #ifdef LOGNEW
 static DsAlias real_rdup_DsAlias( const DsAlias e, const char *_f, const int _l )
@@ -3917,15 +4006,13 @@ static DsAlias rdup_DsAlias( const DsAlias e )
 {
     tmstring i_name;
     tmstring_list i_inherits;
-    tmstring i_target;
 
     if( e == DsAliasNIL ){
 	return DsAliasNIL;
     }
     i_name = rdup_tmstring( e->name );
     i_inherits = rdup_tmstring_list( e->inherits );
-    i_target = rdup_tmstring( e->target );
-    return new_DsAlias( i_name, i_inherits, i_target );
+    return new_DsAlias( i_name, i_inherits );
 }
 
 /* Recursively duplicate a class DsClass element 'e'. */
@@ -4625,6 +4712,14 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"DeleteType",
+	newcnt_DeleteType,
+	frecnt_DeleteType,
+	((newcnt_DeleteType==frecnt_DeleteType)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"DsAlias",
 	newcnt_DsAlias,
 	frecnt_DsAlias,
@@ -4956,6 +5051,9 @@ int get_balance_tm( void )
     if( newcnt_Default<frecnt_Default ){
 	return -1;
     }
+    if( newcnt_DeleteType<frecnt_DeleteType ){
+	return -1;
+    }
     if( newcnt_DsAlias<frecnt_DsAlias ){
 	return -1;
     }
@@ -5089,6 +5187,9 @@ int get_balance_tm( void )
     if( newcnt_Default>frecnt_Default ){
 	return 1;
     }
+    if( newcnt_DeleteType>frecnt_DeleteType ){
+	return 1;
+    }
     if( newcnt_DsAlias>frecnt_DsAlias ){
 	return 1;
     }
@@ -5171,4 +5272,4 @@ int get_balance_tm( void )
 }
 
 /* ---- end of /usr/local/lib/tmc.ct ---- */
-/* Code generation required 760 milliseconds. */
+/* Code generation required 770 milliseconds. */

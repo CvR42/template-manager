@@ -73,15 +73,6 @@ static bool check_ds_inheritance(
     }
     visited[theds] = TRUE;
     supers = rdup_tmstring_list( me->inherits );
-    /* Although in general we don't want that, we now pretend the
-     * target of an alias is a superclass.
-     */
-    if( me->tag == TAGDsAlias ){
-	supers = append_tmstring_list(
-	    supers,
-	    rdup_tmstring( to_DsAlias(me)->target )
-	);
-    }
     for( ix=0; ix<supers->sz; ix++ ){
         tmstring super = supers->arr[ix];
         unsigned int superix = find_type_ix( dl, super );

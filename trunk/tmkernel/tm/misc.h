@@ -14,6 +14,7 @@ extern const tmstring get_type_name( const ds t );
 extern FILE *ckfopen( const char *nm, const char *acc );
 extern void ckfreopen( const char *nm, const char *acc, FILE *f );
 extern bool member_tmstring_list( const tmstring s, const tmstring_list l );
+extern bool any_member_tmstring_list( const tmstring_list sl, const tmstring_list l );
 
 extern field find_field( const ds_list types, const char *type, const char *nm );
 extern field find_field_super( const ds_list types, tmstring_list supers, const char *nm );

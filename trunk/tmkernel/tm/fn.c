@@ -466,7 +466,7 @@ static tmstring fntr( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     if( strlen( oldchars ) != strlen( newchars ) ){
-	line_error( "'tr': the strings of old an new characters must have the same length" );
+	line_error( "'tr': the strings of old and new characters must have the same length" );
     }
     else {
 	for( ix=0; ix<nl->sz; ix++ ){
@@ -1564,49 +1564,24 @@ static tmstring fnmetatype( const tmstring_list sl )
 }
 
 /* Given a type, return the alias of the type, or the original if
- * it doesn't have one. For list types the alias of their base type is taken
- * into account.
+ * it doesn't have one.
  */
-static tmstring calc_alias(
- const char *pre,
- const char *suff,
- const tmstring type
-)
+static tmstring calc_alias( const tmstring type )
 {
     unsigned int ix;
 
     ix = find_type_ix( allds, type );
     if( ix<allds->sz ){
 	ds d = allds->arr[ix];
+
 	if( d->tag != TAGDsAlias ){
 	    return rdup_tmstring( type );
 	}
-	return rdup_tmstring( to_DsAlias(d)->target );
-    }
-    if( strlen( pre ) != 0 || strlen( suff ) != 0 ){
-	/* Try to remove the list layers from the type. */
-	int level = 0;
-	tmstring old = rdup_tmstring( type );
-	tmstring new = get_element_type( pre, suff, old );
-
-	while( new != tmstringNIL ){
-	    rfre_tmstring( old );
-	    old = new;
-	    new = get_element_type( pre, suff, old );
-	    level++;
+	if( d->inherits->sz != 1 ){
+	    assert( FALSE );
+	    return rdup_tmstring( type );
 	}
-	if( level>0 ){
-	    tmstring aliased_stem;
-
-	    /* It *is* a list type. Apply ourselves to the stem,
-	     * and put the list layers back.
-	     */
-	    aliased_stem = calc_alias( pre, suff, old );
-	    rfre_tmstring( old );
-	    old = mklistnm( pre, aliased_stem, suff, level );
-	    rfre_tmstring( aliased_stem );
-	}
-	return old;
+	return calc_alias( d->inherits->arr[0] );
     }
     return rdup_tmstring( type );
 }
@@ -1614,25 +1589,15 @@ static tmstring calc_alias(
 /* Given a type name, return the alias of this type.  */
 static tmstring fnalias( const tmstring_list sl )
 {
-    char *pre;
-    char *suff;
     unsigned int ix;
     tmstring_list res;
     tmstring ans;
 
-    pre = getvar( LISTPRE );
-    if( pre == CHARNIL ){
-	pre = "";
-    }
-    suff = getvar( LISTSUFF );
-    if( suff == CHARNIL ){
-	suff = "";
-    }
     res = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	res = append_tmstring_list(
 	    res,
-	    calc_alias( pre, suff, sl->arr[ix] )
+	    calc_alias( sl->arr[ix] )
 	);
     }
     ans = flatstrings( res );
@@ -2151,16 +2116,18 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 	}
     }
     ix = find_type_ix( allds, t );
-    if( ix>=allds->sz ) return FALSE;
+    if( ix>=allds->sz ){
+	return FALSE;
+    }
     d = allds->arr[ix];
+    if( any_member_tmstring_list( d->inherits, tl ) ){
+	return TRUE;
+    }
     switch( d->tag ){
 	case TAGDsConstructorBase:
 	    break;
 
 	case TAGDsAlias:
-	    if( member_tmstring_list( to_DsAlias(d)->target, tl ) ){
-		return TRUE;
-	    }
 	    break;
 
 	case TAGDsTuple:

@@ -506,3 +506,10 @@ Eval
 .set x "$$[1+2]"
 [$x] [${eval $x}]
 ----
+
+Delete all alias types
+----------------------
+Before: ${typelist}
+.deletetype ${aliases}
+After: ${typelist}
+

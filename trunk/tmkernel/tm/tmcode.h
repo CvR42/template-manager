@@ -1,4 +1,4 @@
-/* Requirement analysis took 360 milliseconds. */
+/* Requirement analysis took 380 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ht ---- */
@@ -7,7 +7,7 @@
    template file:      /usr/local/lib/tmc.ht
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta11
+   tm kernel version:  2.0-beta13
  */
 
 /* data structures */
@@ -34,6 +34,7 @@ typedef struct str_CCSuper *CCSuper;
 typedef struct str_Call *Call;
 typedef struct str_Case *Case;
 typedef struct str_Default *Default;
+typedef struct str_DeleteType *DeleteType;
 typedef struct str_DsAlias *DsAlias;
 typedef struct str_DsClass *DsClass;
 typedef struct str_DsConstructor *DsConstructor;
@@ -82,6 +83,7 @@ typedef struct str_tplelm *tplelm;
 #define CallNIL (Call)0
 #define CaseNIL (Case)0
 #define DefaultNIL (Default)0
+#define DeleteTypeNIL (DeleteType)0
 #define DsAliasNIL (DsAlias)0
 #define DsClassNIL (DsClass)0
 #define DsConstructorNIL (DsConstructor)0
@@ -121,7 +123,7 @@ typedef enum en_tags_ds {
 } tags_ds;
 
 typedef enum en_tags_tplelm {
-    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGRename, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGAppendfile, TAGMacro, TAGCall, TAGReturn, TAGInclude, TAGInsert, TAGCase, TAGDefault
+    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGRename, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGDeleteType, TAGError, TAGExit, TAGRedirect, TAGAppendfile, TAGMacro, TAGCall, TAGReturn, TAGInclude, TAGInsert, TAGCase, TAGDefault
 } tags_tplelm;
 
 
@@ -223,7 +225,6 @@ public:
 /* Structure for class 'DsAlias'. */
 class str_DsAlias: public str_ds {
 public:
-    tmstring target;
 };
 
 /* Structure for class 'DsClass'. */
@@ -289,6 +290,12 @@ public:
 /* Structure for class 'Default'. */
 class str_Default: public str_tplelm {
 public:
+};
+
+/* Structure for class 'DeleteType'. */
+class str_DeleteType: public str_tplelm {
+public:
+    tmstring line;
 };
 
 /* Structure for class 'Error'. */
@@ -482,6 +489,16 @@ struct str_Default {
     int lno;
 };
 
+/* Structure for class 'DeleteType'. */
+struct str_DeleteType {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
 /* Structure for class 'DsAlias'. */
 struct str_DsAlias {
 #ifdef LOGNEW
@@ -490,7 +507,6 @@ struct str_DsAlias {
     tags_ds tag;
     tmstring name;
     tmstring_list inherits;
-    tmstring target;
 };
 
 /* Structure for class 'DsClass'. */
@@ -876,6 +892,7 @@ struct str_var_list {
 #define to_Call(e) ((Call)e)
 #define to_Case(e) ((Case)e)
 #define to_Default(e) ((Default)e)
+#define to_DeleteType(e) ((DeleteType)e)
 #define to_DsAlias(e) ((DsAlias)e)
 #define to_DsClass(e) ((DsClass)e)
 #define to_DsConstructor(e) ((DsConstructor)e)
@@ -917,7 +934,8 @@ struct str_var_list {
 #define new_Call(lno,line) real_new_Call(lno,line,__FILE__,__LINE__)
 #define new_Case(lno,val) real_new_Case(lno,val,__FILE__,__LINE__)
 #define new_Default(lno) real_new_Default(lno,__FILE__,__LINE__)
-#define new_DsAlias(name,inherits,target) real_new_DsAlias(name,inherits,target,__FILE__,__LINE__)
+#define new_DeleteType(lno,line) real_new_DeleteType(lno,line,__FILE__,__LINE__)
+#define new_DsAlias(name,inherits) real_new_DsAlias(name,inherits,__FILE__,__LINE__)
 #define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,__FILE__,__LINE__)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
 #define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
@@ -969,7 +987,8 @@ extern CCSuper real_new_CCSuper( tmstring, const char *, const int );
 extern Call real_new_Call( int, tmstring, const char *, const int );
 extern Case real_new_Case( int, tmstring, const char *, const int );
 extern Default real_new_Default( int, const char *, const int );
-extern DsAlias real_new_DsAlias( tmstring, tmstring_list, tmstring, const char *, const int );
+extern DeleteType real_new_DeleteType( int, tmstring, const char *, const int );
+extern DsAlias real_new_DsAlias( tmstring, tmstring_list, const char *, const int );
 extern DsClass real_new_DsClass( tmstring, tmstring_list, field_list, tmbool, const char *, const int );
 extern DsConstructor real_new_DsConstructor( tmstring, tmstring_list, field_list, const char *, const int );
 extern DsConstructorBase real_new_DsConstructorBase( tmstring, tmstring_list, tmstring_list, const char *, const int );
@@ -1014,7 +1033,8 @@ extern CCSuper new_CCSuper( tmstring );
 extern Call new_Call( int, tmstring );
 extern Case new_Case( int, tmstring );
 extern Default new_Default( int );
-extern DsAlias new_DsAlias( tmstring, tmstring_list, tmstring );
+extern DeleteType new_DeleteType( int, tmstring );
+extern DsAlias new_DsAlias( tmstring, tmstring_list );
 extern DsClass new_DsClass( tmstring, tmstring_list, field_list, tmbool );
 extern DsConstructor new_DsConstructor( tmstring, tmstring_list, field_list );
 extern DsConstructorBase new_DsConstructorBase( tmstring, tmstring_list, tmstring_list );
@@ -1099,4 +1119,4 @@ extern tplelm_list rdup_tplelm_list( const tplelm_list );
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
 /* ---- end of /usr/local/lib/tmc.ht ---- */
-/* Code generation required 580 milliseconds. */
+/* Code generation required 610 milliseconds. */
