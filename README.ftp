@@ -38,19 +38,25 @@ tmkernel-1.1.3.tar.gz	The kernel of Tm: the sources for the program
 			It unpacks in the directory tmkernel-1.1.3.
 tmk113.zip		The same as tmkernel-1.1.3.tar.gz, but now packed
 			as a zip file.  It unpacks in the directory tmk113.
+tmdemo-1.0.tar.gz	A set of two small demonstration programs using the
+			C template. The first program parses a list of
+			assignments, the second program folds constant
+			expressions in these assignments. Only works with
+			version 2.0 of the tm kernel distribution,
+			currently only available as beta version.
 CHANGES.tmpas		The CHANGES file from the most recent version of
 			the tmpas distribution. It lists the new features
 			of each version.
-tmpas-1.0.1.tar.gz	A Pascal template for Tm. Please note that
+tmpas-1.0.2.tar.gz	A Pascal template for Tm. Please note that
 			this template is only lightly tested, and not
 			as sophisticated as the C template.
 			It unpacks in the directory tmpas-1.0.1.
-tmp101.zip		The same as tmpas-1.0.1.tar.gz, but now packed
+tmp102.zip		The same as tmpas-1.0.1.tar.gz, but now packed
 			as a zip file.  It unpacks in the directory tmp101.
 CHANGES.tmmira		The CHANGES file from the most recent version of
 			the tmmira distribution. It lists the new features
 			of each version.
-tmmira-1.0.1.tar.gz	A Miranda template for Tm. Please note that
+tmmira-1.0.2.tar.gz	A Miranda template for Tm. Please note that
 			this template is only lightly tested, and not
 			as sophisticated as the C template.
 			It unpacks in the directory tmmira-1.0.1.
@@ -58,9 +64,6 @@ articles		A directory with some articles on Tm.
 
 To see what is new in these distribution files, read the file
 CHANGES.tmkernel, CHANGES.tmpas or CHANGES.tmmira.
-
-I plan to add files that contain a pre-compiled version of the kernel
-for MSDOS and a pre-compiled version of the kernel for Atari ST.
 
 Unpacking
 =-=-=-=-=

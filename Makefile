@@ -3,21 +3,26 @@
 # The version numbers below reflect release versions for the various
 # packages.
 # The _DOS version number does not contain dots.
-TMKERNEL_VERSION = 1.2-beta4
-TMKERNEL_VERSION_DOS = 12b4
+TMKERNEL_VERSION = 2.0
+TMKERNEL_VERSION_DOS = 20
 TMPAS_VERSION = 1.0.2
 TMPAS_VERSION_DOS = 102
 TMMIRA_VERSION = 1.0.2
-CVSDIR = /home/gargamel/reeuwijk/Cvs
+TMDEMO_VERSION = 1.0-beta4
+TMDEMO_VERSION_DOS = 10b4
+CVSDIR = $(HOME)/Cvs
 
 SHELL=/bin/sh
-FTPDIR=/home/gargamel/ftp/pub/software/Tm
+FTPDIR=$(HOME)/public_html/software/Tm
+MAKEFILE=Makefile
 
 JUNK = tmkernel_distlist tmkernel_distlist_dos tmpas_distlist \
     tmpas_distlist_dos tmmira_distlist tmkerneldoc_distlist \
     tmkerneldoc_distlist_dos
 
 PACKAGES = \
+    tmdemo-$(TMDEMO_VERSION).tar.gz \
+    tmz$(TMDEMO_VERSION_DOS).zip \
     tmkernel-$(TMKERNEL_VERSION).tar.gz \
     tmk$(TMKERNEL_VERSION_DOS).zip \
     tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
@@ -28,6 +33,8 @@ PACKAGES = \
 
 FTPFILES= \
     $(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
+    $(FTPDIR)/tmdemo-$(TMDEMO_VERSION).tar.gz \
+    $(FTPDIR)/tmz$(TMDEMO_VERSION_DOS).zip \
     $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz \
     $(FTPDIR)/tmk$(TMKERNEL_VERSION_DOS).zip \
     $(FTPDIR)/tmd$(TMKERNEL_VERSION_DOS).zip \
@@ -70,6 +77,16 @@ tmpas_distlist_dos: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
 	cd tmpas; $(MAKE) distlist
 	sed -e "s/^/tmp$(TMPAS_VERSION_DOS)\//" tmpas/distlist >> tmpas_distlist_dos
 
+tmdemo_distlist: $(MAKEFILE) tmdemo
+	cp /dev/null tmdemo_distlist
+	cd tmdemo; $(MAKE) distlist
+	sed -e "s/^/tmdemo-$(TMDEMO_VERSION)\//" tmdemo/dist.lst >> tmdemo_distlist
+
+tmdemo_distlist_dos: $(MAKEFILE) tmdemo
+	cp /dev/null tmdemo_distlist_dos
+	cd tmdemo; $(MAKE) distlist
+	sed -e "s/^/tmz$(TMDEMO_VERSION_DOS)\//" tmdemo/dist.lst >> tmdemo_distlist_dos
+
 tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc
 	cp /dev/null tmkernel_distlist
 	cd tmkernel; $(MAKE) distlist
@@ -110,8 +127,11 @@ tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel_distlist
 	-mkdir tmkernel-$(TMKERNEL_VERSION)
 	cvs -d $(CVSDIR) export -r HEAD -d tmkernel-$(TMKERNEL_VERSION) tm/tmkernel
 	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmkernel-$(TMKERNEL_VERSION)/version.h
+	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmkernel-$(TMKERNEL_VERSION)/tm/version.h
 	cd tmkernel-$(TMKERNEL_VERSION)/libtmc; autoconf
 	cd tmkernel-$(TMKERNEL_VERSION)/tm; autoconf
+	cd tmkernel-$(TMKERNEL_VERSION)/tm; tm tm.ds tmcode.ct > tmcode.c
+	cd tmkernel-$(TMKERNEL_VERSION)/tm; tm tm.ds tmcode.ht > tmcode.h
 	cd tmkernel-$(TMKERNEL_VERSION)/tmc; autoconf
 	tar cf tmkernel-$(TMKERNEL_VERSION).tar `cat tmkernel_distlist`
 	gzip --best -f tmkernel-$(TMKERNEL_VERSION).tar
@@ -122,11 +142,28 @@ tmk$(TMKERNEL_VERSION_DOS).zip: tmkernel_distlist_dos
 	-mkdir tmk$(TMKERNEL_VERSION_DOS)
 	cvs -d $(CVSDIR) export -r HEAD -d tmk$(TMKERNEL_VERSION_DOS) tm/tmkernel
 	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmk$(TMKERNEL_VERSION_DOS)/version.h
+	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmk$(TMKERNEL_VERSION_DOS)/tm/version.h
 	cd tmk$(TMKERNEL_VERSION_DOS)/libtmc; autoconf
 	cd tmk$(TMKERNEL_VERSION_DOS)/tm; autoconf
+	cd tmk$(TMKERNEL_VERSION_DOS)/tm; tm tm.ds tmcode.ct > tmcode.c
+	cd tmk$(TMKERNEL_VERSION_DOS)/tm; tm tm.ds tmcode.ht > tmcode.h
 	cd tmk$(TMKERNEL_VERSION_DOS)/tmc; autoconf
 	zip -q -9 tmk$(TMKERNEL_VERSION_DOS).zip `cat tmkernel_distlist_dos`
 	rm -rf tmk$(TMKERNEL_VERSION_DOS)
+
+tmdemo-$(TMDEMO_VERSION).tar.gz: tmdemo_distlist
+	-mkdir tmdemo-$(TMDEMO_VERSION)
+	cvs -d $(CVSDIR) export -r HEAD -d tmdemo-$(TMDEMO_VERSION) tm/tmdemo
+	tar cf tmdemo-$(TMDEMO_VERSION).tar `cat tmdemo_distlist`
+	gzip --best -f tmdemo-$(TMDEMO_VERSION).tar
+	rm -rf tmdemo-$(TMDEMO_VERSION)
+
+tmz$(TMDEMO_VERSION_DOS).zip: tmdemo_distlist_dos
+	-rm -f tmz$(TMDEMO_VERSION_DOS).zip
+	-mkdir tmz$(TMDEMO_VERSION_DOS)
+	cvs -d $(CVSDIR) export -r HEAD -d tmz$(TMDEMO_VERSION_DOS) tm/tmdemo
+	zip -q -9 tmz$(TMDEMO_VERSION_DOS).zip `cat tmdemo_distlist_dos`
+	rm -rf tmz$(TMDEMO_VERSION_DOS)
 
 tmpas-$(TMPAS_VERSION).tar.gz: tmpas_distlist
 	-mkdir tmpas-$(TMPAS_VERSION)
@@ -155,8 +192,20 @@ tmmira-$(TMMIRA_VERSION).tar.gz: tmmira_distlist
 	gzip --best -f tmmira-$(TMMIRA_VERSION).tar
 	rm -rf tmmira-$(TMMIRA_VERSION)
 
+$(FTPDIR)/tmdemo-$(TMDEMO_VERSION).tar.gz: tmdemo-$(TMDEMO_VERSION).tar.gz
+	cp tmdemo-$(TMDEMO_VERSION).tar.gz $(FTPDIR)
+
+$(FTPDIR)/tmz$(TMDEMO_VERSION_DOS).zip: tmz$(TMDEMO_VERSION_DOS).zip
+	cp tmz$(TMDEMO_VERSION_DOS).zip $(FTPDIR)
+
 $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel-$(TMKERNEL_VERSION).tar.gz
 	cp tmkernel-$(TMKERNEL_VERSION).tar.gz $(FTPDIR)
+
+$(FTPDIR)/tmd$(TMKERNEL_VERSION_DOS).zip: tmd$(TMKERNEL_VERSION_DOS).zip
+	cp tmd$(TMKERNEL_VERSION_DOS).zip $(FTPDIR)
+
+$(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).tar.gz: tmkerneldoc-$(TMKERNEL_VERSION).tar.gz
+	cp tmkerneldoc-$(TMKERNEL_VERSION).tar.gz $(FTPDIR)
 
 $(FTPDIR)/tmk$(TMKERNEL_VERSION_DOS).zip: tmk$(TMKERNEL_VERSION_DOS).zip
 	cp tmk$(TMKERNEL_VERSION_DOS).zip $(FTPDIR)
