@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-#include "tmc.h"
+#include "tmcpp.h"
 #include "config.h"
 
 void print_ushrt( TMPRINTSTATE *st, const ushrt i )

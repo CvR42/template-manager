@@ -12,7 +12,7 @@
 
 #include <ctype.h>
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Try to read a constructor name in buffer `buf'. The buffer is 'sz'
  * characters long.

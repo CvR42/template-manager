@@ -5,7 +5,7 @@
  */
 
 #include <string.h>
-#include "tmc.h"
+#include "tmcpp.h"
 #include "config.h"
 
 /* Given a tmtext 't', a position 'pos' and a tmtext 'nw',
@@ -14,7 +14,7 @@
  * appended. If 'pos' is negative, it is assumed that the
  * text must be inserted at the start of 't'.
  */
-tmtext insert_tmtext( tmtext t, const long pos_parm, const tmtext nw )
+tmtext *insert_tmtext( tmtext *t, const long pos_parm, const tmtext *nw )
 {
     long pos = pos_parm;
 

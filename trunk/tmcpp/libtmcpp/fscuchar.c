@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 int fscan_uchar( FILE *f, uchar *p )
 {

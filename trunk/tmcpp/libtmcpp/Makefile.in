@@ -95,18 +95,6 @@ LIBSRCS	 = \
                 fscwrd.c \
                 insblock.c \
                 instext.c \
-                lncrstr.c \
-                lnfrestr.c \
-                lnfretxt.c \
-                lnfscstr.c \
-                lnfsctxt.c \
-                lnfscwrd.c \
-                lnnewstr.c \
-                lnnewtxt.c \
-                lnreastr.c \
-                lns2t.c \
-                lnsltxt.c \
-                lnt2s.c \
                 lognew.c \
                 lrduptxt.c \
                 newstr.c \

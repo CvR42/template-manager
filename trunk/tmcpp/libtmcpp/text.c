@@ -5,59 +5,45 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
-static long newcnt_tmtext = 0;
-static long frecnt_tmtext = 0;
+unsigned long tmtext::newcount = 0;
+unsigned long tmtext::freecount = 0;
 
-#define STARTROOM 32
-
-/* Create a new tmtext. */
-tmtext new_tmtext_nolognew( void )
+// Constructor from buffer size.
+tmtext::tmtext( const long sz ): arr(0), curpos(0), sz(0), room(0)
 {
-    tmtext t;
-
-    newcnt_tmtext++;
-    t = TM_MALLOC( tmtext, sizeof( *t ) );
-    t->arr = TM_MALLOC( tmtextptr, sizeof( uchar )*STARTROOM );
-    t->room = STARTROOM;
-    t->curpos = 0;
-    t->sz = 0;
-    t->lognew_id = 0;
-    return t;
+    reserve( sz );
+    newcount++;
 }
 
-/* Recursively free a tmtext 't'. */
-void fre_tmtext_nolognew( tmtext t )
+// Destructor
+tmtext::~tmtext()
 {
-    if( t == tmtextNIL ){
-	return;
-    }
-    TM_FREE( t->arr );
-    TM_FREE( t );
-    frecnt_tmtext++;
+    TM_FREE( arr );
+    freecount++;
 }
 
-/* Print statistics of tmtext usage to file 'f'. */
-void stat_tmtext( FILE *f )
+// Print statistics of tmtext usage to file 'f'.
+void tmtext::stat( FILE *f )
 {
     fprintf(
 	f,
 	"%-20s: %6ld allocated, %6ld freed.%s\n",
 	"tmtext",
-	newcnt_tmtext,
-	frecnt_tmtext,
-	((newcnt_tmtext==frecnt_tmtext)? "": "<-")
+	newcount,
+	freecount,
+	((newcount==freecount)? "": "<-")
     );
 }
 
-/* Return the balance of the text routines. */
-int get_balance_tmtext( void )
+// Return the balance of the text routines.
+int tmtext::get_balance()
 {
-    if( newcnt_tmtext<frecnt_tmtext ){
+    if( newcount<freecount ){
 	return -1;
     }
-    if( newcnt_tmtext>frecnt_tmtext ){
+    if( newcount>freecount ){
 	return 1;
     }
     return 0;

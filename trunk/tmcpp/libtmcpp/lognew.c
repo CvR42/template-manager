@@ -9,7 +9,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* An entry in the pending pointer list. */
 typedef struct str_ptrlog {

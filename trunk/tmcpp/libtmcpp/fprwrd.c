@@ -9,7 +9,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* definition of 'fprint' for a 'tmword' */
 void fprint_tmword( FILE *f, const char *s )

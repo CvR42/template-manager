@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 #define TESTARRAYSIZE 13000
 
@@ -390,40 +390,52 @@ static void test_tmword( TMPRINTSTATE *st )
 /* Test the tmtext routines. */
 static void test_tmtext( TMPRINTSTATE *st )
 {
-    tmtext t;
-    tmtext t2;
-    tmtext nw;
+    tmtext *t;
+    tmtext *t2;
+    tmtext *nw;
     int stop;
     int i;
-    tmtext sbuf[10];
-    tmstring s;
+    tmtext *sbuf[10];
 
-    for( i=0; i<10; i++ ){
-	sbuf[i] = string_to_tmtext( "testing 1,2,3...." );
+    for( int i=0; i<10; i++ ){
+	sbuf[i] = new tmtext( "testing 1,2,3...." );
     }
-    for( i=0; i<10; i++ ){
-	fre_tmtext( sbuf[i] );
+    for( int i=0; i<10; i++ ){
+	sbuf[i]->destroy();
     }
     tm_opencons( st );
     tm_printword( st, "Textouttest" );
-    t = new_tmtext();
+    t = new tmtext();
     print_tmtext( st, t );
-    rfre_tmtext( t );
-    t = string_to_tmtext( "Test" );
-    s = tmtext_to_tmstring( t );
+    t->destroy();
+    t = new tmtext( "Test" );
+    if( t->sz != 4 ){
+	bad( "tmtext::tmtext( char * ) results in text with the wrong size" );
+    }
+    if( t->curpos != 0 ){
+	bad( "tmtext::tmtext( char * ) does not put curpos on 0" );
+    }
+    if( t->room<t->sz ){
+	bad( "tmtext::tmtext( char * ) room smaller than size?" );
+    }
+    if( t->arr[0] != 'T' || t->arr[1] != 'e' || t->arr[2] != 's' || t->arr[3] != 't' ){
+	bad( "tmtext::tmtext( char * ) results in the wrong text" );
+    }
+    tmstring s = tmtext_to_tmstring( t );
     if( strcmp( s, "Test" ) != 0 ){
-	bad( "tmtext_to_tmstring() or string_to_tmtext() failed" );
+	fprintf( stderr, "s: '%s'\n", s );
+	bad( "tmtext_to_tmstring() failed" );
     }
     rfre_tmstring( s );
-    t2 = rdup_tmtext( t );
+    t2 = t->clone();
     if( cmp_tmtext( t, t2 ) != 0 ){
-	bad( "rdup_tmtext() failed" );
+	bad( "tmtext::clone() failed" );
     }
-    rfre_tmtext( t );
+    t->destroy();
     t = t2;
     print_tmtext( st, t );
-    rfre_tmtext( t );
     tm_closecons( st );
+    t->destroy();
     tm_opencons( st );
     tm_printword( st, "Textintest" );
     stop = 0;
@@ -436,15 +448,15 @@ static void test_tmtext( TMPRINTSTATE *st )
 	if( t != tmtextNIL && cmp_string_tmtext( "STOP", t  ) == 0 ){
 	    stop = 1;
 	}
-	rfre_tmtext( t );
+	t->destroy();
     } while( stop == 0 );
     tm_closecons( st );
-    t = new_tmtext();
+    t = new tmtext();
     t = puts_tmtext( "testing", t );
     if( cmp_string_tmtext( "testing", t ) != 0 ){
 	bad( "bad tmtext" );
     }
-    nw = new_tmtext();
+    nw = new tmtext();
     nw = putc_tmtext( 't', nw );
     nw = putc_tmtext( 's', nw );
     t = replace_tmtext( t, 2, 4, nw );
@@ -475,8 +487,8 @@ static void test_tmtext( TMPRINTSTATE *st )
     if( cmp_string_tmtext( "tsits", t ) != 0 ){
 	bad( "tmtext block not deleted" );
     }
-    rfre_tmtext( nw );
-    nw = string_to_tmtext( "bla" );
+    nw->destroy();
+    nw = new tmtext( "bla" );
     t = insert_tmtext( t, 0, nw );
     if( cmp_string_tmtext( "blatsits", t ) != 0 ){
 	bad( "tmtext badly inserted" );
@@ -493,10 +505,10 @@ static void test_tmtext( TMPRINTSTATE *st )
     if( cmp_string_tmtext( "blblaablatsitsbla", t ) != 0 ){
 	bad( "tmtext badly inserted" );
     }
-    rfre_tmtext( nw );
-    rfre_tmtext( t );
-    t = string_to_tmtext( ", a, z, a, c, z, d, f, blabla" );
-    rfre_tmtext( t );
+    nw->destroy();
+    t->destroy();
+    t = new tmtext( ", a, z, a, c, z, d, f, blabla" );
+    t->destroy();
 }
 
 static void test_tmbool( TMPRINTSTATE *st )
@@ -741,9 +753,9 @@ int main( void )
     lev = tm_endprint( st );
     fprintf( stderr, "bracket level: %d\n", lev );
     fprintf( stderr, "get_balance_tmstring(): %d\n", get_balance_tmstring() );
-    fprintf( stderr, "get_balance_tmtext(): %d\n", get_balance_tmtext() );
+    fprintf( stderr, "tmtext::get_balance(): %d\n", tmtext::get_balance() );
     stat_tmstring( stderr );
-    stat_tmtext( stderr );
+    tmtext::stat( stderr );
     fprintf( outfile, "tm_lineno=%d\n", tm_lineno );
     str = new_tmstring( "bla" );
     fre_tmstring( str );
@@ -755,18 +767,6 @@ int main( void )
     (void) str;
     str = create_tmstring( 23 );
     (void) str;
-    for( ix=0; ix<TESTARRAYSIZE; ix++ ){
-	idlist[ix] = tm_new_logid( "testlognew", ix );
-    }
-    for( ix=50; ix<TESTARRAYSIZE; ix++ ){
-	tm_fre_logid( idlist[ix] );
-    }
-    /* Notice that idlist[0] and idlist[49] are left pending. */
-    for( ix=1; ix<49; ix++ ){
-	tm_fre_logid( idlist[ix] );
-    }
-    report_lognew( stderr );
-    flush_lognew();
     fflush( outfile );		/* Just to be sure.. */
     tm_fatal( __FILE__, __LINE__, "test of 'tm_fatal'" );
     exit( 0 );

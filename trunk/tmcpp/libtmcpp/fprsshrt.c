@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 void fprint_sshrt( FILE *f, const sshrt i )
 {

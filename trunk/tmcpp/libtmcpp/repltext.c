@@ -5,18 +5,18 @@
  */
 
 #include <string.h>
-#include "tmc.h"
+#include "tmcpp.h"
 #include "config.h"
 
 /* Given a tmtext 't', a range 'from' to 'to' and a tmtext 'nw',
  * replace the tmtext in range 'from'..'to' in 't' with the
  * tmtext in 'nw'.
  */
-tmtext replace_tmtext(
- tmtext t,
+tmtext *replace_tmtext(
+ tmtext *t,
  const long from_parm,
  const long to_parm,
- const tmtext nw
+ const tmtext *nw
 )
 {
     long h;

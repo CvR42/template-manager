@@ -9,12 +9,12 @@
  */
 
 #include <ctype.h>
-#include "tmc.h"
+#include "tmcpp.h"
 #include "config.h"
 
 #define BACKSLASH '\\'
 
-/* definition of 'print' for a 'tmsymbol'. */
+// definition of 'print' for a 'tmsymbol'.
 void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s )
 {
     if( s == tmsymbolNIL ){

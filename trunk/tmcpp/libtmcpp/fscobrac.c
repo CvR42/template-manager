@@ -13,7 +13,7 @@
 
 #include <ctype.h>
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Skip all `isspace()' characters, and count the open brackets (`(')
    that you encounter up to the first other character. Return the number

@@ -5,24 +5,22 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Given a tmtext datastructure 't' and a string 'str', add the string
  * to the tmtext.
  */
-tmtext puts_tmtext( const char *str, tmtext t )
+tmtext *puts_tmtext( const char *str, tmtext *t )
 {
-    size_t len;
-
-    len = strlen( str );
-    t = setroom_tmtext( t, t->curpos+len );
+    size_t len = strlen( str );
+    t->reserve( t->curpos+len );
 #if HAVE_MEMMOVE
     memcpy( t->arr+t->curpos, str, len );
     t->curpos += len;
 #else
     {
 	const char *s = str;
-	tmtextptr d = t->arr+t->curpos;
+	char *d = t->arr+t->curpos;
 
 	t->curpos += len;
 	while( len>0 ){
