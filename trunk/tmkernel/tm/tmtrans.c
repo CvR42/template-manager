@@ -34,6 +34,7 @@
 
 /* tags for command table */
 typedef enum en_tmcommands {
+    RENAME,
     APPEND,
     APPENDFILE,
     CALL,
@@ -100,6 +101,7 @@ static struct dotcom dotcomlist[] = {
     { "insert", INSERT },
     { "macro", MACRO },
     { "redirect", REDIRECT },
+    { "rename", RENAME },
     { "return", RETURN },
     { "set", SET },
     { "switch", SWITCH },
@@ -238,7 +240,7 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
      * without checking.
      */
     rfre_tplelm_list( block );
-    return new_Switch( lno, rdup_tmstring( swval ), cases, deflt );
+    return (tplelm) new_Switch( lno, rdup_tmstring( swval ), cases, deflt );
 }
 
 /* Given a file 'f' and a pointer to an int 'endcom', read all lines from
@@ -329,12 +331,12 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			return tel;
 
 		    case CASE:
-			te = new_Case( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Case( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case DEFAULT:
-			te = new_Default( tpllineno );
+			te = (tplelm) new_Default( tpllineno );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -347,7 +349,10 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDSWITCH ){
 			    unbalance( firstlno, subendcom, ENDSWITCH );
 			}
-			el = append_tplelm_list( el, new_Case( 0, new_tmstring( "" ) ) );
+			el = append_tplelm_list(
+			    el,
+			    (tplelm) new_Case( 0, new_tmstring( "" ) )
+			);
 			te = construct_switch( firstlno, p, el );
 			tel = append_tplelm_list( tel, te );
 			rfre_tplelm_list( el );
@@ -366,7 +371,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDIF ){
 			    unbalance( firstlno, subendcom, ENDIF );
 			}
-			te = new_If( firstlno, new_tmstring( p ), e1, e2 );
+			te = (tplelm) new_If( firstlno, new_tmstring( p ), e1, e2 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -376,7 +381,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDFOREACH ){
 			    unbalance( firstlno, subendcom, ENDFOREACH );
 			}
-			te = new_Foreach( firstlno, new_tmstring( p ), e1 );
+			te = (tplelm) new_Foreach( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -386,7 +391,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDWHILE ){
 			    unbalance( firstlno, subendcom, ENDWHILE );
 			}
-			te = new_While( firstlno, new_tmstring( p ), e1 );
+			te = (tplelm) new_While( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -396,7 +401,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDMACRO ){
 			    unbalance( firstlno, subendcom, ENDMACRO );
 			}
-			te = new_Macro( firstlno, new_tmstring( p ), e1 );
+			te = (tplelm) new_Macro( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -406,7 +411,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDAPPENDFILE ){
 			    unbalance( firstlno, subendcom, ENDAPPENDFILE );
 			}
-			te = new_Appendfile( firstlno, new_tmstring( p ), e1 );
+			te = (tplelm) new_Appendfile( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -416,64 +421,69 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			if( subendcom != ENDREDIRECT ){
 			    unbalance( firstlno, subendcom, ENDREDIRECT );
 			}
-			te = new_Redirect( firstlno, new_tmstring( p ), e1 );
+			te = (tplelm) new_Redirect( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case INSERT:
-			te = new_Insert( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Insert( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case INCLUDE:
-			te = new_Include( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Include( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case RENAME:
+			te = (tplelm) new_Rename( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case SET:
-			te = new_Set( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Set( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case GLOBALSET:
-			te = new_GlobalSet( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_GlobalSet( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case RETURN:
-			te = new_Return( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Return( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case APPEND:
-			te = new_Append( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Append( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case GLOBALAPPEND:
-			te = new_GlobalAppend( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_GlobalAppend( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case CALL:
-			te = new_Call( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Call( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case EXIT:
-			te = new_Exit( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Exit( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case ERROR:
-			te = new_Error( tpllineno, new_tmstring( p ) );
+			te = (tplelm) new_Error( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 		}
 	    }
 	}
 	else {
-	    te = new_Plain( tpllineno, new_tmstring( inbuf ) );
+	    te = (tplelm) new_Plain( tpllineno, new_tmstring( inbuf ) );
 	    tel = append_tplelm_list( tel, te );
 	}
     }
@@ -648,8 +658,7 @@ static void doplain( const tplelm l, FILE *outfile )
     tmstring is;
     tmstring os;
 
-    tpllineno = to_Plain(l)->lno;
-    is = to_Plain(l)->plainline;
+    is = to_Plain(l)->line;
     os = alevalto( &is, '\0' );
     if( outfile == NULL ){
 	line_error( "no output allowed in expression macro" );
@@ -671,7 +680,6 @@ static void doinsert( const tplelm tpl, FILE *outfile )
     tmstring is;
     tmstring os;
 
-    tpllineno = to_Insert(tpl)->lno;
     is = to_Insert(tpl)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
@@ -704,7 +712,6 @@ static void doredirect( const tplelm e )
     char *is;
     char *os;
 
-    tpllineno = to_Redirect(e)->lno;
     is = to_Redirect(e)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
@@ -727,7 +734,6 @@ static void doappendfile( const tplelm e )
     char *is;
     char *os;
 
-    tpllineno = to_Appendfile(e)->lno;
     is = to_Appendfile(e)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
@@ -752,7 +758,6 @@ static void doinclude( const tplelm tpl, FILE *outfile )
     char *is;
     char *os;
 
-    tpllineno = to_Include(tpl)->lno;
     is = to_Include(tpl)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
@@ -786,8 +791,7 @@ static void doerror( const tplelm tpl )
     char *is;
     char *os;
 
-    tpllineno = to_Error(tpl)->lno;
-    is = to_Error(tpl)->errstr;
+    is = to_Error(tpl)->str;
     os = alevalto( &is, '\0' );
     fprintf( stderr, "%s\n", os );
     fre_tmstring( os );
@@ -799,7 +803,6 @@ static void doexit( const tplelm tpl )
     char *is;
     char *os;
 
-    tpllineno = to_Exit(tpl)->lno;
     is = to_Exit(tpl)->str;
     os = alevalto( &is, '\0' );
     exit( atoi( os ) );
@@ -815,8 +818,7 @@ static void doglobalset( const tplelm tpl )
     tmstring_list sl;
     tmstring nm;
 
-    tpllineno = to_GlobalSet(tpl)->lno;
-    is = to_GlobalSet(tpl)->setline;
+    is = to_GlobalSet(tpl)->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -843,8 +845,7 @@ static void doset( const tplelm tpl )
     tmstring_list sl;
     tmstring nm;
 
-    tpllineno = to_Set(tpl)->lno;
-    is = to_Set(tpl)->setline;
+    is = to_Set(tpl)->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -862,6 +863,135 @@ static void doset( const tplelm tpl )
     fre_tmstring( nm );
 }
 
+/* Given a tmstring 's', an old type name 'old' and a new type name 'nw'.
+ * replace the string with a copy of 'nw'  if it is equal to 'old'.
+ */
+static tmstring rename_tmstring( tmstring s, tmstring old, tmstring nw )
+{
+    if( strcmp( s, old ) == 0 ){
+	rfre_tmstring( s );
+	s = rdup_tmstring( nw );
+    }
+    return s;
+}
+
+/* Given a list of strings, an old type name 'old' and a new
+ * type name 'nw', rewrite these strings to use the new type name
+ * instead of the old type name.
+ */
+static tmstring_list rename_tmstring_list( tmstring_list dl, const tmstring old, const tmstring nw )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<dl->sz; ix++ ){
+	dl->arr[ix] = rename_tmstring( dl->arr[ix], old, nw );
+    }
+    return dl;
+}
+
+/* Given a list of fields, an old type name 'old' and a new
+ * type name 'nw', rewrite these fields to use the new type name
+ * instead of the old type name.
+ */
+static field rename_field( field f, const tmstring old, const tmstring nw )
+{
+    f->type = rename_tmstring( f->type, old, nw );
+    return f;
+}
+
+/* Given a list of fields, an old type name 'old' and a new
+ * type name 'nw', rewrite these fields to use the new type name
+ * instead of the old type name.
+ */
+static field_list rename_field_list( field_list dl, const tmstring old, const tmstring nw )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<dl->sz; ix++ ){
+	dl->arr[ix] = rename_field( dl->arr[ix], old, nw );
+    }
+    return dl;
+}
+
+/* Given a ds definition, an old type name 'old' and a new
+ * type name 'nw', rewrite this definition to use the new name
+ * instead of the old name.
+ */
+static ds rename_ds( ds d, const tmstring old, const tmstring nw )
+{
+    d->name = rename_tmstring( d->name, old, nw );
+    d->inherits = rename_tmstring_list( d->inherits, old, nw );
+    switch( d->tag ){
+	case TAGDsConstructorBase:
+	{
+	    DsConstructorBase dsub = to_DsConstructorBase( d );
+
+	    dsub->constructors = rename_tmstring_list( dsub->constructors, old, nw );
+	    break;
+	}
+
+	case TAGDsTuple:
+	{
+	    DsTuple dsub = to_DsTuple( d );
+
+	    dsub->fields = rename_field_list( dsub->fields, old, nw );
+	    break;
+	}
+
+	case TAGDsClass:
+	{
+	    DsClass dsub = to_DsClass( d );
+
+	    dsub->fields = rename_field_list( dsub->fields, old, nw );
+	    break;
+	}
+
+	case TAGDsConstructor:
+	{
+	    DsConstructor dsub = to_DsConstructor( d );
+
+	    dsub->fields = rename_field_list( dsub->fields, old, nw );
+	    break;
+	}
+
+    }
+    return d;
+}
+
+/* Given a list of ds definitions, an old type name 'old' and a new
+ * type name 'nw', rewrite these definitions to use the new name
+ * instead of the old name.
+ */
+static ds_list rename_ds_list( ds_list dl, const tmstring old, const tmstring nw )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<dl->sz; ix++ ){
+	dl->arr[ix] = rename_ds( dl->arr[ix], old, nw );
+    }
+    return dl;
+}
+
+/* Handle 'rename' command. */
+static void dorename( const tplelm tpl )
+{
+    char *is;
+    char *os;
+    tmstring_list sl;
+
+    is = to_Rename(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    rfre_tmstring( os );
+    if( sl->sz != 2 ){
+	line_error( "rename requires exactly two parameters" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    allds = rename_ds_list( allds, sl->arr[0], sl->arr[1] );
+    rfre_tmstring_list( sl );
+}
+
 /* Handle 'return' command. */
 static void doreturn( const tplelm tpl )
 {
@@ -870,7 +1000,6 @@ static void doreturn( const tplelm tpl )
     tmstring val;
     tmstring_list sl;
 
-    tpllineno = to_Return(tpl)->lno;
     is = to_Return(tpl)->retval;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
@@ -890,8 +1019,7 @@ static void doappend( const tplelm tpl )
     tmstring nm;
     tmstring_list sl;
 
-    tpllineno = to_Append(tpl)->lno;
-    is = to_Append(tpl)->appline;
+    is = to_Append(tpl)->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -922,8 +1050,7 @@ static void doglobalappend( const tplelm tpl )
     tmstring nm;
     tmstring_list sl;
 
-    tpllineno = to_GlobalAppend(tpl)->lno;
-    is = to_GlobalAppend(tpl)->appline;
+    is = to_GlobalAppend(tpl)->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -952,8 +1079,7 @@ static void doif( const tplelm tpl, FILE *outfile )
     char *os;
     bool cond;
 
-    tpllineno = to_If(tpl)->lno;
-    is = to_If(tpl)->ifcond;
+    is = to_If(tpl)->cond;
     os = alevalto( &is, '\0' );
     cond = istruestr( os );
     fre_tmstring( os );
@@ -975,7 +1101,6 @@ static void doswitch( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     switchcase_list cases;
 
-    tpllineno = to_If(tpl)->lno;
     is = to_Switch(tpl)->val;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
@@ -1019,7 +1144,6 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     tmstring_list sl;
 
-    tpllineno = to_Foreach(tpl)->lno;
     is = to_Foreach(tpl)->felist;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
@@ -1032,7 +1156,7 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     nm = sl->arr[0];
     for( ix=1; ix<sl->sz; ix++ ){
 	setvar( nm, sl->arr[ix] );
-	dotrans( to_Foreach(tpl)->felines, outfile );
+	dotrans( to_Foreach(tpl)->body, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -1048,14 +1172,13 @@ static void dowhile( const tplelm tpl, FILE *outfile )
     char *is;
     char *os;
 
-    tpllineno = to_While(tpl)->lno;
     while( TRUE ){
-	is = to_While(tpl)->whilecond;
+	is = to_While(tpl)->cond;
 	os = alevalto( &is, '\0' );
 	done = isfalsestr( os );
 	fre_tmstring( os );
 	if( done ) return;
-	dotrans( to_While(tpl)->whilelines, outfile );
+	dotrans( to_While(tpl)->body, outfile );
     }
 }
 
@@ -1070,8 +1193,7 @@ static void domacro( const tplelm tpl )
     char *os;
     tmstring_list sl;
 
-    tpllineno = to_Macro(tpl)->lno;
-    is = to_Macro(tpl)->formpar;
+    is = to_Macro(tpl)->formals;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1082,7 +1204,7 @@ static void domacro( const tplelm tpl )
     }
     nm = rdup_tmstring( sl->arr[0] );
     sl = delete_tmstring_list( sl, 0 );
-    setmacro( nm, tplfilename, sl, to_Macro(tpl)->macbody );
+    setmacro( nm, tplfilename, sl, to_Macro(tpl)->body );
     rfre_tmstring( nm );
     rfre_tmstring_list( sl );
 }
@@ -1099,8 +1221,7 @@ static void docall( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     macro m;
 
-    tpllineno = to_Call(tpl)->lno;
-    is = to_Call(tpl)->callline;
+    is = to_Call(tpl)->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1157,6 +1278,7 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
     for( ix=0; ix<tpl->sz; ix++ ){
 	e = tpl->arr[ix];
+	tpllineno = e->lno;
 	switch( e->tag ){
 	    case TAGError:
 		doerror( e );
@@ -1180,6 +1302,10 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
 	    case TAGPlain:
 		doplain( e, outfile );
+		break;
+
+	    case TAGRename:
+		dorename( e );
 		break;
 
 	    case TAGSet:
