@@ -157,14 +157,14 @@ private:
     static unsigned long newcount;
     static unsigned long freecount;
     size_type room;
-#ifdef LOGNEW
-    unsigned long __id;
-#endif
 
 public:
     char *arr;
     long curpos;	// Current read or write pointer.
     size_type sz;
+
+private:
+    unsigned long __id;
 
 private:
     static void copyblock( char *d, const char *s, const long sz );
@@ -187,7 +187,7 @@ public:
     inline size_type size() const { return sz; }
     inline size_type capacity() const { return room; }
 
-    tmtext( const long sz=32 ): room(0), arr(0), curpos(0), sz(0) {
+    tmtext( const long sz=32 ): room(0), arr(0), curpos(0), sz(0), __id(0) {
 	reserve( sz );
 	allocid_admin();
 	newcount++;
