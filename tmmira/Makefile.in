@@ -32,6 +32,11 @@ clean:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) clean; cd ..; done
 	rm -f $(JUNK)
 
+distclean:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
+	rm -f $(JUNK)
+	rm -f config.status config.log config.cache
+
 empty:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) empty; cd ..; done
 	rm -f $(JUNK)
