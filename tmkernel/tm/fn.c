@@ -1991,6 +1991,82 @@ static tmstring fndepsort( tmstring_list sl )
     return ans;
 }
 
+/* Given a type name 't' and a list of types 'tl', return 'TRUE' if
+ * 't' depends on one of the types in 'tl'. That is, 't' is a tuple
+ * type, and at least one of the field types of 't' occurs in tl'.
+ *
+ * Constructor types are not supposed to depend on other types.
+ *
+ * List types depend on their element types; for nested types this
+ * applies transitively.
+ */
+static bool inherit_depends_on( const tmstring t, const tmstring_list tl )
+{
+    unsigned int ix;
+    tmstring_list inherits;
+    bool res = FALSE;
+
+    inherits = extract_inherits( allds, t );
+    if( inherits == tmstring_listNIL ){
+	return res;
+    }
+    for( ix=0; ix<inherits->sz; ix++ ){
+	if( member_tmstring_list( inherits->arr[ix], tl ) ){
+	    res = TRUE;
+	    break;
+	}
+    }
+    return res;
+}
+
+/* Given a list of type names, re-arrange them so that inherited types
+   are placed before their inheritors.
+
+   This is done with a topological search: take the first type that
+   does not have dependent in the list, delete it from the list.
+   Collect these types in a new list.
+   Repeat until all types are deleted from the input list.
+ */
+static tmstring fninheritsort( tmstring_list sl )
+{
+    unsigned int ix;
+    unsigned int foundix;
+    bool found;
+    tmstring_list nl;
+    tmstring t;
+    tmstring baddies;
+    tmstring ans;
+
+    nl = new_tmstring_list();
+    while( sl->sz!=0 ){
+	found = FALSE;
+	ix = 0;
+	foundix = 0;
+	while( !found && ix<sl->sz ){
+	    t = sl->arr[ix];
+	    if( !inherit_depends_on( t, sl ) ){
+		 found = TRUE;
+		 foundix = ix;
+	    }
+	    ix++;
+	}
+	if( !found ){
+	    baddies = flatstrings( sl );
+	    strncpy( errarg, baddies, ERRARGLEN-1 );
+	    errarg[ERRARGLEN-1] = '\0';
+	    rfre_tmstring( baddies );
+	    line_error( "circular dependency" );
+	    break;
+	}
+	t = sl->arr[foundix];
+	nl = append_tmstring_list( nl, rdup_tmstring( t ) );
+	sl = delete_tmstring_list( sl, foundix );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
 static tmstring fndsfilename( const tmstring_list sl )
 {
 
@@ -2260,6 +2336,7 @@ static struct fnentry fntab[] = {
      { "ctypellev", fnctypellev },
      { "ctypename", fnctypename },
      { "defined", fndefined },
+     { "delisttypes", fndelisttypes },
      { "depsort", fndepsort },
      { "dsfilename", fndsfilename },
      { "eq", fnstreq },
@@ -2273,7 +2350,7 @@ static struct fnentry fntab[] = {
      { "index", fnindex },
      { "inheritors", fninheritors },
      { "inherits", fninherits },
-     { "delisttypes", fndelisttypes },
+     { "inheritsort", fninheritsort },
      { "isinenv", fnisinenv },
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
