@@ -139,7 +139,7 @@ prefix:  'pfx_a pfx_b pfx_c pfx_d pfx_e pfx_f' 'pfx_a' ''
 suffix:  'a_sfx b_sfx c_sfx d_sfx e_sfx f_sfx' 'a_sfx' ''
 len:     '6' '1' '0'
 sort:    'a a b b c c d d e e f f' '-1 1 12 2' ''
-sizesort:'Top orig Thing thing TopNone notuple SubNamed Toptuple subclass sublevel subtuple toplevel testclass subNamedlist SubNamedlistlist' '1 2 -1 12' ''
+sizesort:'Top expr orig Thing thing TopNone notuple SubNamed Toptuple exprOrig exprPlus subclass sublevel subtuple toplevel exprConst testclass subNamedlist SubNamedlistlist' '1 2 -1 12' ''
 uniq:    'a b c d e f' '-1 1 12 2' ''
 rev:     'f e d c b a' ''
 ----
@@ -215,20 +215,20 @@ subclasses:
 conslist:   
 fields:   
 types: ''
-types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int'
+types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int int expr expr tmstring'
 conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thing'
 
 Mode `':
 =-=-=-=
-typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass'
+typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr'
 tuplelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
-classlist: 'subclass testclass'
+classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
     conslist orig: ''
     inherits orig: ''
-    inheritors orig: 'subtuple subclass'
+    inheritors orig: 'subtuple subclass expr'
     superclasses orig: ''
-    subclasses orig: 'subtuple subclass notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
+    subclasses orig: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
     isvirtual orig: '0'
     fields orig : 'file line'
 	ttypeclass orig file: 'single'
@@ -420,9 +420,9 @@ classlist: 'subclass testclass'
     fields subclass : ''
     conslist testclass: ''
     inherits testclass: ''
-    inheritors testclass: 'subclass'
+    inheritors testclass: 'subclass exprOrig'
     superclasses testclass: ''
-    subclasses testclass: 'subclass'
+    subclasses testclass: 'subclass exprOrig'
     isvirtual testclass: '0'
     fields testclass : 'a b'
 	ttypeclass testclass a: 'list'
@@ -433,25 +433,69 @@ classlist: 'subclass testclass'
 	typelevel testclass b: 0
 	typename testclass b: 'int'
 	type testclass b: 'int'
+    conslist exprConst: ''
+    inherits exprConst: 'expr'
+    inheritors exprConst: ''
+    superclasses exprConst: 'orig expr'
+    subclasses exprConst: ''
+    isvirtual exprConst: '0'
+    fields exprConst : 'n'
+	ttypeclass exprConst n: 'single'
+	typelevel exprConst n: 0
+	typename exprConst n: 'int'
+	type exprConst n: 'int'
+    conslist exprPlus: ''
+    inherits exprPlus: 'expr'
+    inheritors exprPlus: ''
+    superclasses exprPlus: 'orig expr'
+    subclasses exprPlus: ''
+    isvirtual exprPlus: '0'
+    fields exprPlus : 'a b'
+	ttypeclass exprPlus a: 'single'
+	typelevel exprPlus a: 0
+	typename exprPlus a: 'expr'
+	type exprPlus a: 'expr'
+	ttypeclass exprPlus b: 'single'
+	typelevel exprPlus b: 0
+	typename exprPlus b: 'expr'
+	type exprPlus b: 'expr'
+    conslist exprOrig: ''
+    inherits exprOrig: 'expr testclass'
+    inheritors exprOrig: ''
+    superclasses exprOrig: 'orig expr testclass'
+    subclasses exprOrig: ''
+    isvirtual exprOrig: '0'
+    fields exprOrig : 'lbl'
+	ttypeclass exprOrig lbl: 'single'
+	typelevel exprOrig lbl: 0
+	typename exprOrig lbl: 'tmstring'
+	type exprOrig lbl: 'tmstring'
+    conslist expr: ''
+    inherits expr: 'orig'
+    inheritors expr: 'exprConst exprPlus exprOrig'
+    superclasses expr: 'orig'
+    subclasses expr: 'exprConst exprPlus exprOrig'
+    isvirtual expr: '0'
+    fields expr : ''
 ----
 
 Datastructure dependency
 ----
 Testing error handling:
 Type sorting:
-depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass ]
+depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprOrig expr exprPlus ]
 ----
 Mode `inherited':
 =-=-=-=
-typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass'
+typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr'
 tuplelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
-classlist: 'subclass testclass'
+classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
     conslist orig: ''
     inherits orig: ''
-    inheritors orig: 'subtuple subclass'
+    inheritors orig: 'subtuple subclass expr'
     superclasses orig: ''
-    subclasses orig: 'subtuple subclass notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
+    subclasses orig: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
     isvirtual orig: '0'
     fields orig inherited: 'file line'
 	ttypeclass orig file: 'single'
@@ -811,9 +855,9 @@ classlist: 'subclass testclass'
 	type subclass line: 'int'
     conslist testclass: ''
     inherits testclass: ''
-    inheritors testclass: 'subclass'
+    inheritors testclass: 'subclass exprOrig'
     superclasses testclass: ''
-    subclasses testclass: 'subclass'
+    subclasses testclass: 'subclass exprOrig'
     isvirtual testclass: '0'
     fields testclass inherited: 'a b'
 	ttypeclass testclass a: 'list'
@@ -824,13 +868,97 @@ classlist: 'subclass testclass'
 	typelevel testclass b: 0
 	typename testclass b: 'int'
 	type testclass b: 'int'
+    conslist exprConst: ''
+    inherits exprConst: 'expr'
+    inheritors exprConst: ''
+    superclasses exprConst: 'orig expr'
+    subclasses exprConst: ''
+    isvirtual exprConst: '0'
+    fields exprConst inherited: 'file line n'
+	ttypeclass exprConst file: 'single'
+	typelevel exprConst file: 0
+	typename exprConst file: 'string'
+	type exprConst file: 'string'
+	ttypeclass exprConst line: 'single'
+	typelevel exprConst line: 0
+	typename exprConst line: 'int'
+	type exprConst line: 'int'
+	ttypeclass exprConst n: 'single'
+	typelevel exprConst n: 0
+	typename exprConst n: 'int'
+	type exprConst n: 'int'
+    conslist exprPlus: ''
+    inherits exprPlus: 'expr'
+    inheritors exprPlus: ''
+    superclasses exprPlus: 'orig expr'
+    subclasses exprPlus: ''
+    isvirtual exprPlus: '0'
+    fields exprPlus inherited: 'file line a b'
+	ttypeclass exprPlus file: 'single'
+	typelevel exprPlus file: 0
+	typename exprPlus file: 'string'
+	type exprPlus file: 'string'
+	ttypeclass exprPlus line: 'single'
+	typelevel exprPlus line: 0
+	typename exprPlus line: 'int'
+	type exprPlus line: 'int'
+	ttypeclass exprPlus a: 'single'
+	typelevel exprPlus a: 0
+	typename exprPlus a: 'expr'
+	type exprPlus a: 'expr'
+	ttypeclass exprPlus b: 'single'
+	typelevel exprPlus b: 0
+	typename exprPlus b: 'expr'
+	type exprPlus b: 'expr'
+    conslist exprOrig: ''
+    inherits exprOrig: 'expr testclass'
+    inheritors exprOrig: ''
+    superclasses exprOrig: 'orig expr testclass'
+    subclasses exprOrig: ''
+    isvirtual exprOrig: '0'
+    fields exprOrig inherited: 'file line a b lbl'
+	ttypeclass exprOrig file: 'single'
+	typelevel exprOrig file: 0
+	typename exprOrig file: 'string'
+	type exprOrig file: 'string'
+	ttypeclass exprOrig line: 'single'
+	typelevel exprOrig line: 0
+	typename exprOrig line: 'int'
+	type exprOrig line: 'int'
+	ttypeclass exprOrig a: 'list'
+	typelevel exprOrig a: 2
+	typename exprOrig a: 'int'
+	type exprOrig a: 'int_list_list'
+	ttypeclass exprOrig b: 'single'
+	typelevel exprOrig b: 0
+	typename exprOrig b: 'int'
+	type exprOrig b: 'int'
+	ttypeclass exprOrig lbl: 'single'
+	typelevel exprOrig lbl: 0
+	typename exprOrig lbl: 'tmstring'
+	type exprOrig lbl: 'tmstring'
+    conslist expr: ''
+    inherits expr: 'orig'
+    inheritors expr: 'exprConst exprPlus exprOrig'
+    superclasses expr: 'orig'
+    subclasses expr: 'exprConst exprPlus exprOrig'
+    isvirtual expr: '0'
+    fields expr inherited: 'file line'
+	ttypeclass expr file: 'single'
+	typelevel expr file: 0
+	typename expr file: 'string'
+	type expr file: 'string'
+	ttypeclass expr line: 'single'
+	typelevel expr line: 0
+	typename expr line: 'int'
+	type expr line: 'int'
 ----
 
 Datastructure dependency
 ----
 Testing error handling:
 Type sorting:
-depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass ]
+depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprOrig expr exprPlus ]
 ----
 
 String manipulation functions:
@@ -1003,6 +1131,7 @@ v:[toplevelv]
 []
 gv: 1, ngv: 1 gl: [123], ngl: [123]
 gv: 2, ngv: 1 gl: [123 test], ngl: [123]
+matchmacro: 'testglobal test tv' '' ''
 ----
 
 Eval

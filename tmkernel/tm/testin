@@ -417,6 +417,7 @@ ${call tv 1 2} ${call} ${call tv}
 gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
 .call testglobal
 gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
+matchmacro: '${matchmacro *}' '${matchmacro}' '${matchmacro (*}'
 ----
 
 Eval

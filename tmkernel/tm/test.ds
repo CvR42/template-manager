@@ -30,3 +30,9 @@ toplevel ::= ;
 
 testclass = { a:[[int]], b:int } + subclass: orig;
 
+expr = orig +
+	exprConst: { n:int } |
+	exprPlus: {a:expr, b:expr} |
+	exprOrig: (testclass + { lbl:tmstring })
+	;
+

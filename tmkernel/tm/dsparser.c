@@ -592,6 +592,7 @@ static bool parse_class_component( classComponent *cp )
 	classComponent_list ccl;
 
 	/* It is a bracketed sublist. */
+	next_token();
 	ok = parse_class_components( &ccl );
 	if( !ok ){
 	    return FALSE;

@@ -62,4 +62,6 @@ testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
+testin: 'matchmacro' requires exactly one parameter
+testin: bad regular expression: Unmatched '('
 errors detected, program aborted
