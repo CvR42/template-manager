@@ -89,12 +89,12 @@ SRCS = $(NORMALSRCS) $(GENSRCS)
 
 TMOUTPUT = tmcode.c tmcode.h
 
-GENFILES = $(TMOUTPUT) tmpath.c
+GENFILES = $(TMOUTPUT) tmpath.c version.h
 
 
 JUNK          = y.output lint testerr testout index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
-		config.log version.h distlist
+		config.log distlist
 PRECIOUSJUNK = sedlint
 
 FOREIGNFILES = tmtos.prj makefile.tc config.htc makefile.tos config.hts
@@ -181,8 +181,8 @@ depend: $(DEPENDFILE)
 # some other compilers may have a different flag for this, or otherwise
 # it may be possible to use the GNU compiler just to compute the
 # dependencies.
-$(DEPENDFILE): $(DEPENDSRC)
-	$(CC) -MM $(DEPENDSRC) > $(DEPENDFILE)
+$(DEPENDFILE): $(DEPENDSRC) $(GENFILES)
+	$(CC) -MM $(IPATH) $(DEPENDSRC) > $(DEPENDFILE)
 
 stats: empty
 	wc -l *.c *.h
