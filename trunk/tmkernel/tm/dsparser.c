@@ -656,7 +656,7 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
     tmstring_list inherits;
     Field_list fields;
     ds_list types;
-    tmbool isvirtual = FALSE;
+    tmbool isvirtual = TMFALSE;
 
     inherits = new_tmstring_list();
     fields = new_Field_list();
@@ -717,7 +717,7 @@ static void update_class_info(
 		    *types,
 		    create_subtype( alt->label, nm, alt->component )
 		);
-		*isvirtual = TRUE;
+		*isvirtual = TMTRUE;
 	    }
 	}
     }
