@@ -460,18 +460,18 @@ static tmstring fnindex( const tmstring_list sl )
     return newintstr( (int) ix );
 }
 
-/* ismember <elm> <list> */
+/* member <elm> <list> */
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnismember( const tmstring_list sl )
+static tmstring fnmember( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
     bool found = FALSE;
 
     if( sl->sz<1 ){
-	line_error( "'ismember' requires at least one parameter" );
+	line_error( "'member' requires at least one parameter" );
 	return new_tmstring( "0" );
     }
     estr = sl->arr[0];
@@ -2034,7 +2034,7 @@ static struct fnentry fntab[] = {
      { "index", fnindex },
      { "inherits", fninherits },
      { "isinenv", fnisinenv },
-     { "ismember", fnismember },
+     { "member", fnmember },
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
      { "max", fnmax },
