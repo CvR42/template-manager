@@ -1,5 +1,31 @@
 \chapter{Preface}
 \label{s.preface}
+\section{Preface to the 7th edition}
+This edition documents {\Tm} kernel package version 2.0.
+\par
+The new version has undergone the largest change thus far; so much
+has changed, in fact, that this deserves an increment in the major
+version number.
+\par
+Highlights of the new changes:
+\begin{itemize}
+\item A new metatype, \defn{class}, has been added. This required
+changes in many other places, and made it all the more necessary
+to assist code generation with well-chosen template functions.
+\item A new set of data structure access functions has been defined.
+The old functions are for the moment still supported, but are likely
+to be removed in a future version.
+\item A number of new service functions have been added to simplify
+code requirement analysis and other administration.
+\item This manual has been updated to reflect the changes in the
+language, and to present the information more clearly.
+\item The old C templates have been declared obsolete, and are
+not documented any more. Appendix \ref{s.upgrade} lists a few templates and
+scripts that can assist in converting code to use the new C template.
+\end{itemize}
+\begin{flushright}
+Delft, 23 July 1997.
+\end{flushright}
 \section{Preface to the 6th edition}
 This edition documents {\Tm} version 34.
 \par
@@ -10,12 +36,12 @@ There have been lots of changes:
       this, but this may change in future versions.
 \item The print optimizer now uses an explicit print state, that must
       be passed to the \verb"print_<type>()" functions.
-\item The names of some of the types in the {\C} support library have been
+\item Some of the types in the {\C} support library have been
       renamed to prevent clashes with other libraries. This usually means
       that the names have been prefixed with \verb'tm' or \verb'tm_'.
-\item In the {\Tm} macro-language, there now is a new statement \verb'.redirect'
+\item In the template language, there now is a new statement \verb'.redirect'
       that redirects a range of text to a file.
-\item In the {\Tm} macro-language, functions \verb'tmhost' and \verb'tmdate' 
+\item In the template language, functions \verb'tmhost' and \verb'tmdate' 
       have been deleted.
 \item A number of obsolete functions in the {\C} template \verb'calu', such as
       \verb"ins_<type>_list()", have been deleted.
@@ -34,7 +60,7 @@ of {\Tm} are:
 \item Support for nested lists. The parser for data structures has
 supported this for some time, but now the text substitution language
 and the {\C} templates also support this.
-\item The {\C} templates do no longer require the specification of
+\item The {\C} templates no longer require the specification of
 {\tt otherlists}, and will deduce dependencies for all list types,
 even for single types that are not defined in the data structure definition
 file.

@@ -6,22 +6,38 @@ The data-structure description must have the following syntax:
 \\
 \nonterm{ds} & \produces & \nonterm{name} \term{::=} \nonterm{inherits} \nonterm{constructorlist} \term{{\tt ;}} \\
  & \bar & \nonterm{name} \term{==} \nonterm{inherits} \term{(} \nonterm{tuple} \term{)} \term{;} \\
+ & \bar & \nonterm{name} \term{=} \nonterm{classcomponentlist} \term{;} \\
+ & \bar & \nonterm{name} \term{~=} \nonterm{classcomponentlist} \term{;} \\
  & \bar & \term{\%include} \nonterm{string} \term{;} \\
 \\
 \nonterm{inherits} & \produces & \emptystring \bar \nonterm{name} \term{+} \nonterm{inherits} \\
 \\
-\nonterm{tuple} & \produces & \nonterm{element}  \\
-& \bar & \nonterm{element} \term{,} \nonterm{tuple} \\
+\nonterm{tuple} & \produces & \nonterm{field}  \\
+& \bar & \nonterm{field} \term{,} \nonterm{tuple} \\
 \\
 \nonterm{constructorlist} & \produces & \nonterm{constructor}  \\
 & \bar & \nonterm{constructor} \term{|} \nonterm{constructorlist}  \\
 \\
-\nonterm{constructor} & \produces & \nonterm{name} \nonterm{elementlist} \\
+\nonterm{constructor} & \produces & \nonterm{name} \nonterm{fieldlist} \\
 \\
-\nonterm{elementlist} & \produces & \emptystring \\
-& \bar & \nonterm{element} \nonterm{elementlist}  \\
+\nonterm{fieldlist} & \produces & \emptystring \\
+& \bar & \nonterm{field} \nonterm{fieldlist}  \\
 \\
-\nonterm{element} & \produces & \nonterm{name} \term{:} \nonterm{type} \\
+\nonterm{classcomponentlist} & \produces & \emptystring \\
+& \bar & \nonterm{classcomponent} \\
+& \bar & \nonterm{classcomponent} \term{+} \nonterm{classcomponentlist} \\
+\\
+\nonterm{classcomponent} & \produces & \term{\{} \nonterm{tuple} \term{\}} \\
+& \bar & \nonterm{name} \\
+& \bar & \nonterm{subclasslist} \\
+& \bar & \term{(} \nonterm{classcomponentlist} \term{)} \\
+\\
+\nonterm{subclasslist} & \produces & \nonterm{subclass} \\
+& \bar & \nonterm{subclass} \term{|} \nonterm{subclasslist} \\
+\\
+\nonterm{subclass} & \produces & \nonterm{name} \term{:} \nonterm{classcomponent} \\
+\\
+\nonterm{field} & \produces & \nonterm{name} \term{:} \nonterm{type} \\
 \\
 \nonterm{type} & \produces & \nonterm{name} \\
 & \bar & \term{[} \nonterm{type} \term{]} \\
@@ -33,5 +49,5 @@ Characters in typewriter font ({\tt like this}) are tokens,
 and \nonterm{string} stands for a string of arbitrary characters
 surrounded by double quotes \verb+"+.
 \par
-If a type is defined repeatedly, the constructor or element lists
+If a type is defined repeatedly, the constructor or field lists
 are concatenated. Redefinition of constructors is not allowed.

@@ -1,6 +1,13 @@
 || representation of plot data
-plot ::=
-    XYPlot xycolor:int points:[xypoint] |
-    YPlot ycolor:int xstart:num xend:num points:[num] ;
+plot = { xscale:scale, yscale:scale, curves:[curve] };
+
+curve ::=
+    XYCurve color:int points:[xypoint] |
+    YCurve color:int xstart:num xend:num points:[num] ;
 
 xypoint == ( x:num, y:num );
+
+scale = { title:tmstring } +
+    LinScale: { from:num, to:num } |
+    LogScale: { from:num, to:num }
+    ;

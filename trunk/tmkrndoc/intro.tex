@@ -33,7 +33,7 @@ however, to define a suitable language for this representation;
 if this is not done properly,
 it may lead to inconsistency or system dependency.
 \par
-The program \dfn{Tm} (for \dfn{template manager}) allows such textual
+The program \defn{Tm} (for \defn{template manager}) allows such textual
 representations to be defined in
 a special data structure definition language.
 {\Tm} is able to generate data structure definitions for a number of
@@ -44,7 +44,7 @@ to the textual representation.
 \par
 At the moment, {\Tm} can generate code for {\C}, Lisp, {\Miranda} and Pascal.
 Code generation for any other language is easily added,
-because the generation is based on \dfn{templates}:
+because the generation is based on \defn{templates}:
 source texts for the target programming language
 interspersed with text substitution and repetition commands for {\Tm}.
 
@@ -88,8 +88,8 @@ In this manual the following shorthand notations are used:
 \begin{tabular}{ll}
 {\tt <type>} \index{type@{\tt <type>}} & A type.  \\
 {\tt <cons>} \index{cons@{\tt <cons>}} & A constructor.  \\
-{\tt <elmtype>} \index{elmtype@{\tt <elmtype>}} & A type of an element in a constructor.  \\
-{\tt <elmname>} \index{elmname@{\tt <elmname>}} & A name of an element in a constructor.  \\
+{\tt <fieldtype>} \index{fieldtype@{\tt <fieldtype>}} & The type of a field.  \\
+{\tt <fieldname>} \index{fieldname@{\tt <fieldname>}} & The name of a field.  \\
 {\tt <something>} \index{something@{\tt <something>}} & The actual contents of this fragment are not important.  \\
 {\tt <basename>} \index{basename@{\tt <basename>}} & Fill in the value of {\Tm} variable {\tt basename}. \\
 \end{tabular}
