@@ -306,7 +306,7 @@ $(stic_$t)$t new_$c( $(tl) )
 #endif
     nw->tag = TAG$c;
 .foreach e ${fields $c inherited}
-    cast_$c(nw)->$e = p_$e;
+    to_$c(nw)->$e = p_$e;
 .endforeach
 .if $(statcode)
 #ifdef STAT
@@ -614,7 +614,7 @@ $(stic_$t)void rfre_$t( $t e )
 .foreach c ${conslist $t}
 	case TAG$c:
 .foreach e ${fields $c inherited}
-	    rfre_${type $c $e}( cast_$c(e)->$e );
+	    rfre_${type $c $e}( to_$c(e)->$e );
 .endforeach
 	    break;
 
@@ -694,7 +694,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 	case TAG$c:
 	    tm_printword( st, "$c" );
 .foreach e ${fields $c inherited}
-	    print_${type $c $e}( st, cast_$c(t)->$e );
+	    print_${type $c $e}( st, to_$c(t)->$e );
 .endforeach
 	    break;
 
@@ -777,7 +777,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 	    fputs( "$c", f );
 .foreach e ${fields $c inherited}
 	    putc( ' ', f );
-	    fprint_${type $c $e}( f, cast_$c(t)->$e );
+	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
 	    break;
 
@@ -886,7 +886,7 @@ $(stic_$t)$t rdup_$t( const $t e )
 .endforeach
 
 .foreach e ${fields $c inherited}
-	    i_$e = rdup_${type $c $e}( cast_$c(e)->$e );
+	    i_$e = rdup_${type $c $e}( to_$c(e)->$e );
 .endforeach
 	    return new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
 	}
@@ -1087,7 +1087,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 		break;
 	    }
 .endif
-	    res = cmp_${type $c $e}( cast_$c(a)->$e, cast_$c(b)->$e );
+	    res = cmp_${type $c $e}( to_$c(a)->$e, to_$c(b)->$e );
 .endforeach
 	    break;
 
