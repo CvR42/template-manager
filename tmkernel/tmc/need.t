@@ -69,10 +69,10 @@
 .if ${defined alldefs}
 .. All classes want all types
 . foreach g ${excl $(groups) "" $(listgroups)}
-.  set want_$g ${ctypelist} ${ttypelist} ${classlist}
+.  set want_$g ${ctypelist} ${tuplelist} ${classlist}
 . endforeach
 . foreach g $(groups)
-.  set want_$g ${suffix $(listsuff) ${ctypelist} ${ttypelist} ${classlist}}
+.  set want_$g ${suffix $(listsuff) ${ctypelist} ${tuplelist} ${classlist}}
 . endforeach
 . set want_misc $(misccode)
 .endif
@@ -104,6 +104,7 @@
 . error Can't handle definition: $(wantdefs)
 . exit 1
 .endif
+.set reqlevel 0
 ..
 .. Macros to calculate all need variables.
 ..
@@ -113,7 +114,10 @@
 .set l ${excl ${uniq $l} "" $(need_$g)}
 .if ${len $l}
 . globalappend need_$g $l
+/* required: ${strpad "" $(reqlevel) "."} ${prefix $g_ $l} */
+.set reqlevel $[$(reqlevel)+1]
 . call req_$g "$l"
+.set reqlevel $[$(reqlevel)-1]
 .endif
 .endmacro
 ..
@@ -136,6 +140,9 @@
 .call require ds "$l"
 .call require rdup "${delisttypes $l}"
 .call require rdup "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.if ${eq $(template) tmc}
+.call require rdup "${subclasses $l}"
+.endif
 .endmacro
 ..
 .. ** fscan **
@@ -155,6 +162,9 @@
 .call require ds "$l"
 .call require print "${delisttypes $l}"
 .call require print "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.if ${eq $(template) tmc}
+.call require print "${subclasses $l}"
+.endif
 .endmacro
 ..
 .. ** fprint **
@@ -162,6 +172,9 @@
 .call require ds "$l"
 .call require fprint "${delisttypes $l}"
 .call require fprint "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.if ${eq $(template) tmc}
+.call require fprint "${subclasses $l}"
+.endif
 .endmacro
 ..
 .. ** cmp **
@@ -169,6 +182,9 @@
 .call require ds "$l"
 .call require cmp "${delisttypes $l}"
 .call require cmp "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.if ${eq $(template) tmc}
+.call require cmp "${subclasses $l}"
+.endif
 .endmacro
 ..
 .. ** append **
@@ -212,6 +228,9 @@
 .macro req_rfre l
 .call require rfre "${delisttypes $l}"
 .call require rfre "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.if ${eq $(template) tmc}
+.call require rfre "${subclasses $l}"
+.endif
 .call require fre "$l"
 .endmacro
 ..
@@ -227,6 +246,9 @@
 .. ** fre **
 .macro req_fre l
 .call require ds "$l"
+.if ${eq $(template) tmc}
+.call require fre "${subclasses $l}"
+.endif
 .endmacro
 ..
 .. ** new **
@@ -238,6 +260,9 @@
 .macro req_ds l
 .call require ds "${delisttypes $l}"
 .call require ds "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.if ${eq $(template) tmc}
+.call require ds "${subclasses $l}"
+.endif
 .endmacro
 ..
 .. Reset all need_<group> variables.
@@ -285,6 +310,9 @@
 .set need_stat
 .set want_stat
 .endif
+.foreach g $(groups) stat
+/* ${prefix $g_ $(need_$g)} */
+.endforeach
 ..
 .. Derive the contents of the want_*_list and need_*_list variables
 .. from the want_ and need_ variables
