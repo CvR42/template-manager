@@ -1,0 +1,27 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+
+.. File: tmccode.ct
+
+#include "config.h"
+
+/* Standard UNIX libraries */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Standard tm library */
+#include <tmc.h>
+
+/* Local definitions */
+#include "tmccode.h"
+
+#define CACHESZ 20
+
+.insert tmcspec.t
+.insert macros.t
+.insert tmcid.t
+.insert need.t
+.include tmc.ct

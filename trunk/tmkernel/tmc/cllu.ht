@@ -103,7 +103,7 @@ struct str_$t {
 };
 
 .endif
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist} ${classlist}}
 struct str_$t {
 .foreach e ${fields $t inherited}
     ${type $t $e} $e;
@@ -129,7 +129,7 @@ struct str_$t {
 
 #ifdef LOGNEW
 .foreach t $(want_new)
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist} ${classlist}}
 #define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
 .else
 .foreach c ${conslist $t}
@@ -162,7 +162,7 @@ struct str_$t {
 
 .. new_<cons> and new_<type> routines
 .foreach t $(want_new)
-.if ${member $t ${ttypelist} ${classlist}}
+.if ${member $t ${tuplelist} ${classlist}}
 .set tl
 .foreach e ${fields $t inherited}
 .append tl ${type $t $e}

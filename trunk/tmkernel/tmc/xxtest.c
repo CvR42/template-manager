@@ -48,6 +48,13 @@ int main( void )
         exit( 1 );
     }
 #endif
+#ifdef CODEtmc
+    if( ds->room<42 ){
+        fprintf( stderr, "setroom_toplevel_list() fails\n" );
+        fprintf( stderr, "actual size is %u\n", ds->sz );
+        exit( 1 );
+    }
+#endif
     rfre_toplevel_list( ds );
     infile = fopen( "XXXtesti", "r" );
     if( infile == NULL ){
@@ -63,6 +70,7 @@ int main( void )
         fprintf( stderr, "Cannot redirect error file" );
         exit( 1 );
     }
+    tm_lineno = 1;
     if( fscan_toplevel_list( infile, &ds ) ){
 	fprintf( stderr, "Read error at line XXXtesti(%d): %s\n", tm_lineno, tm_errmsg );
         exit( 1 );
@@ -84,45 +92,57 @@ int main( void )
 	fprintf( stderr, "Doubly reversed copy not equal to original??\n" );
 	exit( 1 );
     }
+#ifdef CODEtmc
+    ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
+#endif
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
-#else
+#endif
 #ifdef CODEald
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds.arr[0] ) );
-#else
-    ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds ) );
 #endif
+#ifdef CODEllu
+    ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds ) );
 #endif
     if( cmp_toplevel_list( ds, dscopy ) == 0 ){
 	fprintf( stderr, "Insertion does not change comparison??\n" );
 	exit( 1 );
     }
+#ifdef CODEtmc
+    ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
+#endif
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
-#else
+#endif
 #ifdef CODEald
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds.arr[0] ) );
-#else
+#endif
+#ifdef CODEllu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds ) );
 #endif
+#ifdef CODEtmc
+    ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds->arr[0] ) );
 #endif
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds->arr[0] ) );
-#else
+#endif
 #ifdef CODEald
     ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds.arr[0] ) );
-#else
+#endif
+#ifdef CODEllu
     ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds ) );
 #endif
+#ifdef CODEtmc
+    ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds->arr[0] ) );
 #endif
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds->arr[0] ) );
-#else
+#endif
 #ifdef CODEald
     ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds.arr[0] ) );
-#else
-    ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds ) );
 #endif
+#ifdef CODEllu
+    ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds ) );
 #endif
     ds = delete_toplevel_list( ds, (unsigned int) 1 );
     ds = delete_toplevel_list( ds, (unsigned int) 0 );
@@ -156,27 +176,33 @@ int main( void )
 	fprintf( stderr, "Out of bounds delete affects datastructure?\n" );
 	exit( 1 );
     }
+#ifdef CODEtmc
+    ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
+#endif
 #ifdef CODEalu
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
-#else
+#endif
 #ifdef CODEald
     ds = append_toplevel_list( ds, rdup_toplevel( ds.arr[0] ) );
-#else
-    ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
+#ifdef CODEllu
+    ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
     if( cmp_toplevel_list( ds, dscopy ) == 0 ){
 	fprintf( stderr, "Append does not change comparison??\n" );
 	exit( 1 );
     }
+#ifdef CODEtmc
+    ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
+#endif
 #ifdef CODEalu
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
-#else
+#endif
 #ifdef CODEald
     ds = append_toplevel_list( ds, rdup_toplevel( ds.arr[0] ) );
-#else
-    ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
+#ifdef CODEllu
+    ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
     ds = concat_toplevel_list( ds, dscopy );
     /* 'dscopy' is not freed to test lognew routines. */

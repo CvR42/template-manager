@@ -52,3 +52,51 @@ static ${eval "$(tpl)"};
 .macro linkname nm
 .return ${subs ${stemname $(nm)}(*) next\1  $(nm)}
 .endmacro
+..
+.. Given a list of types, ensure that none of these types is
+.. virtual and has no subclasses
+.macro no_childless_virtual l
+.set bad 0
+.foreach t $l
+.if ${isvirtual $t}
+.if $[${len ${subclasses $t}}<1]
+.error $t is virtual but has no children.
+.set bad 1
+.endif
+.endif
+.endforeach
+.if $(bad)
+.exit 1
+.endif
+.endmacro
+..
+.. Given a list of types, ensure that none of these types has
+.. multiple inheritance
+.macro no_multiple_inheritance l
+.set bad 0
+.foreach t $l
+.if $[${len ${inherits $t}}>1]
+.if $(bad)
+.else
+.error Multiple inheritance not supported in this template.
+.set bad 1
+.endif
+.error $t inherits ${seplist ", " ${inherits $t}}
+.endif
+.endforeach
+.if $(bad)
+.exit 1
+.endif
+.endmacro
+..
+.. Given a type t, return its root class
+.macro rootclass t
+.if ${member $t ${typelist}}
+.set root ${inherits $t}
+.while ${len $(root)}
+.set t $(root)
+.set root ${inherits $t}
+.endwhile
+.endif
+.return $t
+.endmacro
