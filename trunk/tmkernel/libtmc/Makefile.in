@@ -190,6 +190,8 @@ testprog: $(TESTOBJS) $(LIBNAME)
 check: testprog testin
 	-./testprog
 	diff testout goodout
+	@echo "### Pointer values may differ between runs."
+	@echo "### Expect three differences in the values after \"p=\""
 	diff testerr gooderr
 
 install: $(LIBNAME)
