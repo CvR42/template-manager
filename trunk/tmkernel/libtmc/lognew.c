@@ -243,8 +243,12 @@ void flush_lognew( void )
     idsz = 0;
     idfree = -1;
     idofl = 0;
-    TM_FREE( idlist );
-    TM_FREE( plist );
+    if( idlist != 0 ){
+	TM_FREE( idlist );
+    }
+    if( plist != 0 ){
+	TM_FREE( plist );
+    }
     idlist = (id *)0;
     plist = (ptrlog *)0;
     plistsz = 0;
