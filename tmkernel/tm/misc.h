@@ -16,8 +16,8 @@ extern FILE *ckfopen( const char *nm, const char *acc );
 extern void ckfreopen( const char *nm, const char *acc, FILE *f );
 extern bool member_tmstring_list( const tmstring s, const tmstring_list l );
 
-extern field find_class_field( const ds_list types, const char *type, const char *nm );
-extern field find_class_field_super( const ds_list types, tmstring_list supers, const char *nm );
+extern field find_field( const ds_list types, const char *type, const char *nm );
+extern field find_field_super( const ds_list types, tmstring_list supers, const char *nm );
 
 extern const tmstring_list extract_inherits( const ds_list types, const char *type );
 extern void collect_subclasses( tmstring_list *res, const ds_list types, const tmstring type );

@@ -43,56 +43,12 @@ static void yyerror( const char *s )
     fputc( '\n', stderr );
 }
 
-/* Check a name on underscores and give an error message if one is found */
-static void ckunderscore( const char *s )
-{
-    if( strchr( s, '_' ) != NULL ){
-	strcpy( errarg, s );
-	yyerror( "No '_' allowed in name" );
-    }
-}
-
-/* Ensure that name 's' is a proper constructor name. */
-static void ckconsname( const char *s )
-{
-    if( s[0] == '\0' ) return;
-    ckunderscore( s );
-    if( !isupper( s[0] ) ){
-	strcpy( errarg, s );
-	yyerror( "a constructor name should start with an uppercase character" );
-    }
-}
-
-/* Ensure that name 's' is a proper type name. */
-static void cktypename( const char *s )
-{
-    if( s[0] == '\0' ){
-	return;
-    }
-    ckunderscore( s );
-    if( !islower( s[0] ) ){
-	(void) strcpy( errarg, s );
-	yyerror( "a type name should start with a lowercase character" );
-    }
-}
-
-/* Ensure that name 's' is a proper element name. */
-static void ckelmname( const char *s )
-{
-    if( s[0] == '\0' ){
-	return;
-    }
-    ckunderscore( s );
-}
-
-
 /* Given a tmstring list 'l' and a tmstring 's', add 's' to the
  * list 'l' and return the newly constructed list. Reject strings
  * that are already defined.
  */
 static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
 {
-    cktypename( s );
     if( member_tmstring_list( s, l ) ){
 	(void) sprintf( errarg, "'%s'", s );
 	yyerror( "duplicate inheritance" );
@@ -291,7 +247,6 @@ static bool parse_field( field *fp )
 	return FALSE;
     }
     elmname = yylval.parstring;
-    ckelmname( elmname );
     next_token();
     if( curr_token!=COLON ){
 	yyerror( "':' expected" );
@@ -326,18 +281,22 @@ static bool parse_field_list( field_list *flp )
 }
 
 /* Trye to parse a constructor. Return TRUE if this succeeded. */
-static bool parse_constructor( constructor *cp )
+static bool parse_constructor( tmstring p_nm, constructor *cp )
 {
-    tmstring nm;
     bool ok;
     field_list fl;
+    tmstring nm;
 
-    if( curr_token!=NAME ){
-	return FALSE;
+    if( p_nm == tmstringNIL ){
+	if( curr_token!=NAME ){
+	    return FALSE;
+	}
+	nm = yylval.parstring;
+	next_token();
     }
-    nm = yylval.parstring;
-    ckconsname( nm );
-    next_token();
+    else {
+	nm = rdup_tmstring( p_nm );
+    }
     ok = parse_field_list( &fl );
     if( !ok ){
 	yyerror( "invalid field list" );
@@ -348,20 +307,31 @@ static bool parse_constructor( constructor *cp )
     return TRUE;
 }
 
-/* Try to parse a list of constructors up to (but not including)
+/* Given the name of the first constructor 'nm' (if it isn't empty),
+ * try to parse a list of constructors up to (but not including)
  * the final ';'. Return TRUE if you have a valid constructor list.
  */
-static bool parse_constructor_list( constructor_list *clp )
+static bool parse_constructor_list( tmstring nm, constructor_list *clp )
 {
     bool ok;
     constructor nw;
 
     *clp = new_constructor_list();
     if( curr_token==SEMI ){
+	if( nm != tmstringNIL ){
+	    *clp = add_constructor_list(
+		*clp,
+		new_constructor(
+		    rdup_tmstring( nm ),
+		    new_field_list()
+		)
+	    );
+	}
 	return TRUE;
     }
     for(;;){
-	ok = parse_constructor( &nw );
+	ok = parse_constructor( nm, &nw );
+	nm = tmstringNIL;
 	if( ok ){
 	    *clp = add_constructor_list( *clp, nw );
 	    rfre_constructor( nw );
@@ -387,7 +357,7 @@ static bool parse_constructor_list( constructor_list *clp )
     return TRUE;
 }
 
-/* Given a type name 'nm', try to parse the remainder
+/* Try to parse the remainder
  * of a constructor definition, up to (but not including) the final ';'.
  * Return TRUE if this succeeded, and set *tp to the parsed constructor.
  */
@@ -396,23 +366,27 @@ static bool parse_constructor_type( tmstring nm, ds *tp )
     bool ok;
     constructor_list cl;
     tmstring_list inherits;
+    tmstring cnm = tmstringNIL;
 
     inherits = new_tmstring_list();
-    /* This is a bit dirty: we assume that inherited type names
-     * start with a lowercase character, and constructor names start
-     * with an uppercase character.
+    /* First eat all names followed by a '+'. After that assume
+     * that the first constructor has started.
      */
-    while( curr_token == NAME && islower( yylval.parstring[0] ) ){
-	inherits = add_inherit_list( inherits, yylval.parstring );
+    while( curr_token == NAME ){
+	cnm = yylval.parstring;
 	next_token();
 	if( curr_token != PLUS ){
-	    yyerror( "'+' expected" );
+	    /* Not a plus, so at least it isn't an inherit. */
+	    break;
 	}
-	else {
-	    next_token();
-	}
+	inherits = add_inherit_list( inherits, cnm );
+	cnm = tmstringNIL;
+	next_token();	/* Eat the PLUS */
     }
-    ok = parse_constructor_list( &cl );
+    ok = parse_constructor_list( cnm, &cl );
+    if( cnm != tmstringNIL ){
+	rfre_tmstring( cnm );
+    }
     ckconstructor( nm, cl );
     *tp = new_DsCons( nm, inherits, cl );
     return ok;
@@ -764,7 +738,6 @@ static bool parse_ds( ds_list *dl )
 	return FALSE;
     }
     nm = yylval.parstring;
-    cktypename( nm );
     next_token();
     switch( curr_token ){
 	case COLCOLEQ:
