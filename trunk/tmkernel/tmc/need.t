@@ -247,8 +247,15 @@
 .call require rfre "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
 .call require rfre "${subclasses $l}"
+.foreach t $l
+.if ${isvirtual $t}
+.else
+.call require fre $t
 .endif
+.endforeach
+.else
 .call require fre "$l"
+.endif
 .endmacro
 ..
 .. ** null **
