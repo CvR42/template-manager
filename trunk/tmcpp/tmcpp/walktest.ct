@@ -1,0 +1,156 @@
+.. File: tmcwalktest.ct
+..
+.. Tree walker for rewriting operations.
+..
+.. Return 'walk' or 'action', depending on the contents of 'actors'
+.macro walkername t
+.if ${member $t $(actors)}
+.return action
+.else
+.return walker
+.endif
+.endmacro
+..
+.macro generate_empty_walker_body indent var t
+$(indent)(void) $(var);
+$(indent)(void) n;
+.endmacro
+..
+.. Given an indent 'indent', the name 'var' of the variable that holds
+.. the datastructure we're walking on, and a type 't', of that variable,
+.. generate a return statement.
+.macro generate_walker_return indent var t
+$(indent)return $(var);
+.endmacro
+..
+.. Given the name 'var' of the variable that holds the datastructure
+.. we`re walking on, and the type 't' of that variable, generate a
+.. signature for the walker function of the given type.
+.macro generate_walker_signature var t
+static $t add_$t_walker( $t $(var), const int n )
+.endmacro
+..
+.. Given the name 'var' of the variable that holds the datastructure
+.. we're walking on, and the type 't' of that variable, generate a forward
+.. declaration for the walker function of the given type.
+.macro generate_walker_declaration var t
+static $t add_$t_walker( $t $(var), const int n );
+.endmacro
+..
+.. Given an indent 'indent', a variable 'var' to walk into, the type of
+.. the variable 'type', and the current type of the variable 'nowtype',
+.. generate an invokation to an action.
+.macro generate_action_call indent var type nowtype
+.if ${eq $(type) $(nowtype)}
+$(indent)$(var) = ($(nowtype)) add_$(type)_action( $(var), n );
+.else
+$(indent)$(var) = ($(nowtype)) add_$(type)_action( to_$(type)( $(var) ), n );
+.endif
+.endmacro
+..
+.. Given an indent 'indent', a variable 'var' to walk into, the type of
+.. the variable 'type', and the current type of the variable 'nowtype',
+.. generate an invokation to a walker.
+.macro generate_walker_call indent var type nowtype
+.if ${eq $(type) $(nowtype)}
+$(indent)$(var) = ($(nowtype)) add_$(type)_walker( $(var), n );
+.else
+$(indent)$(var) = ($(nowtype)) add_$(type)_walker( to_$(type)( $(var) ), n );
+.endif
+.endmacro
+..
+.. Given an indent 'indent', a variable 'var' to walk into, the type of the
+.. variable 'type', and the current type of the variable 'nowtype', generate
+.. an invocation to an action or walker.
+.macro generate_descent_call indent var type nowtype
+.if ${member $(type) $(actors)}
+.call generate_action_call "$(indent)" "$(var)" "$(type)" "$(nowtype)"
+.else
+.call generate_walker_call "$(indent)" "$(var)" "$(type)" "$(nowtype)"
+.endif
+.endmacro
+..
+.. For which types are there actions defines?
+.set actors int foldexpr
+..
+.insert tmcwalk.t
+..
+.set visit_types ${call calc_treewalk "expr" "int"}
+..
+/* File: tmcwalktest.c
+ *
+ * A test tree walker that adds the given parameter 'n' to all ints in
+ * expr tree.
+ */
+
+#include <tmc.h>
+
+#include "config.h"
+#include "tmccode.h"
+
+typedef expr foldexpr;
+
+.call generate_walker_forwards "$(visit_types)"
+
+/* ----------- Actors ----------- */
+
+/* Add action for 'int'. */
+static int add_int_action( int elm, int n )
+{
+.call generate_walker_call "    " elm int int
+    return elm+n;
+}
+
+/* Add action for 'foldexpr'. */
+static foldexpr add_foldexpr_action( foldexpr elm, int n )
+{
+.call generate_walker_call "    " elm foldexpr foldexpr
+    return elm;
+}
+
+.call generate_walker "$(visit_types)"
+
+int main( void )                             
+{
+    TMPRINTSTATE *st;
+    int level;
+    expr x;                                                     
+    FILE *infile;
+    FILE *outfile;
+    int n = 2;
+
+    infile = fopen( "tmcwalkin", "r" );
+    if( infile == NULL ){
+        fprintf( stderr, "Cannot open input file" );
+        exit( 1 );
+    }
+    outfile = fopen( "testout", "w" );
+    if( outfile == NULL ){
+        fprintf( stderr, "Cannot open output file" );
+        exit( 1 );
+    }
+    tm_lineno = 1;
+    if( fscan_expr( infile, &x ) ){
+        fprintf( stderr, "tmcwalktest: %d: %s\n", tm_lineno, tm_errmsg );
+        exit( 1 );
+    }
+.call generate_descent_call "    " x expr expr
+    st = tm_setprint( outfile, 1, 75, 8, 0 );
+    print_expr( st, x );
+    level = tm_endprint( st );
+    if( level != 0 ){                          
+        fprintf( stderr, "Internal error: bracket level = %d\n", level );
+        exit( 1 );
+    }
+    rfre_expr( x );
+    if( get_balance_ds() != 0 || get_balance_tmstring() != 0 ){
+        fprintf( stderr, "Tm object allocation not balanced\n" );
+        stat_ds( stderr );
+        stat_tmstring( stderr );
+        report_lognew( stderr );
+	exit( 1 );
+    }
+    exit( 0 );
+    return 0;             
+}
+

@@ -1,0 +1,75 @@
+EA                  :      0 allocated,      0 freed.
+EB                  :      0 allocated,      0 freed.
+EC                  :      0 allocated,      0 freed.
+SubNamed            :    414 allocated,    410 freed.<-
+SubNamedlist        :    621 allocated,    615 freed.<-
+Thing               :   1657 allocated,   1641 freed.<-
+Top                 :    207 allocated,    205 freed.<-
+TopClass            :      0 allocated,      0 freed.
+TopEmptyTuple       :      0 allocated,      0 freed.
+TopEnum             :      0 allocated,      0 freed.
+TopNone             :    623 allocated,    618 freed.<-
+TopTuple            :    207 allocated,    205 freed.<-
+emptytuple          :      0 allocated,      0 freed.
+exprConst           :      2 allocated,      2 freed.
+exprFold            :      0 allocated,      0 freed.
+exprPlus            :      1 allocated,      1 freed.
+exprSubtract        :      0 allocated,      0 freed.
+label               :      1 allocated,      1 freed.
+subtuple            :    207 allocated,    205 freed.<-
+sublevel_list       :    414 allocated,    410 freed.<-
+sublevel_list_list  :    207 allocated,    205 freed.<-
+subtuple_list       :      0 allocated,      0 freed.
+thing_list          :    621 allocated,    615 freed.<-
+toplevel_list       :    107 allocated,    106 freed.<-
+lognew: pending blocks:
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)
+tmctest.c(199)

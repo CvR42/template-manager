@@ -1,0 +1,35 @@
+|| Tm - an interface code generator.
+|| Author: C. van Reeuwijk.
+||
+|| All rights reserved.
+
+|| File: test.ds
+|| Author: CvR
+||
+|| Datastructure file for exhausive test of tm.
+
+toplevel ::=
+    Top la:[sublevel] lb:[[sublevel]] |
+    TopTuple tup:subtuple |
+    TopEnum e:subenum |
+    TopEmptyTuple e:emptytuple |
+    TopEmptyCons e:emptycons |
+    TopNone;
+
+emptytuple == ();
+
+emptycons ::= ;
+
+label == ( labelval:int );
+
+subtuple == label + ( tl:[thing], tn:int );
+
+sublevel ::= label +
+    SubNamed n:int |
+    SubNamedlist thinglist:[listthing] ;
+
+subenum ::= EA | EB | EC;
+
+thing ::= Thing n:int;
+
+listthing -> thing;
