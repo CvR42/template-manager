@@ -152,7 +152,7 @@ List manipulation:
 ----
 .set lst a b c d e f
 index:   '${index a $(lst)}' '${index z $(lst)}' '${index z}' '${index}'
-ismember:'${ismember a $(lst)}' '${ismember z $(lst)}' '${ismember z}' '${ismember}'
+member:  '${member a $(lst)}' '${member z $(lst)}' '${member z}' '${member}'
 shift:   '${shift $(lst)}' '${shift}'
 first:   '${first $(lst)}' '${first}'
 seplist: '${seplist ", " $(lst)}' '${seplist a a}' '${seplist a}'
