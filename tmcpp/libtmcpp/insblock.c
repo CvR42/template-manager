@@ -5,8 +5,8 @@
  */
 
 #include <string.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 /* Given a position 'pos' and a size 'blk_sz', make room for 'blk_sz'
  * characters in the ext, starting at position 'pos'.

@@ -1,16 +1,9 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: prsym.c
- * C. van Reeuwijk
- */
+// File: prsym.c
+// C. van Reeuwijk
 
 #include <ctype.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 #define BACKSLASH '\\'
 

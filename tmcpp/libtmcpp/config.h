@@ -13,6 +13,8 @@
 #define TEXTGROWSTEP 40		/* The growth step of the text putc routine */
 #define INITIAL_STRINGSIZE 4	/* First size of a growing string buffer. */
 
+#define LOGNEW
+
 #define SYMHASHWIDTH 1024
 
 /* #undef const */
