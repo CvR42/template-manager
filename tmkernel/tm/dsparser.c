@@ -34,7 +34,7 @@ static void update_class_info(
     field_list *fields,
     ds_list *types,
     const classComponent cc,
-    tmbool *virtual
+    tmbool *isvirtual
 );
 
 static void yyerror( const char *s )
@@ -677,16 +677,16 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
     tmstring_list inherits;
     field_list fields;
     ds_list types;
-    tmbool virtual = FALSE;
+    tmbool isvirtual = FALSE;
 
     inherits = new_tmstring_list();
     fields = new_field_list();
     types = new_ds_list();
     inherits = append_tmstring_list( inherits, rdup_tmstring( super ) );
-    update_class_info( nm, &inherits, &fields, &types, comp, &virtual );
+    update_class_info( nm, &inherits, &fields, &types, comp, &isvirtual );
     types = append_ds_list(
 	types,
-	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
+	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, isvirtual )
     );
     return types;
 
@@ -698,7 +698,7 @@ static void update_class_info(
     field_list *fields,
     ds_list *types,
     const classComponent cc,
-    tmbool *virtual
+    tmbool *isvirtual
 )
 {
     switch( cc->tag ){
@@ -720,7 +720,7 @@ static void update_class_info(
 
 	    ccl = to_CCSublist(cc)->components;
 	    for( ix=0; ix<ccl->sz; ix++ ){
-		update_class_info( nm, inherits, fields, types, ccl->arr[ix], virtual );
+		update_class_info( nm, inherits, fields, types, ccl->arr[ix], isvirtual );
 	    }
 	    break;
 	}
@@ -738,13 +738,13 @@ static void update_class_info(
 		    *types,
 		    create_subtype( alt->label, nm, alt->component )
 		);
-		*virtual = TRUE;
+		*isvirtual = TRUE;
 	    }
 	}
     }
 }
 
-static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbool virtual )
+static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbool isvirtual )
 {
     tmstring_list inherits;
     field_list fields;
@@ -755,11 +755,11 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbo
     fields = new_field_list();
     types = new_ds_list();
     for( ix=0; ix<ccl->sz; ix++ ){
-	update_class_info( nm, &inherits, &fields, &types, ccl->arr[ix], &virtual );
+	update_class_info( nm, &inherits, &fields, &types, ccl->arr[ix], &isvirtual );
     }
     types = append_ds_list(
 	types,
-	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
+	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, isvirtual )
     );
     return types;
 }
@@ -851,12 +851,12 @@ static bool parse_ds( ds_list *dl )
 	case TILDEQ:
 	{
 	    classComponent_list nw;
-	    bool virtual = (curr_token == TILDEQ);
+	    bool isvirtual = (curr_token == TILDEQ);
 
 	    next_token();
 	    ok = parse_class_components( &nw );
 	    if( ok ){
-		*dl = normalize_class( nm, nw, virtual );
+		*dl = normalize_class( nm, nw, isvirtual );
 		rfre_classComponent_list( nw );
 		rfre_tmstring( nm );
 	    }
@@ -930,7 +930,7 @@ static ds_list parse_ds_list( void )
  * after searching for it in searchpath, parse it, and return
  * a list of datastructures.
  */
-ds_list parse_ds_file( const tmstring fnm )
+ds_list parse_ds_file( const char *fnm )
 {
     ds_list ans;
     FILE *oldf;

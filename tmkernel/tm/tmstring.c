@@ -37,7 +37,9 @@ const char *scanword( const char *s, char **w )
     unsigned int room;
     tmstring buf;
 
-    while( isspace( *s ) ) s++;
+    while( isspace( *s ) ){
+	s++;
+    }
     if( *s == '\0' ){
 	*w = tmstringNIL;
 	return( s );
@@ -151,6 +153,15 @@ char *newintstr( int n )
     return new_tmstring( buf );
 }
 
+/* Return a new tmstring reflecting the value of uint 'n'. */
+char *newuintstr( uint n )
+{
+    char buf[NUMBUFSIZE];
+
+    (void) sprintf( buf, "%u", n );
+    return new_tmstring( buf );
+}
+
 /* Given a tmstring 'p', chop it into words using 'scanword' and return
  * a tmstringlist containing the pieces.
  */
@@ -179,9 +190,9 @@ tmstring_list chopstring( const char *p )
  * the total length of the required tmstring is
  *  sum(<all joined tmstrings>) + (n-1)*strlen(sep)
  */
-tmstring sepstrings( const tmstring_list sl, const tmstring sep )
+tmstring sepstrings( const tmstring_list sl, const char *sep )
 {
-    char *cp;		/* pointer in copied tmstrings  */
+    const char *cp;	/* pointer in copied tmstrings  */
     char *cs;		/* tmstring under construction */
     char *bufp;		/* pointer in tmstring under construction */
     unsigned int ix;	/* index in tmstring array */

@@ -23,7 +23,7 @@
 FILE *tracestream = stderr;
 FILE *statstream = stderr;
 
-char *tplfilename = CHARNIL;
+tmstring tplfilename = tmstringNIL;
 int tpllineno = 0;
 tmstring dsfilename = tmstringNIL;
 FILE *dsfile = stdin;

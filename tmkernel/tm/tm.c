@@ -33,7 +33,7 @@
 #include "version.h"
 #include "checkds.h"
 
-static char *prognm;
+static const char *prognm;
 static FILE *tplfile;
 static tmstring outfilename;	/* Possible output redirection file. */
 static tmstring errfilename;	/* Possible error redirection file. */

@@ -91,7 +91,7 @@ static const char *bopat[MAXTAG];
 static const char *eopat[MAXTAG];
 static char bittab[BITBLK];		/* bit table for PAT_INSET */
 
-static void chset( const char c )
+static void chset( const int c )
 {
     bittab[((c)&BLKIND)>>3] |= 1<<((c)&BITIND);
 }
@@ -99,7 +99,7 @@ static void chset( const char c )
 /* Given a pattern string 'pat', compile it into a DFA in the fixed
  * array dfa. Return an error message, or NULL if all went as planned.
  */
-char *ref_comp( const char *pat )
+const char *ref_comp( const char *pat )
 {
     const char *p;         /* pointer into the pattern.   */
     char *mp = dfa;        /* pointer into the dfa */
@@ -135,10 +135,10 @@ char *ref_comp( const char *pat )
 		}
 
 		if( *p == '-' ){    /* real dash */
-		    chset(*p++);
+		    chset( *p++ );
 		}
 		if( *p == ']' ){    /* real brac */
-		    chset(*p++);
+		    chset( *p++ );
 		}
 		while (*p && *p != ']' ){
 		    if( *p == '-' && *(p+1) && *(p+1) != ']' ){
