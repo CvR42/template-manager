@@ -1499,7 +1499,7 @@ int get_balance_$(basename)( void )
     }
 .endif
 .endforeach
-    /* Check for too many fre()s. */
+    /* Check for too few fre()s. */
 .foreach t $(need_stat_list)
     if( newcnt_$t_list>frecnt_$t_list ){
         res = 1;
