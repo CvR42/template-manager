@@ -27,9 +27,9 @@
 #		may want a name with '32' in it for one of them.
 # 
 LOCALBIN = c:\bin
-LOCALLIB=e:\lib
-LOCALINC=e:\include
-TPLPATH = e:\\\\lib
+LOCALLIB=c:\lib
+LOCALINC=c:\include
+TPLPATH = c:\\\\lib
 CC = BCC32
 SYSCFLAGS = -wall -wstu -4 -O2
 #PROGBASE = tm32
@@ -39,7 +39,7 @@ PROG = $(PROGBASE).exe
 LINKER = $(CC)
 LIBS = $(LOCALLIB)\tmc32.lib
 
-VERSION=35
+VERSION=36
 
 # -I flags for  .h files
 IPATH = -I$(LOCALINC)
@@ -55,13 +55,13 @@ SRCS	      = refex.c \
 		tmcode.c \
 		error.c \
 		tmexpr.c \
+		checkds.c \
 		fn.c \
 		global.c \
 		dsparser.c \
 		lex.c \
 		tmpath.c \
 		misc.c \
-		expand.c \
 		tmstring.c \
 		tmtrans.c \
 		var.c \
@@ -120,7 +120,7 @@ version.h: ..\\version.h
 	cp ..\\version.h version.h
 
 test: testin sub.ds test.ds testsub goodout gooderr
-	 -.\$(PROG) -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
+	 -.\$(PROG) -dn -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
 	diff testout goodout
 	diff testerr gooderr
 	diff testrdir goodrdir
@@ -142,9 +142,9 @@ lex.obj: tmdefs.h tmcode.h tmstring.h error.h global.h \
 misc.obj: tmdefs.h misc.h error.h tmcode.h
 tmstring.obj: tmdefs.h tmcode.h tmstring.h misc.h error.h
 tmtrans.obj: tmdefs.h tmcode.h tmstring.h fn.h tmexpr.h error.h \
-	expand.h global.h tmpath.h misc.h tmtrans.h var.h srchfile.h
+	global.h tmpath.h misc.h tmtrans.h var.h srchfile.h
 var.obj: tmdefs.h tmcode.h tmstring.h misc.h error.h var.h \
 	global.h
 srchfile.obj: tmdefs.h tmcode.h srchfile.h
 flag.obj: tmdefs.h flag.h
-expand.o: tmdefs.h global.h expand.h tmcode.h config.h error.h misc.h
+checds.obj: tmdefs.h config.h error.h tmcode.h misc.h checkds.h

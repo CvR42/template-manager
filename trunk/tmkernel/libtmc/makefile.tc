@@ -23,8 +23,8 @@
 #  LIBFILE	The name of the resulting library. If you want to generate
 #		both the 16 bits and the 32 bits version, you
 #		can use a name with '32' in it for one of them.
-LOCALLIB=e:\lib
-LOCALINC=e:\include
+LOCALLIB=c:\lib
+LOCALINC=c:\include
 CC = BCC32
 CFLAGS = -wall -wstu -4 -O2
 LIBFILE=tmc32.lib
@@ -76,6 +76,7 @@ LIBSRCS	      = \
                 fscushrt.c \
                 insblock.c \
                 instext.c \
+                lncrstr.c \
                 lnfrestr.c \
                 lnfretxt.c \
                 lnfscstr.c \

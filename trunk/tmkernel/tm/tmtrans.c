@@ -164,7 +164,7 @@ typedef enum en_switchstate {
  */
 static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 {
-    unsigned int ix = 0;
+    unsigned int ix;
     tplelm_list block;
     tplelm_list deflt;
     switchcase_list cases;
