@@ -12,6 +12,7 @@ TopTuple            :    207 allocated,    205 freed.<-
 emptytuple          :      0 allocated,      0 freed.
 exprConst           :      2 allocated,      2 freed.
 exprPlus            :      1 allocated,      1 freed.
+exprSubtract        :      0 allocated,      0 freed.
 label               :      1 allocated,      1 freed.
 subtuple            :    207 allocated,    205 freed.<-
 sublevel_list       :    414 allocated,    410 freed.<-
