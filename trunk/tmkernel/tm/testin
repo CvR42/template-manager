@@ -267,6 +267,7 @@ inherits: ${inherits} ${inherits iserniet}
 inheritors: ${inheritors} ${inheritors iserniet}
 superclasses: ${superclasses} ${superclasses iserniet}
 subclasses: ${subclasses} ${subclasses iserniet}
+reach: ${reach} ${reach iserniet}
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
 fields: ${fields} ${fields bla bla} ${fields notatype}
 allfields: ${allfields} ${allfields bla bla} ${allfields notatype}
@@ -297,6 +298,7 @@ virtual and nonvirtual behave as they should
 types <all>: '${types ${typelist}}'
 alltypes <all>: '${alltypes ${typelist}}'
 subclasses <all>: '${subclasses ${typelist}}'
+reach <all>: '${reach ${typelist}}'
 conslist <all>: '${conslist ${typelist}}'
 metatype: ${metatype} ${metatype a b c} ${metatype a} ${metatype [a]}
 
@@ -309,13 +311,14 @@ ctypelist: '${ctypelist}'
 classlist: '${classlist}'
 aliases: '${aliases}'
 .foreach t ${typelist}
-    conslist $t: '${conslist $t }'
-    inherits $t: '${inherits $t }'
-    inheritors $t: '${inheritors $t }'
-    superclasses $t: '${superclasses $t }'
-    subclasses $t: '${subclasses $t }'
-    isvirtual $t: '${isvirtual $t }'
-    metatype $t: '${metatype $t }'
+    conslist $t: '${conslist $t}'
+    inherits $t: '${inherits $t}'
+    inheritors $t: '${inheritors $t}'
+    superclasses $t: '${superclasses $t}'
+    subclasses $t: '${subclasses $t}'
+    reach $t: '${reach $t}'
+    isvirtual $t: '${isvirtual $t}'
+    metatype $t: '${metatype $t}'
 .foreach c ${conslist $t}
         celmlist $t $c: '${celmlist $t $c}'
         fields $c: '${fields $c}'

@@ -74,12 +74,12 @@ unsigned int find_type_ix( const ds_list types, const char *t )
  * Return the index of that field in the list, or fl->sz if not
  * found.
  */ 
-unsigned int find_field_ix( const field_list fl, const char *nm )
+unsigned int find_field_ix( const Field_list fl, const char *nm )
 {
     unsigned int ix;
 
     for( ix = 0; ix < fl->sz; ix++ ){
-	const field f = fl->arr[ix];
+	const Field f = fl->arr[ix];
 
 	if( strcmp( f->name, nm ) == 0 ){
 	    return ix;
@@ -118,41 +118,40 @@ bool any_member_tmstring_list( const tmstring_list sl, const tmstring_list l )
     return FALSE;
 }
 
-field find_field_super( const ds_list types, tmstring_list supers, const char *nm )
+Field find_field_super( const ds_list types, tmstring_list supers, const char *nm )
 {
     unsigned int ix;
 
     for( ix=0; ix<supers->sz; ix++ ){
-	field f;
+	Field f = find_field( types, supers->arr[ix], nm );
 
-	f = find_field( types, supers->arr[ix], nm );
-	if( f != fieldNIL ){
+	if( f != FieldNIL ){
 	    return f;
 	}
     }
-    return fieldNIL;
+    return FieldNIL;
 }
 
-field find_field( const ds_list types, const char *type, const char *nm )
+Field find_field( const ds_list types, const char *type, const char *nm )
 {
     unsigned int pos;
     ds t;
-    field_list fl = field_listNIL;
+    Field_list fl = Field_listNIL;
     tmstring_list inherits = tmstring_listNIL;
 
     pos = find_type_ix( types, type );
     if( pos >= types->sz ){
-	return fieldNIL;
+	return FieldNIL;
     }
     t = types->arr[pos];
     inherits = t->inherits;
     switch( t->tag ){
 	case TAGDsAlias:
-	    fl = field_listNIL;
+	    fl = Field_listNIL;
 	    break;
 
 	case TAGDsConstructorBase:
-	    fl = field_listNIL;
+	    fl = Field_listNIL;
 	    break;
 
 	case TAGDsTuple:
@@ -168,7 +167,7 @@ field find_field( const ds_list types, const char *type, const char *nm )
 	    break;
 
     }
-    if( fl != field_listNIL ){
+    if( fl != Field_listNIL ){
 	pos = find_field_ix( fl, nm );
 	if( pos<fl->sz ){
 	    return fl->arr[pos];
@@ -267,7 +266,7 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring
 void collect_fields( tmstring_list *fields, const ds_list types, const char *type )
 {
     unsigned int ix;
-    field_list el = field_listNIL;
+    Field_list el = Field_listNIL;
     ds d;
 
     ix = find_type_ix( types, type );
@@ -294,9 +293,9 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
 	case TAGDsConstructorBase:
 	    return;
     }
-    if( el != field_listNIL ){
+    if( el != Field_listNIL ){
 	for( ix=0; ix<el->sz; ix++ ){
-	    const field e = el->arr[ix];
+	    const Field e = el->arr[ix];
 
 	    *fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
 	}

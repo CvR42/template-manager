@@ -31,7 +31,7 @@ static bool parse_class_components( classComponent_list *clp );
 static void update_class_info(
     tmstring nm,
     tmstring_list *inherits,
-    field_list *fields,
+    Field_list *fields,
     ds_list *types,
     const classComponent cc,
     tmbool *isvirtual
@@ -203,21 +203,21 @@ static void next_token( void )
     curr_token = yylex();
 }
 
-/* Given a field name 'nm', try to parse a field type, and set
- * '*fp' to the constructed field. Return TRUE if you have constructed
+/* Try to parse a field type, and set
+ * '*tp' to the constructed field. Return TRUE if you have constructed
  * a valid field.
  */
-static bool parse_field_type( const tmstring nm, field *fp )
+static bool parse_Type( Type *tp )
 {
     bool ok;
 
     if( curr_token==LSBRAC ){
 	next_token();
-	ok = parse_field_type( nm, fp );
+	ok = parse_Type( tp );
 	if( !ok ){
 	    return FALSE;
 	}
-	(*fp)->level++;
+	(*tp)->level++;
 	if( curr_token==RSBRAC ){
 	    next_token();
 	}
@@ -227,7 +227,7 @@ static bool parse_field_type( const tmstring nm, field *fp )
 	return TRUE;
     }
     if( curr_token==NAME ){
-	*fp = new_field( 0, rdup_tmstring( nm ), yylval.parstring );
+	*tp = new_Type( 0, yylval.parstring );
 	next_token();
 	return TRUE;
     }
@@ -235,11 +235,12 @@ static bool parse_field_type( const tmstring nm, field *fp )
     return FALSE;
 }
 
-/* Try to parse a field. Return TRUE if you have a valid field. */
-static bool parse_field( field *fp )
+/* Try to parse a Field. Return TRUE if you have a valid field. */
+static bool parse_field( Field *fp )
 {
     tmstring elmname;
     bool ok;
+    Type t;
 
     if( curr_token!=NAME ){
 	return FALSE;
@@ -251,8 +252,8 @@ static bool parse_field( field *fp )
 	return FALSE;
     }
     next_token();
-    ok = parse_field_type( elmname, fp );
-    rfre_tmstring( elmname );
+    ok = parse_Type( &t );
+    *fp = new_Field( elmname, t );
     return ok;
 }
 
@@ -262,16 +263,16 @@ static bool parse_field( field *fp )
  *
  * Return TRUE if you have a valid tuple body.
  */
-static bool parse_field_list( field_list *flp )
+static bool parse_Field_list( Field_list *flp )
 {
     bool ok;
-    field nw;
+    Field nw;
 
-    *flp = new_field_list();
+    *flp = new_Field_list();
     for(;;){
 	ok = parse_field( &nw );
 	if( ok ){
-	    *flp = append_field_list( *flp, nw );
+	    *flp = append_Field_list( *flp, nw );
 	}
 	else {
 	    break;
@@ -287,7 +288,7 @@ static bool parse_field_list( field_list *flp )
 static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
 {
     bool ok;
-    field_list fl;
+    Field_list fl;
     tmstring nm;
 
     if( p_nm == tmstringNIL ){
@@ -300,7 +301,7 @@ static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
     else {
 	nm = rdup_tmstring( p_nm );
     }
-    ok = parse_field_list( &fl );
+    ok = parse_Field_list( &fl );
     if( !ok ){
 	yyerror( "invalid field list" );
 	rfre_tmstring( nm );
@@ -338,7 +339,7 @@ static bool parse_constructor_list( const tmstring super, tmstring nm, ds_list *
 			new_tmstring_list(),
 			rdup_tmstring( super )
 		    ),
-		    new_field_list()
+		    new_Field_list()
 		)
 	    );
 	}
@@ -427,19 +428,19 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
  *
  * Return TRUE if you have a valid tuple body.
  */
-static bool parse_tuplebody( field_list *flp )
+static bool parse_tuplebody( Field_list *flp )
 {
     bool ok;
-    field nw;
+    Field nw;
 
-    *flp = new_field_list();
+    *flp = new_Field_list();
     if( curr_token == RRBRAC || curr_token == RCBRAC ){
 	return TRUE;
     }
     for(;;){
 	ok = parse_field( &nw );
 	if( ok ){
-	    *flp = append_field_list( *flp, nw );
+	    *flp = append_Field_list( *flp, nw );
 	}
 	else {
 	    yyerror( "field expected" );
@@ -474,7 +475,7 @@ static bool parse_tuplebody( field_list *flp )
 static bool parse_tuple_type( tmstring nm, ds *tp )
 {
     bool ok;
-    field_list body;
+    Field_list body;
     tmstring_list inherits;
 
     inherits = new_tmstring_list();
@@ -514,27 +515,9 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
     }
     else {
 	rfre_tmstring( nm );
-	rfre_field_list( body );
+	rfre_Field_list( body );
 	rfre_tmstring_list( inherits );
     }
-    return TRUE;
-}
-
-/* Given a type name 'nm', try to parse a alias definition. Return
- * TRUE if you have a valid alias.
- */
-static bool parse_alias_type( tmstring nm, ds *tp )
-{
-    tmstring_list inherits;
-
-    if( curr_token != NAME ){
-	yyerror( "name expected" );
-	return FALSE;
-    }
-    inherits = new_tmstring_list();
-    inherits = append_tmstring_list( inherits, yylval.parstring );
-    next_token();
-    *tp = (ds) new_DsAlias( nm, inherits );
     return TRUE;
 }
 
@@ -549,7 +532,7 @@ static bool parse_class_component( classComponent *cp )
     classComponent res;
 
     if( curr_token == LCBRAC ){
-	field_list fields;
+	Field_list fields;
 
 	next_token();
 	/* We want a list of field definitions. */
@@ -675,12 +658,12 @@ static bool parse_class_components( classComponent_list *clp )
 static ds_list create_subtype( const tmstring nm, const tmstring super, const classComponent comp )
 {
     tmstring_list inherits;
-    field_list fields;
+    Field_list fields;
     ds_list types;
     tmbool isvirtual = FALSE;
 
     inherits = new_tmstring_list();
-    fields = new_field_list();
+    fields = new_Field_list();
     types = new_ds_list();
     inherits = append_tmstring_list( inherits, rdup_tmstring( super ) );
     update_class_info( nm, &inherits, &fields, &types, comp, &isvirtual );
@@ -695,7 +678,7 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
 static void update_class_info(
     tmstring nm,
     tmstring_list *inherits,
-    field_list *fields,
+    Field_list *fields,
     ds_list *types,
     const classComponent cc,
     tmbool *isvirtual
@@ -707,9 +690,9 @@ static void update_class_info(
 	    break;
 
 	case TAGCCFields:
-	    *fields = concat_field_list(
+	    *fields = concat_Field_list(
 		*fields,
-		rdup_field_list( to_CCFields(cc)->fields )
+		rdup_Field_list( to_CCFields(cc)->fields )
 	    );
 	    break;
 
@@ -747,12 +730,12 @@ static void update_class_info(
 static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbool isvirtual )
 {
     tmstring_list inherits;
-    field_list fields;
+    Field_list fields;
     unsigned int ix;
     ds_list types;
 
     inherits = new_tmstring_list();
-    fields = new_field_list();
+    fields = new_Field_list();
     types = new_ds_list();
     for( ix=0; ix<ccl->sz; ix++ ){
 	update_class_info( nm, &inherits, &fields, &types, ccl->arr[ix], &isvirtual );
@@ -823,11 +806,13 @@ static bool parse_ds( ds_list *dl )
 
 	case ARROW:
 	{
-	    ds nw;
+	    Type t;
 
 	    next_token();
-	    ok = parse_alias_type( nm, &nw );
+	    ok = parse_Type( &t );
 	    if( ok ){
+		ds nw = (ds) new_DsAlias( nm, new_tmstring_list(), t );
+
 		*dl = new_ds_list();
 		*dl = append_ds_list( *dl, nw );
 	    }
