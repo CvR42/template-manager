@@ -121,7 +121,7 @@ test: tmctestrun llutestrun alutestrun aldtestrun
 tmctest: $(TMCTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCTESTOBJS) $(LIBS) -o tmctest
 
-tmctestrun: tmctest tmctesti
+tmctestrun: tmctest tmctesti tmcokout tmcokerr
 	tmctest
 	diff testout tmcokout
 	diff testerr tmcokerr
@@ -137,7 +137,7 @@ tmcinstall: need.t tmc.ct tmc.ht tmcid.t
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
 
-alutestrun: alutest alutesti
+alutestrun: alutest alutesti aluokout aluokerr
 	alutest
 	diff testout aluokout
 	diff testerr aluokerr
@@ -153,7 +153,7 @@ aluinstall: need.t calu.ct calu.ht aluid.t
 aldtest: $(ALDTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALDTESTOBJS) $(LIBS) -o aldtest
 
-aldtestrun: aldtest aldtesti
+aldtestrun: aldtest aldtesti aldokout aldokerr
 	aldtest
 	diff testout aldokout
 	diff testerr aldokerr
