@@ -730,10 +730,10 @@ $(stic_$t)$t rdup_$t( const $t e )
 .endforeach
     return new_$t( ${seplist ", " ${prefix "i_" ${fields $t inherited}}} );
 .case constructor constructorbase class
-.if ${len ${inheritors $t}}
     if( e == $tNIL ){
 	return $tNIL;
     }
+.if ${len ${inheritors $t}}
     switch( e->tag ){
 .foreach c ${subclasses $t}
 	case TAG$c:
