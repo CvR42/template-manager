@@ -1,0 +1,87 @@
+\chapter{An example project: expression optimization}
+\label{s.calc}
+In this chapter we will present a small but complete set of sources to parse
+a simple language, and print it out in the standard Tm representation.
+A second program is presented that reads in this representation,
+replaces constant expressions with a single constant, and writes
+it out again.
+
+\section{The parser}
+\label{s.calcparser}
+You can use the following steps to obtain {\C} code from {\Tm}.
+The steps are illustrated by an example:
+\begin{enumerate}
+\item
+Design the data structures for your problem,
+and encode them in a data structure description file.
+For the example it is assumed that the file {\tt plot.ds} contains the
+data structure definitions of page \pageref{plotds}.
+\item
+Create a configuration file that sets the following {\Tm} variables:
+\begin{itemize}
+\item
+The variable {\tt basename}:
+a name that can be used to identify the complete set of data structures
+for which code will be generated. This name will be used for some global
+routines such as \verb'stat_<basename>()' that are not specific to
+a certain type or constructor.
+\item
+The variable {\tt wantdefs}: the names of the functions that you
+will use in your program.
+If these functions require other functions,
+this will be deduced, and the necessary functions will be generated and
+declared {\tt static} in the generated {\tt .c} file.
+\item
+The variable {\tt notwantdefs}:
+in the rare case that {\Tm} deduces that a function must be generated
+while this is not desirable,
+the name of this function can be appended to the list of
+variable {\tt notwantdefs}.
+\end{itemize}
+For the running example a file {\tt democonf.t} is used with the
+following contents:
+\begin{listing}
+\verbatiminput{democonf.t}
+\end{listing}
+\item
+Create a {\Tm} header file for the generated {\tt .c} and {\tt .h}
+files.
+These files should at least contain
+\begin{itemize}
+\item
+A {\tt .insert} of the configuration file.
+\item
+A {\tt .include} of one of the template files.
+\end{itemize}
+The header file for the {\tt .c} file should contain a {\tt \#include}
+for the generated {\tt .h} file,
+and a {\tt \#include <tmc.h>}: an inclusion of the header file of the
+{\C} support template.
+The header files may also contain other stuff,
+such as functions for primitive types.
+For the example the two header files are:
+\begin{listing}
+\verbatiminput{demo.ht}
+\end{listing}
+and
+\begin{listing}
+\verbatiminput{demo.ct}
+\end{listing}
+\item
+Add rules to your makefile to generate the code:
+\begin{listing}
+\begin{verbatim}
+demo.c : plot.ds demo.ct democonf.t
+        tm plot.ds demo.ct > demo.c
+
+demo.h : plot.ds demo.ht democonf.t
+        tm plot.ds demo.ht > demo.h
+\end{verbatim}
+\end{listing}
+\end{enumerate}
+\par
+The files {\tt demo.h} and {\tt demo.c} that are generated from the
+example configuration are listed
+in appendices~\ref{s.demoh} and~\ref{s.democ}.
+\section{The optimizer}
+\section{Listing of the generated files}
