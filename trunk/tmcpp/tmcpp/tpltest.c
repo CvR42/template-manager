@@ -15,6 +15,54 @@
 
 #include "cppcode.h"
 
+static void dump_int_list( FILE *f, const int_list *l )
+{
+    fputs( "list: ", f );
+    for( unsigned int ix=0; ix<l->size(); ix++ ){
+	fprintf( f, "%d ", l->arr[ix] );
+    }
+    fputs( "\n", f );
+}
+
+static void dump_ref( FILE *f, const int *l )
+{
+    fputs( "reference: ", f );
+    unsigned int ix = 0;
+    while( l[ix] != 0 ){
+	fprintf( f, "%d ", l[ix] );
+	ix++;
+    }
+    fputs( "\n", f );
+}
+
+// Given an int_list and a reference array, make sure the elements agree.
+static void check_int_list( const int line, const int_list *l, int *ref )
+{
+    unsigned int ix = 0;
+
+    while( ref[ix] != 0 ){
+	if( l->size()<=ix ){
+	    fprintf( stderr, "line %d: Constructed list is too short\n", line );
+	    dump_int_list( stderr, l );
+	    dump_ref( stderr, ref );
+	    exit( 0 );
+	}
+	if( l->arr[ix] != ref[ix] ){
+	    fprintf( stderr, "line %d: list contents differ\n", line );
+	    dump_int_list( stderr, l );
+	    dump_ref( stderr, ref );
+	    exit( 0 );
+	}
+	ix++;
+    }
+    if( l->size()>ix ){
+	fprintf( stderr, "line %d: Constructed list is too long\n", line );
+	dump_int_list( stderr, l );
+	dump_ref( stderr, ref );
+	exit( 0 );
+    }
+}
+
 // Test a list of a value type
 static void test_valuetype_list( FILE *infile, FILE *outfile )
 {
@@ -22,8 +70,34 @@ static void test_valuetype_list( FILE *infile, FILE *outfile )
     l->append( 2 );
     l->append( 3 );
     l->append( 7 );
+    {
+	int ref[] = { 2, 3, 7, 0 };
+	check_int_list( __LINE__, l, ref );
+    }
     l->erase( 1 );
+    {
+	int ref[] = { 2, 7, 0 };
+	check_int_list( __LINE__, l, ref );
+    }
+    l->append( 2 );
+    l->append( 3 );
+    l->append( 7 );
+    {
+	int ref[] = { 2, 7, 2, 3, 7, 0 };
+	check_int_list( __LINE__, l, ref );
+    }
+    l->erase( 0, 0 );
+    { int ref[] = { 2, 7, 2, 3, 7, 0 }; check_int_list( __LINE__, l, ref ); }
+    l->erase( 1, 3 );
+    {
+	int ref[] = { 2, 3, 7, 0 };
+	check_int_list( __LINE__, l, ref );
+    }
     int_list *lc = l->clone();
+    {
+	int ref[] = { 2, 3, 7, 0 };
+	check_int_list( __LINE__, lc, ref );
+    }
     if( cmp_int_list( l, lc ) != 0 ){
 	fprintf( stderr, "Duplicate of int list is not the same\n" );
         fprintf( stderr, "Original: " );
@@ -32,17 +106,21 @@ static void test_valuetype_list( FILE *infile, FILE *outfile )
 	fprint_int_list( stderr, lc );
 	exit( 1 );
     }
-    if( l->arr[0] != 2 ){
-	fprintf( stderr, "l[0] has unexpected value %d\n", l->arr[0] );
-	exit( 1 );
-    }
-    if( l->arr[1] != 7 ){
-	fprintf( stderr, "l[1] has unexpected value %d\n", l->arr[1] );
-	exit( 1 );
-    }
     l->concat( lc );
-    lc = l->slice( 1, 2 );
+    {
+	int ref[] = { 2, 3, 7, 2, 3, 7, 0 };
+	check_int_list( __LINE__, l, ref );
+    }
+    lc = l->slice( 1, 3 );
+    {
+	int ref[] = { 3, 7, 0 };
+	check_int_list( __LINE__, lc, ref );
+    }
     lc->reverse();
+    {
+	int ref[] = { 7, 3, 0 };
+	check_int_list( __LINE__, lc, ref );
+    }
     fprint_int_list( outfile, l );
     TmPrintState *st = new TmPrintState( outfile, 4, 78, 8, 0 );
     print_int_list( st, l );

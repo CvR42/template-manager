@@ -200,6 +200,7 @@ public:
 .endif
 .if ${member $t $(need_erase_list)}
     void erase( const unsigned int );
+    void erase( const unsigned int, const unsigned int );
 .endif
 .if ${member $t $(need_slice_list)}
     $t_list *slice( const unsigned int, const unsigned int ) const;
