@@ -276,7 +276,7 @@ Testing error handling:
 ..'${deptype reutel ${first ${typelist}}}'
 ..'${deptype}'
 Type sorting:
-depsort: [${depsort int ${typelist}}]
+depsort: [${depsort int_list int ${typelist}} ]
 ----
 .endforeach
 

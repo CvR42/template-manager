@@ -312,16 +312,15 @@ static tmstring fnstrpad( const tmstring_list sl )
 	line_error( "'pad' requires exactly three parameters" );
 	return new_tmstring( "" );
     }
-    buf = new_tmstring( "" );
     w = sl->arr[0];
     pw = sl->arr[2];
     if( *pw == '\0' ){
 	line_error( "empty padding string" );
-	return buf;
+	return new_tmstring( "" );;
     }
     cknumpar( sl->arr[1] );
     len = atoi( sl->arr[1] );
-    buf = realloc_tmstring( buf, len+1 );
+    buf = create_tmstring( len+1 );
     wp = w;
     bufp = buf;
     while( len!=0 && *wp != '\0' ){
@@ -510,26 +509,25 @@ static tmstring fnprefix( const tmstring_list sl )
     tmstring pfstr;
     tmstring ans;
     tmstring buf;
-    unsigned int len;
-    unsigned int maxlen;
+    size_t len;
+    size_t maxlen;
     tmstring_list nl;
     unsigned int ix;
 
-    buf = new_tmstring( "" );
     if( sl->sz<1 ){
 	line_error( "'prefix' requires at least one parameter" );
-	return buf;
+	return new_tmstring( "" );
     }
     pfstr = sl->arr[0];
     maxlen = 0;
     for( ix=1; ix<sl->sz; ix++ ){
-	len = (int) strlen( sl->arr[ix] );
+	len = strlen( sl->arr[ix] );
 	if( len>maxlen ){
 	    maxlen = len;
 	}
     }
-    len = 1 + (int) strlen( pfstr ) + maxlen;
-    buf = realloc_tmstring( buf, len );
+    len = 1 + strlen( pfstr ) + maxlen;
+    buf = create_tmstring( len );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
 	(void) sprintf( buf, "%s%s", pfstr, sl->arr[ix] );
@@ -547,26 +545,25 @@ static tmstring fnsuffix( const tmstring_list sl )
     tmstring sfstr;
     tmstring ans;
     tmstring buf;
-    unsigned int len;
-    unsigned int maxlen;
+    size_t len;
+    size_t maxlen;
     tmstring_list nl;
     unsigned int ix;
 
-    buf = new_tmstring( "" );
     if( sl->sz<1 ){
 	line_error( "'suffix' requires at least one parameter" );
-	return buf;
+	return new_tmstring( "" );
     }
     sfstr = sl->arr[0];
     maxlen = 0;
     for( ix=1; ix<sl->sz; ix++ ){
-	len = (int) strlen( sl->arr[ix] );
+	len = strlen( sl->arr[ix] );
 	if( len>maxlen ){
 	    maxlen = len;
 	}
     }
-    len = 1 + (int) strlen( sfstr ) + maxlen;
-    buf = realloc_tmstring( buf, len );
+    len = 1 + strlen( sfstr ) + maxlen;
+    buf = create_tmstring( len );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
 	(void) sprintf( buf, "%s%s", sl->arr[ix], sfstr );
@@ -954,6 +951,29 @@ static tmstring fnnot( const tmstring_list sl )
 
 /* -- datastructure access & file name access -- */
 
+/* Given a list prefix 'pre' and suffix 'suff', and a type 't',
+ * return TRUE if 't' is a list type. That is, it starts with the
+ * given 
+ */
+static tmstring get_element_type( const char *pre, const char *suff, const tmstring t )
+{
+    const size_t prelen = strlen( pre );
+    const size_t sufflen = strlen( suff );
+    const size_t tlen = strlen( t );
+
+    if(
+	tlen>prelen+sufflen &&
+	strncmp( pre, t, prelen ) == 0 &&
+	strncmp( suff, t+tlen-sufflen, sufflen ) == 0 
+    ){
+	tmstring ns = rdup_tmstring( t+prelen );
+
+	ns[tlen-(prelen+sufflen)] = '\0';
+	return ns;
+    }
+    return tmstringNIL;
+}
+
 /* listtypes <list> */
 static tmstring fnlisttypes( const tmstring_list sl )
 {
@@ -962,8 +982,6 @@ static tmstring fnlisttypes( const tmstring_list sl )
     unsigned int ix;
     char *pre;
     char *suff;
-    size_t sufflen;
-    size_t prelen;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -973,18 +991,13 @@ static tmstring fnlisttypes( const tmstring_list sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    prelen = strlen( pre );
-    sufflen = strlen( suff );
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	tmstring s = sl->arr[ix];
-	size_t l = strlen( s );
+	const tmstring s = sl->arr[ix];
+	tmstring et = get_element_type( pre, suff, s );
 
-	if(
-	    l>prelen+sufflen &&
-	    strncmp( pre, s, prelen ) == 0 &&
-	    strncmp( suff, s+l-sufflen, sufflen ) == 0 
-	){
+	if( et != tmstringNIL ){
+	    rfre_tmstring( et );
 	    nl = append_tmstring_list( nl, rdup_tmstring( s ) );
 	}
     }
@@ -1017,17 +1030,10 @@ static tmstring fndelisttypes( const tmstring_list sl )
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	tmstring s = sl->arr[ix];
-	size_t l = strlen( s );
+	tmstring et = get_element_type( pre, suff, s );
 
-	if(
-	    l>prelen+sufflen &&
-	    strncmp( pre, s, prelen ) == 0 &&
-	    strncmp( suff, s+l-sufflen, sufflen ) == 0 
-	){
-	    tmstring ns = rdup_tmstring( s+prelen );
-
-	    ns[l-(prelen+sufflen)] = '\0';
-	    nl = append_tmstring_list( nl, ns );
+	if( et != tmstringNIL ){
+	    nl = append_tmstring_list( nl, et );
 	}
     }
     ans = flatstrings( nl );
@@ -1043,8 +1049,6 @@ static tmstring fnsingletypes( const tmstring_list sl )
     unsigned int ix;
     char *pre;
     char *suff;
-    size_t sufflen;
-    size_t prelen;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1054,19 +1058,16 @@ static tmstring fnsingletypes( const tmstring_list sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    prelen = strlen( pre );
-    sufflen = strlen( suff );
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	tmstring s = sl->arr[ix];
-	size_t l = strlen( s );
+	tmstring et = get_element_type( pre, suff, s );
 
-	if(
-	    l<=prelen+sufflen ||
-	    strncmp( pre, s, prelen ) != 0 ||
-	    strncmp( suff, s+l-sufflen, sufflen ) != 0 
-	){
+	if( et == tmstringNIL ){
 	    nl = append_tmstring_list( nl, rdup_tmstring( s ) );
+	}
+	else {
+	    rfre_tmstring( et );
 	}
     }
     ans = flatstrings( nl );
@@ -1082,9 +1083,6 @@ static tmstring fnstemname( const tmstring_list sl )
     unsigned int ix;
     char *pre;
     char *suff;
-    tmstring nwin;
-    tmstring nwout;
-    char *suffstart;
     size_t sufflen;
     size_t prelen;
 
@@ -1098,23 +1096,22 @@ static tmstring fnstemname( const tmstring_list sl )
     }
     prelen = strlen( pre );
     sufflen = strlen( suff );
+    if( pre[0] == '\0' && suff[0] == '\0' ){
+	line_error( "'stemname' cannot function if both '" LISTPRE "' and '" LISTSUFF "' are empty" );
+	ans = flatstrings( sl );
+	return ans;
+    }
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	nwin = rdup_tmstring( sl->arr[ix] );
-	suffstart = &nwin[strlen( nwin )-sufflen];
-	while(
-	    (prelen!=0 || sufflen != 0) &&
-	    suffstart>&nwin[prelen] &&
-	    strncmp( nwin, pre, prelen )==0 &&
-	    strcmp( suffstart, suff )==0
-	){
-	    suffstart[0] = '\0';
-	    nwout = new_tmstring( nwin+prelen );
-	    rfre_tmstring( nwin );
-	    nwin = nwout;
-	    suffstart = &nwin[strlen( nwin )-sufflen];
+	tmstring old = rdup_tmstring( sl->arr[ix] );
+	tmstring new = get_element_type( pre, suff, old );
+
+	while( new != tmstringNIL ){
+	    rfre_tmstring( old );
+	    old = new;
+	    new = get_element_type( pre, suff, old );
 	}
-	nl = append_tmstring_list( nl, nwin );
+	nl = append_tmstring_list( nl, old );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -1326,44 +1323,6 @@ static ds findtype( ds_list dl, const tmstring t )
     }
     return dl->arr[ix];
 }
-
-#if 0
-/* Given a list of constructors 'dl', search for
-   constructor with name 'nm'. Give an error message if it is not found.
- */ 
-static constructor find_constructor( constructor_list cl, const tmstring nm )
-{
-    unsigned int ix;
-
-    ix = find_constructor_ix( cl, nm );
-    if( ix<cl->sz ){
-	return cl->arr[ix];
-    }
-    (void) strcpy( errarg, nm );
-    line_error( "no such constructor" );
-    return constructorNIL;
-}
-#endif
-
-#if 0
-/* Given a list of constructor elements 'el',
-   search for constructor element with name 'nm'.
- */ 
-static field findfield( field_list el, const tmstring nm )
-{
-    unsigned int ix;
-    field e;
-
-    for( ix=0; ix<el->sz; ix++ ){
-	e = el->arr[ix];
-	if( strcmp( e->name, nm ) == 0 )
-	    return e;
-    }
-    (void) strcpy( errarg, nm );
-    line_error( "no such constructor element" );
-    return fieldNIL;
-}
-#endif
 
 /* Given a type name, return TRUE if the type is virtual. */
 static tmstring fnisvirtual( const tmstring_list sl )
@@ -1859,205 +1818,35 @@ static tmstring fnctypellev( const tmstring_list sl )
     return newintstr( e->level );
 }
 
-/* Given a type name 'tnm', a list level 'listlev', an array of marked
- * flags 'marked', an array of list levels 'levels' and a list of type
- * definitions 'dl', mark type 'tnm' as dependent with a list level of
- * at least 'listlev'.
- *
- * If this type is not yet marked, mark it, and also mark all types
- * occurring in the constructor or tuple elements of this type.
- */
-static void markdep(
-    bool *marked,
-    int *levels,
-    const tmstring tnm,
-    int listlev,
-    ds_list dl
-)
-{
-    unsigned int tix;
-    ds d;
-
-    tix = find_type_ix( dl, tnm );
-    if( tix>=dl->sz ){
-	return;
-    }
-    d = dl->arr[tix];
-    if( marked[tix] ){
-	if( levels[tix]<listlev ){
-	    levels[tix] = listlev;
-	}
-	return;
-    }
-    marked[tix] = TRUE;
-    levels[tix] = listlev;
-    switch( d->tag ){
-	case TAGDsCons:
-	{
-	    unsigned int ix;
-	    tmstring_list cl = d->DsCons.constructors;
-
-	    for( ix=0; ix<cl->sz; ix++ ){
-		unsigned int cix;
-
-		cix = find_type_ix( dl, cl->arr[ix] );
-		if( cix<cl->sz ){
-		    ds c = dl->arr[ix];
-
-		    if( c->tag == TAGDsConstructor ){
-			field_list el = c->DsConstructor.fields;
-			unsigned int eix;
-
-			for( eix=0; eix<el->sz; eix++ ){
-			    const field e = el->arr[eix];
-
-			    markdep( marked, levels, e->type, e->level, dl );
-			}
-		    }
-		}
-	    }
-	    break;
-	}
-
-	case TAGDsTuple:
-	{
-	    field_list el = d->DsTuple.fields;
-	    unsigned int eix;
-
-	    for( eix=0; eix<el->sz; eix++ ){
-		const field e = el->arr[eix];
-
-		markdep( marked, levels, e->type, e->level, dl );
-	    }
-	    break;
-	}
-
-	case TAGDsClass:
-	{
-	    field_list el = d->DsClass.fields;
-	    unsigned int eix;
-
-	    for( eix=0; eix<el->sz; eix++ ){
-		const field e = el->arr[eix];
-
-		markdep( marked, levels, e->type, e->level, dl );
-	    }
-	    break;
-	}
-
-	case TAGDsConstructor:
-	{
-	    field_list el = d->DsConstructor.fields;
-	    unsigned int eix;
-
-	    for( eix=0; eix<el->sz; eix++ ){
-		const field e = el->arr[eix];
-
-		markdep( marked, levels, e->type, e->level, dl );
-	    }
-	    break;
-	}
-
-    }
-}
-
-/* Given a class name, and a list of type names, determine which types and
-   lists of types are dependent on these types.
-   If class name is 'single' return the list of types that required for
-   the given types.
-   If class name is 'single' return the list of type lists that required for
-   the given types.
-   The top level types are assumed to be 'single'.
- */
-static tmstring fndeptype( const tmstring_list sl )
-{
-    bool *marked;
-    int *levels;
-    tmstring ans;
-    unsigned int ix;
-    tmstring_list nl;
-    tmstring vp;
-    char *bufin;
-    char *bufout;
-    char *pre;
-    char *suff;
-    bool islist;
-    int lev;
-
-    if( sl->sz<1 ){
-	line_error( "'deptype' requires at least one parameter" );
-	return new_tmstring( "" );
-    }
-    if( strcmp( sl->arr[0], "single" ) == 0 ){
-	islist = FALSE;
-    }
-    else if( strcmp( sl->arr[0], "list" ) == 0 ){
-	islist = TRUE;
-    }
-    else {
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "bad parameter" );
-	return new_tmstring( "" );
-    }
-    /* The +1 below is to ensure no malloc of size 0 */
-    marked = TM_MALLOC( bool *,(allds->sz+1)*sizeof(bool) );
-    levels = TM_MALLOC( int *, (allds->sz+1)*sizeof(int) );
-    for( ix=0; ix<allds->sz; ix++ ){
-	marked[ix] = FALSE;
-	levels[ix] = 0;
-    }
-    for( ix=1; ix<sl->sz; ix++ ){
-	markdep( marked, levels, sl->arr[ix], 0, allds );
-    }
-    nl = new_tmstring_list();
-    if( islist ){
-	pre = getvar( LISTPRE );
-	if( pre == CHARNIL ){
-	    pre = "";
-	}
-	suff = getvar( LISTSUFF );
-	if( suff == CHARNIL ){
-	    suff = "";
-	}
-	for( ix=0; ix<allds->sz; ix++ ){
-	    vp = get_type_name( allds->arr[ix] );
-	    if( marked[ix] ){
-		bufin = rdup_tmstring( vp );
-		for( lev=1; lev<=levels[ix]; lev++ ){
-		    bufout = mklistnm( pre, bufin, suff, 1 );
-		    nl = append_tmstring_list( nl, bufin );
-		    bufin = bufout;
-		}
-		rfre_tmstring( bufin );
-	    }
-	}
-    }
-    else {
-	for( ix=0; ix<allds->sz; ix++ ){
-	    if( marked[ix] ){
-		vp = get_type_name( allds->arr[ix] );
-		nl = append_tmstring_list( nl, new_tmstring( vp ) );
-	    }
-	}
-    }
-    TM_FREE( marked );
-    TM_FREE( levels );
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
-    return ans;
-}
-
 /* Given a type name 't' and a list of types 'tl', return 'TRUE' if
  * 't' depends on one of the types in 'tl'. That is, 't' is a tuple
  * type, and at least one of the field types of 't' occurs in tl'.
  *
  * Constructor types are not supposed to depend on other types.
+ *
+ * List types depend on their element types; for nested types this
+ * applies transitively.
  */
-static bool depends_on( const tmstring t, const tmstring_list tl )
+static bool depends_on( const char *pre, const char *suff, const tmstring t, const tmstring_list tl )
 {
     unsigned int ix;
     ds d;
 
+    if( pre[0] != '\0' || suff[0] != '\0' ){
+	tmstring base = get_element_type( pre, suff, t );
+
+	while( base != tmstringNIL ){
+	    tmstring new;
+
+	    if( member_tmstring_list( base, tl ) ){
+		rfre_tmstring( base );
+		return TRUE;
+	    }
+	    new = get_element_type( pre, suff, base );
+	    rfre_tmstring( base );
+	    base = new;
+	}
+    }
     ix = find_type_ix( allds, t );
     if( ix>=allds->sz ) return FALSE;
     d = allds->arr[ix];
@@ -2124,7 +1913,17 @@ static tmstring fndepsort( tmstring_list sl )
     tmstring t;
     tmstring baddies;
     tmstring ans;
+    char *pre;
+    char *suff;
 
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
     nl = new_tmstring_list();
     while( sl->sz!=0 ){
 	found = FALSE;
@@ -2132,7 +1931,7 @@ static tmstring fndepsort( tmstring_list sl )
 	foundix = 0;
 	while( !found && ix<sl->sz ){
 	    t = sl->arr[ix];
-	    if( !depends_on( t, sl ) ){
+	    if( !depends_on( pre, suff, t, sl ) ){
 		 found = TRUE;
 		 foundix = ix;
 	    }
@@ -2382,7 +2181,6 @@ static struct fnentry fntab[] = {
      { "ctypename", fnctypename },
      { "defined", fndefined },
      { "depsort", fndepsort },
-     { "deptype", fndeptype },
      { "dsfilename", fndsfilename },
      { "eq", fnstreq },
      { "eval", fneval },

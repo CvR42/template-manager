@@ -14,6 +14,7 @@ testin: 'if' requires at least a condition expression
 testin: 'index' requires at least one parameter
 testin: 'member' requires at least one parameter
 testin: 'mklist' requires at least one parameter
+testin: 'stemname' cannot function if both 'listpre' and 'listsuff' are empty
 testin: 'mklist' requires at least one parameter
 testin: 'mklist' requires at least one parameter
 testin: 'mklist' requires at least one parameter
