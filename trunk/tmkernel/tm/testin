@@ -224,6 +224,7 @@ types: '${types}'
 types <all>: '${types ${typelist}}'
 subclasses <all>: '${subclasses ${typelist}}'
 conslist <all>: '${conslist ${typelist}}'
+metatype: ${metatype} ${metatype a b c} ${metatype a} ${metatype [a]}
 
 .foreach mode "" inherited
 Mode `$(mode)':
@@ -241,6 +242,7 @@ classlist: '${classlist}'
     superclasses $t: '${superclasses $t }'
     subclasses $t: '${subclasses $t }'
     isvirtual $t: '${isvirtual $t }'
+    metatype $t: '${metatype $t }'
 .foreach c ${conslist $t}
         celmlist $(mode): '${celmlist $t $c $(mode)}'
         fields $c $(mode): '${fields $c $(mode)}'

@@ -1192,7 +1192,7 @@ static tmstring fnconstructorlist( const tmstring_list sl )
     for( ix = 0; ix< allds->sz; ix++ ){
 	d = allds->arr[ix];
 	switch( d->tag ){
-	    case TAGDsCons:
+	    case TAGDsConstructorBase:
 		break;
 
 	    case TAGDsTuple:
@@ -1225,8 +1225,8 @@ static tmstring fnctypelist( const tmstring_list sl )
     for( ix = 0; ix< allds->sz; ix++ ){
 	d = allds->arr[ix];
 	switch( d->tag ){
-	    case TAGDsCons:
-		nl = append_tmstring_list( nl, new_tmstring( d->DsCons.name ) );
+	    case TAGDsConstructorBase:
+		nl = append_tmstring_list( nl, new_tmstring( d->DsConstructorBase.name ) );
 		break;
 
 	    case TAGDsTuple:
@@ -1263,7 +1263,7 @@ static tmstring fntuplelist( const tmstring_list sl )
 		nl = append_tmstring_list( nl, new_tmstring( d->DsClass.name ) );
 		break;
 
-	    case TAGDsCons:
+	    case TAGDsConstructorBase:
 	    case TAGDsConstructor:
 	    case TAGDsClass:
 		break;
@@ -1292,7 +1292,7 @@ static tmstring fnclasslist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-	    case TAGDsCons:
+	    case TAGDsConstructorBase:
 	    case TAGDsConstructor:
 		break;
 
@@ -1327,33 +1327,82 @@ static ds findtype( ds_list dl, const tmstring t )
 /* Given a type name, return TRUE if the type is virtual. */
 static tmstring fnisvirtual( const tmstring_list sl )
 {
-    ds d;
     bool ans;
+    unsigned int ix;
 
     if( sl->sz != 1 ){
 	line_error( "'isvirtual' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
-	return new_tmstring( "" );
-    }
     ans = FALSE;
-    switch( d->tag ){
-	case TAGDsCons:
-	    ans = TRUE;
-	    break;
+    ix = find_type_ix( allds, sl->arr[0] );
+    if( ix<allds->sz ){
+	ds d = allds->arr[ix];
 
-	case TAGDsTuple:
-	case TAGDsConstructor:
-	    break;
+	switch( d->tag ){
+	    case TAGDsConstructorBase:
+		ans = TRUE;
+		break;
 
-	case TAGDsClass:
-	    ans = d->DsClass.virtual;
-	    break;
+	    case TAGDsTuple:
+	    case TAGDsConstructor:
+		break;
 
+	    case TAGDsClass:
+		ans = d->DsClass.virtual;
+		break;
+
+	}
     }
     return newboolstr( ans );
+}
+
+/* Given a type name, return the metatype of this type.  */
+static tmstring fnmetatype( const tmstring_list sl )
+{
+    unsigned int ix;
+    char *pre;
+    char *suff;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    if( sl->sz != 1 ){
+	line_error( "'metatype' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    ix = find_type_ix( allds, sl->arr[0] );
+    if( ix<allds->sz ){
+	ds d = allds->arr[ix];
+	switch( d->tag ){
+	    case TAGDsConstructorBase:
+		return new_tmstring( "constructorbase" );
+
+	    case TAGDsConstructor:
+		return new_tmstring( "constructor" );
+
+	    case TAGDsTuple:
+		return new_tmstring( "tuple" );
+
+	    case TAGDsClass:
+		return new_tmstring( "class" );
+
+	}
+    }
+    {
+	tmstring et = get_element_type( pre, suff, sl->arr[0] );
+
+	if( et != tmstringNIL ){
+	    rfre_tmstring( et );
+	    return new_tmstring( "list" );
+	}
+    }
+    return new_tmstring( "atom" );
 }
 
 /* Given a type name, return the subclasses (transitive closure of inherits)
@@ -1460,7 +1509,7 @@ static tmstring fnfields( const tmstring_list sl )
 	/* findtype already complained about this. */
 	return new_tmstring( "" );
     }
-    if( d->tag == TAGDsCons ){
+    if( d->tag == TAGDsConstructorBase ){
 	sprintf( errarg, "type `%s'", sl->arr[0] );
 	line_error( "'fields' does not work on a constructor type" );
 	/* Fall through, since nothing chokes on a constructor type. */
@@ -1569,7 +1618,7 @@ static tmstring fntypes( const tmstring_list tl )
 	    field_list fl = field_listNIL;
 
 	    switch( d->tag ){
-		case TAGDsCons:
+		case TAGDsConstructorBase:
 		    break;
 
 		case TAGDsTuple:
@@ -1648,10 +1697,10 @@ static tmstring fnconslist( const tmstring_list tl )
 	if( dix<allds->sz ){
 	    const ds d = allds->arr[dix];
 
-	    if( d->tag == TAGDsCons ){
+	    if( d->tag == TAGDsConstructorBase ){
 		nl = concat_tmstring_list(
 		    nl,
-		    rdup_tmstring_list( d->DsCons.constructors )
+		    rdup_tmstring_list( d->DsConstructorBase.constructors )
 		);
 	    }
 	}
@@ -1684,12 +1733,12 @@ static tmstring fncelmlist( const tmstring_list sl )
 	}
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsCons ){
+    if( d == dsNIL || d->tag != TAGDsConstructorBase ){
 	(void) strcpy( errarg, sl->arr[0] );
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.constructors;
+    cl = d->DsConstructorBase.constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1724,12 +1773,12 @@ static tmstring fnctypename( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsCons ){
+    if( d == dsNIL || d->tag != TAGDsConstructorBase ){
 	(void) strcpy( errarg, sl->arr[0] );
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.constructors;
+    cl = d->DsConstructorBase.constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1762,12 +1811,12 @@ static tmstring fnctypeclass( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsCons ){
+    if( d == dsNIL || d->tag != TAGDsConstructorBase ){
 	(void) strcpy( errarg, sl->arr[0] );
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.constructors;
+    cl = d->DsConstructorBase.constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1797,12 +1846,12 @@ static tmstring fnctypellev( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsCons ){
+    if( d == dsNIL || d->tag != TAGDsConstructorBase ){
 	(void) strcpy( errarg, sl->arr[0] );
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.constructors;
+    cl = d->DsConstructorBase.constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1850,7 +1899,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
     if( ix>=allds->sz ) return FALSE;
     d = allds->arr[ix];
     switch( d->tag ){
-	case TAGDsCons:
+	case TAGDsConstructorBase:
 	    break;
 
 	case TAGDsTuple:
@@ -2226,6 +2275,7 @@ static struct fnentry fntab[] = {
      { "matchmacro", fnmatchmacro },
      { "max", fnmax },
      { "member", fnmember },
+     { "metatype", fnmetatype },
      { "min", fnmin },
      { "mklist", fnmklist },
      { "neq", fnstrneq },
@@ -2262,9 +2312,9 @@ static struct fnentry fntab[] = {
      { "tuplelist", fntuplelist },
      { "type", fntype },
      { "typelevel", fntypelevel },
-     { "types", fntypes },
      { "typelist", fntypelist },
      { "typename", fntypename },
+     { "types", fntypes },
      { "uniq", fnuniq },
      { "", fnplus }
 };

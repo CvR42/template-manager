@@ -60,8 +60,8 @@ static long newcnt_CCAlternatives = 0;
 static long frecnt_CCAlternatives = 0;
 static long newcnt_CCSublist = 0;
 static long frecnt_CCSublist = 0;
-static long newcnt_DsCons = 0;
-static long frecnt_DsCons = 0;
+static long newcnt_DsConstructorBase = 0;
+static long frecnt_DsConstructorBase = 0;
 static long newcnt_DsTuple = 0;
 static long frecnt_DsTuple = 0;
 static long newcnt_DsClass = 0;
@@ -344,11 +344,11 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_CCFields(fields) real_new_CCFields(fields,_f,_l)
 #define new_CCAlternatives(alternatives) real_new_CCAlternatives(alternatives,_f,_l)
 #define new_CCSublist(components) real_new_CCSublist(components,_f,_l)
-#undef new_DsCons
+#undef new_DsConstructorBase
 #undef new_DsTuple
 #undef new_DsClass
 #undef new_DsConstructor
-#define new_DsCons(name,inherits,constructors) real_new_DsCons(name,inherits,constructors,_f,_l)
+#define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,_f,_l)
 #define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,_f,_l)
 #define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,_f,_l)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,_f,_l)
@@ -834,9 +834,9 @@ classComponent new_CCSublist( classComponent_list p_components )
 }
 
 #ifdef LOGNEW
-ds real_new_DsCons( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constructors, const char *_f, const int _l )
+ds real_new_DsConstructorBase( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constructors, const char *_f, const int _l )
 #else
-ds new_DsCons( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constructors )
+ds new_DsConstructorBase( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constructors )
 #endif
 {
     ds nw;
@@ -851,12 +851,12 @@ ds new_DsCons( tmstring p_name, tmstring_list p_inherits, tmstring_list p_constr
 #ifdef USECACHE
     }
 #endif
-    nw->tag = TAGDsCons;
-    nw->DsCons.name = p_name;
-    nw->DsCons.inherits = p_inherits;
-    nw->DsCons.constructors = p_constructors;
+    nw->tag = TAGDsConstructorBase;
+    nw->DsConstructorBase.name = p_name;
+    nw->DsConstructorBase.inherits = p_inherits;
+    nw->DsConstructorBase.constructors = p_constructors;
 #ifdef STAT
-    newcnt_DsCons++;
+    newcnt_DsConstructorBase++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1654,8 +1654,8 @@ static void fre_ds( ds e )
 #endif
 #ifdef STAT
     switch( e->tag ){
-	case TAGDsCons:
-	    frecnt_DsCons++;
+	case TAGDsConstructorBase:
+	    frecnt_DsConstructorBase++;
 	    break;
 
 	case TAGDsTuple:
@@ -2267,10 +2267,10 @@ void rfre_ds( ds e )
 	return;
     }
     switch( e->tag ){
-	case TAGDsCons:
-	    rfre_tmstring( e->DsCons.name );
-	    rfre_tmstring_list( e->DsCons.inherits );
-	    rfre_tmstring_list( e->DsCons.constructors );
+	case TAGDsConstructorBase:
+	    rfre_tmstring( e->DsConstructorBase.name );
+	    rfre_tmstring_list( e->DsConstructorBase.inherits );
+	    rfre_tmstring_list( e->DsConstructorBase.constructors );
 	    break;
 
 	case TAGDsTuple:
@@ -2588,11 +2588,11 @@ static void print_ds( TMPRINTSTATE *st, const ds t )
     }
     tm_opencons( st );
     switch( t->tag ){
-	case TAGDsCons:
-	    tm_printword( st, "DsCons" );
-	    print_tmstring( st, t->DsCons.name );
-	    print_tmstring_list( st, t->DsCons.inherits );
-	    print_tmstring_list( st, t->DsCons.constructors );
+	case TAGDsConstructorBase:
+	    tm_printword( st, "DsConstructorBase" );
+	    print_tmstring( st, t->DsConstructorBase.name );
+	    print_tmstring_list( st, t->DsConstructorBase.inherits );
+	    print_tmstring_list( st, t->DsConstructorBase.constructors );
 	    break;
 
 	case TAGDsTuple:
@@ -2729,16 +2729,16 @@ ds rdup_ds( const ds e )
 	return dsNIL;
     }
     switch( e->tag ){
-	case TAGDsCons:
+	case TAGDsConstructorBase:
 	{
 	    tmstring i_name;
 	    tmstring_list i_inherits;
 	    tmstring_list i_constructors;
 
-	    i_name = rdup_tmstring( e->DsCons.name );
-	    i_inherits = rdup_tmstring_list( e->DsCons.inherits );
-	    i_constructors = rdup_tmstring_list( e->DsCons.constructors );
-	    return new_DsCons( i_name, i_inherits, i_constructors );
+	    i_name = rdup_tmstring( e->DsConstructorBase.name );
+	    i_inherits = rdup_tmstring_list( e->DsConstructorBase.inherits );
+	    i_constructors = rdup_tmstring_list( e->DsConstructorBase.constructors );
+	    return new_DsConstructorBase( i_name, i_inherits, i_constructors );
 	}
 
 	case TAGDsTuple:
@@ -3300,10 +3300,10 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
-	"DsCons",
-	newcnt_DsCons,
-	frecnt_DsCons,
-	((newcnt_DsCons==frecnt_DsCons)? "": "<-")
+	"DsConstructorBase",
+	newcnt_DsConstructorBase,
+	frecnt_DsConstructorBase,
+	((newcnt_DsConstructorBase==frecnt_DsConstructorBase)? "": "<-")
     );
     fprintf(
 	f,
@@ -3630,10 +3630,10 @@ int get_balance_tm( void )
     if( newcnt_CCSublist>frecnt_CCSublist ){
         res = 1;
     }
-    if( newcnt_DsCons<frecnt_DsCons ){
+    if( newcnt_DsConstructorBase<frecnt_DsConstructorBase ){
         return -1;
     }
-    if( newcnt_DsCons>frecnt_DsCons ){
+    if( newcnt_DsConstructorBase>frecnt_DsConstructorBase ){
         res = 1;
     }
     if( newcnt_DsTuple<frecnt_DsTuple ){

@@ -26,6 +26,8 @@ testin: 'fields' requires one or two parameters
 testin: 'fields' second parameter must be absent or `inherited'
 testin: unknown type: bla
 testin: unknown type: notatype
+testin: 'metatype' requires exactly one parameter
+testin: 'metatype' requires exactly one parameter
 testin: 'fields' does not work on a constructor type: type `sublevel'
 testin: 'fields' does not work on a constructor type: type `sublevel'
 testin: 'fields' does not work on a constructor type: type `toplevel'
