@@ -1433,13 +1433,11 @@ int get_balance_$(basename)( void )
     int res;
 
     res = 0;
+    /* Now check for too many fre()s. */
 #ifdef STAT
 .foreach t $(need_stat_list)
     if( newcnt_$t_list<frecnt_$t_list ){
         return -1;
-    }
-    if( newcnt_$t_list>frecnt_$t_list ){
-        res = 1;
     }
 .endforeach
 .foreach t $(need_stat)
@@ -1447,15 +1445,29 @@ int get_balance_$(basename)( void )
     if( newcnt_$t<frecnt_$t ){
         return -1;
     }
-    if( newcnt_$t>frecnt_$t ){
-        res = 1;
-    }
 .endif
 .if ${member $t ${ctypelist}}
 .foreach c ${conslist $t}
     if( newcnt_$c<frecnt_$c ){
         return -1;
     }
+.endforeach
+.endif
+.endforeach
+    /* Now check for too few fre()s. */
+.foreach t $(need_stat_list)
+    if( newcnt_$t_list>frecnt_$t_list ){
+        res = 1;
+    }
+.endforeach
+.foreach t $(need_stat)
+.if ${member $t ${tuplelist} ${classlist}}
+    if( newcnt_$t>frecnt_$t ){
+        res = 1;
+    }
+.endif
+.if ${member $t ${ctypelist}}
+.foreach c ${conslist $t}
     if( newcnt_$c>frecnt_$c ){
         res = 1;
     }
