@@ -40,13 +40,16 @@ MAKEFILE = Makefile
 DOC = README
 
 JUNK = tmp core makelog testerr testout alutest llutest config.log \
-       gmon.out log alutest.c llutest.c dist.lst distlist
+       gmon.out log alutest.c llutest.c dist.lst distlist tmctest.c \
+       alutest.c llutest.c tmctest tmcwalktest aldtest
+
 
 TESTFILES = \
     cltest.ds test.ds xxtest.c \
     tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
     aluokerr aluokout alutesti aluspec.t alucode.ct alucode.ht \
-    lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht
+    lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht \
+    tmcwalktest.ct tmcwalkin tmcwalkok
 
 FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
@@ -60,7 +63,7 @@ DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 TMMODULES     = tmc.ct tmc.ht \
 		calu.ct calu.ht \
                 cllu.ct cllu.ht \
-                need.t \
+                need.t tmcwalk.t \
 		macros.t tmcid.t aluid.t lluid.t
 
 LLUTMSRCS     = llucode.c 
@@ -83,14 +86,19 @@ TMCTESTSRCS   = tmctest.c tmccode.c
 TMCTESTHDRS   = tmccode.h
 TMCTESTOBJS   = tmctest.o tmccode.o
 
+TMCWALKTESTSRCS = tmcwalktest.c tmccode.c
+TMCWALKTESTOBJS = $(TMCWALKTESTSRCS:.c=.o)
+
 ALUTESTSRCS   = alutest.c alucode.c
 ALUTESTHDRS   = alucode.h
 ALUTESTOBJS   = alutest.o alucode.o
 
-OBJS = tmccode.o alutest.o alucode.o alutest.o llucode.o llutest.o
+OBJS = $(TMCWALKTESTOBJS) tmccode.o alutest.o alucode.o alutest.o llucode.o \
+ llutest.o tmctest.o
 
 # These sources are generated from tm templates.
-TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h
+TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h \
+ tmcwalktest.c
 
 help :
 	@echo " Possible make targets:"
@@ -102,11 +110,18 @@ help :
 	@echo "test		Run tests."
 
 #
-all: tmctest llutest alutest
+all: tmctest llutest alutest tmcwalktest
 
 # Add rules for the programs themselves here.
 
-test: tmctestrun llutestrun alutestrun
+test: tmctestrun llutestrun alutestrun tmcwalktestrun
+
+tmcwalktest: $(TMCWALKTESTOBJS)
+	$(LINKER) $(LDFLAGS) $(TMCWALKTESTOBJS) $(LIBS) -o tmcwalktest
+
+tmcwalktestrun: tmcwalktest tmcwalkin tmcwalkok
+	tmcwalktest
+	diff testout tmcwalkok
 
 tmctest: $(TMCTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCTESTOBJS) $(LIBS) -o tmctest
@@ -116,13 +131,14 @@ tmctestrun: tmctest tmctesti tmcokout tmcokerr
 	diff testout tmcokout
 	diff testerr tmcokerr
 
-tmcinstall: need.t tmc.ct tmc.ht tmcid.t
+tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t
 	-$(INSTALL) -d $(LOCALLIB)
 	cat macros.t tmcid.t need.t tmc.ct > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmc.ct
 	cat macros.t tmcid.t need.t tmc.ht > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmc.ht
 	rm -f tmp4242
+	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.ht
 
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
@@ -176,6 +192,9 @@ distlist: $(DISTFILES)
 depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS)
 	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
 
+tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t
+	$(TM) cltest.ds tmcwalktest.ct > tmcwalktest.c
+
 tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
 	$(TM) cltest.ds tmccode.ct > tmccode.c
 
@@ -210,3 +229,4 @@ alucode.o: alucode.h config.h
 alutest.o: alucode.h config.h
 llucode.o: llucode.h config.h
 llutest.o: llucode.h config.h
+tmcwalktest.o: tmccode.h config.h
