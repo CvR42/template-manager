@@ -91,9 +91,9 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 // These functions are safer than the macros below, since they only accept
 // tmsymbols.
 inline tmsymbol rdup_tmsymbol( tmsymbol s ) { return s; }
-inline void rfre_tmsymbol( tmsymbol s ) { }
-inline void fre_tmsymbol( tmsymbol s ) { }
-inline int cmp_tmsymbol( tmsymbol a, tmsymbol b) { return (a==b?0:(a<b?-1:1)); }
+inline void rfre_tmsymbol( tmsymbol ) {}
+inline void fre_tmsymbol( tmsymbol ) { }
+inline int cmp_tmsymbol(tmsymbol a, tmsymbol b) { return (a==b?0:(a<b?-1:1)); }
 inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #else
 #define rdup_tmsymbol(s) (s)
