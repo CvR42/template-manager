@@ -91,16 +91,16 @@ static ds merge_cons_types( const ds a, const ds b )
     tmstring_list ilb;
     unsigned int ix;
 
-    la = rdup_tmstring_list( a->DsConstructorBase.constructors );
-    lb = rdup_tmstring_list( b->DsConstructorBase.constructors );
+    la = rdup_tmstring_list( to_DsConstructorBase(a)->constructors );
+    lb = rdup_tmstring_list( to_DsConstructorBase(b)->constructors );
     la = concat_tmstring_list( la, lb );
-    ila = rdup_tmstring_list( a->DsConstructorBase.inherits );
-    ilb = b->DsConstructorBase.inherits;
+    ila = rdup_tmstring_list( to_DsConstructorBase(a)->inherits );
+    ilb = to_DsConstructorBase(b)->inherits;
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
     return new_DsConstructorBase(
-	rdup_tmstring( a->DsConstructorBase.name ),
+	rdup_tmstring( to_DsConstructorBase(a)->name ),
 	ila,
 	la
     );
@@ -117,7 +117,7 @@ static void ckcname_type( const ds t, const tmstring cnm, const tmstring tnm )
     if( t->tag != TAGDsConstructorBase ){
 	return;
     }
-    cl = t->DsConstructorBase.constructors;
+    cl = to_DsConstructorBase(t)->constructors;
     if( member_tmstring_list( tnm, cl ) ){
 	(void) sprintf( errpos, "type %s", tnm );
 	(void) sprintf( errarg, "'%s' (in type %s)", cnm, get_type_name( t ) );
@@ -151,7 +151,7 @@ static void ckcnames( ds_list l, ds t )
     if( t->tag != TAGDsConstructorBase ){
 	return;
     }
-    cl = t->DsConstructorBase.constructors;
+    cl = to_DsConstructorBase(t)->constructors;
     tnm = get_type_name( t );
     for( ix=0; ix<cl->sz; ix++ ){
 	ckcname( l, cl->arr[ix], tnm );
@@ -665,13 +665,13 @@ static void update_class_info( tmstring nm, tmstring_list *inherits, field_list 
 {
     switch( cc->tag ){
 	case TAGCCSuper:
-	    *inherits = append_tmstring_list( *inherits, rdup_tmstring( cc->CCSuper.super ) );
+	    *inherits = append_tmstring_list( *inherits, rdup_tmstring( to_CCSuper(cc)->super ) );
 	    break;
 
 	case TAGCCFields:
 	    *fields = concat_field_list(
 		*fields,
-		rdup_field_list( cc->CCFields.fields )
+		rdup_field_list( to_CCFields(cc)->fields )
 	    );
 	    break;
 
@@ -680,7 +680,7 @@ static void update_class_info( tmstring nm, tmstring_list *inherits, field_list 
 	    unsigned int ix;
 	    classComponent_list ccl;
 
-	    ccl = cc->CCSublist.components;
+	    ccl = to_CCSublist(cc)->components;
 	    for( ix=0; ix<ccl->sz; ix++ ){
 		update_class_info( nm, inherits, fields, types, ccl->arr[ix] );
 	    }
@@ -692,7 +692,7 @@ static void update_class_info( tmstring nm, tmstring_list *inherits, field_list 
 	    unsigned int ix;
 	    alternative_list alts;
 
-	    alts = cc->CCAlternatives.alternatives;
+	    alts = to_CCAlternatives(cc)->alternatives;
 	    for( ix=0; ix<alts->sz; ix++ ){
 		alternative alt = alts->arr[ix];
 
