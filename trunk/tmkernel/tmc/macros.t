@@ -14,7 +14,6 @@
 static ${eval "$(tpl)"};
 .endforeach
 .endif
-
 .endmacro
 ..
 .. Given an element list 'el', a type inquiry function 'tf' and 
