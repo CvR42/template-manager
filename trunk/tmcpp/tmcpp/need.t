@@ -52,7 +52,7 @@
 .set listsuff _list
 ..
 .. Define the list of definition classes
-.set groups      ds cmp destroy clone print fprint fscan
+.set groups      ds compare destroy clone print fprint fscan
 .. These are only useful for lists.
 .set listgroups append concat slice reserve insert erase reverse extract
 .append listgroups extractlist insertlist
@@ -183,12 +183,12 @@
 .call require fprint "${nonvirtual ${subclasses $l}}"
 .endmacro
 ..
-.. ** cmp **
-.macro req_cmp l
+.. ** compare **
+.macro req_compare l
 .call require ds "$l"
-.call require cmp "${delisttypes $l}"
-.call require cmp "${types ${singletypes $l} ${subclasses $l}}"
-.call require cmp "${nonvirtual ${subclasses $l}}"
+.call require compare "${delisttypes $l}"
+.call require compare "${types ${singletypes $l} ${subclasses $l}}"
+.call require compare "${nonvirtual ${subclasses $l}}"
 .endmacro
 ..
 .. ** append **

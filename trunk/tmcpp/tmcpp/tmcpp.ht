@@ -167,36 +167,45 @@ public:
 class $t_list {
 public:
     unsigned int sz;
+    unsigned int room;
 
 public:
+.if ${member $t $(valuetypes)}
+    typedef $t value_type;
+.else
+    typedef $t *value_type;
+.endif
+    typedef value_type *iterator;
+    typedef const value_type *const_iterator;
+    typedef unsigned int size_type;
+    typedef int difference_type;
     static unsigned long newcount;
     static unsigned long freecount;
-    unsigned int room;
 .if ${member $t $(valuetypes)}
     $t *arr;
 .else
     $t **arr;
 .endif
 
-    $t_list( const unsigned int rm = 0 );
+    $t_list( const size_type rm = 0 );
     $t_list( const $t_list &l );
     virtual ~$t_list();
-//    virtual $t_list& operator=( const $t & );
     virtual $t_list *clone() const { return new $t_list( *this ); }
 
-    inline unsigned int size() const { return sz; }
+    inline size_type size() const { return sz; }
+    inline size_type capacity() const { return room; }
     bool empty() const { return sz == 0; }
-    void reserve( const unsigned int rm );
-    inline void resize( unsigned int new_sz ) { reserve( new_sz ); sz = new_sz; }
+
+    void reserve( const size_type rm );
+    inline void resize( size_type new_sz ) { reserve( new_sz ); sz = new_sz; }
+
+    inline iterator begin() { return arr; }
+    inline iterator end() { return arr+sz; }
 .if ${member $t $(need_reverse_list)}
     void reverse();
 .endif
 .if ${member $t $(need_extract_list)}
-.if ${member $t $(valuetypes)}
-    bool extract( const unsigned int, $t * );
-.else
-    bool extract( const unsigned int, $t ** );
-.endif
+    bool extract( const unsigned int, value_type * );
 .endif
 .if ${member $t $(need_erase_list)}
     void erase( const unsigned int );
@@ -206,21 +215,13 @@ public:
     $t_list *slice( const unsigned int, const unsigned int ) const;
 .endif
 .if ${member $t $(need_append_list)}
-.if ${member $t $(valuetypes)}
-    void append( $t );
-.else
-    void append( $t * );
-.endif
+    void append( value_type );
 .endif
 .if ${member $t $(need_insert_list)}
-.if ${member $t $(valuetypes)}
-    void insert( const unsigned int, $t );
-.else
-    void insert( const unsigned int, $t * );
-.endif
+    void insert( const unsigned int, value_type );
 .endif
 .if ${member $t $(need_insertlist_list)}
-    void insertlist( unsigned int, $t_list * );
+    void insertlist( unsigned int, $t_list & );
 .endif
 .if ${member $t $(need_extractlist_list)}
     $t_list *extractlist( unsigned int, unsigned int );
@@ -268,12 +269,12 @@ extern int fscan_$t_list( FILE *, $t_list ** );
 .endforeach
 .endif
 ..
-.. cmp_<type>() routines
-.foreach t $(want_cmp)
-extern int cmp_$t( const $t *a, const $t *b );
+.. compare() routines
+.foreach t $(want_compare)
+extern int compare( const $t &, const $t & );
 .endforeach
-.foreach t $(want_cmp_list)
-extern int cmp_$t_list( const $t_list *a, const $t_list *b );
+.foreach t $(want_compare_list)
+extern int compare( const $t_list &, const $t_list & );
 .endforeach
 ..
 .. Misc. functions.
