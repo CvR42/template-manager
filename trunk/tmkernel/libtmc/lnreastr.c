@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-/* file: nlreastr.c
+/* file: lreastr.c
    Realloc tmstring size. Version for use with lognew.
  */
 

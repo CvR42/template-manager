@@ -164,12 +164,14 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 #define fscan_tmstring(f,p) fscan_tmstring_lognew(f,p,__FILE__,__LINE__)
 #define fre_tmstring fre_tmstring_lognew
 #define realloc_tmstring(s,sz) realloc_tmstring_lognew(s,sz,__FILE__,__LINE__)
+#define create_tmstring(sz) create_tmstring_lognew(sz,__FILE__,__LINE__)
 #define tmtext_to_tmstring(t) tmtext_to_tmstring_lognew(t,__FILE__,__LINE__)
 #else
 #define new_tmstring new_tmstring_nolognew
 #define fre_tmstring fre_tmstring_nolognew
 #define fscan_tmstring fscan_tmstring_nolognew
 #define realloc_tmstring realloc_tmstring_nolognew
+#define create_tmstring create_tmstring_nolognew
 #define tmtext_to_tmstring tmtext_to_tmstring_nolognew
 #endif
 #ifdef LOGNEW
@@ -357,6 +359,8 @@ extern void fprint_ulong( FILE *f, const ulong u );
 /* 'tmstring' functions */
 extern tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz );
 extern tmstring realloc_tmstring_lognew( tmstring s, const size_t sz, const char *file, const int line );
+extern tmstring create_tmstring_nolognew( const size_t sz );
+extern tmstring create_tmstring_lognew( const size_t sz, const char *file, const int line );
 extern tmstring new_tmstring_lognew( const char *s, const char *file, const int line );
 extern void fre_tmstring_lognew( tmstring s );
 extern int fscan_tmstring_lognew( FILE *f, tmstring *p, const char *file, const int line );

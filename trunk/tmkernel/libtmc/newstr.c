@@ -16,6 +16,24 @@
 static long newcnt_tmstring = 0;
 static long frecnt_tmstring = 0;
 
+
+/* Given a size 'sz', create an empty tmstring with that many characters
+ * in it.
+ */
+tmstring create_tmstring_nolognew( const size_t sz )
+{
+    tmstring adr;
+    size_t realsz = sz;
+
+    if( realsz==0 ){
+	realsz = 1;	/* Some mallocs/reallocs get upset over sz==0. */
+    }
+    adr = TM_MALLOC( char *, realsz*sizeof( char ) );
+    adr[0] = '\0';
+    newcnt_tmstring++;
+    return adr;
+}
+
 /* Allocate space for tmstring 's' and copy the text into it. */
 tmstring new_tmstring_nolognew( const char *s )
 {
