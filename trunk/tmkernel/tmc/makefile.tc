@@ -24,8 +24,8 @@
 #		may want a name with '32' in it for one of them.
 # 
 LOCALBIN = c:\bin
-LOCALLIB=e:\lib
-LOCALINC=e:\include
+LOCALLIB=c:\lib
+LOCALINC=c:\include
 CC = BCC32
 LINKER = $(CC)
 SYSCFLAGS = -wall -wstu -4 -O2 -DLOGNEW -DSTAT
@@ -48,6 +48,9 @@ DOC	= README
 
 DEMOFILES =
 
+TMCTESTSRCS = tmctest.c tmccode.c
+TMCTESTOBJS = $(TMCTESTSRCS:.c=.obj)
+
 LLUTESTSRCS = llutest.c llucode.c
 LLUTESTOBJS = $(LLUTESTSRCS:.c=.obj)
 
@@ -66,11 +69,23 @@ help :
 	@echo "test		Run tests."
 
 #
-all: llutest.exe alutest.exe aldtest.exe
+all: llutest.exe alutest.exe aldtest.exe tmctest.exe
 
 # Add rules for the programs themselves here.
 
-test : llutestrun alutestrun aldtestrun
+test : llutestrun alutestrun aldtestrun tmctestrun
+
+tmctest.exe: $(TMCTESTOBJS)
+	$(LINKER) -etmctest $(LDFLAGS) $(TMCTESTOBJS) $(LIBS)
+
+tmctestrun: tmctest.exe tmctesti
+	tmctest.exe
+	diff testout tmcokout
+	diff testerr tmcokerr
+
+tmcinstall: need.t tmc.ct tmc.ht
+	copy /a macros.t+tmcid.t+need.t+tmc.ct $(LOCALLIB)\tmc.ct
+	copy /a macros.t+tmcid.t+need.t+tmc.ht $(LOCALLIB)\tmc.ht
 
 alutest.exe: $(ALUTESTOBJS)
 	$(LINKER) -ealutest $(LDFLAGS) $(ALUTESTOBJS) $(LIBS)
@@ -80,9 +95,9 @@ alutestrun: alutest.exe alutesti
 	diff testout aluokout
 	diff testerr aluokerr
 
-aluinstall: aluneed.t calu.ct calu.ht
-	copy /a macros.t+aluneed.t+calu.ct $(LOCALLIB)\calu.ct
-	copy /a macros.t+aluneed.t+calu.ht $(LOCALLIB)\calu.ht
+aluinstall: need.t calu.ct calu.ht
+	copy /a macros.t+aluid.t+need.t+calu.ct $(LOCALLIB)\calu.ct
+	copy /a macros.t+aluid.t+need.t+calu.ht $(LOCALLIB)\calu.ht
 
 aldtest.exe: $(ALDTESTOBJS)
 	$(LINKER) -ealdtest $(LDFLAGS) $(ALDTESTOBJS) $(LIBS)
@@ -92,9 +107,9 @@ aldtestrun: aldtest.exe aldtesti
 	diff testout aldokout
 	diff testerr aldokerr
 
-aldinstall: aldneed.t cald.ct cald.ht
-	copy /a macros.t+aldneed.t+cald.ct $(LOCALLIB)\cald.ct
-	copy /a macros.t+aldneed.t+cald.ht $(LOCALLIB)\cald.ht
+aldinstall: need.t cald.ct cald.ht
+	copy /a macros.t+aldid.t+need.t+cald.ct $(LOCALLIB)\cald.ct
+	copy /a macros.t+aldid.t+need.t+cald.ht $(LOCALLIB)\cald.ht
 
 llutest.exe: $(LLUTESTOBJS)
 	$(LINKER) -ellutest $(LDFLAGS) $(LLUTESTOBJS) $(LIBS)
@@ -104,77 +119,94 @@ llutestrun: llutest.exe llutesti
 	diff testout lluokout
 	diff testerr lluokerr
 
-lluinstall : lluneed.t cllu.ct cllu.ht
-	copy /a macros.t+lluneed.t+cllu.ct $(LOCALLIB)\cllu.ct
-	copy /a macros.t+lluneed.t+cllu.ht $(LOCALLIB)\cllu.ht
+lluinstall : need.t cllu.ct cllu.ht
+	copy /a macros.t+lluid.t+need.t+cllu.ct $(LOCALLIB)\cllu.ct
+	copy /a macros.t+lluid.t+need.t+cllu.ht $(LOCALLIB)\cllu.ht
 
-install: lluinstall aluinstall aldinstall
+install: lluinstall aluinstall aldinstall tmcinstall
 
 clean:
 	del *.obj
-	del testout
-	del testerr
-	del llutest.exe
-	del llutest.c
-	del aldtest.exe
-	del aldtest.c
-	del alutest.exe
-	del alutest.c
-	del llucode.h
-	del alucode.h
-	del aldcode.h
-	del llucode.c
-	del alucode.c
 	del aldcode.c
+	del aldcode.h
+	del aldtest.c
+	del aldtest.exe
+	del alucode.c
+	del alucode.h
+	del alutest.c
+	del alutest.exe
+	del llucode.c
+	del llucode.h
+	del llutest.c
+	del llutest.exe
+	del testerr
+	del testout
+	del tmccode.c
+	del tmccode.h
+	del tmctest.exe
 
 empty:
 	del *.obj
-	del testout
-	del testerr
-	del llutest.exe
-	del llutest.c
-	del aldtest.exe
-	del aldtest.c
-	del alutest.exe
-	del alutest.c
-	del llucode.h
-	del alucode.h
-	del aldcode.h
-	del llucode.c
-	del alucode.c
 	del aldcode.c
+	del aldcode.h
+	del aldtest.c
+	del aldtest.exe
+	del alucode.c
+	del alucode.h
+	del alutest.c
+	del alutest.exe
+	del llucode.c
+	del llucode.h
+	del llutest.c
+	del llutest.exe
+	del testerr
+	del testout
+	del tmccode.c
+	del tmccode.h
+	del tmctest.exe
 
-alucode.c: alucode.ct calu.ct aluspec.t test.ds aluneed.t macros.t
+tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds tmccode.ct > tmccode.c
+
+tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds tmccode.ht > tmccode.h
+
+alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t
 	$(TM) test.ds alucode.ct > alucode.c
 
-alucode.h: alucode.ht calu.ht aluspec.t test.ds aluneed.t macros.t
+alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t
 	$(TM) test.ds alucode.ht > alucode.h
 
-aldcode.c: aldcode.ct cald.ct aldspec.t test.ds aldneed.t macros.t
+aldcode.c: aldcode.ct cald.ct aldspec.t test.ds need.t macros.t
 	$(TM) test.ds aldcode.ct > aldcode.c
 
-aldcode.h: aldcode.ht cald.ht aldspec.t test.ds aldneed.t macros.t
+aldcode.h: aldcode.ht cald.ht aldspec.t test.ds need.t macros.t
 	$(TM) test.ds aldcode.ht > aldcode.h
 
-llucode.c: llucode.ct cllu.ct lluspec.t test.ds lluneed.t macros.t
+llucode.c: llucode.ct cllu.ct lluspec.t test.ds need.t macros.t
 	$(TM) test.ds llucode.ct > llucode.c
 
-llucode.h: llucode.ht cllu.ht lluspec.t test.ds lluneed.t macros.t
+llucode.h: llucode.ht cllu.ht lluspec.t test.ds need.t macros.t
 	$(TM) test.ds llucode.ht > llucode.h
 
+tmctest.c: xxtest.c
+	sed -e s/XXX/tmc/ xxtest.c > tmctest.c
+
 alutest.c: xxtest.c
-	sed -e 's/XXX/alu/' xxtest.c > alutest.c
+	sed -e s/XXX/alu/ xxtest.c > alutest.c
 
 aldtest.c: xxtest.c
-	sed -e 's/XXX/ald/' xxtest.c > aldtest.c
+	sed -e s/XXX/ald/ xxtest.c > aldtest.c
 
 llutest.c: xxtest.c
-	sed -e 's/XXX/llu/' xxtest.c > llutest.c
+	sed -e s/XXX/llu/ xxtest.c > llutest.c
 
 .c.obj:
 	$(CC) -c $(CFLAGS) -o$* $<
 
 ###
+tmccode.obj: tmccode.h config.h
+tmctest.obj: tmccode.h config.h
 alucode.obj: alucode.h config.h
 alutest.obj: alucode.h config.h
 aldcode.obj: aldcode.h config.h

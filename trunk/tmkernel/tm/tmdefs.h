@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #if defined( GEMDOS ) || defined( __TOS__ )
 #define PATHSEPSTR "\\"
