@@ -3,7 +3,7 @@
 ..
 .. All rights reserved.
 ..
-.. File tmcspec.t
+.. File spec.t
 ..set verbose
 .set basename ds
 .set wantdefs
