@@ -129,6 +129,7 @@ struct str_$t {
 #define $t_listNIL ($t_list)0
 .endforeach
 
+.. new_<type> routines
 #ifdef LOGNEW
 .foreach t ${nonvirtual $(want_new)}
 .switch ${metatype $t}
@@ -229,7 +230,7 @@ extern void rfre_$t( $t );
 extern void rfre_$t_list( $t );
 .endforeach
 ..
-.. append_<type>_list routines
+.. append_<type>_list() routines.
 .foreach t $(want_append_list)
 extern $t_list append_$t_list( $t_list, $t );
 .endforeach
@@ -239,7 +240,7 @@ extern $t_list append_$t_list( $t_list, $t );
 extern $t_list concat_$t_list( $t_list, $t_list );
 .endforeach
 ..
-.. reverse_<type>_list routines
+.. reverse_<type>_list() routines.
 .foreach t $(want_reverse_list)
 extern $t_list reverse_$t_list( $t_list );
 .endforeach
@@ -247,6 +248,11 @@ extern $t_list reverse_$t_list( $t_list );
 .. insert_<type>_list() routines.
 .foreach t $(want_insert_list)
 extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
+.endforeach
+..
+.. insertlist_<type>_list() routines.
+.foreach t $(want_insertlist_list)
+extern $t_list insertlist_$t_list( $t_list, const unsigned int, $t_list  );
 .endforeach
 ..
 .. delete_<type>_list() routines.
@@ -259,6 +265,11 @@ extern $t_list delete_$t_list( $t_list, const unsigned int );
 extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
 .endforeach
 ..
+.. extractlist_<type>_list() routines.
+.foreach t $(want_extractlist_list)
+extern $t_list extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list * );
+.endforeach
+..
 .. slice_<type>_list routines
 .foreach t $(want_slice_list)
 #ifdef LOGNEW
@@ -268,7 +279,7 @@ $t_list slice_$t_list( const $t_list, const unsigned int, const unsigned int );
 #endif
 .endforeach
 ..
-.. print_<type> routines
+.. print_<type>() routines
 .foreach t $(want_print)
 extern void print_$t( TMPRINTSTATE *, const $t );
 .endforeach
@@ -284,7 +295,8 @@ extern void fprint_$t( FILE *, const $t );
 extern void fprint_$t_list( FILE *, const $t_list );
 .endforeach
 ..
-.. rdup_<type> routines
+.. rdup_<type>() routines
+.if ${len $(want_rdup) $(want_rdup_list)}
 #ifdef LOGNEW
 .foreach t $(want_rdup)
 extern $t real_rdup_$t( const $t, const char *_f, const int _l );
@@ -300,8 +312,10 @@ extern $t rdup_$t( const $t );
 extern $t_list rdup_$t_list( const $t_list );
 .endforeach
 #endif
+.endif
 ..
 .. fscan_<type>() routines
+.if ${len $(want_fscan) $(want_fscan_list)}
 #ifdef LOGNEW
 .foreach t $(want_fscan)
 extern int real_fscan_$t( FILE *, $t *, const char *, const int );
@@ -317,6 +331,7 @@ extern int fscan_$t( FILE *, $t * );
 extern int fscan_$t_list( FILE *, $t_list * );
 .endforeach
 #endif
+.endif
 ..
 .. cmp_<type>() routines
 .foreach t $(want_cmp)
@@ -327,9 +342,6 @@ extern int cmp_$t_list( const $t_list, const $t_list );
 .endforeach
 ..
 .. Misc. functions.
-.if ${member flush_$(basename) $(want_misc)}
-#define flush_$(basename)()
-.endif
 .if ${member stat_$(basename) $(want_misc)}
 extern void stat_$(basename)( FILE * );
 .endif

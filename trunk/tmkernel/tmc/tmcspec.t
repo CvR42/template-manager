@@ -24,6 +24,8 @@
 .append wantdefs cmp_toplevel
 .append wantdefs setroom_toplevel_list
 .append wantdefs slice_toplevel_list
+.append wantdefs extractlist_toplevel_list
+.append wantdefs insertlist_toplevel_list
 .append wantdefs append_toplevel_list
 .append wantdefs append_toplevel_list_list_list
 .append wantdefs reverse_toplevel_list
