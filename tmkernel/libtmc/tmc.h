@@ -316,6 +316,7 @@ extern void tm_lognew( const tm_neutralp p, const char *file, const int line );
 extern void tm_logfre( const tm_neutralp p );
 extern void flush_lognew( void );
 extern void report_lognew( FILE *f );
+extern void simple_report_lognew( FILE *f );
 
 extern TMPRINTSTATE *tm_setprint(
     FILE *f,

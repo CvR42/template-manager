@@ -69,6 +69,15 @@ static void print_plist( FILE *f )
     }
 }
 
+static void print_simple_plist( FILE *f )
+{
+    size_t ix;
+
+    for( ix=0l; ix<plistsz; ix++ ){
+	fprintf( f, "%s(%d)\n", plist[ix].file, plist[ix].line );
+    }
+}
+
 /* Given a pointer 'p', record it as a new entry in the 'new' table. */
 void tm_lognew( const tm_neutralp p, const char *file, const int line )
 {
@@ -226,6 +235,26 @@ void report_lognew( FILE *f )
     }
     else {
 	print_plist( f );
+    }
+    if( idofl ){
+	fputs( "lognew: id list overflow.\n", f );
+    }
+    else {
+	print_idlist( f );
+    }
+}
+
+/* Print the remaining entries in the new log to file 'f'. */
+void simple_report_lognew( FILE *f )
+{
+    if( plistsz>0 || idcnt>0 ){
+	fputs( "lognew: pending blocks:\n", f );
+    }
+    if( plistofl ){
+	fputs( "lognew: pointer list overflow.\n", f );
+    }
+    else {
+	print_simple_plist( f );
     }
     if( idofl ){
 	fputs( "lognew: id list overflow.\n", f );
