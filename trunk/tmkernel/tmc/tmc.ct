@@ -1210,7 +1210,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .. Add some space for '\0' and safety..
 .set maxlen $[$(maxlen)+4]
     char tm_word[$(maxlen)];	/* Largest constructor should fit in it.. */
-    int err = 0;
+    int err;
 
 .if ${not ${len ${nonvirtual $t ${subclasses $t}}}}
 #ifdef LOGNEW

@@ -25,7 +25,7 @@
 .foreach t $(need_ds_list)
 typedef struct str_$t_list *$t_list;
 .endforeach
-.foreach t ${depsort $(need_ds)}
+.foreach t ${depsort ${excl $(need_ds) "" ${conslist $(need_ds)}}}
 typedef struct str_$t *$t;
 .endforeach
 
@@ -72,7 +72,7 @@ typedef struct str_$c {
 .endforeach
 } C_$c;
 .else
-/* Constructor $c has no fields */
+/* No str_$c: Constructor $c has no fields */
 .endif
 
 .endforeach
