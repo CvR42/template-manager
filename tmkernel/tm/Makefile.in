@@ -180,6 +180,12 @@ createdepend: $(DEPENDFILE)
 $(DEPENDFILE):
 	touch $(DEPENDFILE)
 
+stats: empty
+	wc -l *.c *.h
+
+genstats: $(GENSRCS) $(GENHDRS)
+	wc -l $(GENSRCS) $(GENHDRS)
+
 -include $(DEPENDFILE)
 checkds.o: checkds.c config.h tmdefs.h error.h tmcode.h misc.h \
  checkds.h
