@@ -4,8 +4,8 @@ In this chapter a detailed description of the {\C} templates is given.
 In appendix \ref{s.calc} an example project is shown that demonstrates
 the use of these templates.
 \par
-The {\C} support consists of two template files: {\tt tmc.ht} is used
-to generate a header file, and {\tt tmc.ct} is used to generate a code
+The {\C} support consists of two template files: \texttt{tmc.ht} is used
+to generate a header file, and \texttt{tmc.ct} is used to generate a code
 file. Also, a library is provided that contains service functions
 needed by the templates, and the equivalent of the generated routines
 for a number of {\C} types.
@@ -48,7 +48,7 @@ The tag is used to distinguish between the class and the possible
 subclasses. To access the fields of a subclass, the pointer must
 be cast to the appropriate subclass type.
 \index{constructor!array list template}\index{array list template!constructor}
-For example, constructor type {\tt btree} is represented as:
+For example, constructor type \texttt{btree} is represented as:
 \begin{showfile}
 \begin{verbatim}
 typedef str_ctree *ctree;
@@ -75,8 +75,8 @@ struct str_treeNull {
 };
 \end{verbatim}
 \end{showfile}
-The possible tags for a type are enumerated in the {\tt enum} type
-{\tt tags\_<type>}. Note that no tag is generated for {\tt ctree},
+The possible tags for a type are enumerated in the \texttt{enum} type
+\texttt{tags\_<type>}. Note that no tag is generated for \texttt{ctree},
 because this type is virtual.
 \par
 If a C++ compiler is detected (the preprocessor variable \verb'__cplusplus' 
@@ -118,7 +118,7 @@ The tag is used to distinguish between the class and the possible
 subclasses. To access the fields of a subclass, the pointer must
 be cast to the appropriate subclass type.
 \index{constructor!array list template}\index{array list template!constructor}
-For example, constructor type {\tt btree} is represented as:
+For example, constructor type \texttt{btree} is represented as:
 \begin{showfile}
 \begin{verbatim}
 typedef str_btree *btree;
@@ -146,9 +146,9 @@ struct str_btree {
 \end{verbatim}
 \end{showfile}
 The constructor base type is represented by a separate structure containing
-a {\tt tag} field to indicate the actual constructor.
-The possible tags for a type are enumerated in the {\tt enum} type
-{\tt tags\_<type>}.
+a \texttt{tag} field to indicate the actual constructor.
+The possible tags for a type are enumerated in the \texttt{enum} type
+\texttt{tags\_<type>}.
 \par
 As for classes, a slightly different representation is used if
 the preprocessor variable \verb'__cplusplus' is used:
@@ -247,7 +247,7 @@ void clear_leaf( btree tree )
 \end{showfile}
 
 \subsection{Null pointers}
-For each type and type list a suitable {\tt NIL} pointer is defined.
+For each type and type list a suitable \texttt{NIL} pointer is defined.
 \index{<type>NIL@\verb+<type>NIL+}
 \index{<type>_listNIL@\verb+<type>_listNIL+}
 For example:
@@ -259,7 +259,7 @@ For example:
 \end{verbatim}
 \end{showfile}
 The following functions show how all the type representations
-(in this case the types {\tt tree}, {\tt btree}, {\tt ctree} and the list type
+(in this case the types \texttt{tree}, \texttt{btree}, \texttt{ctree} and the list type
 \verb+[tree]+)
 are used in a program:
 Each function returns the sum of the leave or node values in a given
@@ -382,7 +382,7 @@ leading to performance degradation or program failure.
 \par
 Therefore,
 in the ideal situation each call to \verb+malloc()+ is balanced with
-{\em exactly} one call to \verb+free()+.
+\emph{exactly} one call to \verb+free()+.
 \par
 {\Tm} offers two facilities to ensure that the \verb+malloc()+
 and \verb+free()+ calls are in balance.
@@ -423,7 +423,7 @@ eventually, since it may conceal an imbalance in the opposite direction.
 To find which blocks are never freed,
 {\Tm} provides another facility:
 if the code is compiled with the {\C} preprocessor variable
-{\tt LOGNEW} defined,
+\texttt{LOGNEW} defined,
 the source file and line of all {\Tm} block allocations are recorded in a
 special list.
 The entries for all blocks that are freed are removed from the list,
@@ -433,9 +433,9 @@ A report on this list can be written to a file with the function
 \verb+report_lognew()+.
 Usually the cause of the imbalance is easily determined from this information.
 \par
-The {\tt LOGNEW} facility is a powerful debugging aid, but it has an important
+The \texttt{LOGNEW} facility is a powerful debugging aid, but it has an important
 disadvantage:
-{\em all} code must be compiled with this option.
+\emph{all} code must be compiled with this option.
 \par
 To find the place where a second \verb+fre_<type>+ of a block is done is
 more difficult;
@@ -467,13 +467,13 @@ When necessary an array will be allocated through \verb+setroom_<type>_list()+.
 \index{new_<type>@\verb+new_<type>()+}
 Create a constructor, class or tuple,
 and set the elements to the value of the given parameters.
-For constructor and class types, the {\tt tag} field is set to the appropriate
+For constructor and class types, the \texttt{tag} field is set to the appropriate
 value.
 \par
 If the type is a subclass, the fields of the superclasses must also
-be given, in the order described for the {\Tm} template function {\tt fields}.
+be given, in the order described for the {\Tm} template function \texttt{fields}.
 \par
-For example, if {\tt expr} is defined as:
+For example, if \texttt{expr} is defined as:
 \begin{showfile}
 \begin{verbatim}
 expr = { line:int } + exprPlus: { a:expr, b:expr } | exprConst: { n:int };
@@ -492,10 +492,10 @@ exprConst new_exprConst( int line, int n );
 \end{verbatim}
 \begin{desc}
 \index{setroom_<type>_list@\verb+setroom_<type>_list()+}
-Specify that list {\tt l} must have room for at least {\tt rm} elements.
+Specify that list \texttt{l} must have room for at least \texttt{rm} elements.
 In the templates that use an array to represent the list,
 this function will ensure that the array has sufficient room to
-store {\tt rm} elements;
+store \texttt{rm} elements;
 in the linked list template this function is a dummy.
 The room in a list is never reduced.
 \par
@@ -513,7 +513,7 @@ void fre_<type>_list( <type>_list l );
 \begin{desc}
 \index{fre_<type>@\verb+fre_<type>()+}
 \index{fre_<type>_list@\verb+fre_<type>_list()+}
-Destroy an instance of {\tt <type>} or {\tt <type>\_list}.
+Destroy an instance of \texttt{<type>} or \texttt{<type>\_list}.
 \end{desc}
 \begin{verbatim}
 void rfre_<type>( <type> e );
@@ -522,7 +522,7 @@ void rfre_<type>_list( <type>_list e );
 \begin{desc}
 \index{rfre_<type>@\verb+rfre_<type>()+}
 \index{rfre_<type>_list@\verb+rfre_<type>_list()+}
-Recursively destroy all elements of {\tt e} and {\tt e} itself.
+Recursively destroy all elements of \texttt{e} and \texttt{e} itself.
 \end{desc}
 \begin{verbatim}
 void stat_<basename>( FILE *f );
@@ -530,7 +530,7 @@ void stat_<basename>( FILE *f );
 \begin{desc}
 \index{stat_<basename>@\verb+stat_<basename>()+}
 Write statistics of allocation and freeing for each type and type list
-associated with {\tt <basename>} to file {\tt f}. The code that counts
+associated with \texttt{<basename>} to file \texttt{f}. The code that counts
 allocations and deallocations is only generated if \verb'stat_<basename>'
 or \verb'get_balance_<basename>' is requested.
 \end{desc}
@@ -554,33 +554,33 @@ The code that counts allocations and deallocations is only generated if
 \end{verbatim}
 \begin{desc}
 \index{append_<type>_list@\verb+append_<type>_list()+}
-Given a list {\tt l} and an element {\tt e},
-put element {\tt e} after the elements of {\tt l}.
+Given a list \texttt{l} and an element \texttt{e},
+put element \texttt{e} after the elements of \texttt{l}.
 Enlarge the array if necessary.
-Element {\tt e} is now `owned' by list {\tt l}.
+Element \texttt{e} is now `owned' by list \texttt{l}.
 \end{desc}
 \begin{verbatim}
 <type>_list concat_<type>_list( <type>_list la, <type>_list lb );
 \end{verbatim}
 \begin{desc}
 \index{concat_<type>_list@\verb+concat_<type>_list()+}
-Given two lists {\tt la} and {\tt lb},
-append the elements of {\tt lb} after the elements of {\tt la}.
-Enlarge the array of {\tt la} if necessary.
-The elements of {\tt lb} are now `owned' by {\tt la},
-and {\tt lb} itself is destroyed.
+Given two lists \texttt{la} and \texttt{lb},
+append the elements of \texttt{lb} after the elements of \texttt{la}.
+Enlarge the array of \texttt{la} if necessary.
+The elements of \texttt{lb} are now `owned' by \texttt{la},
+and \texttt{lb} itself is destroyed.
 \end{desc}
 \begin{verbatim}
 <type>_list insert_<type>_list( <type>_list l, unsigned p, <type> e );
 \end{verbatim}
 \begin{desc}
 \index{insert_<type>_list@\verb+insert_<type>_list()+}
-Insert element {\tt e} at position {\tt p} in list {\tt l}.
-All elements at and after position {\tt p} are moved up in the list
+Insert element \texttt{e} at position \texttt{p} in list \texttt{l}.
+All elements at and after position \texttt{p} are moved up in the list
 (they have their index in the list incremented).
-If {\tt p} is greater than or equal to the length of {\tt l},
-the element is appended after {\tt l}.
-Element {\tt e} is now `owned' by list {\tt l}.
+If \texttt{p} is greater than or equal to the length of \texttt{l},
+the element is appended after \texttt{l}.
+Element \texttt{e} is now `owned' by list \texttt{l}.
 \end{desc}
 \begin{verbatim}
 <type>_list insertlist_<type>_list(
@@ -591,27 +591,27 @@ Element {\tt e} is now `owned' by list {\tt l}.
 \end{verbatim}
 \begin{desc}
 \index{insertlist_<type>_list@\verb+insertlist_<type>_list()+}
-Insert list {\tt lb} at position {\tt p} in list {\tt la}.
-All elements at and after position {\tt p} are moved up in the list
+Insert list \texttt{lb} at position \texttt{p} in list \texttt{la}.
+All elements at and after position \texttt{p} are moved up in the list
 (they have their index in the list incremented).
-If {\tt p} is greater than or equal to the length of {\tt l},
-the elements are appended after {\tt la}.
-All elements in {\tt lb} are now `owned' by list {\tt la}, and the
-list container of {\tt lb} is destroyed.
+If \texttt{p} is greater than or equal to the length of \texttt{l},
+the elements are appended after \texttt{la}.
+All elements in \texttt{lb} are now `owned' by list \texttt{la}, and the
+list container of \texttt{lb} is destroyed.
 \par
-If {\tt la} is \verb'<type>_listNIL', an error is generated.
-If {\tt lb} is \verb'<type>_listNIL', {\tt la} is returned unchanged.
+If \texttt{la} is \verb'<type>_listNIL', an error is generated.
+If \texttt{lb} is \verb'<type>_listNIL', \texttt{la} is returned unchanged.
 \end{desc}
 \begin{verbatim}
 <type>_list delete_<type>_list( <type>_list l, unsigned int pos );
 \end{verbatim}
 \begin{desc}
 \index{delete_<type>_list@\verb+delete_<type>_list()+}
-Delete the element at position {\tt pos} in list {\tt l}.
-The element is freed using {\tt rfre\_<type>()}.
-All elements after position {\tt pos} are moved down
+Delete the element at position \texttt{pos} in list \texttt{l}.
+The element is freed using \texttt{rfre\_<type>()}.
+All elements after position \texttt{pos} are moved down
 (have their index in the list decremented).
-If {\tt pos} is greater than or equal to the length of {\tt l},
+If \texttt{pos} is greater than or equal to the length of \texttt{l},
 nothing happens.
 \end{desc}
 \begin{verbatim}
@@ -623,11 +623,11 @@ nothing happens.
 \end{verbatim}
 \begin{desc}
 \index{deletelist_<type>_list@\verb+deletelist_<type>_list()+}
-Delete the element at position {\tt from} up to, but not including, {\tt
-to} in list {\tt l}.  The elements are freed using {\tt rfre\_<type>()}.
-All elements at position {\tt to} and up are moved down (have their index
-in the list decremented).  If {\tt from} is greater than or equal to {\tt
-to}, or if {\tt from} is greater than or equal to the length of {\tt l},
+Delete the element at position \texttt{from} up to, but not including, {\tt
+to} in list \texttt{l}.  The elements are freed using \texttt{rfre\_<type>()}.
+All elements at position \texttt{to} and up are moved down (have their index
+in the list decremented).  If \texttt{from} is greater than or equal to {\tt
+to}, or if \texttt{from} is greater than or equal to the length of \texttt{l},
 nothing happens.
 \end{desc}
 \begin{verbatim}
@@ -640,15 +640,15 @@ nothing happens.
 \end{verbatim}
 \begin{desc}
 \index{extract_<type>_list@\verb+extract_<type>_list()+}
-Remove the element at position {\tt pos} from list {\tt l},
+Remove the element at position \texttt{pos} from list \texttt{l},
 and assign it to \verb'*e'.
-All elements after position {\tt pos} are moved down
+All elements after position \texttt{pos} are moved down
 (have their index in the list decremented).
-If {\tt pos} is greater than or equal to the length of {\tt l},
+If \texttt{pos} is greater than or equal to the length of \texttt{l},
 nothing happens.
-If there was a valid element at position {\tt pos}, it is assigned
-to \verb'*e', and \verb'*valid' is set to {\tt 1}. Otherwise
-\verb'*valid' is set to {\tt 0}, and \verb'*e' is left unchanged.
+If there was a valid element at position \texttt{pos}, it is assigned
+to \verb'*e', and \verb'*valid' is set to \texttt{1}. Otherwise
+\verb'*valid' is set to \texttt{0}, and \verb'*e' is left unchanged.
 \par
 This function is similar to \verb'delete_<type>_list()', but instead
 of deleting an element, it puts it in possession of the caller.
@@ -663,11 +663,11 @@ of deleting an element, it puts it in possession of the caller.
 \end{verbatim}
 \begin{desc}
 \index{extractlist_<type>_list@\verb+extractlist_<type>_list()+}
-Remove the elements in the range {\tt from} up to, but not including {\tt to} from list {\tt l},
+Remove the elements in the range \texttt{from} up to, but not including \texttt{to} from list \texttt{l},
 put them in a new list, and assign this list to \verb'*e'.
-All elements after position {\tt to} are moved down
+All elements after position \texttt{to} are moved down
 (have their index in the list decremented) to fill the gap.
-If a range extends beyond the size of {\tt l}, the range is silently
+If a range extends beyond the size of \texttt{l}, the range is silently
 truncated.
 \par
 This function is similar to \verb'extract_<type>_list()', but it
@@ -692,8 +692,8 @@ in the data-structures.
 \begin{desc}
 \index{rdup_<type>@\verb+rdup_<type>()+}
 \index{rdup_<type>_list@\verb+rdup_<type>_list()+}
-Recursively duplicate instance {\tt e} of type {\tt <type>} or
-{\tt <type>\_list}.
+Recursively duplicate instance \texttt{e} of type \texttt{<type>} or
+\texttt{<type>\_list}.
 \end{desc}
 \begin{verbatim}
 <type>_list slice_<type>_list(
@@ -705,17 +705,17 @@ Recursively duplicate instance {\tt e} of type {\tt <type>} or
 \begin{desc}
 \index{slice_<type>_list@\verb+slice_<type>_list()+}
 Create a new list that contains recursive duplicates of the elements of
-list {\tt l} with indices {\tt b} up to but {\em not} including {\tt e}.
-If {\tt b>e} or {\tt b} points beyond the list,
+list \texttt{l} with indices \texttt{b} up to but \emph{not} including \texttt{e}.
+If \texttt{b>e} or \texttt{b} points beyond the list,
 an empty list is returned.
-If {\tt e} points beyond {\tt l},
-it is taken to point to the last element in {\tt l}.
+If \texttt{e} points beyond \texttt{l},
+it is taken to point to the last element in \texttt{l}.
 \end{desc}
 \section{Data structure input and output}
 These functions handle reading of a textual description of the data structures
 and allocation of new instances of the type and list structures for the
 read data.
-The {\tt print\_<type>} and {\tt print\_<type>\_list} functions rely on the
+The \texttt{print\_<type>} and \texttt{print\_<type>\_list} functions rely on the
 print optimizer in the
 {\C} support library to handle the actual printing to a file,
 see section~\ref{s.csupportlib}.
@@ -723,7 +723,7 @@ see section~\ref{s.csupportlib}.
 \begin{sloppypar}
 As an extension to the standard {\Tm} internal representation,
 the \verb!print_<type>! and \verb'fprint_<type>' functions print null
-pointers as the symbol `{\tt @}'.
+pointers as the symbol `\texttt{@}'.
 The \verb+fscan_<type>+ functions for the array list code recognizes
 this symbol.
 \end{sloppypar}
@@ -734,14 +734,14 @@ int fscan_<type>_list( FILE *f, <type>_list *p );
 \begin{desc}
 \index{fscan_<type>@\verb+fscan_<type>()+}
 \index{fscan_<type>_list@\verb+fscan_<type>_list()+}
-Read an instance of data structure {\tt <type>} or {\tt <type>\_list}
-from file {\tt f},
+Read an instance of data structure \texttt{<type>} or \texttt{<type>\_list}
+from file \texttt{f},
 allocate new room to hold the data that is read,
-and set pointer {\tt p} to point to the new data.
-If no error occurs, a value {\tt 0} is returned.
-If an error {\em does} occur,
-a value {\tt 1} is returned, and an error message is put in the array
-{\tt tm\_errmsg} provided by the {\C} support library.
+and set pointer \texttt{p} to point to the new data.
+If no error occurs, a value \texttt{0} is returned.
+If an error \emph{does} occur,
+a value \texttt{1} is returned, and an error message is put in the array
+\texttt{tm\_errmsg} provided by the {\C} support library.
 Elements are created all the data that has been read before the error elements,
 and they must be freed to keep the allocation statistics in balance.
 The \verb+fscan_<type>()+ routines will ensure that in all cases the
@@ -754,8 +754,8 @@ void print_<type>_list( TMPRINTSTATE *st, const_<type>_list l );
 \begin{desc}
 \index{print_<type>@\verb+print_<type>()+}
 \index{print_<type>_list@\verb+print_<type>_list()+}
-Given a print state {\tt st},
-print an instance of data structure {\tt <type>} or {\tt <type>\_list}
+Given a print state \texttt{st},
+print an instance of data structure \texttt{<type>} or \texttt{<type>\_list}
 using the print optimizer, see section~\ref{s.csupportlib}.
 \end{desc}
 \begin{verbatim}
@@ -765,15 +765,15 @@ void fprint_<type>_list( FILE *f, const_<type>_list t );
 \begin{desc}
 \index{fprint_<type>@\verb+fprint_<type>()+}
 \index{fprint_<type>_list@\verb+fprint_<type>_list()+}
-Print an instance of data structure {\tt <type>} or {\tt <type>\_list}
-to file {\tt f}.
+Print an instance of data structure \texttt{<type>} or \texttt{<type>\_list}
+to file \texttt{f}.
 \end{desc}
 \section{Comparison}
 These functions handle recursive comparison of structures.
-Given two data structures {\tt a} and {\tt b},
-an int ${\tt n}<0$ is returned if ${\tt a}<{\tt b}$,
-0 if ${\tt a}={\tt b}$,
-and an int ${\tt n}>0$ if ${\tt a}>{\tt b}$.
+Given two data structures \texttt{a} and \texttt{b},
+an int $\texttt{n}<0$ is returned if $\texttt{a}<\texttt{b}$,
+0 if $\texttt{a}=\texttt{b}$,
+and an int $\texttt{n}>0$ if $\texttt{a}>\texttt{b}$.
 \par
 For comparison the following rules are applied:
 \begin{itemize}
@@ -794,7 +794,7 @@ else the first differing element determines the comparison,
 or else the shortest list is the smallest.
 \end{itemize}
 \par
-Resemblance to {\tt strcmp()} is intentional. In fact it is possible to do:
+Resemblance to \texttt{strcmp()} is intentional. In fact it is possible to do:
 \begin{showfile}
 \begin{verbatim}
 #define cmp_tmstring strcmp
@@ -806,9 +806,9 @@ also note that it is possible to do
 #define cmp_int (a-b)
 \end{verbatim}
 \end{showfile}
-However, it is not wise to do this for {\tt float} or {\tt double},
+However, it is not wise to do this for \texttt{float} or \texttt{double},
 since rounding errors may lead to unexpected behavior.
-There are a {\tt cmp\_float()} and {\tt cmp\_double()} in the support library,
+There are a \texttt{cmp\_float()} and \texttt{cmp\_double()} in the support library,
 see section~\ref{s.csupportlib}.
 \par
 These functions are mainly intended for equality comparison,
@@ -816,7 +816,7 @@ and to impose `some' repeatable ordering on the data structures.
 The ordering may be different from the desired ordering.
 If another comparison function is required for a data type,
 the generation of the standard function can be suppressed by
-using {\tt notwantdefs}, see section~\ref{s.config}.
+using \texttt{notwantdefs}, see section~\ref{s.config}.
 \begin{verbatim}
 int cmp_<type>( const_<type> a, const_<type> b );
 int cmp_<type>_list( const_<type>_list a, const_<type>_list b );
@@ -824,14 +824,14 @@ int cmp_<type>_list( const_<type>_list a, const_<type>_list b );
 \begin{desc}
 \index{cmp_<type>@\verb+cmp_<type>()+}
 \index{cmp_<type>_list@\verb+cmp_<type>_list()+}
-Compare data structures {\tt a} and {\tt b}, and return a code
+Compare data structures \texttt{a} and \texttt{b}, and return a code
 according to the table listed previously.
 \end{desc}
 \section{Equality test}
 These functions implement an equality test on structures.
-Given two data structures {\tt a} and {\tt b},
-{\tt TMTRUE} is returned if all the elements of the structure are equal,
-else {\tt TMFALSE} is returned.
+Given two data structures \texttt{a} and \texttt{b},
+\texttt{TMTRUE} is returned if all the elements of the structure are equal,
+else \texttt{TMFALSE} is returned.
 \par
 For the equality test the following rules are applied:
 \begin{itemize}
@@ -849,7 +849,7 @@ but cannot be used to impose an ordering on the data structures.
 For this the comparison functions in the previous section can be used.
 If another equality test function is required for a data type,
 the generation of the standard function can be suppressed by
-using {\tt notwantdefs}, see section~\ref{s.config}.
+using \texttt{notwantdefs}, see section~\ref{s.config}.
 \begin{verbatim}
 tmbool isequal_<type>( const_<type> a, const_<type> b );
 tmbool isequal_<type>_list( const_<type>_list a, const_<type>_list b );
@@ -857,7 +857,7 @@ tmbool isequal_<type>_list( const_<type>_list a, const_<type>_list b );
 \begin{desc}
 \index{isequal_<type>@\verb+isequal_<type>()+}
 \index{isequal_<type>_list@\verb+isequal_<type>_list()+}
-Compare data structures {\tt a} and {\tt b}, and return {\tt TMTRUE}
+Compare data structures \texttt{a} and \texttt{b}, and return \texttt{TMTRUE}
 if and only if all the elements of the structure are equal.
 Two constructors can only be equal if they are of the same type.
 \end{desc}
@@ -871,7 +871,7 @@ or modification can be done. In many cases only a few types of nodes
 have to be visited, but nodes of many other types have to be traversed
 to reach these nodes. Also, it is very simple to overlook a path to a node
 of the given type. For that reason the \verb'tmc' template\footnote{The
-tree walker template that is described here is specific for the {\tt tmc}
+tree walker template that is described here is specific for the \texttt{tmc}
 template. However, it would be fairly simple to write a similar template
 for other standard templates.} is supplemented with a template that
 generates code to traverse trees of Tm data structures.
@@ -909,7 +909,7 @@ These macros must be defined before the template itself is included
 (see below).
 \par
 To illustrate the description of the macros, a simple walker is
-constructed that returns the number of {\tt int} fields in a tree.
+constructed that returns the number of \texttt{int} fields in a tree.
 \begin{verbatim}
 .macro generate_walker_signature var t
 \end{verbatim}
@@ -1082,8 +1082,8 @@ defined, and it will define the following macros:
 .macro calc_treewalk starts targets
 \end{verbatim}
 \begin{desc}
-Given the list of types to start from {\tt starts}, and the list of types
-to visit {\tt targets}, return the list of types that must be visited.
+Given the list of types to start from \texttt{starts}, and the list of types
+to visit \texttt{targets}, return the list of types that must be visited.
 \par
 Note that both parameters of this macro could potentially consist of
 a list of types. It is therefore recommended that the expressions
@@ -1095,7 +1095,7 @@ broken up.
 .macro generate_walker_forwards list
 \end{verbatim}
 \begin{desc}
-Given a list {\tt list} of types the tree walker should visit, generate
+Given a list \texttt{list} of types the tree walker should visit, generate
 forward declarations for the walker functions for these types. 
 \par
 To ensure that the list that is passed to the macro is evaluated as
@@ -1105,7 +1105,7 @@ a single parameter, it should be surrounded with quotes.
 .macro generate_walker list
 \end{verbatim}
 \begin{desc}
-Given a list {\tt list} of types the tree walker should visit, generate
+Given a list \texttt{list} of types the tree walker should visit, generate
 walker functions for these types.
 \par
 To ensure that the list that is passed to the macro is evaluated as
@@ -1152,7 +1152,7 @@ static int count_int_action( int n )
     return n;
 }
 \end{verbatim}
-The walker function for {\tt int} will be empty, but it is good
+The walker function for \texttt{int} will be empty, but it is good
 practice to call it anyway, if only to prevent a complaint about
 unused static functions.
 \subsection{Generating of the tree walker}
@@ -1227,7 +1227,7 @@ These variables must be defined before the template itself is inserted
 (see below).
 \par
 To illustrate the description of the macros, we construct a simple
-analyzer that returns the sum of all {\tt int} fields in a tree.
+analyzer that returns the sum of all \texttt{int} fields in a tree.
 
 \begin{verbatim}
 .set reduction_type <type>
@@ -1280,17 +1280,17 @@ For each target type, there should be a variable of the form
 for this type.  The supported kinds of action are:
 \end{sloppypar}
 \begin{itemize}
-\item[{\tt reduction}] A reduction on all fields of the class, constructor
+\item[\texttt{reduction}] A reduction on all fields of the class, constructor
 type or tuple, or all elements of the list is done. If an optional
 value is given, this value is also incorporated in the reduction.
-\item[{\tt function}] The node is passed to a function that should be
+\item[\texttt{function}] The node is passed to a function that should be
 provided by the user. The name of the function to invoke must be provided
 as parameter. This function must have a formal parameter list
 as generated by the \verb'generate_formal_parameters' macro (see below).
-\item[{\tt constant}] The node has constant value {\tt value}. Recursion
-stops at this node, any fields or list elements are {\em not} visited.
-\item[{\tt ignore}] The node is ignored. Recursion stops at this node,
-any fields or list elements are {\em not} visited.
+\item[\texttt{constant}] The node has constant value \texttt{value}. Recursion
+stops at this node, any fields or list elements are \emph{not} visited.
+\item[\texttt{ignore}] The node is ignored. Recursion stops at this node,
+any fields or list elements are \emph{not} visited.
 \end{itemize}
 
 \par
@@ -1312,12 +1312,12 @@ These macros must be defined before the template itself is included
 \par
 To illustrate the description of the macros, we continue the
 construction of a simple analyzer
-that returns the sum of all {\tt int} fields in a tree.
+that returns the sum of all \texttt{int} fields in a tree.
 \begin{verbatim}
 .macro generate_formal_parameters nm t
 \end{verbatim}
 \begin{desc}
-Given the name of the formal parameter {\tt nm} and its type {\tt t},
+Given the name of the formal parameter \texttt{nm} and its type \texttt{t},
 construct and return the formal parameter list of the analysis functions.
 
 The signature should contain ``\verb'$t $(nm)''' somewhere in the list
@@ -1336,7 +1336,7 @@ For example:
 \begin{desc}
 Given the name \verb'nm' of the variable that holds the datastructure
 we are walking on, the type \verb'should_type' of the formal parameter,
-and the type \verb'is_type' of the variable {\tt nm}, construct and
+and the type \verb'is_type' of the variable \texttt{nm}, construct and
 return the the actual parameter list of the analyzer invocation.
 \par
 For example:
@@ -1354,7 +1354,7 @@ For example:
 .macro generate_reduction_operation a b
 \end{verbatim}
 \begin{desc}
-Given two expressions {\tt a} and {\tt b}, construct and return an expression
+Given two expressions \texttt{a} and \texttt{b}, construct and return an expression
 to evaluate the reduction of these expressions.
 \par
 For example:
@@ -1385,8 +1385,8 @@ The termination test is only intended to speed up analysis; it is not
 guaranteed to be used at any point.
 \par
 The termination test is particularly useful when a boolean reduction
-operation is done, since once an intermediate result is {\tt true} for
-a boolean `or' reduction, or {\tt false} for a boolean `and' reduction,
+operation is done, since once an intermediate result is \texttt{true} for
+a boolean `or' reduction, or \texttt{false} for a boolean `and' reduction,
 we know further reduction is useless.
 \end{desc}
 \begin{verbatim}
@@ -1426,8 +1426,8 @@ have been defined, and it will define the following macros:
 .macro calc_analyzer starts targets
 \end{verbatim}
 \begin{desc}
-Given the list of types to start from {\tt starts}, and the list of types
-to visit {\tt targets}, return the list of types that must be visited.
+Given the list of types to start from \texttt{starts}, and the list of types
+to visit \texttt{targets}, return the list of types that must be visited.
 \par
 Note that both parameters of this macro could potentially consist of
 a list of types. Therefore expressions for these parameters should be
@@ -1437,7 +1437,7 @@ surrounded by quotes, so that the list is not broken up.
 .macro generate_analyzer_forwards list
 \end{verbatim}
 \begin{desc}
-Given a list {\tt list} of types the analyzer should visit, generate
+Given a list \texttt{list} of types the analyzer should visit, generate
 forward declarations for the walker functions for these types.
 \par
 To ensure that the list that is passed to the macro is evaluated as
@@ -1447,7 +1447,7 @@ a single parameter, it should be surrounded with quotes.
 .macro generate_analyzer list
 \end{verbatim}
 \begin{desc}
-Given a list {\tt list} of types the analyzer should visit, generate
+Given a list \texttt{list} of types the analyzer should visit, generate
 walker functions for these types.
 \par
 To ensure that the list that is passed to the macro is evaluated as a
@@ -1479,14 +1479,14 @@ For example:
 .call generate_analyzer_forwards "$(visit_types)"
 \end{verbatim}
 \subsection{Action functions}
-For nodes for which a {\tt function} action is specified, the user
+For nodes for which a \texttt{function} action is specified, the user
 must specify the function that implements the analysis on this node,
 and provide an implementation of this function.  The function must have
 a formal parameter list that is compatible with the one generated by the
 \verb'generate_formal_parameters' macro, and must return the type that
 was specified in the variable \verb'reduction_type'.
 
-For example, for an analyzer that calculates the sum of all {\tt int}
+For example, for an analyzer that calculates the sum of all \texttt{int}
 expressions in a tree, we can simply define an action
 \begin{verbatim}
 .set analyze_action_int function add_int_action
@@ -1530,13 +1530,13 @@ The {\C} support library provides definitions in
 the same class as the generated definitions for a number of commonly used
 primitive types.
 It also provides definitions that are necessary
-for various templates (e.g. the {\tt print} functions).
+for various templates (e.g. the \texttt{print} functions).
 \par
 For the library the following files are provided:
 
 \begin{desctab}
-{\tt libtmc.a} & The library itself. \\
-{\tt tmc.h} & The header file with declarations for the library functions. \\
+\texttt{libtmc.a} & The library itself. \\
+\texttt{tmc.h} & The header file with declarations for the library functions. \\
 \end{desctab}
 \subsection{Print optimizer functions}
 The print optimizer will attempt as much as possible to write a constructor,
@@ -1555,21 +1555,21 @@ TMPRINSTATE *tm_setprint(
 \begin{desc}
 \index{tm_setprint@\verb+tm_setprint()+}
 Initialize the print optimizer handler.
-The output of the {\tt print\_<type>()} functions will be written to
-file {\tt f} with an indent {\tt i} for each list, tuple or constructor.
-The output has a maximum of {\tt w} characters on each line of output.
-If {\tt tw} is not equal to zero, it is interpreted as the width of the
+The output of the \texttt{print\_<type>()} functions will be written to
+file \texttt{f} with an indent \texttt{i} for each list, tuple or constructor.
+The output has a maximum of \texttt{w} characters on each line of output.
+If \texttt{tw} is not equal to zero, it is interpreted as the width of the
 tab character, and all indents will be implemented with as many tab
 characters as possible.
 Usually \verb'tw' should be 8.
 \par
-The {\tt flags} can be used to modify the style of the output. At the
+The \texttt{flags} can be used to modify the style of the output. At the
 moment no style options are implemented, and the parameter should be 0.
 \par
-The print state descriptor returned by {\tt tm\_setprint()} stores the
+The print state descriptor returned by \texttt{tm\_setprint()} stores the
 formatting state. It must be passed to all functions that are used to
 print the data structures. After all formatting and printing has been
-done, the print state must be destroyed with the function {\tt tm\_endprint()}
+done, the print state must be destroyed with the function \texttt{tm\_endprint()}
 described below.
 \par
 Typically the function is used as follows:
@@ -1589,10 +1589,10 @@ int tm_endprint( TMPRINTSTATE *st );
 \index{tm_endprint@\verb+tm_endprint()+}
 Destroy the given print state, and return the listing level of
 the print state. The listing level is the number of calls to {\tt
-tm\_openlist()}, {\tt tm\_opencons()}, and {\tt tm\_opentuple()} that
-have not been balanced with the corresponding {\tt tm\_closelist()},
-{\tt tm\_closecons()}, resp.  {\tt tm\_closetuple()}. Normally the
-listing level returned by {\tt tm\_endprint()} should be zero.
+tm\_openlist()}, \texttt{tm\_opencons()}, and \texttt{tm\_opentuple()} that
+have not been balanced with the corresponding \texttt{tm\_closelist()},
+\texttt{tm\_closecons()}, resp.  \texttt{tm\_closetuple()}. Normally the
+listing level returned by \texttt{tm\_endprint()} should be zero.
 \end{desc}
 \begin{verbatim}
 void tm_openlist( TMPRINTSTATE *st );
@@ -1627,7 +1627,7 @@ void tm_printword( TMPRINTSTATE *st, const char *w );
 \end{verbatim}
 \begin{desc}
 \index{tm_printword@\verb+tm_printword()+}
-Add a word {\tt w} to the current list, tuple, or constructor.
+Add a word \texttt{w} to the current list, tuple, or constructor.
 \end{desc}
 \subsection{File scan support functions}
 These functions are provided to support the \verb'fscan_<type>' template
@@ -1642,12 +1642,12 @@ int tm_lineno;
 \index{tm_lineno@\verb+tm_lineno+}
 Skip all spaces, tabs, form feeds and comment in the input up to the
 next non-white character.
-Increment {\tt tm\_lineno} for each newline character that is encountered.
-A comment is started with {\tt ||} and is terminated by a newline.
-It is not allowed to have a single {\tt |}
-followed by another character than another {\tt |} in the input:
-this will put an error message in {\tt tm\_errmsg} and a return value {\tt 1}.
-In all other cases {\tt 0} is returned.
+Increment \texttt{tm\_lineno} for each newline character that is encountered.
+A comment is started with \texttt{||} and is terminated by a newline.
+It is not allowed to have a single \texttt{|}
+followed by another character than another \texttt{|} in the input:
+this will put an error message in \texttt{tm\_errmsg} and a return value \texttt{1}.
+In all other cases \texttt{0} is returned.
 \end{desc}
 \begin{verbatim}
 int tm_fneedc( FILE *f, int c );
@@ -1655,10 +1655,10 @@ int tm_fneedc( FILE *f, int c );
 \begin{desc}
 \index{tm_fneedc@\verb+tm_fneedc()+}
 After skipping spaces, tabs, form feeds and comment,
-try to read character {\tt c} from file {\tt f}.
-Return a value {\tt 1} and put an error message in {\tt tm\_errmsg} if this
+try to read character \texttt{c} from file \texttt{f}.
+Return a value \texttt{1} and put an error message in \texttt{tm\_errmsg} if this
 is not possible,
-else return {\tt 0}.
+else return \texttt{0}.
 \end{desc}
 \begin{verbatim}
 int tm_fscanopenbrac( FILE *f );
@@ -1670,12 +1670,12 @@ int tm_fscanclosebrac( FILE *f, int n );
 \begin{sloppypar}
 Handle brackets around constructors.
 \verb+tm_fscanopenbrac()+ counts and returns the number
-of open brackets (`{\tt (}') it encounters up to the first character
+of open brackets (`\texttt{(}') it encounters up to the first character
 that is not white space, comment or an open bracket.
-\verb+tm_fscanclosebrac()+ tries to read {\tt n} close brackets (`{\tt )}').
-It will return {\tt 1} and put an error message in {\tt tm\_errmsg} if this is
+\verb+tm_fscanclosebrac()+ tries to read \texttt{n} close brackets (`\texttt{)}').
+It will return \texttt{1} and put an error message in \texttt{tm\_errmsg} if this is
 not possible.
-It will return {\tt 0} if it is successful.
+It will return \texttt{0} if it is successful.
 \end{sloppypar}
 \end{desc}
 \begin{verbatim}
@@ -1685,12 +1685,12 @@ int tm_fscancons( FILE *f, char *buf, int sz );
 \index{tm_fscancons@\verb+tm_fscancons()+}
 Read a constructor name.
 \verb+tm_fscancons()+ tries to read a constructor name consisting of up to
-${\tt sz}-1$ upper- or lower-case characters or digits.
-The constructor name will be copied into {\tt buf},
+$\texttt{sz}-1$ upper- or lower-case characters or digits.
+The constructor name will be copied into \texttt{buf},
 and terminated by a `\verb+\0+'.
-It will return {\tt 1} and put an error message in {\tt tm\_errmsg}
-if the constructor name has length 0 or is longer than ${\tt sz}-1$,
-else it will return {\tt 0}.
+It will return \texttt{1} and put an error message in \texttt{tm\_errmsg}
+if the constructor name has length 0 or is longer than $\texttt{sz}-1$,
+else it will return \texttt{0}.
 \end{desc}
 \begin{verbatim}
 const char *tm_escapestring( const unsigned int code );
@@ -1707,9 +1707,9 @@ int tm_fscanescapedchar( FILE *f, int *code );
 \end{verbatim}
 \begin{desc}
 Try to read a (possibly escaped) character from the file \verb'f'. 
-It will return {\tt 1} and put an error message in {\tt tm\_errmsg}
+It will return \texttt{1} and put an error message in \texttt{tm\_errmsg}
 if no escaped character can be read,
-else it will return {\tt 0}.
+else it will return \texttt{0}.
 \end{desc}
 
 \subsection{Template functions for primitive types}
@@ -1728,13 +1728,13 @@ typedef tmbool <something>
 \begin{desc}
 \index{tmbool}
 Module functions for type `tmbool'.
-A {\tt tmbool} is the boolean representation used by {\Tm}.
-It may have the values {\tt TMTRUE} and {\tt TMFALSE}.
+A \texttt{tmbool} is the boolean representation used by {\Tm}.
+It may have the values \texttt{TMTRUE} and \texttt{TMFALSE}.
 This name has been chosen instead of the more obvious `bool',
 since this type name is often defined at another place.
-For example, the {\tt curses} software and MS-Windows both define {\tt bool}.
-In {\tt fscan\_tmbool()}, {\tt fprint\_tmbool()} and {\tt print\_tmbool()}
-use {\tt TMTRUESTR} and {\tt TMFALSESTR} as representation strings.
+For example, the \texttt{curses} software and MS-Windows both define \texttt{bool}.
+In \texttt{fscan\_tmbool()}, \texttt{fprint\_tmbool()} and \texttt{print\_tmbool()}
+use \texttt{TMTRUESTR} and \texttt{TMFALSESTR} as representation strings.
 \end{desc}
 \begin{verbatim}
 typedef signed char tmschar;
@@ -1750,7 +1750,7 @@ void rfre_tmschar( tmschar c );
 \end{verbatim}
 \begin{desc}
 \index{tmschar}
-Module functions for type `{\tt signed char}'.
+Module functions for type `\texttt{signed char}'.
 \end{desc}
 \begin{verbatim}
 typedef unsigned char tmuchar;
@@ -1766,7 +1766,7 @@ void rfre_tmuchar( tmuchar c );
 \end{verbatim}
 \begin{desc}
 \index{tmuchar}
-Module functions for type `{\tt unsigned char}'.
+Module functions for type `\texttt{unsigned char}'.
 \end{desc}
 \begin{verbatim}
 int cmp_int( const int a, const int b );
@@ -1781,7 +1781,7 @@ void rfre_int( int i );
 \end{verbatim}
 \begin{desc}
 \index{int}
-Module functions for type `{\tt int}'.
+Module functions for type `\texttt{int}'.
 \end{desc}
 \begin{verbatim}
 typedef unsigned int tmuint;
@@ -1797,7 +1797,7 @@ void rfre_tmuint( tmuint u );
 \end{verbatim}
 \begin{desc}
 \index{tmuint}
-Module functions for type `{\tt unsigned int}'.
+Module functions for type `\texttt{unsigned int}'.
 \end{desc}
 \begin{verbatim}
 int cmp_long( const long a, const long b );
@@ -1812,7 +1812,7 @@ void rfre_long( long u );
 \end{verbatim}
 \begin{desc}
 \index{long}
-Module functions for type `{\tt long int}'.
+Module functions for type `\texttt{long int}'.
 \end{desc}
 \begin{verbatim}
 typedef unsigned long int tmulong;
@@ -1828,7 +1828,7 @@ void rfre_tmulong( tmulong u );
 \end{verbatim}
 \begin{desc}
 \index{tmulong}
-Module functions for type `{\tt unsigned long int}'.
+Module functions for type `\texttt{unsigned long int}'.
 \end{desc}
 \begin{verbatim}
 typedef short int tmshort;
@@ -1844,7 +1844,7 @@ void rfre_tmshort( tmshort u );
 \end{verbatim}
 \begin{desc}
 \index{tmshort}
-Module functions for type `{\tt short int}'.
+Module functions for type `\texttt{short int}'.
 \end{desc}
 \begin{verbatim}
 typedef unsigned short int tmushort;
@@ -1860,7 +1860,7 @@ void rfre_tmushort( tmushort u );
 \end{verbatim}
 \begin{desc}
 \index{tmushort}
-Module functions for type `{\tt unsigned short int}'.
+Module functions for type `\texttt{unsigned short int}'.
 \end{desc}
 \begin{verbatim}
 int cmp_double( const double a, const double b );
@@ -1875,7 +1875,7 @@ void rfre_double( double d );
 \end{verbatim}
 \begin{desc}
 \index{double}
-Module functions for type `{\tt double}'.
+Module functions for type `\texttt{double}'.
 \end{desc}
 \begin{verbatim}
 int cmp_float( float a, float b );
@@ -1890,7 +1890,7 @@ void rfre_float( float d );
 \end{verbatim}
 \begin{desc}
 \index{float}
-Module functions for type `{\tt float}'.
+Module functions for type `\texttt{float}'.
 \end{desc}
 \begin{verbatim}
 void fprint_tmsymbol( FILE *f, const tmsymbol s );
@@ -1925,10 +1925,10 @@ int get_balance_tmstring( void );
 \index{tmstring}
 Module functions for type `tmstring'.
 A `tmstring' is an array of characters terminated by a `\verb+\0+' character.
-Note that {\tt fscan\_tmstring()}, {\tt rdup\_tmstring()},
-and {\tt new\_tmstring()} allocate memory for the scanned string,
-you must use {\tt fre\_tmstring()} to return that memory.
-{\tt Stat\_tmstring} prints to file {\tt f} a line specifying the number of
+Note that \texttt{fscan\_tmstring()}, \texttt{rdup\_tmstring()},
+and \texttt{new\_tmstring()} allocate memory for the scanned string,
+you must use \texttt{fre\_tmstring()} to return that memory.
+\texttt{Stat\_tmstring} prints to file \texttt{f} a line specifying the number of
 allocated and freed strings.
 There is also a function \verb+realloc_tmstring()+ to enlarge the
 string array,
@@ -1938,7 +1938,7 @@ see section~\ref{s.malloc}.
 tmstring create_tmstring( size_t sz );
 \end{verbatim}
 \begin{desc}
-Given a desired string size \verb'sz', return a new, empty, {\tt tmstring}
+Given a desired string size \verb'sz', return a new, empty, \texttt{tmstring}
 containing room for \verb'sz' characters.
 \end{desc}
 \begin{verbatim}
@@ -1965,7 +1965,7 @@ Like other \verb'fscan_<type>' functions, \verb'fscan_tmword()' allows
 any number of parenthesis pairs around the word, and skips
 whitespace before the word.
 Since a \verb'tmword' is represented as a \verb'tmstring',
-you must use \verb'fre_tmstring', or the alias {\tt fre\_tmword()},
+you must use \verb'fre_tmstring', or the alias \texttt{fre\_tmword()},
 to deallocate that memory.
 \end{desc}
 \begin{verbatim}
@@ -1999,8 +1999,8 @@ char tm_errmsg[TM_ERRLEN];
 \index{tm_errmsg@\verb+tm_errmsg+}
 \begin{sloppypar}
 A buffer for error messages from {\Tm} functions,
-in particular the {\tt fscan\_<type>()} functions.
-The value {\tt TM\_ERRLEN} is defined in the include file {\tt tmc.h}.
+in particular the \texttt{fscan\_<type>()} functions.
+The value \texttt{TM\_ERRLEN} is defined in the include file \texttt{tmc.h}.
 \end{sloppypar}
 \end{desc}
 \begin{verbatim}
@@ -2009,8 +2009,8 @@ void tm_fatal( char *file, int line, char *s );
 \begin{desc}
 \index{tm_fatal@\verb+tm_fatal()+}
 Fatal error handler for {\Tm} functions:
-given the source file name {\tt file},
-the source line {\tt line} and the error message {\tt s},
+given the source file name \texttt{file},
+the source line \texttt{line} and the error message \texttt{s},
 print the error message \verb+s+.
 If \verb+line+ is not equal to $0$, and \verb+file+ is not equal
 to \verb+""+ (the empty string) the origin (source file and line)
@@ -2028,10 +2028,10 @@ void tm_badtag( char *file, int line, int tag );
 \begin{desc}
 \index{tm_badtag@\verb+tm_badtag()+}
 Fatal error handler for bad tags: print the position
-given by source file name {\tt file} and source line {\tt line},
+given by source file name \texttt{file} and source line \texttt{line},
 and print the tag value as a decimal and hexadecimal value.
 After this stop the program.
-This message is {\em not} printed through \verb'tm_fatal()',
+This message is \emph{not} printed through \verb'tm_fatal()',
 since the occurrence of a bad tag is a symptom of a serious organization
 problem.
 \end{desc}
@@ -2049,8 +2049,8 @@ If this function returns (the default one does not), the {\Tm}
 allocation routines will try again to allocate the requested block.
 This way, garbage collection may be implemented.
 \end{desc}
-\subsection{{\tt LOGNEW} functions}
-For a detailed explanation of the purpose of {\tt LOGNEW} functions,
+\subsection{\texttt{LOGNEW} functions}
+For a detailed explanation of the purpose of \texttt{LOGNEW} functions,
 see section~\ref{s.allocation}.
 \begin{verbatim}
 void tm_lognew(
@@ -2061,7 +2061,7 @@ void tm_lognew(
 \end{verbatim}
 \begin{desc}
 \index{tm_lognew@\verb+tm_lognew()+}
-Given a pointer {\tt p}, record it as a new entry in the lognew table.
+Given a pointer \texttt{p}, record it as a new entry in the lognew table.
 The current values of \verb+nwl_f+ and \verb+nwl_l+
 are stored to record the source-code position of the block request.
 \end{desc}
@@ -2070,7 +2070,7 @@ void tm_logfre( const tm_neutralp p );
 \end{verbatim}
 \begin{desc}
 \index{tm_logfre@\verb+tm_logfre()+}
-Given a pointer {\tt p}, delete its entry from the lognew table.
+Given a pointer \texttt{p}, delete its entry from the lognew table.
 \end{desc}
 \begin{verbatim}
 long int tm_new_logid( const char *file, const int line );
@@ -2096,7 +2096,7 @@ void tm_fre_logid( const long int i );
 \end{verbatim}
 \begin{desc}
 \index{tm_fre_logid@\verb+tm_fre_logid()+}
-Remove the block with id {\tt i} from the list of pending blocks.
+Remove the block with id \texttt{i} from the list of pending blocks.
 See the description of \verb+tm_new_logid()+.
 \end{desc}
 \begin{verbatim}
@@ -2104,7 +2104,7 @@ void report_lognew( FILE *f );
 \end{verbatim}
 \begin{desc}
 \index{report_lognew@\verb+report_lognew()+}
-Print the pending entries in the lognew table to file {\tt f}.
+Print the pending entries in the lognew table to file \texttt{f}.
 \end{desc}
 \begin{verbatim}
 void flush_lognew();
@@ -2117,7 +2117,7 @@ has been allocated for it.
 \subsection{Dynamic memory allocation}
 \label{s.malloc}
 \index{malloc@\verb+malloc()+}
-Type handling for \verb+malloc()+ and friends is a {\em minefield}.
+Type handling for \verb+malloc()+ and friends is a \emph{minefield}.
 Different compilers have different ideas about neutral pointers, whether the
 result of a malloc should be cast, etc.
 The functions and defines in the {\Tm} {\C} library try to meet the demands
@@ -2161,12 +2161,10 @@ but with important differences:
       they try again to allocate the requested memory.
 \item They are guaranteed to accept \verb'sz = 0' and \verb'n = 0'.
 \end{enumerate}
-You cannot use these functions directly in portable code,
-since some compilers will require casts of the pointer parameters and
-return values,
-while other compilers require that you do {\em not}.
-Therefore,
-a set of compiler dependent macros is provided to solve this problem.
+You cannot use these functions directly in portable code, since some
+compilers will require casts of the pointer parameters and return values,
+while other compilers require that you do \emph{not}.  Therefore, a set
+of compiler dependent macros is provided to solve this problem.
 \end{desc}
 \begin{verbatim}
 #define TM_MALLOC(t,sz) <something>
@@ -2243,9 +2241,9 @@ extern tmtext setroom_tmtext( tmtext t, long rm );
 \index{setroom_tmtext()@\verb'setroom_tmtext()'}
 This function is similar to the standard \verb'setroom_<type>()'
 function.
-Specify that text {\tt t} must have room for at least {\tt rm} characters.
+Specify that text \texttt{t} must have room for at least \texttt{rm} characters.
 This function ensures that the array has sufficient room to
-store {\tt rm} elements.
+store \texttt{rm} elements.
 The room in a list is never reduced.
 \par
 Functions that add elements to a \verb'tmtext' use this function implicitly,
@@ -2349,10 +2347,10 @@ to point past the written characters.
 \index{tmsymbol}
 These functions maintain a table of strings.
 Each time a string is added to the table,
-a value of type {\tt symbol} is returned.
+a value of type \texttt{symbol} is returned.
 It is guaranteed that for equal strings the same value is returned,
-and it is possible to compare these values with a simple compare ({\tt ==}).
-There is a special `nil' value, {\tt symbolNIL}.
+and it is possible to compare these values with a simple compare (\texttt{==}).
+There is a special `nil' value, \texttt{symbolNIL}.
 \par
 To store the information for a symbol, the following data structure is used:
 \begin{verbatim}
@@ -2383,7 +2381,7 @@ tmsymbol add_tmsymbol( const char *name );
 \end{verbatim}
 \begin{desc}
 \index{add_tmsymbol@\verb+add_tmsymbol()+}
-Add string {\tt name} to the symbol table.
+Add string \texttt{name} to the symbol table.
 If the string already occurs in the table, the value of the old
 entry is returned, else a new entry is created,
 and a new value is returned.
@@ -2396,9 +2394,9 @@ tmsymbol find_tmsymbol( char *name );
 \end{verbatim}
 \begin{desc}
 \index{find_tmsymbol@\verb+find_tmsymbol()+}
-Try to locate string {\tt name} in the symbol table.
+Try to locate string \texttt{name} in the symbol table.
 If it occurs in the table, its value is returned,
-else {\tt symbolNIL} is returned.
+else \texttt{symbolNIL} is returned.
 \end{desc}
 \begin{verbatim}
 void flush_tmsymbol();
@@ -2415,7 +2413,7 @@ tmsymbol gen_tmsymbol( const char *prefix );
 \end{verbatim}
 \begin{desc}
 \index{gen_tmsymbol@\verb+gen_tmsymbol()+}
-Given a string {\tt prefix}, generate a new symbol value with a new string.
+Given a string \texttt{prefix}, generate a new symbol value with a new string.
 It is not allowed to use \verb+add_tmsymbol()+ after you have used
 \verb+gen_tmsymbol()+.
 Otherwise it cannot be guaranteed that the generated symbols remain unique.
@@ -2430,62 +2428,63 @@ it is not necessary to set them;
 a reasonable default will be chosen.
 \par
 \begin{desctab}
-{\tt basename}\index{basename@{\tt basename}}
+\texttt{basename}\index{basename@\texttt{basename}}
 &
 This variable is used to generate the names of
 definitions that are generated only once
 (e.g. initialization and statistics functions).
-This variable {\em must} be set.
+This variable \emph{must} be set.
 \\
-{\tt wantdefs}\index{wantdefs@{\tt wantdefs}}
+\texttt{wantdefs}\index{wantdefs@\texttt{wantdefs}}
 &
 If set,
 this variable contains the names of the type and function definitions that
 must be generated.
 If these functions require the definition of other functions,
 the necessary functions will be generated,
-but will be declared {\tt static}.
-If {\tt alldefs} is set all possible definitions are generated.
+but will be declared \texttt{static}.
+If \texttt{alldefs} is set all possible definitions are generated.
 \\
-{\tt notwantdefs}\index{notwantdefs@{\tt notwantdefs}}
+\texttt{notwantdefs}\index{notwantdefs@\texttt{notwantdefs}}
 &
 If set, this variable contains the names of the type and function
-definitions for which under {\em all} conditions {\em no} code must
+definitions for which under \emph{all} conditions \emph{no} code must
 be generated.
 \\
-{\tt alldefs}\index{alldefs@{\tt alldefs}}
+\texttt{alldefs}\index{alldefs@\texttt{alldefs}}
 &
 If set,
 this variable indicates that all possible type and function definitions, and
 all functions for first level lists, must be generated for all defined types.
 \end{desctab}
 \par
-At least one of the variables {\tt wantdefs} and {\tt alldefs} must be set.
+At least one of the variables \texttt{wantdefs} and \texttt{alldefs}
+must be set.
 \par
 In the generated {\C} code a number of preprocessor variables are used:
 \par
 \begin{desctab}
-{\tt FATAL(msg)}\index{FATAL@{\tt FATAL()}}
+\texttt{FATAL(msg)}\index{FATAL@\texttt{FATAL()}}
 &
-{\tt \#define} this if you want to supply a fatal error handler to print
-{\tt msg}.
+\texttt{\#define} this if you want to supply a fatal error handler to print
+\texttt{msg}.
 By default \verb'tm_fatal()' is used,
 see section~\ref{s.csupportlib}.
 \\
-{\tt FIRSTROOM}\index{FIRSTROOM@{\tt FIRSTROOM}}
+\texttt{FIRSTROOM}\index{FIRSTROOM@\texttt{FIRSTROOM}}
 &
 The initial room of an array when created with \verb+new_<type>_list()+.
 Default it is 0.
 \\
-{\tt LOGNEW}\index{LOGNEW@{\tt LOGNEW}}
+\texttt{LOGNEW}\index{LOGNEW@\texttt{LOGNEW}}
 &
-{\tt \#define} this if you want code to record the origin of all
+\texttt{\#define} this if you want code to record the origin of all
 \verb+new_<type>()+ requests.
 If this code is enabled, you can print with \verb+report_lognew()+ the
 source file and line of all pending allocated blocks.
 See section~\ref{s.allocation} for a detailed description.
 \par
-{\em Important:} {\tt LOGNEW} only works if all code is compiled
-with {\tt LOGNEW}.
+\emph{Important:} \texttt{LOGNEW} only works if all code is compiled
+with \texttt{LOGNEW}.
 \\
 \end{desctab}
