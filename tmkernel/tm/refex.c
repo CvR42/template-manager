@@ -280,7 +280,7 @@ static const char *pmatch( const char *lp, const char *ap )
 
 	    case PAT_INSET:
 		c = *lp++;
-		if( !isinset( ap, c ) ){
+		if( c == '\0' || !isinset( ap, c ) ){
 		    return NULL;
 		}
 		ap += BITBLK;
@@ -288,7 +288,7 @@ static const char *pmatch( const char *lp, const char *ap )
 
 	    case PAT_NOTINSET:
 		c = *lp++;
-		if( isinset( ap, c ) ){
+		if( c == '\0' || isinset( ap, c ) ){
 		    return NULL;
 		}
 		ap += BITBLK;
