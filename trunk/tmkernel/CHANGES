@@ -1,3 +1,8 @@
+New in version 2.0.12 Fri May 23 22:31:32 CEST 2003
+
+- cmp_tmsymbol() now uses strcmp instead of comparing pointers.
+
+
 New in version 2.0.11
 
 - Makefiles now have an 'uninstall' rule.
