@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: newlog.c
-   Log new_ and fre_ actions and their origin in the users' code.
+ * Log new_ and fre_ actions and their origin in the users' code.
  */
 
 #include "config.h"

@@ -1,12 +1,8 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
+ *
+ * Tm - an interface code generator.
  *
  * All rights reserved.
- */
-
-/* File: fscstr.c
- * 
- * Handle 'fscan_<type>' for type 'string'.
  */
 
 #include <ctype.h>
@@ -15,6 +11,7 @@
 
 #define WORDBUFSZ 20
 
+/* Handle 'fscan_<type>' for type 'string'.  */
 int fscan_tmbool( FILE *f, tmbool *s )
 {
     char buf[WORDBUFSZ];

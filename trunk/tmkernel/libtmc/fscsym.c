@@ -1,4 +1,4 @@
-/* File: fscsym.c */
+/* File: $Id$ */
 
 #include "config.h"
 #include "tmc.h"

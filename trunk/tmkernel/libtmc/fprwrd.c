@@ -1,17 +1,14 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
+ *
+ * Tm - an interface code generator.
  *
  * All rights reserved.
- */
-
-/* File: fprwrd.c
- * C. van Reeuwijk
  */
 
 #include "config.h"
 #include "tmc.h"
 
-/* definition of 'fprint' for a 'tmword' */
+/* Implementation of 'fprint' for a 'tmword', */
 void fprint_tmword( FILE *f, const char *s )
 {
     if( s == 0 ){
