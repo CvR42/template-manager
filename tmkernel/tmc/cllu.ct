@@ -77,6 +77,7 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 
 .if ${len ${virtual $(need_new)}}
 /* virtual: ${prefix new_ ${virtual $(need_new)}} */
+
 .endif
 .foreach t ${nonvirtual $(need_new)}
 .if ${member $t $(want_new)}
@@ -453,20 +454,62 @@ $(stat)$t_list insertlist_$t_list( $t_list la, unsigned int p, $t_list lb )
 /* Delete element at position 'p' in list 'l'. */
 $(stat)$t_list delete_$t_list( $t_list l, const unsigned int p )
 {
-    $t_list nl;
+    $t_list res = l;
+    $t_list *prev = &res;
 
-    if( l == $t_listNIL ){
+    for( unsigned int ix=0; ix<p; ix++ ){
+	if( l == $t_listNIL ){
+	    return res;
+	}
+	prev = &l->${call linkname $t};
+	l = l->${call linkname $t};
+    }
+    (*prev) = l->${call linkname $t};
+    rfre_$t( l );
+    return res;
+}
+
+.endforeach
+.endif
+.if ${len $(need_deletelist_list)}
+/************************************************
+ *    deletelist_<type>_list routines               *
+ ************************************************/
+
+.call ansi_static deletelist_list "$$t_list deletelist_$$t_list( $$t_list, unsigned int, unsigned int )"
+.foreach t $(need_deletelist_list)
+.if ${member $t $(want_deletelist_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* delete elements at positions 'from' to 'to' in list 'l'. */
+$(stat)$t_list deletelist_$t_list( $t_list l, const unsigned int from, unsigned int to )
+{
+    $t_list res = l;
+    $t_list *prev = &res;
+    unsigned int n;
+    unsigned int ix;
+
+    if( from>to ){
 	return l;
     }
-    if( p == 0 ){
-	nl = l->${call linkname $t};
+    for( ix=0; ix<from; ix++ ){
+	if( l == $t_listNIL ){
+	    return res;
+	}
+	prev = &l->${call linkname $t};
+	l = l->${call linkname $t};
+    }
+    for( n=from; n<to; ix++ ){
+	if( l == $t_listNIL ){
+	    break;
+	}
+	$t_list nl = (*prev) = l->${call linkname $t};
 	rfre_$t( l );
+	l = nl;
     }
-    else {
-	nl = l;
-	nl->${call linkname $t} = delete_$t_list( l->${call linkname $t}, (p-1) );
-    }
-    return nl;
+    return res;
 }
 
 .endforeach

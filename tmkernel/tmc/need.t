@@ -55,7 +55,7 @@
 .set groups      ds cmp isequal new fre rfre rdup print fprint fscan
 .. These are only useful for lists.
 .set listgroups append concat slice setroom insert delete reverse extract
-.append listgroups extractlist insertlist
+.append listgroups extractlist insertlist deletelist
 .append groups $(listgroups)
 .set misccode stat_$(basename) get_balance_$(basename) flush_$(basename)
 .if ${eq $(template) ald}
@@ -257,6 +257,12 @@
 ..
 .. ** delete **
 .macro req_delete l
+.call require rfre "${delisttypes $l}"
+.call require ds "$l"
+.endmacro
+..
+.. ** deletelist **
+.macro req_deletelist l
 .call require rfre "${delisttypes $l}"
 .call require ds "$l"
 .endmacro

@@ -33,6 +33,7 @@
 .append wantdefs rfre_toplevel
 .append wantdefs rdup_toplevel_list
 .append wantdefs concat_toplevel_list
+.append wantdefs deletelist_toplevel_list
 .append wantdefs fprint_toplevel_list
 .append wantdefs fprint_toplevel_list_list_list
 .append wantdefs fprint_toplevel_list
