@@ -3,7 +3,7 @@
 ..
 .. All rights reserved.
 
-.. File: tmccode.ct
+.. File: cppcode.ct
 
 #include "config.h"
 
@@ -13,10 +13,10 @@
 #include <string.h>
 
 // Standard tm library
-#include <tmc.h>
+#include <tmcpp.h>
 
 // Local definitions
-#include "tmccode.h"
+#include "cppcode.h"
 
 .insert tmcspec.t
 .insert macros.t

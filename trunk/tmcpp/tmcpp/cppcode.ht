@@ -3,7 +3,7 @@
 ..
 .. All rights reserved.
 ..
-.. File: tmccode.ht
+.. File: cppcode.ht
 .insert tmcspec.t
 .insert macros.t
 .insert tmcid.t
