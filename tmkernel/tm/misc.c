@@ -130,25 +130,26 @@ field find_field( const ds_list types, const char *type, const char *nm )
 	return fieldNIL;
     }
     t = types->arr[pos];
+    inherits = t->inherits;
     switch( t->tag ){
+	case TAGDsAlias:
+	    fl = field_listNIL;
+	    break;
+
 	case TAGDsConstructorBase:
 	    fl = field_listNIL;
-	    inherits = to_DsConstructorBase(t)->inherits;
 	    break;
 
 	case TAGDsTuple:
 	    fl = to_DsTuple(t)->fields;
-	    inherits = to_DsTuple(t)->inherits;
 	    break;
 
 	case TAGDsClass:
 	    fl = to_DsClass(t)->fields;
-	    inherits = to_DsClass(t)->inherits;
 	    break;
 
 	case TAGDsConstructor:
 	    fl = to_DsConstructor(t)->fields;
-	    inherits = to_DsConstructor(t)->inherits;
 	    break;
 
     }
@@ -161,31 +162,6 @@ field find_field( const ds_list types, const char *type, const char *nm )
     return find_field_super( types, inherits, nm );
 }
 
-static const tmstring_list extract_inherits_type( const ds d )
-{
-    tmstring_list ans = tmstring_listNIL;
-
-    switch( d->tag ){
-	case TAGDsConstructorBase:
-	    ans = to_DsConstructorBase(d)->inherits;
-	    break;
-
-	case TAGDsTuple:
-	    ans = to_DsTuple(d)->inherits;
-	    break;
-
-	case TAGDsClass:
-	    ans = to_DsClass(d)->inherits;
-	    break;
-
-	case TAGDsConstructor:
-	    ans = to_DsConstructor(d)->inherits;
-	    break;
-
-    }
-    return ans;
-}
-
 const tmstring_list extract_inherits( const ds_list types, const char *type )
 {
     unsigned int ix;
@@ -194,7 +170,7 @@ const tmstring_list extract_inherits( const ds_list types, const char *type )
     if( ix>=types->sz ){
 	return tmstring_listNIL;
     }
-    return extract_inherits_type( types->arr[ix] );
+    return types->arr[ix]->inherits;
 }
 
 /* Given a pointer to a string list 'res', a list of types 'types'
@@ -257,7 +233,7 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring
 
     for( ix=0; ix<types->sz; ix++ ){
 	const ds d = types->arr[ix];
-	const tmstring_list inherits = extract_inherits_type( d );
+	const tmstring_list inherits = d->inherits;
 
 	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
 	    const char *nm = d->name;
@@ -285,6 +261,9 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
     }
     d = types->arr[ix];
     switch( d->tag ){
+	case TAGDsAlias:
+	    break;
+
 	case TAGDsTuple:
 	    el = to_DsTuple(d)->fields;
 	    break;

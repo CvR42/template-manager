@@ -946,6 +946,14 @@ static ds rename_ds( ds d, const tmstring old, const tmstring nw )
 	    break;
 	}
 
+	case TAGDsAlias:
+	{
+	    DsAlias dsub = to_DsAlias( d );
+
+	    dsub->target = rename_tmstring( dsub->target, old, nw );
+	    break;
+	}
+
 	case TAGDsConstructor:
 	{
 	    DsConstructor dsub = to_DsConstructor( d );
@@ -1031,7 +1039,7 @@ static void doappend( const tplelm tpl )
     nm = rdup_tmstring( sl->arr[0] );
     sl = delete_tmstring_list( sl, 0 );
     val = getvar( nm );
-    if( val != tmstringNIL ){
+    if( val != tmstringNIL && val[0] != '\0' ){
 	sl = insert_tmstring_list( sl, 0, rdup_tmstring( val ) );
     }
     val = flatstrings( sl );
@@ -1062,7 +1070,7 @@ static void doglobalappend( const tplelm tpl )
     nm = rdup_tmstring( sl->arr[0] );
     sl = delete_tmstring_list( sl, 0 );
     val = getvar( nm );
-    if( val != tmstringNIL ){
+    if( val != tmstringNIL && val[0] != '\0' ){
 	sl = insert_tmstring_list( sl, 0, rdup_tmstring( val ) );
     }
     val = flatstrings( sl );
