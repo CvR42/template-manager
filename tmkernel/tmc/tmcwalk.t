@@ -51,21 +51,28 @@
 
 .foreach t $(visit_types)
 .set empty 1
-/* Given a ${metatype $t} $t, rewrite it. */
+/* Walker for ${metatype $t} $t. */
 .call generate_walker_signature e $t
 {
 .call generate_walker_locals "    " e $t
 .switch ${metatype $t}
 .case alias
+.if ${member ${alias $t} $(visit_types)}
 .call generate_descent_call "    " e ${alias $t} $t 
+.set empty 0
+.endif
 .case atom
 .case list
-    unsigned int ix;
+.if ${member ${delisttypes $t} $(visit_types)}
+    {
+	unsigned int ix;
 
-    for( ix=0; ix<e->sz; ix++ ){
+	for( ix=0; ix<e->sz; ix++ ){
 .call generate_descent_call "	" e->arr[ix] ${delisttypes $t} ${delisttypes $t}
 .set empty 0
+	}
     }
+.endif
 .case class constructor constructorbase
 .set sub ${comm ${inheritors $t} "" $(visit_types)}
 .if ${len $(sub)}
