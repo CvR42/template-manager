@@ -17,5 +17,6 @@ extern void flushvar( void );
 extern tmstring getvar( const tmstring nm );
 extern tmstring getretval( void );
 extern char *match_macros( const tmstring pat, tmstring_list *matcnes );
+extern char *match_vars( const tmstring pat, tmstring_list *matcnes );
 extern void init_var( void );
 extern void end_var( void );

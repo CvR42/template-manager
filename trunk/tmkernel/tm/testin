@@ -269,10 +269,14 @@ superclasses: ${superclasses} ${superclasses iserniet}
 subclasses: ${subclasses} ${subclasses iserniet}
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
 fields: ${fields} ${fields bla bla} ${fields notatype}
+allfields: ${allfields} ${allfields bla bla} ${allfields notatype}
 types: '${types}'
 .set listpre [
 .set listsuff ]
 .set l ${typelist} bla ${mklist 1 ${typelist}}
+fields <all>: '${fields $l}'
+allfields <all>: '${allfields $l}'
+metatype <all>: '${metatype $l}'
 virtual <all>: '${virtual $l}'
 nonvirtual <all>: '${nonvirtual $l}'
 .set bad ${excl ${sort $l} "" ${sort ${virtual $l} ${nonvirtual $l}}}
@@ -288,12 +292,11 @@ Returned by neither virtual or nonvirtual: '$(bad)'
 virtual and nonvirtual behave as they should
 .endif
 types <all>: '${types ${typelist}}'
+alltypes <all>: '${alltypes ${typelist}}'
 subclasses <all>: '${subclasses ${typelist}}'
 conslist <all>: '${conslist ${typelist}}'
 metatype: ${metatype} ${metatype a b c} ${metatype a} ${metatype [a]}
 
-.foreach mode "" inherited
-Mode `$(mode)':
 =-=-=-=
 .set listpre
 .set listsuff _list
@@ -301,6 +304,7 @@ typelist: '${typelist}'
 tuplelist: '${tuplelist}'
 ctypelist: '${ctypelist}'
 classlist: '${classlist}'
+aliases: '${aliases}'
 .foreach t ${typelist}
     conslist $t: '${conslist $t }'
     inherits $t: '${inherits $t }'
@@ -310,8 +314,9 @@ classlist: '${classlist}'
     isvirtual $t: '${isvirtual $t }'
     metatype $t: '${metatype $t }'
 .foreach c ${conslist $t}
-        celmlist $(mode): '${celmlist $t $c $(mode)}'
-        fields $c $(mode): '${fields $c $(mode)}'
+        celmlist $t $c: '${celmlist $t $c}'
+        fields $c: '${fields $c}'
+        allfields $c: '${allfields $c}'
 .foreach e ${celmlist $t $c}
             ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
 	    ctypellev $t $c $e: ${ctypellev $t $c $e}
@@ -322,8 +327,9 @@ classlist: '${classlist}'
 	    type $c $e: '${type $c $e}'
 .endforeach
 .endforeach
-    fields $t $(mode): '${fields $t $(mode)}'
-.foreach e ${fields $t $(mode)}
+    fields $t: '${fields $t}'
+    allfields $t: '${allfields $t}'
+.foreach e ${allfields $t}
 	ttypeclass $t $e: '${ttypeclass $t $e }'
 	typelevel $t $e: ${typelevel $t $e}
 	typename $t $e: '${typename $t $e}'
@@ -348,7 +354,6 @@ Type sorting:
 depsort: [${depsort int_list int ${typelist}} ]
 inheritsort: [${inheritsort int_list int ${typelist}} ]
 ----
-.endforeach
 
 String manipulation functions:
 ----
@@ -359,6 +364,8 @@ strindex: '${strindex c abcdef}' '${strindex z abcdef}'
 toupper: '${toupper bla}' '${toupper BLA bla Bla}' '${toupper}'
 tolower: '${tolower bla}' '${tolower BLA bla Bla}' '${tolower}'
 capitalize: '${capitalize bla}' '${capitalize BLA bla Bla}' '${capitalize}'
+tr: '${tr far ver bla are a Ab fever favor}' '${tr fe}' '${tr}' '${tr ab b}'
+tr: '${tr - " " string-list words [a---a]}'
 ----
 
 Miscellaneous functions:
@@ -488,6 +495,7 @@ gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
 .call testglobal
 gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
 matchmacro: '${matchmacro *}' '${matchmacro}' '${matchmacro (*}'
+matchvar: '${matchvar *}' '${matchvar}' '${matchvar *e*}'
 ----
 
 Eval

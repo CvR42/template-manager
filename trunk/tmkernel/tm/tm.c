@@ -44,14 +44,14 @@ static tmstring errfilename;	/* Possible error redirection file. */
  */
 static dbflag flagtab[] = {
     { 'e', &sevaltr, "tracing of string evaluations" },
-    { 'f', &fntr, "tracing of function evaluations" },
+    { 'f', &fntracing, "tracing of function evaluations" },
     { 'l', &listing, "list parsetree" },
     { 'm', &maintr, "tracing of main actions" },
     { 'n', &noerrorline, "don't generate line numbers in error messages (useful for diffs)" },
     { 's', &prstat, "statistics" },
     { 'v', &vartr, "variable and macro tracing" },
     { 'x', &lextr, "tracing of lexical analyzer" },
-    { '\0', &fntr, "" }
+    { '\0', &fntracing, "" }
 };
 
 /* Return the library path to be used. If there is an environment

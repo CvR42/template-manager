@@ -21,7 +21,7 @@ extern ds_list allds;
 extern clock_t start_time;
 
 /* debugging flags */
-extern int fntr;
+extern int fntracing;
 extern int listing;
 extern int maintr;
 extern int prstat;

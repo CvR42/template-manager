@@ -33,7 +33,7 @@ tmstring_list searchpath = tmstring_listNIL;
 
 time_t start_time;
 
-int fntr = FALSE;
+int fntracing = FALSE;
 int listing = FALSE;
 int maintr = FALSE;
 int prstat = FALSE;
