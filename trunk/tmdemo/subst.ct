@@ -1,0 +1,151 @@
+.. File: rewrite.ct
+..
+.. Tree walker for rewriting operations.
+..
+.. Return 'walk' or 'action', depending on the contents of 'actors'
+.macro walkername t
+.if ${member $t $(actors)}
+.return action
+.else
+.return walker
+.endif
+.endmacro
+..
+.macro generate_empty_walker_body indent var t
+$(indent)(void) lets;
+.endmacro
+..
+.macro generate_walker_return indent var t
+$(indent)return $(var);
+.endmacro
+..
+.macro generate_walker_signature var t
+static $t subst_$t_walker( $t $(var), command_list *lets )
+.endmacro
+..
+.macro generate_walker_declaration var t
+static $t subst_$t_walker( $t $(var), command_list *lets );
+.endmacro
+..
+.macro generate_action_call indent var type nowtype
+.if ${eq $(type) $(nowtype)}
+$(indent)$(var) = ($(nowtype)) subst_$(type)_action( $(var), lets );
+.else
+$(indent)$(var) = ($(nowtype)) subst_$(type)_action( to_$(type)( $(var) ), lets );
+.endif
+.endmacro
+..
+.macro generate_walker_call indent var type nowtype
+.if ${eq $(type) $(nowtype)}
+$(indent)$(var) = ($(nowtype)) subst_$(type)_walker( $(var), lets );
+.else
+$(indent)$(var) = ($(nowtype)) subst_$(type)_walker( to_$(type)( $(var) ), lets );
+.endif
+.endmacro
+..
+.macro generate_descent_call indent var type nowtype
+.if ${member $(type) $(actors)}
+.call generate_action_call "$(indent)" "$(var)" "$(type)" "$(nowtype)"
+.else
+.call generate_walker_call "$(indent)" "$(var)" "$(type)" "$(nowtype)"
+.endif
+.endmacro
+..
+.. For which types are there actions defines?
+.set actors command ExprSymbol
+..
+.insert tmcwalk.t
+..
+.set visit_types ${call calc_treewalk "command_list" "$(actors)"}
+..
+/* File: subst.c
+ *
+ * Substitute known variables in expressions.
+ */
+
+#include <assert.h>
+#include <tmc.h>
+
+#include "calc.h"
+
+.call generate_walker_forwards "$(visit_types)"
+
+static tmbool find_command( tmconststring nm, command_list l, unsigned int *pos )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<l->sz; ix++ ){
+	if( strcmp( l->arr[ix]->lhs, nm ) == 0 ){
+	    *pos = ix;
+	    return TMTRUE;
+	}
+    }
+    return TMFALSE;
+}
+
+static expr subst_ExprSymbol_action( ExprSymbol s, command_list *lets )
+{
+    unsigned int pos;
+    expr res;
+
+.call generate_walker_call "    " s ExprSymbol ExprSymbol
+    if( find_command( s->s, *lets, &pos ) ){
+	rfre_expr( (expr) s );
+	res = rdup_expr( (*lets)->arr[pos]->rhs );
+    }
+    else {
+	res = (expr) s;
+    }
+    return res;
+}
+
+/* First apply substitutions in the rhs of the command, then
+ * add or replace the current assignment to the state.
+ */
+static command subst_command_action( command c, command_list *lets )
+{
+    unsigned int pos;
+
+.call generate_walker_call "    " c command command
+    if( find_command( c->lhs, *lets, &pos ) ){
+	*lets = delete_command_list( *lets, pos );
+    }
+    *lets = append_command_list( *lets, rdup_command( c ) );
+    return c;
+}
+
+.call generate_walker "$(visit_types)"
+
+int main( void )
+{
+    TMPRINTSTATE *st;
+    int level;
+    command_list sl;
+    command_list context;
+    command_list *lets = &context;
+
+    tm_lineno = 1;
+    if( fscan_command_list( stdin, &sl ) ){
+	fprintf( stderr, "calcopt: %d: %s\n", tm_lineno, tm_errmsg );
+	exit( 1 );
+    }
+    context = new_command_list();
+.call generate_descent_call "    " sl command_list command_list
+    rfre_command_list( context );
+    st = tm_setprint( stdout, 1, 75, 8, 0 );
+    print_command_list( st, sl );
+    level = tm_endprint( st );
+    if( level != 0 ){
+	fprintf( stderr, "Internal error: bracket level = %d\n", level );
+	exit( 1 );
+    }
+    rfre_command_list( sl );
+    if( get_balance_calc() != 0 || get_balance_tmstring() != 0 ){
+        fprintf( stderr, "Tm object allocation not balanced\n" );
+        stat_calc( stderr );
+        stat_tmstring( stderr );
+        report_lognew( stderr );
+    }
+    exit( 0 );
+    return 0;
+}

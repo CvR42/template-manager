@@ -14,6 +14,11 @@ AC_PROG_LN_S
 AC_PROG_LEX
 AC_PROG_YACC
 dnl AC_PROG_INSTALL
+AC_CHECK_PROG( TM, tm, tm, no)
+if test "$TM" = "no"; then
+    echo "'tm' not found; please make sure it is compiled and in your path"
+    exit 1
+fi
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lmalloc:

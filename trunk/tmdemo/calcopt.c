@@ -67,18 +67,18 @@ static expr optimize_expr( expr x )
     return x;
 }
 
-static statement optimize_statement( statement s )
+static command optimize_command( command s )
 {
     s->rhs = optimize_expr( s->rhs );
     return s;
 }
 
-static statement_list optimize_statement_list( statement_list sl )
+static command_list optimize_command_list( command_list sl )
 {
     unsigned int ix;
 
     for( ix=0; ix<sl->sz; ix++ ){
-	sl->arr[ix] = optimize_statement( sl->arr[ix] );
+	sl->arr[ix] = optimize_command( sl->arr[ix] );
     }
     return sl;
 }
@@ -87,22 +87,22 @@ int main( void )
 {
     TMPRINTSTATE *st;
     int level;
-    statement_list sl;
+    command_list sl;
 
     tm_lineno = 1;
-    if( fscan_statement_list( stdin, &sl ) ){
+    if( fscan_command_list( stdin, &sl ) ){
 	fprintf( stderr, "calcopt: %d: %s\n", tm_lineno, tm_errmsg );
 	exit( 1 );
     }
-    sl = optimize_statement_list( sl );
+    sl = optimize_command_list( sl );
     st = tm_setprint( stdout, 1, 75, 8, 0 );
-    print_statement_list( st, sl );
+    print_command_list( st, sl );
     level = tm_endprint( st );
     if( level != 0 ){
 	fprintf( stderr, "Internal error: bracket level = %d\n", level );
 	exit( 1 );
     }
-    rfre_statement_list( sl );
+    rfre_command_list( sl );
     if( get_balance_calc() != 0 || get_balance_tmstring() != 0 ){
         fprintf( stderr, "Tm object allocation not balanced\n" );
         stat_calc( stderr );
