@@ -281,6 +281,7 @@ typedef enum en_tmbool { TMFALSE=0, TMTRUE=1 } tmbool;
 #define print_tmbool(st,b) tm_printword(st,(b)?TMTRUESTR:TMFALSESTR)
 #define fprint_tmbool(f,b) fputs(((b)?TMTRUESTR:TMFALSESTR),f)
 #define cmp_tmbool(a,b) ((int)a-(int)b)
+#define isequal_tmbool(a,b) ((a)==(b))
 #define tmboolNIL TMFALSE
 #define null_tmbool() tmboolNIL
 
