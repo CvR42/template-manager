@@ -11,7 +11,7 @@ unsigned long tmtext::newcount = 0;
 unsigned long tmtext::freecount = 0;
 
 // Constructor from buffer size.
-tmtext::tmtext( const long sz ): arr(0), curpos(0), sz(0), room(0)
+tmtext::tmtext( const long sz ): room(0), arr(0), curpos(0), sz(0)
 {
     reserve( sz );
     newcount++;

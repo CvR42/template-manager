@@ -8,7 +8,7 @@
 #include "config.h"
 
 // tmtext copy constructor
-tmtext::tmtext( const tmtext &c ): arr(0), curpos(0), sz(0), room(0)
+tmtext::tmtext( const tmtext &c ): room(0), arr(0), curpos(0), sz(0)
 {
     reserve( c.sz );
     copyblock( arr, c.arr, c.sz );
