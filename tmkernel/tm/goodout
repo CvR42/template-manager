@@ -206,9 +206,9 @@ Datastructure access functions:
 Pass 1
 mklist: test a test a test a  
 stemname: a b] [c [d] [e]] a[f] [[g]]
-listtypes: a b] [c [d] [e]] a[f] [[g]]
-delisttypes: a b] [c [d] [e]] a[f] [[g]]
-singletypes: 
+listtypes: 
+delisttypes: 
+singletypes: a b] [c [d] [e]] a[f] [[g]]
 Pass 2
 mklist: test a [test [a [[[[[test [[[[[a  
 stemname: a b] c d] e]] a[f] g]]
