@@ -13,7 +13,7 @@ TOPFILE = main
 # Reduction factor for draft files
 REDUCT = 2
 
-TM = tm
+TM = ../tmkernel/tm/tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
@@ -86,10 +86,10 @@ spell: $(SPELLFILES)
 $(SPELLFILES): sort
 
 unalias.out: unalias.xt alias.ds
-	tm alias.ds unalias.xt > $*.out
+	$(TM) alias.ds unalias.xt > $*.out
 
 .xt.out: plot.ds
-	tm plot.ds $< > $*.out
+	$(TM) plot.ds $< > $*.out
 
 clean:
 	rm -f $(JUNK) $(SPELLFILES)
@@ -107,22 +107,22 @@ distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 demo.c : plot.ds demo.ct democonf.t
-	tm plot.ds demo.ct | expand > demo.c
+	$(TM) plot.ds demo.ct | expand > demo.c
 
 demo.h : plot.ds demo.ht democonf.t
-	tm plot.ds demo.ht | expand > demo.h
+	$(TM) plot.ds demo.ht | expand > demo.h
 
 subst.c : calc.ds subst.ct
-	tm calc.ds subst.ct | expand > subst.c
+	$(TM) calc.ds subst.ct | expand > subst.c
 
 calc.c : calc.ds calc.ct calcconf.t
-	tm calc.ds calc.ct | expand > calc.c
+	$(TM) calc.ds calc.ct | expand > calc.c
 
 calc.h : calc.ds calc.ht calcconf.t
-	tm calc.ds calc.ht | expand > calc.h
+	$(TM) calc.ds calc.ht | expand > calc.h
 
 title.c: title.ct title.ds
-	tm title.ds title.ct > title.c
+	$(TM) title.ds title.ct > title.c
 
 t: $(CALCDEMO) $(EXAMPLEOUTFILES)
 	echo $(CALCDEMO) $(EXAMPLEOUTFILES)
