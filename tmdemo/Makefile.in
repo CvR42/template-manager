@@ -75,7 +75,7 @@ JUNK          = sedlint y.output lint testerr testout index.sed \
 # Files for configuration
 CONFIGUREFILES = configure Makefile.in configure.in
 
-DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) \
+DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) calcopt.c \
     $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES) $(PARSESRC)
 
 
