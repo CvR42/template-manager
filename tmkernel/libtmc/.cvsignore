@@ -1,4 +1,5 @@
 configure
+dist.lst
 Makefile
 config.h
 testprog
