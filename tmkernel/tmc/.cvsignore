@@ -20,3 +20,5 @@ tmctest
 tmctest.c
 tmcwalktest
 tmcwalktest.c
+tmcanalyzetest
+tmcanalyzetest.c
