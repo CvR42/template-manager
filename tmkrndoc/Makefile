@@ -13,7 +13,7 @@ TOPFILE = main
 # Reduction factor for draft files
 REDUCT = 2
 
-TM = ../tmkernel/tm/tm
+TM = tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
