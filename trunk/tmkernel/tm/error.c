@@ -1,4 +1,5 @@
-/* file: error.c
+/* file: $Id$
+ *
  * Error handling.
  */
 

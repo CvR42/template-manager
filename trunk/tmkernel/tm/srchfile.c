@@ -1,4 +1,4 @@
-/* file: srchfile.c */
+/* File: $Id$ */
 
 #include "config.h"
 #include <stdio.h>

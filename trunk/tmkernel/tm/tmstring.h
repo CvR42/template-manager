@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: tmstring.h
-   Description of exported objects of tmstring.c
+ * Description of exported objects of tmstring.c.
  */
 
 extern const char *scanword( const char *s, char **w );

@@ -1,10 +1,5 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* file: $Id$
  *
- * All rights reserved.
- */
-
-/* file: dsparser.c
  * A recursive descend parser for Tm datastructure definitions.
  */
 

@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: refex.c
+/* File: $Id$
  *
  * File-style regular expression pattern matching and replacement
  *

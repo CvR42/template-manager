@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: tmmisc.c
-   Various low-level routines.
+ * Various low-level routines.
  */
 #include "config.h"
 #include <stdio.h>

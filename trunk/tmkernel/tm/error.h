@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: error.h
-   Description of exported objects of error.c
+ * Description of exported objects of error.c.
  */
 
 #define ERRARGLEN 80       /* max length of argument arrays below */
