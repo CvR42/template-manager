@@ -4,7 +4,7 @@ AC_INIT(tpltest.c)
 dnl Checks for programs.
 AC_PROG_CXX
 if test "$GXX" = "yes"; then
-  CFLAGS="-O2  -Wall -W -Wtraditional -Wpointer-arith -Wcast-align -Wmissing-prototypes -Wstrict-prototypes -ansi -pedantic"
+  CFLAGS="-O2  -Wall -W -Wpointer-arith -Wcast-align -Wmissing-prototypes -Wstrict-prototypes -ansi -pedantic"
 fi
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
