@@ -1,0 +1,1967 @@
+\chapter{C support}
+\label{s.tmc}
+This section provides the necessary information to use the {\C}
+templates of {\Tm}.
+The information is split in two parts: in section~\ref{s.quickintro}
+a `cookbook' description of the use of the templates is given.
+In the remaining sections a detailed description of the templates is given.
+\par
+There are three {\C} templates,
+differing in the way they represent the {\Tm} data-structures in {\C}.
+\begin{enumerate}
+\item
+{\em Linked list template}.
+All {\Tm} types are pointers to dynamically allocated {\C} structures.
+Lists are built by chaining elements together through a {\tt next} field.
+\item
+{\em Array list template}.
+All {\Tm} types are pointers to dynamically allocated {\C} structures.
+{\Tm} lists are built using dynamically growing arrays and are represented by
+pointers to list descriptor structures.
+\item
+{\em Direct representation template}.
+{\Tm} tuple types are {\C} structures,
+{\Tm} constructor types are {\C} structures containing a union of pointers
+to dynamically allocated {\C} structures for all constructors of the
+type.
+{\Tm} lists are built using dynamically growing arrays and are
+represented by list descriptor structures.
+\end{enumerate}
+\par
+All {\C} templates consist of two parts:
+A file to generate {\C} code (a {\tt .ct} file),
+and a file to generate a header file (a {\tt .ht} file).
+One should {\tt \#include} the generated header file in the generated
+{\C} file to prevent problems with mutually recursive functions.
+\par
+The following template files are provided:
+\begin{flushleft}
+\begin{tabular}{ll}
+{\tt cald.ct} & Code template for array list, direct structure implementation. \\
+{\tt cald.ht} & Header template for array list, direct structure implementation. \\
+{\tt calu.ct} & Code template for array list implementation. \\
+{\tt calu.ht} & Header template for array list implementation. \\
+{\tt cllu.ct} & Code template for linked list implementation. \\
+{\tt cllu.ht} & Header template for linked list implementation. \\
+\end{tabular}
+\end{flushleft}
+\par
+\index{ANSI C@ANSI {\C}}
+The functions are described using ANSI {\C} style type specifications,
+and require an ANSI {\C} compiler.
+\section{Inheritance}
+\index{inheritance}\index{C templates!inheritance}
+All the {\C} templates support inheritance through the {\Tm} command.
+\verb'.expandinherits', see page \pageref{s.expandinherits}.
+As a consequence, only inheritance of tuple types is allowed. Inheritance
+from constructor types or primitive types will cause an error.
+\section{Usage}
+\label{s.quickintro}
+You can use the following steps to obtain {\C} code from {\Tm}.
+The steps are illustrated by an example:
+\begin{enumerate}
+\item
+Design the data structures for your problem,
+and encode them in a data structure description file.
+For the example it is assumed that the file {\tt plot.ds} contains the
+data structure definitions of page \pageref{plotds}.
+\item
+Decide which template you want to use.
+All representations have advantages and disadvantages.
+For the example the array list template {\tt calu} is selected.
+\item
+Create a configuration file that sets the following {\Tm} variables:
+\begin{itemize}
+\item
+The variable {\tt basename}:
+a name that can be used to identify the complete set of data structures
+for which code will be generated. This name will be used for some global
+routines such as \verb'stat_<basename>()' that are not specific to
+a certain type or constructor.
+\item
+For the array list template: if necessary set the variable {\tt otherlists}
+to the list of additional types for which list code must be generated.
+\item
+The variable {\tt wantdefs}: the names of the definitions that you
+will use in your program.
+If these definitions require other definitions,
+this will be deduced, and the necessary definitions will be generated and
+declared {\tt static} in the generated {\tt .c} file.
+\item
+The variable {\tt notwantdefs}:
+in the rare case that {\Tm} deduces that a definition must be generated
+while this is not desirable,
+the name of this definition can be appended to the list of
+variable {\tt notwantdefs}.
+\end{itemize}
+For the running example a file {\tt democonf.t} is used with the
+following contents:
+\begin{listing}
+\verbatiminput{democonf.t}
+\end{listing}
+\item
+Create a {\Tm} header file for the generated {\tt .c} and {\tt .h}
+files.
+These files should at least contain
+\begin{itemize}
+\item
+A {\tt .insert} of the configuration file.
+\item
+A {\tt .include} of one of the template files.
+\end{itemize}
+The header file for the {\tt .c} file should contain a {\tt \#include}
+for the generated {\tt .h} file,
+and a {\tt \#include <tmc.h>}: an inclusion of the header file of the
+{\C} support template.
+The header files may also contain other stuff,
+such as definitions for primitive types.
+For the example the two header files are:
+\begin{listing}
+\verbatiminput{demo.ht}
+\end{listing}
+and
+\begin{listing}
+\verbatiminput{demo.ct}
+\end{listing}
+\item
+Add make rules to your makefile to generate the code:
+\begin{listing}
+\begin{verbatim}
+demo.c : plot.ds demo.ct democonf.t
+        tm plot.ds demo.ct > demo.c
+
+demo.h : plot.ds demo.ht democonf.t
+        tm plot.ds demo.ht > demo.h
+\end{verbatim}
+\end{listing}
+\end{enumerate}
+\par
+The files {\tt demo.h} and {\tt demo.c} that are generated from the
+example configuration are listed
+in appendices~\ref{s.demoh} and~\ref{s.democ}.
+\section{Tm type representation}
+In {\C},
+several {\Tm} type representations are possible that all have their advantages
+and disadvantages.
+As a consequence,
+a number of templates have evolved that all make different choices
+in this respect.
+The type representation of each template is described in this section.
+As illustration the type representation of the types
+{\tt tree}, {\tt btree} and \verb+[tree]+ will be shown
+for each of the representations.
+\begin{verbatim}
+tree == ( v:int, t:[tree] );
+
+btree ::= BTree l:btree r:btree | BLeaf v:int;
+\end{verbatim}
+\subsection{Array list template}
+In the array list template {\Tm} types and type lists are pointers
+to appropriate structures.
+For tuple types this is simply a pointer to a structure containing all the
+fields of the tuple.
+\par
+\index{tuple!array list template}\index{array list template!tuple}
+For example:
+\begin{verbatim}
+typedef str_tree *tree;
+
+struct str_tree {
+    int v;
+    tree_list t;
+};
+\end{verbatim}
+Constructor types are pointers to a structure containing
+a tag and a union containing the appropriate structures.
+The tag is used to distinguish between the possible structures
+contained in the union, and is represented by an enumeration type.
+\index{constructor!array list template}\index{array list template!constructor}
+For example:
+\begin{verbatim}
+typedef str_btree *btree;
+
+typedef struct str_BTree {
+    btree l;
+    btree r;
+} C_BTree;
+
+typedef struct str_BLeaf {
+    int v;
+} C_BLeaf;
+
+typedef enum en_btree {
+    TAGBTree, TAGBLeaf
+} tags_btree;
+
+struct str_btree {
+    tags_btree tag;
+    union un_btree {
+        C_BTree ue_BTree;
+        C_BLeaf ue_BLeaf;
+    } u;
+};
+\end{verbatim}
+For each constructor in the type a separate {\tt struct} type is defined
+with name {\tt C\_<cons>}.
+Since {\C} does not like structures without fields,
+no type is defined for empty constructors.
+The constructor type itself is represented by a separate structure containing
+a {\tt tag} field to indicate the actual constructor
+and a {\tt union} of all possible constructor structures of the type.
+The possible tags for a type are enumerated in the {\tt enum} type
+{\tt tags\_<type>}.
+\par
+Since {\C} does not like empty {\tt union} types,
+the union field is only generated if the type has at least
+one non-empty constructor type.
+Thus,
+the representation of constructor type
+\begin{verbatim}
+val ::= VA | VB;
+\end{verbatim}
+degenerates to
+\begin{verbatim}
+typedef struct str_val *val;
+
+enum en_val {
+    TAGVA, TAGVB
+} tags_val;
+
+struct str_val {
+    tags_val tag;
+};
+\end{verbatim}
+\par
+With the general representation of constructors
+one has to access a field of a constructor with an
+expression of the form
+\begin{verbatim}
+<var>->u.ue_<cons>.<elmname>
+\end{verbatim}
+As a service to the user appropriate {\tt \#define}s are provided
+so that the expression
+\begin{verbatim}
+<var>-><cons>.<elmname>
+\end{verbatim}
+is allowed.
+This is demonstrated at the end of this subsection.
+\par
+List types are defined as pointers to a list description structure.
+\index{list!array list template}\index{array list template!list}
+For example:
+\begin{verbatim}
+typedef struct str_tree_list *tree_list;
+
+struct str_tree_list {
+    unsigned int sz;     /* current number of elements */
+    unsigned int room;   /* maximum number of elements */
+    tree *arr;           /* ptr to array of 'room' elements */
+};
+\end{verbatim}
+Note that in the {\C} representation \verb+[tree]+ is called
+\verb+tree_list+, and \verb+[[tree]]+ is called \verb+tree_list_list+.
+The list description structure contains a pointer to an array,
+the current length of the list,
+and the maximum length of the list before re-allocation is necessary.
+\par
+For each type and type list a suitable {\tt NIL} pointer is defined.
+\index{<type>NIL@\verb+<type>NIL+}
+\index{<type>_listNIL@\verb+<type>_listNIL+}
+For example:
+\begin{verbatim}
+#define treeNIL (tree)0
+#define btreeNIL (btree)0
+#define tree_listNIL (tree_list)0
+\end{verbatim}
+The following two functions show how all the type representations
+(in this case the types {\tt tree}, {\tt btree} and the list type
+\verb+[tree]+)
+are used in a program:
+Each function returns the sum of the leave or node values in a given
+tree.
+\begin{verbatim}
+/* Return the sum of all the node values in tree 't'. */
+int sum_tree( tree t )
+{
+    unsigned int ix;
+    tree_list tl;
+    int s;
+
+    s = 0;
+    tl = t->t;
+    for( ix=0; ix<tl->sz; ix++ ){
+       s += sum_tree( tl->arr[ix] );
+    }
+    return t->v + s;
+}
+\end{verbatim}
+
+\begin{verbatim}
+/* Return the sum of all the leave values in btree 't'. */
+int sum_btree( btree t )
+{
+    int s;
+
+    switch( t->tag )
+    {
+        case TAGBTree:
+            s = sum_btree( t->BTree.l ) + sum_btree( t->BTree.r );
+            break;
+
+        case TAGBLeaf:
+            s = t->BLeaf.v;
+
+        default:
+            tm_badtag( __FILE__, __LINE__, (int) t->tag );
+            break;
+    }
+    return s;
+}
+\end{verbatim}
+\subsection{Direct representation template}
+In the direct representation template {\Tm} types and type lists are
+represented by the appropriate structures.
+For tuple types this is simply a structure containing all the
+fields of the tuple.
+\index{tuple!direct representation template}\index{direct representation template!tuple}
+For example:
+\begin{verbatim}
+typedef str_tree {
+    int v;
+    tree_list t;
+} tree;
+\end{verbatim}
+Constructor types are structures containing
+a tag and a union of pointers to the appropriate structures
+for each of the constructors.
+The tag is used to distinguish between the possible structures
+contained in the union, and it is represented by an enumeration type.
+\index{constructor!direct representation template}\index{direct representation template!constructor}
+For example:
+\begin{verbatim}
+typedef struct str_BTree {
+    btree l;
+    btree r;
+} C_BTree;
+
+typedef struct str_BLeaf {
+    int v;
+} C_BLeaf;
+
+typedef enum en_btree {
+    TAGBTree, TAGBLeaf
+} tags_btree;
+
+typedef struct str_btree {
+    tags_btree tag;
+    union un_btree {
+        C_BTree *ue_BTree;
+        C_BLeaf *ue_BLeaf;
+    } u;
+} btree;
+\end{verbatim}
+For each constructor in the type a separate {\tt struct} type is defined
+with name {\tt C\_<cons>}.
+Since {\C} does not like structures without fields,
+no type is defined for empty constructors.
+The constructor type itself is represented by a separate structure containing
+a {\tt tag} field to indicate the actual constructor
+and a {\tt union} of pointer to all possible constructor structures of the type.
+The possible tags for a type are enumerated in the {\tt enum} type
+{\tt tags\_<type>}.
+For obvious reasons it is not allowed to use field name `tag' in constructors,
+and this will be detected.
+\par
+Since {\C} does not like empty {\tt union} types,
+the union field is only generated if the type has at least
+one non-empty constructor type.
+Thus,
+the representation of constructor type
+\begin{verbatim}
+val ::= VA | VB;
+\end{verbatim}
+degenerates to
+\begin{verbatim}
+enum en_val {
+    TAGVA, TAGVB
+} tags_val;
+
+typedef struct str_val {
+    tags_val tag;
+} val;
+\end{verbatim}
+\par
+With the general representation of constructors
+one has to access a field of a constructor with an
+expression of the form
+\begin{verbatim}
+<var>.u.ue_<cons>-><elmname>
+\end{verbatim}
+As a service to the user appropriate {\tt \#define}s are provided
+so that the expression
+\begin{verbatim}
+<cons>(<var>).<elmname>
+\end{verbatim}
+is allowed,
+giving a somewhat clearer expression to access the elements in
+a constructor.
+This is demonstrated at the end of this subsection.
+\par
+List types are defined as a list description structure.
+\index{list!direct representation template}\index{direct representation template!list} %
+For example:
+\begin{verbatim}
+typedef struct str_tree_list {
+    unsigned int sz;     /* current number of elements */
+    unsigned int room;   /* maximum number of elements */
+    tree *arr;           /* ptr to array of 'room' elements */
+} tree_list;
+\end{verbatim}
+Note that in the {\C} representation \verb+[tree]+ is called
+\verb+tree_list+, and \verb+[[tree]]+ is called \verb+tree_list_list+.
+The list description structure contains a pointer to an array,
+the current length of the list,
+and the maximum length of the list before re-allocation is necessary.
+\par
+The following two functions show how all the type representations
+(in this case the types {\tt tree}, {\tt btree} and the list type
+\verb+[tree]+)
+are used in a program:
+Each function returns the sum of the leave or node values in a given
+tree.
+\begin{verbatim}
+/* Return the sum of all the node values in tree 't'. */
+int sum_tree( tree t )
+{
+    unsigned int ix;
+    tree_list tl;
+    int s;
+
+    s = 0;
+    tl = t.t;
+    for( ix=0; ix<tl.sz; ix++ ){
+       s += sum_tree( tl.arr[ix] );
+    }
+    return t.v + s;
+}
+\end{verbatim}
+
+\begin{verbatim}
+/* Return the sum of all the leave values in btree 't'. */
+int sum_btree( btree t )
+{
+    int s;
+
+    switch( t.tag )
+    {
+        case TAGBTree:
+            s = sum_btree( BTree(t).l ) + sum_btree( BTree(t).r );
+            break;
+
+        case TAGBLeaf:
+            s = BLeaf(t).v;
+
+        default:
+            tm_badtag( __FILE__, __LINE__, (int) t.tag );
+            break;
+    }
+    return s;
+}
+\end{verbatim}
+\subsection{Linked list template}
+In the linked list template {\Tm} types are pointers
+to appropriate structures,
+and lists are constructed by linking single elements together using
+a special {\tt next} field.
+Nested lists are constructed by using additional \verb+next+ fields.
+For example, if a list of list is necessary, the template generates
+a \verb+next_list+ field.
+Tuple types are pointers to a structure containing all
+fields of the tuple and a {\tt next} field.
+\index{tuple!linked list template}\index{linked list template!tuple}
+For example:
+\begin{verbatim}
+typedef str_tree *tree;
+typedef str_tree *tree_list;
+typedef str_tree *tree_list_list;
+
+typedef str_tree {
+    int v;
+    tree_list t;
+    tree_list next;
+    tree_list_list next_list;    /* For a list of tree_lists */
+};
+\end{verbatim}
+Type definitions for \verb+tree_list+ and more nested lists
+are only generated when necessary. The same applies for the
+\verb+next+ and \verb+next_list+ pointers. Thus, if a \verb+tree_list_list_list+
+must be generated, an additional type definition and and \verb+next+ pointer
+are generated.
+\par
+Constructor types are pointers to a structure containing
+a tag and a union containing the appropriate structures.
+The tag is used to distinguish between the possible structures
+contained in the union, and it is represented by an enumeration type.
+\index{constructor!linked list template}\index{linked list template!constructor}
+For example:
+\begin{verbatim}
+typedef str_btree *btree;
+typedef str_btree *btree_list;
+
+typedef struct str_BTree {
+    btree l;
+    btree r;
+} C_BTree;
+
+typedef struct str_BLeaf {
+    int v;
+} C_BLeaf;
+
+typedef enum en_btree {
+    TAGBTree, TAGBLeaf
+} tags_btree;
+
+struct str_btree {
+    tags_btree tag;
+    union un_btree {
+        C_BTree ue_BTree;
+        C_BLeaf ue_BLeaf;
+    } u;
+    btree_list next;
+};
+\end{verbatim}
+Type definitions for \verb+tree_list+ and more nested lists
+are only generated when necessary. The same applies for the
+\verb+next+ and \verb+next_list+ pointers. Thus, if a \verb+tree_list_list_list+
+must be generated, an additional type definition and and next pointer
+are generated.
+\par
+For each constructor in the type a separate {\tt struct} type is defined
+with name {\tt C\_<cons>}.
+Since {\C} does not like structures without fields,
+no type is defined for empty constructors.
+The constructor type itself is represented by a separate structure containing
+a {\tt tag} field to indicate the actual constructor
+and a {\tt union} of all possible constructor structures of the type.
+The possible tags for a type are enumerated in the {\tt enum} type
+{\tt tags\_<type>}.
+For obvious reasons it is not allowed to use field name `tag' in constructors,
+and this will be detected.
+\par
+Since {\C} does not like empty {\tt union} types,
+the union field is only generated if the type has at least
+one non-empty constructor type.
+Thus,
+the representation of constructor type
+\begin{verbatim}
+val ::= VA | VB;
+\end{verbatim}
+degenerates to
+\begin{verbatim}
+typedef struct str_val *val;
+typedef struct str_val *val_list;
+
+enum en_val {
+    TAGVA, TAGVB
+} tags_val;
+
+struct str_val {
+    val_list next;
+    tags_val tag;
+};
+\end{verbatim}
+\par
+With the general representation of constructors
+one has to access a field of a constructor with an
+expression of the form
+\begin{verbatim}
+<var>->u.ue_<cons>.<elmname>
+\end{verbatim}
+As a service to the user appropriate {\tt \#define}s are provided
+so that the expression
+\begin{verbatim}
+<var>-><cons>.<elmname>
+\end{verbatim}
+is allowed.
+This is demonstrated at the end of this subsection.
+\par
+\index{list!linked list template}\index{linked list template!list}
+Lists are constructed using the special {\tt next} field defined
+in each tuple and constructor structure.
+Thus, all list types are synonyms of the element types.
+This is shown in the example type definitions of {\tt tree} and
+{\tt btree}, since the type definitions of \verb+[tree]+ and
+\verb+[btree]+ are also shown.
+Note that in the {\C} representation \verb+[tree]+ is called
+\verb+tree_list+; and \verb+[[tree]]+ is called \verb+tree_list_list+.
+\par
+For each type and type list a suitable {\tt NIL} pointer is defined.
+\index{<type>NIL@\verb+<type>NIL+}
+\index{<type>_listNIL@\verb+<type>_listNIL+}
+For example:
+\begin{verbatim}
+#define treeNIL (tree)0
+#define btreeNIL (btree)0
+#define tree_listNIL (tree_list)0
+\end{verbatim}
+The following two functions show how all the type representations
+(in this case the types {\tt tree}, {\tt btree} and the list type
+\verb+[tree]+)
+are used in a program:
+Each function returns the sum of the leave or node values in a given
+tree.
+\begin{verbatim}
+/* Return the sum of all the node values in tree 't'. */
+int sum_tree( tree t )
+{
+    tree_list tl;
+    int s;
+
+    s = 0;
+    tl = t->t;
+    while( tl!=tree_listNIL ){
+       s += sum_tree( tl );
+       tl = tl->next;
+    }
+    return t->v + s;
+}
+\end{verbatim}
+
+\begin{verbatim}
+/* Return the sum of all the leave values in btree 't'. */
+int sum_btree( btree t )
+{
+    int s;
+
+    switch( t->tag )
+    {
+        case TAGBTree:
+            s = sum_btree( t->BTree.l ) + sum_btree( t->BTree.r );
+            break;
+
+        case TAGBLeaf:
+            s = t->BLeaf.v;
+
+        default:
+            tm_badtag( __FILE__, __LINE__, (int) t->tag );
+            break;
+    }
+    return s;
+}
+\end{verbatim}
+\section{Dynamic memory allocation}
+\label{s.allocation}
+\index{allocation}
+One of the important features of {\C} is that it has dynamic memory allocation
+available through the functions \verb+malloc()+ and \verb+free()+.
+These functions are, however, sensitive to two forms of abuse.
+First,
+blocks that are requested from \verb+malloc()+
+may be released with \verb+free()+, but used after that or even passed to
+\verb+free()+ for a second time.
+This may lead to serious problems that may be hard to find,
+since the symptoms are often not related to the cause, differ between machines
+and sometimes even differ between runs.
+Another form of abuse of \verb+malloc()+ is that requested blocks are
+never released.
+This is not inherently dangerous,
+and is even a sensible practice in small programs.
+For large programs, however, it is undesirable,
+since a large amount of memory may be consumed in these blocks,
+leading to performance degradation or program failure.
+\par
+Therefore,
+in the ideal situation each call to \verb+malloc()+ is balanced with
+{\em exactly} \/one call to \verb+free()+.
+\par
+{\Tm} offers two facilities to ensure that the \verb+malloc()+
+and \verb+free()+ calls are in balance.
+First,
+{\Tm} can generate code to count the number of calls to \verb+new_<type>+
+and \verb+fre_<type>+.
+The generated {\C} code will always contain this code,
+but it is only compiled if the {\C} preprocessor variable {\tt STAT}
+is defined.
+For each file of generated {\C} code you may request a function
+\verb+stat_<basename>+ to print the allocation and freeing statistics of the
+functions in that file.
+You can call this function at a place where you expect the statistics
+to be in balance (usually at the end of the program) to 
+print the actual statistics.
+To facilitate checking this, the function \verb+get_balance_<basename>()+
+can be generated. It returns the current balance state (there are less, more,
+or the same number of allocations as deallocations).
+This can be used to routinely check the balance at the end of the program,
+and issue a warning if necessary.
+\par
+It is highly recommended to ensure that a program always terminates
+with balanced allocation statistics.
+\par
+For the types \verb'tmstring' and \verb'tmtext' in the \verb'tmc' library
+the functions \verb+stat_tmstring()+, \verb+get_balance_tmstring()+,
+and \verb+stat_tmtext()+ and \verb+get_balance_tmtext()+ are already provided.
+\par
+If the statistics reveal that more blocks have been freed than have
+been allocated, there is a serious problem in the software that deserves
+immediate attention.
+If the statistics reveal that less blocks have been freed than have been
+allocated,
+the program will function properly, but you should repair this
+eventually, since it may conceal an imbalance in the opposite direction.
+\par
+To find which blocks are never freed,
+{\Tm} provides another facility:
+if the code is compiled with the {\C} preprocessor variable
+{\tt LOGNEW} defined,
+the source file and line of all {\Tm} block allocations are recorded in a
+special list.
+The entries for all blocks that are freed are removed from the list,
+so that the list always contains a description of the currently allocated
+blocks.
+A report on this list can be written to a file with the function
+\verb+report_lognew()+.
+Usually the cause of the imbalance is easily determined from this information.
+\par
+The {\tt LOGNEW} facility is a powerful debugging aid, but it has an important
+disadvantage:
+{\em all} \/code must be compiled with this option.
+\par
+To find the place where a second \verb+fre_<type>+ of a block is done is
+more difficult;
+general \verb+malloc()+ debugging packages may be useful for this.
+\section{Creation and destruction}
+Since all templates use dynamic allocation, if only for the representation
+of lists,
+it is necessary to create and destroy instances of {\Tm} types explicitly.
+The functions in this section handle creation and destruction of instances of
+the {\Tm} types.
+All dynamic memory allocation in {\Tm} templates and routines is done through
+the functions \verb+tm_malloc()+ and \verb+tm_realloc()+.
+\par
+Dynamic memory allocation is very sensitive to errors,
+and therefore {\Tm} provides extensive support to detect and repair such
+bugs.
+This is described in more detail in section~\ref{s.allocation}.
+\par
+Although in the linked list template the types of single elements
+and of lists are synonyms,
+a separate count of created and destroyed lists is maintained.
+Thus,
+one should announce the construction of a list
+by using \verb+new_<type>_list()+ and destroy it by using
+\verb+fre_<type>_list()+.
+Functions that should destroy lists (such as \verb+concat_<type>_list()+
+and \verb+rfre_<type>_list()+) also do this.
+\begin{verbatim}
+<type>_list new_<type>_list();
+\end{verbatim}
+\begin{desc}
+\index{new_<type>_list@\verb+new_<type>_list()+}
+Create a new, empty, list.
+No array is allocated to store the elements,
+since this is not necessary when there are no elements.
+When necessary an array will be allocated through \verb+setroom_<type>_list()+.
+\end{desc}
+\begin{verbatim}
+<type> new_<cons>( <elmtype> f1, .. <elmtype> fn );
+<type> new_<type>( <elmtype> f1, .. <elmtype> fn );
+\end{verbatim}
+\begin{desc}
+\index{new_<type>@\verb+new_<type>()+}
+\index{new_<cons>@\verb+new_<cons>()+}
+Create a constructor or tuple,
+and set the
+elements of the constructor or tuple to the value of the given parameters.
+For constructor types, the {\tt tag} field is set to the appropriate
+value.
+To request the generation of {\tt new\_<cons>} functions for a certain
+constructor type,
+{\tt new\_<type>} must be added to {\tt wantdefs};
+see section~\ref{s.config} for an explanation of the use of {\tt wantdefs}.
+\end{desc}
+\begin{verbatim}
+<type>_list setroom_<type>_list( <type>_list l, unsigned int rm );
+\end{verbatim}
+\begin{desc}
+\index{setroom_<type>_list@\verb+setroom_<type>_list()+}
+Specify that list {\tt l} must have room for at least {\tt rm} elements.
+In the templates that use an array to represent the list,
+this function will ensure that the array has sufficient room to
+store {\tt rm} elements;
+in the linked list template this function is a dummy.
+The room in a list is never reduced.
+\par
+Functions that add elements to a list (\verb+append_<type>_list()+,
+\verb+concat_<type>_list()+ and
+\verb+insert_<type>_list()+) use this function implicitly, the
+user only needs these functions for efficiency reasons
+(to prevent repeated enlargement of the array)
+or to build new list functions.
+\end{desc}
+\begin{verbatim}
+void fre_<type>( <type> e );
+void fre_<type>_list( <type>_list l );
+\end{verbatim}
+\begin{desc}
+\index{fre_<type>@\verb+fre_<type>()+}
+\index{fre_<type>_list@\verb+fre_<type>_list()+}
+Destroy an instance of {\tt <type>} or {\tt <type>\_list}.
+\end{desc}
+\begin{verbatim}
+void rfre_<type>( <type> e );
+void rfre_<type>_list( <type>_list e );
+\end{verbatim}
+\begin{desc}
+\index{rfre_<type>@\verb+rfre_<type>()+}
+\index{rfre_<type>_list@\verb+rfre_<type>_list()+}
+Recursively destroy all elements of {\tt e} and {\tt e} itself.
+\end{desc}
+\begin{verbatim}
+void flush_<basename>();
+\end{verbatim}
+\begin{desc}
+\index{flush_<basename>@\verb+flush_<basename>()+}
+\sloppy
+Internally the array list code will store freed constructors,
+tuples or list descriptors in a special array,
+and will re-use one of these on the next call to {\tt new\_<something>}
+of the same type.
+This mechanism is called \dfn{caching}.
+Calling {\tt flush\_<basename>()} will empty these variables.
+This is useful to balance the number of {\tt malloc()} and {\tt free()}
+calls, for example for profiling of the code.
+Note that this function does {\em not} \/affect the statistics printed by
+{\tt stat\_<basename>}, since for these statistics cached variables are
+considered as freed.
+\par
+Since the other templates do not use caching,
+for these templates the function is a dummy.
+\end{desc}
+\begin{verbatim}
+void stat_<basename>( FILE *f );
+\end{verbatim}
+\begin{desc}
+\index{stat_<basename>@\verb+stat_<basename>()+}
+\begin{sloppypar}
+Write statistics of allocation and freeing for each type and type
+list associated with {\tt <basename>} to file {\tt f}.
+This code is only compiled if the preprocessor variable {\tt STAT} is
+defined (see section~\ref{s.config}),
+otherwise this function does nothing.
+\end{sloppypar}
+\end{desc}
+\begin{verbatim}
+int get_balance_<basename>( void );
+\end{verbatim}
+\begin{desc}
+\index{get_balance_<basename>@\verb+get_balance_<basename>()+}
+\begin{sloppypar}
+Return \verb+-1+ if any of the types managed in \verb"<basename>" has
+been freed more often than allocated.
+Return \verb+1+ if any of the types managed in \verb"<basename>" has
+been freed less often than allocated.
+Return \verb+0+ if the allocation and freeing are in balance.
+\par
+The test code is only compiled if the preprocessor variable {\tt STAT} is
+defined (see section~\ref{s.config}),
+otherwise this function returns 0.
+\end{sloppypar}
+\end{desc}
+\subsection{List manipulation}
+\begin{verbatim}
+<type>_list append_<type>_list( <type>_list l, <type> e );
+\end{verbatim}
+\begin{desc}
+\index{append_<type>_list@\verb+append_<type>_list()+}
+Given a list {\tt l} and an element {\tt e},
+put element {\tt e} after the elements of {\tt l}.
+Enlarge the array if necessary.
+Element {\tt e} is now `owned' by list {\tt l}.
+\end{desc}
+\begin{verbatim}
+<type>_list concat_<type>_list( <type>_list la, <type>_list lb );
+\end{verbatim}
+\begin{desc}
+\index{concat_<type>_list@\verb+concat_<type>_list()+}
+Given two lists {\tt la} and {\tt lb},
+append the elements of {\tt lb} after the elements of {\tt la}.
+Enlarge the array of {\tt la} if necessary.
+The elements of {\tt lb} are now `owned' by {\tt la},
+and {\tt lb} itself is destroyed.
+\end{desc}
+\begin{verbatim}
+<type>_list insert_<type>_list( <type>_list l, unsigned p, <type> e );
+\end{verbatim}
+\begin{desc}
+\index{insert_<type>_list@\verb+insert_<type>_list()+}
+Insert element {\tt e} at position {\tt p} in list {\tt l}.
+All elements at and after position {\tt p} are moved up in the list
+(they have their index in the list incremented).
+If {\tt p} is greater than or equal to the length of {\tt l},
+the element is appended after {\tt l}.
+Element {\tt e} is now `owned' by list {\tt l}.
+\end{desc}
+\begin{verbatim}
+<type>_list delete_<type>_list( <type>_list l, unsigned int pos );
+\end{verbatim}
+\begin{desc}
+\index{delete_<type>_list@\verb+delete_<type>_list()+}
+Delete the element at position {\tt pos} in list {\tt l}.
+The element is freed using {\tt rfre\_<type>()}.
+All elements after position {\tt pos} are moved down
+(have their index in the list decremented).
+If {\tt pos} is greater than or equal to the length of {\tt l},
+nothing happens.
+\end{desc}
+\begin{verbatim}
+<type>_list extract_<type>_list(
+ <type>_list l,
+ unsigned int pos,
+ <type> *e,
+ int *valid
+);
+\end{verbatim}
+\begin{desc}
+\index{extract_<type>_list@\verb+extract_<type>_list()+}
+Remove the element at position {\tt pos} from list {\tt l},
+and assign it to \verb'*e'.
+All elements after position {\tt pos} are moved down
+(have their index in the list decremented).
+If {\tt pos} is greater than or equal to the length of {\tt l},
+nothing happens.
+If there was a valid element at position {\tt pos}, it is assigned
+to \verb'*e', and \verb'*valid' is set to {\tt 1}. Otherwise
+\verb'*valid' is set to {\tt 0}, and \verb'*e' is left unchanged.
+\par
+This function is similar to \verb'extract_<type>_list()', but instead
+of deleting an element, it puts it in possession of the caller.
+\end{desc}
+\begin{verbatim}
+<type>_list reverse_<type>_list( <type>_list l );
+\end{verbatim}
+\begin{desc}
+\index{reverse_<type>_list@\verb+reverse_<type>_list()+}
+Reverse the elements in the given list.
+\end{desc}
+\section{Recursive duplication}
+These functions handle recursive duplication of instances of types and
+lists of types.
+Duplication means that new instances are created for all elements
+in the data-structures.
+\begin{verbatim}
+<type> rdup_<type>( <type> e );
+<type>_list rdup_<type>_list( <type>_list e );
+\end{verbatim}
+\begin{desc}
+\index{rdup_<type>@\verb+rdup_<type>()+}
+\index{rdup_<type>_list@\verb+rdup_<type>_list()+}
+Recursively duplicate instance {\tt e} of type {\tt <type>} or
+{\tt <type>\_list}.
+\end{desc}
+\begin{verbatim}
+<type>_list slice_<type>_list( <type>_list e, unsigned int b, unsigned int e );
+\end{verbatim}
+\begin{desc}
+\index{slice_<type>_list@\verb+slice_<type>_list()+}
+Create a new list that contains recursive duplicates of the elements of
+list {\tt l} with indices {\tt b} up to but {\em not} \/including {\tt e}.
+If {\tt b>e} or {\tt b} points beyond the list,
+an empty list is returned.
+If {\tt e} points beyond {\tt l},
+it is taken to point to the last element in {\tt l}.
+\end{desc}
+\section{Data structure input and output}
+These functions handle reading of a textual description of the data structures
+and allocation of new instances of the type and list structures for the
+read data.
+The {\tt print\_<type>} and {\tt print\_<type>\_list} functions rely on the
+print optimizer in the
+{\C} support library to handle the actual printing to a file,
+see section~\ref{s.csupportlib}.
+\par
+\begin{sloppypar}
+In the array list code,
+as an extension to the standard {\Tm} internal representation,
+the \verb!print_<type>! and \verb'fprint_<type>' functions print null
+pointers as the symbol `{\tt @}'.
+The \verb+fscan_<type>+ functions for the array list code will recognize
+this symbol.
+\end{sloppypar}
+\begin{verbatim}
+int fscan_<type>( FILE *f, <type> *p );
+int fscan_<type>_list( FILE *f, <type>_list *p );
+\end{verbatim}
+\begin{desc}
+\index{fscan_<type>@\verb+fscan_<type>()+}
+\index{fscan_<type>_list@\verb+fscan_<type>_list()+}
+Read an instance of data structure {\tt <type>} or {\tt <type>\_list}
+from file {\tt f},
+allocate new room to hold the data that is read,
+and set pointer {\tt p} to point to the new data.
+If no error occurs, a value {\tt 0} is returned.
+If an error {\em does} \/occur,
+a value {\tt 1} is returned, and an error message is put in the array
+{\tt tm\_errmsg} provided by the {\C} support library.
+Elements are created all the data that has been read before the error elements,
+and they must be freed to keep the allocation statistics in balance.
+The \verb+fscan_<type>()+ routines will ensure that in all cases the
+data-structures can be destroyed again using \verb+rfre_<type>+.
+\end{desc}
+\begin{verbatim}
+void print_<type>( TMPRINTSTATE *st, <type> t );
+void print_<type>_list( TMPRINTSTATE *st, <type>_list l );
+\end{verbatim}
+\begin{desc}
+\index{print_<type>@\verb+print_<type>()+}
+\index{print_<type>_list@\verb+print_<type>_list()+}
+Given a print state {\tt st},
+print an instance of data structure {\tt <type>} or {\tt <type>\_list}
+using the print optimizer, see section~\ref{s.csupportlib}.
+\end{desc}
+\begin{verbatim}
+void fprint_<type>( FILE *f, <type> t );
+void fprint_<type>_list( FILE *f, <type>_list t );
+\end{verbatim}
+\begin{desc}
+\index{fprint_<type>@\verb+fprint_<type>()+}
+\index{fprint_<type>_list@\verb+fprint_<type>_list()+}
+Print an instance of data structure {\tt <type>} or {\tt <type>\_list}
+to file {\tt f}.
+\end{desc}
+\section{Comparison}
+These functions handle recursive comparison of structures.
+Given two data structures {\tt a} and {\tt b},
+an int ${\tt n}<0$ is returned if ${\tt a}<{\tt b}$,
+0 if ${\tt a}={\tt b}$,
+and an int ${\tt n}>0$ if ${\tt a}>{\tt b}$.
+\par
+For comparison the following rules are applied:
+\begin{itemize}
+\item
+Tuples are equal if all their elements are equal,
+otherwise the first differing element (in the order in which they occur in
+the tuple definition) determines the comparison.
+\item
+Constructors are ordered according to their order of definition in the
+data structure file,
+where the first defined constructor is the smallest.
+Constructors are equal if all their elements are equal,
+otherwise the first differing element (in the order in which they occur
+in the tuple definition) determines the comparison.
+\item
+Lists are equal if all their elements are equal,
+else the first differing element determines the comparison,
+or else the shortest list is the smallest.
+\end{itemize}
+\par
+Resemblance to {\tt strcmp()} is intentional. In fact it is possible to do:
+\begin{verbatim}
+#define cmp_tmstring strcmp
+\end{verbatim}
+also note that it is possible to do
+\begin{verbatim}
+#define cmp_int (a-b)
+\end{verbatim}
+However, it is not wise to do this for {\tt float} or {\tt double},
+since rounding errors may lead to unexpected behavior.
+There are a {\tt cmp\_float()} and {\tt cmp\_double()} in the support library,
+see section~\ref{s.csupportlib}.
+\par
+These functions are mainly intended for equality comparison,
+and to impose `some' repeatable ordering on the data structures.
+The ordering may be different from the desired ordering.
+If another comparison function is required for a data type,
+the generation of the standard function can be suppressed by
+using {\tt notwantdefs}, see section~\ref{s.config}.
+\begin{verbatim}
+int cmp_<type>( <type> a, <type> b );
+int cmp_<type>_list( <type>_list a, <type>_list b );
+\end{verbatim}
+\begin{desc}
+\index{cmp_<type>@\verb+cmp_<type>()+}
+\index{cmp_<type>_list@\verb+cmp_<type>_list()+}
+Compare data structures {\tt a} and {\tt b}, and return a code
+according to the table listed previously.
+\end{desc}
+\section{C support library}
+\label{s.csupportlib}
+The {\C} support library provides definitions in
+the same class as the generated definitions for a number of commonly used
+primitive types.
+It also provides definitions that are necessary
+for various templates (e.g.\ the {\tt print} functions).
+\par
+For the library the following files are provided:
+
+\begin{desctab}
+{\tt libtmc.a} & The library itself. \\
+{\tt tmc.h} & The header file with declarations for the library functions. \\
+\end{desctab}
+\subsection{Print optimizer functions}
+The print optimizer will attempt as much as possible to write a constructor,
+tuple or list on one line.
+If this is not possible it will write each item of it on a separate line.
+\par
+\begin{verbatim}
+TMPRINSTATE *tm_setprint(
+ FILE *f,
+ const int i,
+ const int w,
+ const int tw,
+ const unsigned int flags
+);
+\end{verbatim}
+\begin{desc}
+\index{tm_setprint@\verb+tm_setprint()+}
+Initialize the print optimizer handler.
+The output of the {\tt print\_<type>()} functions will be written to
+file {\tt f} with an indent {\tt i} for each list, tuple or constructor.
+The output has a maximum of {\tt w} characters on each line of output.
+If {\tt tw} is not equal to zero, it is interpreted as the width of the
+tab character, and all indents will be implemented with as many tab
+characters as possible.
+Usually \verb'tw' should be 8.
+\par
+The {\tt flags} can be used to modify the style of the output. At the
+moment no style options are implemented, and the parameter should be 0.
+\end{desc}
+\begin{verbatim}
+void tm_openlist( TMPRINTSTATE *st );
+void tm_closelist( TMPRINSTATE *st );
+\end{verbatim}
+\begin{desc}
+\index{tm_openlist@\verb+tm_openlist()+}
+\index{tm_closelist@\verb+tm_closelist()+}
+Start or stop a list.
+\end{desc}
+\begin{verbatim}
+void tm_opencons( TMPRINTSTATE *st );
+void tm_closecons( TMPRINTSTATE *st );
+\end{verbatim}
+\begin{desc}
+\index{tm_opencons@\verb+tm_opencons()+}
+\index{tm_closecons@\verb+tm_closecons()+}
+Start or stop a constructor.
+\end{desc}
+\begin{verbatim}
+void tm_opentuple( TMPRINTSTATE *st );
+void tm_closetuple( TMPRINTSTATE *st );
+\end{verbatim}
+\begin{desc}
+\index{tm_opentuple@\verb+tm_opentuple()+}
+\index{tm_closetuple@\verb+tm_closetuple()+}
+Start or stop a tuple.
+\end{desc}
+\begin{verbatim}
+void tm_printword( TMPRINTSTATE *st, const char *w );
+\end{verbatim}
+\begin{desc}
+\index{tm_printword@\verb+tm_printword()+}
+Add a word {\tt w} to the current list, tuple, or constructor.
+\end{desc}
+\subsection{File scan support functions}
+These functions are provided to support the \verb'fscan_<type>' template
+functions, and similar functions for primitive types.
+\par
+\begin{verbatim}
+int tm_fscanspace( FILE *f );
+int tm_lineno;
+\end{verbatim}
+\begin{desc}
+\index{tm_fscanspace@\verb+tm_fscanspace()+}
+\index{tm_lineno@\verb+tm_lineno+}
+Skip all spaces, tabs, form feeds and comment in the input up to the
+next non-white character.
+Increment {\tt tm\_lineno} for each newline character that is encountered.
+A comment is started with {\tt ||} and is terminated by a newline.
+It is not allowed to have a single {\tt |}
+followed by another character than another {\tt |} in the input:
+this will put an error message in {\tt tm\_errmsg} and a return value {\tt 1}.
+In all other cases {\tt 0} is returned.
+\end{desc}
+\begin{verbatim}
+int tm_fneedc( FILE *f, int c );
+\end{verbatim}
+\begin{desc}
+\index{tm_fneedc@\verb+tm_fneedc()+}
+After skipping spaces, tabs, form feeds and comment,
+try to read character {\tt c} from file {\tt f}.
+Return a value {\tt 1} and put an error message in {\tt tm\_errmsg} if this
+is not possible,
+else return {\tt 0}.
+\end{desc}
+\begin{verbatim}
+int tm_fscanopenbrac( FILE *f );
+int tm_fscanclosebrac( FILE *f, int n );
+\end{verbatim}
+\begin{desc}
+\index{tm_fscanopenbrac@\verb+tm_fscanopenbrac()+}
+\index{tm_fscanclosebrac@\verb+tm_fscanclosebrac()+}
+\begin{sloppypar}
+Handle brackets around constructors.
+\verb+tm_fscanopenbrac()+ counts and returns the number
+of open brackets (`{\tt (}') it encounters up to the first character
+that is not white space, comment or an open bracket.
+\verb+tm_fscanclosebrac()+ tries to read {\tt n} close brackets (`{\tt )}').
+It will return {\tt 1} and put an error message in {\tt tm\_errmsg} if this is
+not possible.
+It will return {\tt 0} if it is successful.
+\end{sloppypar}
+\end{desc}
+\begin{verbatim}
+int tm_fscancons( FILE *f, char *buf, int sz );
+\end{verbatim}
+\begin{desc}
+\index{tm_fscancons@\verb+tm_fscancons()+}
+Read a constructor name.
+\verb+tm_fscancons()+ tries to read a constructor name consisting of up to
+${\tt sz}-1$ upper- or lower-case characters or digits.
+The constructor name will be copied into {\tt buf},
+and terminated by a `\verb+\0+'.
+It will return {\tt 1} and put an error message in {\tt tm\_errmsg}
+if the constructor name has length 0 or is longer than ${\tt sz}-1$,
+else it will return {\tt 0}.
+\end{desc}
+\begin{verbatim}
+const char *tm_escapestring( const unsigned int code );
+\end{verbatim}
+\begin{desc}
+Given an unsigned int \verb+code+ representing the ASCII code of a character,
+return a pointer to a string representing this character in an
+escape sequence (or an ordinary character, if that is possible).
+The returned pointer points to a static buffer that is overwritten
+upon the next invocation of the function.
+\end{desc}
+\begin{verbatim}
+int tm_fscanescapedchar( FILE *f, int *code );
+\end{verbatim}
+\begin{desc}
+Try to read a (possibly escaped) character from the file \verb'f'. 
+It will return {\tt 1} and put an error message in {\tt tm\_errmsg}
+if no escaped character can be read,
+else it will return {\tt 0}.
+\end{desc}
+
+\subsection{Template functions for primitive types}
+\label{s.primtype}
+\begin{verbatim}
+void fprint_tmbool( FILE *f, const tmbool b );
+void fre_tmbool( tmbool b );
+int fscan_tmbool( FILE *f, tmbool *b );
+void print_tmbool( TMPRINSTATE *st, const tmbool b );
+void rfre_tmbool( tmbool b );
+#define tmboolNIL <something>
+#define TMTRUESTR "True"
+#define TMFALSESTR "False"
+typedef tmbool <something>
+\end{verbatim}
+\begin{desc}
+\index{tmbool}
+Module functions for type `tmbool'.
+A {\tt tmbool} is the boolean representation used by {\Tm}.
+It may have the values {\tt TMTRUE} and {\tt TMFALSE}.
+This name has been chosen instead of the more obvious `bool',
+since this type name is often defined at another place.
+For example, the {\tt curses} software and MS-Windows both define {\tt bool}.
+In {\tt fscan\_tmbool()}, {\tt fprint\_tmbool()} and {\tt print\_tmbool()}
+use {\tt TMTRUESTR} and {\tt TMFALSESTR} as representation strings.
+\end{desc}
+\begin{verbatim}
+typedef signed char schar;
+int cmp_schar( const schar a, const schar b );
+void fprint_schar( FILE *f, const schar c );
+void fre_schar( schar c );
+int fscan_schar( FILE *f, schar *cp );
+#define scharNIL <something>
+void print_schar( TMPRINSTATE *st, const schar c );
+schar rdup_schar( const schar c );
+void rfre_schar( schar c );
+\end{verbatim}
+\begin{desc}
+\index{schar}
+Module functions for type `{\tt signed char}'.
+\end{desc}
+\begin{verbatim}
+typedef unsigned char uchar;
+int cmp_uchar( const uchar a, const uchar b );
+void fprint_uchar( FILE *f, const uchar c );
+void fre_uchar( uchar c );
+int fscan_uchar( FILE *f, uchar *cp );
+#define ucharNIL <something>
+void print_uchar( TMPRINSTATE *st, const uchar c );
+uchar rdup_uchar( const uchar c );
+void rfre_uchar( uchar c );
+\end{verbatim}
+\begin{desc}
+\index{uchar}
+Module functions for type `{\tt unsigned char}'.
+\end{desc}
+\begin{verbatim}
+int cmp_int( const int a, const int b );
+void fprint_int( FILE *f, const int i );
+void fre_int( int i );
+int fscan_int( FILE *f, int *i );
+#define intNIL <something>
+void print_int( TMPRINSTATE *st, const int i );
+int rdup_int( int i );
+void rfre_int( int i );
+\end{verbatim}
+\begin{desc}
+\index{int}
+Module functions for type `{\tt int}'.
+\end{desc}
+\begin{verbatim}
+typedef unsigned int uint;
+int cmp_uint( const uint a, const uint b );
+void fprint_uint( FILE *f, const uint i );
+void fre_uint( uint u );
+int fscan_uint( FILE *f, uint *p );
+void print_uint( TMPRINSTATE *st, const uint i );
+uint rdup_uint( const uint u );
+void rfre_uint( uint u );
+#define uintNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{uint}
+Module functions for type `{\tt unsigned int}'.
+\end{desc}
+\begin{verbatim}
+int cmp_long( const long a, const long b );
+void fprint_long( FILE *f, const long i );
+void fre_long( long u );
+int fscan_long( FILE *f, long *p );
+void print_long( TMPRINSTATE *st, const long i );
+long rdup_long( const long u );
+void rfre_long( long u );
+#define longNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{long}
+Module functions for type `{\tt long int}'.
+\end{desc}
+\begin{verbatim}
+typedef unsigned long int ulong;
+int cmp_ulong( const ulong a, const ulong b );
+void fprint_ulong( FILE *f, const ulong i );
+void fre_ulong( ulong u );
+int fscan_ulong( FILE *f, ulong *p );
+void print_ulong( TMPRINSTATE *st, const ulong i );
+ulong rdup_ulong( const ulong u );
+void rfre_ulong( ulong u );
+#define ulongNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{ulong}
+Module functions for type `{\tt unsigned long int}'.
+\end{desc}
+\begin{verbatim}
+int cmp_double( const double a, const double b );
+#define doubleNIL <something>
+void fprint_double( FILE *f, const double d );
+void fre_double( double d );
+int fscan_double( FILE *f, double *d );
+void print_double( TMPRINTSTATE *st, double d );
+double rdup_double( const double d );
+void rfre_double( double d );
+\end{verbatim}
+\begin{desc}
+\index{double}
+Module functions for type `{\tt double}'.
+\end{desc}
+\begin{verbatim}
+int cmp_float( float a, float b );
+#define floatNIL <something>
+void fprint_float( FILE *f, float d );
+void fre_float( float d );
+int fscan_float( FILE *f, float *d );
+void print_float( TMPRINSTATE *st, const float d );
+float rdup_float( const float d );
+void rfre_float( float d );
+\end{verbatim}
+\begin{desc}
+\index{float}
+Module functions for type `{\tt float}'.
+\end{desc}
+\begin{verbatim}
+void fprint_tmsymbol( FILE *f, const tmsymbol s );
+void fre_tmsymbol( tmsymbol s );
+int fscan_tmsymbol( FILE *f,  tmsymbol *s );
+tmsymbol new_tmsymbol( const char *s );
+void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s );
+tmsymbol rdup_tmsymbol( const tmsymbol s );
+void rfre_tmsymbol( tmsymbol s );
+#define tmsymbolNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{tmsymbol}
+Module functions for type `tmsymbol'.
+See section~\ref{s.tmsymbol} for details about type \verb"tmsymbol".
+\end{desc}
+\begin{verbatim}
+void fprint_tmstring( FILE *f, const tmstring s );
+void fre_tmstring( tmstring s );
+int fscan_tmstring( FILE *f,  tmstring *s );
+tmstring new_tmstring( const char *s );
+void print_tmstring( TMPRINTSTATE *st, const tmstring s );
+tmstring rdup_tmstring( const tmstring s );
+void rfre_tmstring( tmstring s );
+void stat_tmstring( FILE *f );
+int get_balance_tmstring( void );
+#define tmstringNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{tmstring}
+Module functions for type `tmstring'.
+A `tmstring' is an array of characters terminated by a `\verb+\0+' character.
+Note that {\tt fscan\_tmstring()}, {\tt rdup\_tmstring()},
+and {\tt new\_tmstring()} allocate memory for the scanned string,
+you must use {\tt fre\_tmstring()} to return that memory.
+{\tt Stat\_tmstring} prints to file {\tt f} a line specifying the number of
+allocated and freed strings.
+There is also a function \verb+realloc_tmstring()+ to enlarge the
+string array,
+see section~\ref{s.malloc}.
+\end{desc}
+\begin{verbatim}
+void fprint_tmtext( FILE *f, const tmtext s );
+int cmp_tmtext( const tmtext ta, const tmtext tb );
+void fre_tmtext( tmtext s );
+int fscan_tmtext( FILE *f,  tmtext *s );
+tmtext new_tmtext( const char *s );
+void print_tmtext( TMPRINTSTATE *st, const tmtext s );
+tmtext rdup_tmtext( const tmtext s );
+void rfre_tmtext( tmtext s );
+void stat_tmtext( FILE *f );
+int get_balance_tmtext( void );
+#define tmtextNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{tmtext}
+Module functions for type `tmtext'.
+A `tmtext' is a list of characters, similar to the lists that can be
+generated for arbitrary types. See section~\ref{s.tmtext} for more details.
+\end{desc}
+\subsection{Error functions}
+\begin{verbatim}
+char tm_errmsg[TM_ERRLEN];
+\end{verbatim}
+\begin{desc}
+\index{tm_errmsg@\verb+tm_errmsg+}
+\begin{sloppypar}
+A buffer for error messages from {\Tm} functions,
+in particular the {\tt fscan\_<type>()} functions.
+The value {\tt TM\_ERRLEN} is defined in the include file {\tt tmc.h}.
+\end{sloppypar}
+\end{desc}
+\begin{verbatim}
+void tm_fatal( char *file, int line, char *s );
+\end{verbatim}
+\begin{desc}
+\index{tm_fatal@\verb+tm_fatal()+}
+Fatal error handler for {\Tm} functions:
+given the source file name {\tt file},
+the source line {\tt line} and the error message {\tt s},
+print the error message \verb+s+.
+If \verb+line+ is not equal to $0$, and \verb+file+ is not equal
+to \verb+""+ (the empty string) the origin (source file and line)
+of the error is printed.
+After this, stop the program.
+\par
+All error messages,
+except those about bad tags and dynamic memory problems,
+are passed through \verb'tm_fatal()'.
+The user can supply another error handler by replacing this function.
+\end{desc}
+\begin{verbatim}
+void tm_badtag( char *file, int line, int tag );
+\end{verbatim}
+\begin{desc}
+\index{tm_badtag@\verb+tm_badtag()+}
+Fatal error handler for bad tags: print the position
+given by source file name {\tt file} and source line {\tt line},
+and print the tag value as a decimal and hexadecimal value.
+After this stop the program.
+This message is {\em not} \/printed through \verb'tm_fatal()',
+since the occurrence of a bad tag is a symptom of a serious organization
+problem.
+\end{desc}
+\begin{verbatim}
+void tm_noroom( void );
+\end{verbatim}
+\begin{desc}
+Handler for allocation errors of \verb+tm_malloc()+, \verb+tm_calloc()+
+and \verb+tm_realloc()+.
+By default it prints `no room' to \verb+stderr+ and does an
+\verb+exit(1)+, but it may be replaced by another function
+to incorporate panic shutdown
+code (to save, for example, the file being edited).
+If this function returns (the default one does not), the {\Tm}
+allocation routines will try again to allocate the requested block.
+This way, garbage collection may be implemented.
+\end{desc}
+\subsection{{\tt LOGNEW} functions}
+For a detailed explanation of the purpose of {\tt LOGNEW} functions,
+see section~\ref{s.allocation}.
+\begin{verbatim}
+void tm_lognew(
+ const tm_neutralp p,
+ const char *file,
+ const int line
+);
+\end{verbatim}
+\begin{desc}
+\index{tm_lognew@\verb+tm_lognew()+}
+Given a pointer {\tt p}, record it as a new entry in the lognew table.
+The current values of \verb+nwl_f+ and \verb+nwl_l+
+are stored to record the source-code position of the block request.
+\end{desc}
+\begin{verbatim}
+void tm_logfre( const tm_neutralp p );
+\end{verbatim}
+\begin{desc}
+\index{tm_logfre@\verb+tm_logfre()+}
+Given a pointer {\tt p}, delete its entry from the lognew table.
+\end{desc}
+\begin{verbatim}
+long int tm_new_logid( const char *file, const int line );
+\end{verbatim}
+\begin{desc}
+\index{tm_new_logid@\verb+tm_new_logid()+}
+Request a new number to identify a {\Tm} allocation block.
+\par
+When called, \verb+file+ and \verb+line+
+are stored to record the source-code position of the block request.
+The {\Tm} code templates store the identification number in the
+allocated block.
+When the block is freed, the entry is removed from the list
+using the identification number, with a call to \verb+tm_fre_logid()+.
+This method is more efficient than that of \verb+tm_lognew()+
+and \verb+tm_logfre()+,
+but requires that the identification number is stored in the
+allocated block.
+It is therefore unsuitable to log \verb+tmstring+ allocations.
+\end{desc}
+\begin{verbatim}
+void tm_fre_logid( const long int i );
+\end{verbatim}
+\begin{desc}
+\index{tm_fre_logid@\verb+tm_fre_logid()+}
+Remove the block with id {\tt i} from the list of pending blocks.
+See the description of \verb+tm_new_logid()+.
+\end{desc}
+\begin{verbatim}
+void report_lognew( FILE *f );
+\end{verbatim}
+\begin{desc}
+\index{report_lognew@\verb+report_lognew()+}
+Print the pending entries in the lognew table to file {\tt f}.
+\end{desc}
+\begin{verbatim}
+void flush_lognew();
+\end{verbatim}
+\begin{desc}
+\index{flush_lognew@\verb+flush_lognew()+}
+Clear the table of lognew entries, and free any memory that
+has been allocated for it.
+\end{desc}
+\subsection{Dynamic memory allocation}
+\label{s.malloc}
+\index{malloc@\verb+malloc()+}
+Type handling for \verb+malloc()+ and friends is a {\em minefield}.
+Different compilers have different ideas about neutral pointers, whether the
+result of a malloc should be cast, etc.
+The functions and defines in the {\Tm} {\C} library try to meet the demands
+for the various compilers by introducing a number of 
+compiler-dependent definitions.
+\par
+The allocation functions invoke a function \verb+tm_noroom()+ to print
+the actual error message.
+A default function is provided that prints the message to \verb+stderr+
+and does an \verb+exit(1)+.
+To implement emergency handling or even recovery,
+the user can provide a different \verb+tm_noroom()+ function.
+\par
+Dynamic memory allocation is very sensitive to errors.
+Therefore,
+{\Tm} provides extensive support to detect and repair such bugs,
+see section~\ref{s.allocation}.
+\begin{verbatim}
+typedef <something> tm_neutralp;
+\end{verbatim}
+\begin{desc}
+\index{tm_neutralp@\verb+tm_neutralp+}
+The pointer type that is the `neutral' pointer type for this compiler.
+\end{desc}
+\begin{verbatim}
+tm_neutralp tm_malloc( size_t sz );
+tm_neutralp tm_calloc( size_t n, size_t sz );
+tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
+\end{verbatim}
+\begin{desc}
+\index{tm_malloc@\verb+tm_malloc()+}
+\index{tm_calloc@\verb+tm_calloc()+}
+\index{tm_realloc@\verb+tm_realloc()+}
+The standard \verb+malloc()+ routine and friends,
+but with important differences:
+\begin{enumerate}
+\item They return a pointer of type \verb+tm_neutralp+, which may not
+      be the same type as that of the original routine.
+\item They handle out of memory situations by invoking \verb+tm_noroom()+.
+      If \verb'tm_noroom()' returns, (the default one does not),
+      they try again to allocate the requested memory.
+\item They are guaranteed to accept \verb'sz = 0' and \verb'n = 0'.
+\end{enumerate}
+You cannot use these functions directly in portable code,
+since some compilers will require casts of the pointer parameters and
+return values,
+while other compilers require that you do {\em not}.
+Therefore,
+a set of compiler dependent macros is provided to solve this problem.
+\end{desc}
+\begin{verbatim}
+#define TM_MALLOC(t,sz) <something>
+#define TM_CALLOC(t,n,sz) <something>
+#define TM_REALLOC(t,p,sz) <something>
+#define TM_FREE(p) <something>
+\end{verbatim}
+\begin{desc}
+\index{TM_REALLOC@\verb+TM_REALLOC()+}
+\index{TM_CALLOC@\verb+TM_CALLOC()+}
+\index{TM_MALLOC@\verb+TM_MALLOC()+}
+System-independent versions of the \verb+tm_malloc()+ functions and
+friends.
+They have the same parameters as the functions, but have an additional
+parameter \verb+t+ that indicates the type the returned pointer
+should have.
+\end{desc}
+\begin{verbatim}
+tmstring realloc_tmstring( tmstring s, const size_t sz );
+\end{verbatim}
+\begin{desc}
+\index{realloc_tmstring@\verb+realloc_tmstring()+}
+Given a tmstring \verb+s+ and a string size \verb+sz+,
+invoke \verb+tm_realloc()+ to enlarge \verb+s+ to have at least
+\verb+sz+ bytes.
+You should not use \verb+tm_realloc()+ on strings directly,
+since this confuses the \verb+LOGNEW+ functions.
+\end{desc}
+\subsection{Text handling}
+\label{s.tmtext}
+\begin{verbatim}
+typedef tmtextptr <something>;
+
+typedef struct str_tmtext {
+    tmtextptr arr;
+    long curpos;        /* Current read or write pointer. */
+    long sz;
+    long room;
+    long int lognew_id;
+} *tmtext;
+\end{verbatim}
+\par
+A \verb'tmtext' is a list of \verb'uchar', similar to other
+lists, with some additional functionality. The type \verb'tmtextptr' is a
+pointer to \verb'uchar'.
+The main reason this deserves a typedef is that this way it can be declared
+\verb'huge', as is required for MS-DOS and some versions of MS-Windows.
+Next to the standard support functions (see~\ref{s.primtype}),
+a number of additional functions are provided.
+\begin{verbatim}
+extern void stat_tmtext( FILE *f );
+\end{verbatim}
+\begin{desc}
+\index{stat_tmtext()@\verb'stat_tmtext()'}
+This function is equivalent to the standard \verb'stat_<basename>()' function:
+given a file handle \verb'f', print the allocation and freeing statistics
+to that file.
+\end{desc}
+\begin{verbatim}
+extern int get_balance_tmtext( void );
+\end{verbatim}
+\begin{desc}
+\index{get_balance_tmtext()@\verb'get_balance_tmtext()'}
+This function is equivalent to the standard \verb'get_balance_<basename>()'
+function: return the current balance state of \verb'tmtext'. 
+The function returns $-1$ if more instances have been freed than have
+been allocated, $1$ if more instances have been allocated than freed,
+and $0$ if the same number of instances have been allocated and freed.
+\end{desc}
+\begin{verbatim}
+extern tmtext setroom_tmtext( tmtext t, long rm );
+\end{verbatim}
+\begin{desc}
+\index{setroom_tmtext()@\verb'setroom_tmtext()'}
+This function is similar to the standard \verb'setroom_<type>()'
+function.
+Specify that text {\tt t} must have room for at least {\tt rm} characters.
+This function ensures that the array has sufficient room to
+store {\tt rm} elements.
+The room in a list is never reduced.
+\par
+Functions that add elements to a \verb'tmtext' use this function implicitly,
+the user only needs these functions for efficiency reasons
+(to prevent repeated enlargement of the array)
+or to build new list functions.
+\end{desc}
+\begin{verbatim}
+extern tmtext slice_tmtext( const tmtext t, long from, long to );
+\end{verbatim}
+\begin{desc}
+\index{slice_tmtext()@\verb'slice_tmtext()'}
+This function is similar to the standard \verb'slice_<type>()'
+function.
+Given a text \verb't', a start position \verb'from' and an end position
+\verb'to', create a new text containing the character from \verb't'
+starting from \verb'from' up to (but not including) \verb'to'.
+\par
+If the specified range extends beyond the real text, the range is
+limited to the real text.
+\end{desc}
+\begin{verbatim}
+extern tmtext delblock_tmtext( tmtext t, long from, long to );
+\end{verbatim}
+\begin{desc}
+\index{delblock_tmtext()@\verb'delblock_tmtext()'}
+Given a text \verb't', a starting position \verb'from' and an end position
+\verb'to', delete the characters from \verb'from' up to, but not including
+\verb'to'.
+Characters above this range are moved down to close the gap.
+If all or part of the specified range to delete falls beyond the text,
+that part of the range is ignored.
+\end{desc}
+\begin{verbatim}
+extern tmtext replace_tmtext(
+ tmtext t,
+ const long from,
+ const long to,
+ const tmtext nw
+);
+\end{verbatim}
+\begin{desc}
+\index{replace_tmtext()@\verb'replace_tmtext()'}
+Given a text \verb't', a starting position \verb'from', an ending
+position \verb'to', and a text \verb'nw', replace the characters in 
+that range with the characters in \verb'nw'. The characters beyond the
+range, from \verb'to' upwards, are moved up or down to close the gap.
+Return the new text.
+\end{desc}
+\begin{verbatim}
+extern tmtext insert_tmtext( tmtext t, const long pos, const tmtext nw );
+\end{verbatim}
+\begin{desc}
+\index{replace_tmtext()@\verb'replace_tmtext()'}
+Given a text \verb't', a position \verb'pos', 
+and a text \verb'nw', insert \verb'nw' in \verb't' at position \verb'pos'.
+If \verb'pos' is negative, \verb'nw' is inserted at the start of the text,
+if \verb'pos' is greater than the size of \verb't', \verb'nw' is appended
+at the end of the text.
+\par
+The new text is returned.
+\end{desc}
+\begin{verbatim}
+extern int cmp_string_tmtext( const char *s, const tmtext t );
+\end{verbatim}
+\begin{desc}
+\index{cmp_string_tmtext()@\verb'cmp_string_tmtext()'}
+Given a string \verb's' and a text \verb't', return $-1$ if \verb't' is
+smaller than \verb's', return $1$ if \verb't' is greater than \verb's', and
+return $0$ if they are equal. 
+\end{desc}
+\begin{verbatim}
+extern tmstring tmtext_to_tmstring( const tmtext t );
+\end{verbatim}
+\begin{desc}
+\index{tmtext_to_tmstring()@\verb'tmtext_to_tmstring()'}
+Given a text \verb't', return a \verb'tmstring' that contains these characters.
+It is assumed that \verb't' does not contain \verb"'\0'" characters.
+\end{desc}
+\begin{verbatim}
+extern tmtext string_to_tmtext( const char *s );
+\end{verbatim}
+\begin{desc}
+\index{string_to_tmtext()@\verb'string_to_tmtext()'}
+Given a string \verb's', return a new text consisting of this string.
+\end{desc}
+\begin{verbatim}
+extern void puts_tmtext( const char *s, tmtext t );
+extern void putc_tmtext( uchar c, tmtext t );
+\end{verbatim}
+\begin{desc}
+\index{puts_tmtext()@\verb'puts_tmtext()'}
+\index{putc_tmtext()@\verb'putc_tmtext()'}
+Given a text \verb't' and a character \verb'c' or a string \verb's', write
+this string or character to the text at the position \verb't->curpos'.
+If necessary the text is enlarged. \verb't->curpos' is incremented
+to point past the written characters.
+\end{desc}
+\subsection{Symbol handling}
+\label{s.tmsymbol}
+\index{tmsymbol}
+These functions maintain a table of strings.
+Each time a string is added to the table,
+a value of type {\tt symbol} is returned.
+It is guaranteed that for equal strings the same value is returned,
+and it is possible to compare these values with a simple compare ({\tt ==}).
+There is a special `nil' value, {\tt symbolNIL}.
+\par
+To store the information for a symbol, the following data structure is used:
+\begin{verbatim}
+/* Storage for a symbol string */
+struct _tmc_sym {
+   struct _tmc_sym *next;       /* next in list */
+   tmstring name;               /* pointer to the string */
+   tm_neutralp data;            /* any info for it. */
+};
+\end{verbatim}
+The tmstring of this symbol is stored in field \verb+name+.
+Thus,
+the name of a tmsymbol \verb+s+ can be printed with
+\begin{verbatim}
+printf( "%s", s->name );
+\end{verbatim}
+The field \verb+data+ is never touched by the symbol handling routines,
+it may be used to store user data associated with the symbol.
+\par
+Next to the standard template functions, a number of other functions
+are defined:
+\begin{verbatim}
+tmsymbol add_tmsymbol( const char *name );
+\end{verbatim}
+\begin{desc}
+\index{add_tmsymbol@\verb+add_tmsymbol()+}
+Add string {\tt name} to the symbol table.
+If the string already occurs in the table, the value of the old
+entry is returned, else a new entry is created,
+and a new value is returned.
+\par
+This routine ensures that for all symbols with the same name,
+the same value is returned.
+\end{desc}
+\begin{verbatim}
+tmsymbol find_tmsymbol( char *name );
+\end{verbatim}
+\begin{desc}
+\index{find_tmsymbol@\verb+find_tmsymbol()+}
+Try to locate string {\tt name} in the symbol table.
+If it occurs in the table, its value is returned,
+else {\tt symbolNIL} is returned.
+\end{desc}
+\begin{verbatim}
+void flush_tmsymbol();
+\end{verbatim}
+\begin{desc}
+\index{flush_tmsymbol@\verb+flush_tmsymbol()+}
+Empty the symbol table, and free all memory allocated to it.
+It is allowed to start using \verb+add_tmsymbol()+
+and \verb+gen_tmsymbol()+ again,
+but new symbol values will be returned.
+\end{desc}
+\begin{verbatim}
+tmsymbol gen_tmsymbol( const char *prefix );
+\end{verbatim}
+\begin{desc}
+\index{gen_tmsymbol@\verb+gen_tmsymbol()+}
+Given a string {\tt prefix}, generate a new symbol value with a new string.
+It is not allowed to use \verb+add_tmsymbol()+ after you have used
+\verb+gen_tmsymbol()+.
+Otherwise it cannot be guaranteed that the generated symbols remain unique.
+This restriction is enforced by the routines.
+\end{desc}
+\section{Tm and C configuration variables}
+\label{s.config}
+The templates use a few {\Tm} variables to modify the contents
+of the generated code.
+Unless stated otherwise,
+it is not necessary to set them;
+a reasonable default will be chosen.
+\par
+\begin{desctab}
+{\tt basename}\index{basename@{\tt basename}}
+&
+This variable is used to generate the names of
+definitions that are generated only once
+(e.g.\ initialization and statistics functions).
+This variable {\em must} \/be set.
+\\
+{\tt wantdefs}\index{wantdefs@{\tt wantdefs}}
+&
+If set,
+this variable contains the names of the type and function definitions that
+must be generated.
+If these functions require the definition of other functions,
+the necessary functions will be generated,
+but will be declared {\tt static}.
+If {\tt alldefs} is set all possible definitions are generated.
+\par
+There is one exception:
+to request the generation of {\tt new\_<cons>} functions for a certain
+constructor type {\tt <type>},
+{\tt new\_<type>} must be added to {\tt wantdefs}.
+\\
+{\tt notwantdefs}\index{notwantdefs@{\tt notwantdefs}}
+&
+If set,
+this variable contains the names of the type and function definitions for
+which under {\em all} conditions {\em no} code must be generated.
+\\
+{\tt alldefs}\index{alldefs@{\tt alldefs}}
+&
+If set,
+this variable indicates that all possible type and function definitions, and
+all functions for first level lists, must be generated for all defined types.
+\end{desctab}
+\par
+At least one of the variables {\tt wantdefs} and {\tt alldefs} must be set.
+\par
+In the generated {\C} code a number of preprocessor variables are used:
+\par
+\begin{desctab}
+{\tt CACHESZ}\index{CACHESZ@{\tt CACHESZ}}
+&
+For every tuple, constructor, and list type an array of freed instances
+is maintained.
+When a new instance must be made of a type,
+it is attempted to take it from this list,
+so that the overhead associated with {\tt malloc()} is prevented.
+This process is called \dfn{caching},
+and the array is called the \dfn{cache}.
+Whether the caching effort is worthwhile
+depends on the machine and the application.
+\par
+The size of the cache is determined by {\tt CACHESZ}.
+If the caching is not considered worthwhile, it can be prevented
+by specifying that {\tt CACHESZ} is 0.
+\\
+{\tt FATAL(msg)}\index{FATAL@{\tt FATAL()}}
+&
+{\tt \#define} this if you want to supply a fatal error handler to print
+{\tt msg}.
+By default \verb'tm_fatal()' is used,
+see section~\ref{s.csupportlib}.
+\\
+{\tt FIRSTROOM}\index{FIRSTROOM@{\tt FIRSTROOM}}
+&
+The initial room of an array when created with \verb+new_<type>_list()+.
+Default it is 0.
+\\
+{\tt LOGNEW}\index{LOGNEW@{\tt LOGNEW}}
+&
+{\tt \#define} this if you want code to record the origin of all
+\verb+new_<type>()+ requests.
+If this code is enabled, you can print with \verb+report_lognew()+ the
+source file and line of all pending allocated blocks.
+See section~\ref{s.allocation} for a detailed description.
+\par
+{\em Important:} {\tt LOGNEW} only works best if all code is compiled
+with {\tt LOGNEW}.
+\\
+{\tt STAT}\index{STAT@{\tt STAT}}
+&
+{\tt \#define} this if you want code for statistics.
+Code is inserted to count the number of allocated and freed instances of each
+constructor.
+These statistics can be printed with {\tt stat\_<basename>()},
+and the balance state can be obtained with \verb'get_balance<basename>()'.
+See section~\ref{s.allocation} for a detailed description.
+\\
+\end{desctab}

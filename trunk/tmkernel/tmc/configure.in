@@ -1,0 +1,29 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(xxtest.c)
+
+dnl Set the installation path by default to the path were gcc is found.
+AC_PREFIX_PROGRAM(gcc)
+
+dnl Checks for programs.
+AC_PROG_CC
+if test "$GCC" = "yes"; then
+  CFLAGS="-O2  -Wall -W -Wtraditional -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
+fi
+AC_PROG_LN_S
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+
+dnl Checks for libraries.
+dnl Replace `main' with a function in -lmalloc:
+dnl AC_CHECK_LIB(malloc, main)
+
+dnl Checks for header files.
+AC_CONFIG_HEADER(config.h:config.hin)
+AC_HEADER_STDC
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+dnl Checks for library functions.
+
+AC_OUTPUT(Makefile)

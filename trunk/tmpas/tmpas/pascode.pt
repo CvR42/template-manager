@@ -1,0 +1,757 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. file: pascode.pt
+..
+.. The following variables must be set in tm:
+.. basename:     the name of the module. used to generate Stat..
+.. wantdefs:     the names of wanted definitions.
+{ ---- start of ${tplfilename} ---- }
+
+{ routines for $(basename).
+
+  template file:      ${tplfilename}
+  datastructure file: ${dsfilename}
+  tm version:         $(tmvers)
+}
+
+{****************************************************************
+ *    New<type> and New<cons> functions                         *
+ ****************************************************************}
+
+.foreach t $(need_New)
+.if ${member $t ${ttypelist}}
+{ Allocate a new instance of tuple type '$t' }
+procedure New$t(
+.foreach sname ${telmlist $t}
+.if ${eq list ${ttypeclass $t $(sname)}}
+ Tmp$(sname): ${ttypename $t $(sname)}list;
+.else
+ Tmp$(sname): ${ttypename $t $(sname)};
+.endif
+.endforeach
+ var nw: $t
+);
+begin
+    new( nw );
+.if ${index Stat$(basename) $(need_misc)}
+    CntNew$t := CntNew$t+1;
+.endif
+    nw^.next:=nil;
+.foreach sname ${telmlist $t}
+    nw^.$(sname) := Tmp$(sname);
+.endforeach
+end; { New$t }
+
+.else
+.foreach c ${conslist $t}
+{ Allocate a new instance of constructor '$c' }
+procedure New$c(
+.foreach sname ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(sname)}}
+ Tmp$(sname): ${ctypename $t $c $(sname)}list;
+.else
+ Tmp$(sname): ${ctypename $t $c $(sname)};
+.endif
+.endforeach
+ var nw: $t
+);
+begin
+    new( nw, Tag$c );
+    nw^.tag := Tag$c;
+    nw^.next :=nil;
+.foreach sname ${celmlist $t $c}
+    nw^.$(sname) := Tmp$(sname);
+.endforeach
+.if ${index Stat$(basename) $(need_misc)}
+    CntNew$c := CntNew$c+1;
+.endif
+end; { New$c }
+
+.endforeach
+.endif
+.endforeach
+
+{***************************************************************
+ *   Free<type> and Free<type>list routines                    *
+ ***************************************************************}
+
+{ Forward declarations }
+.foreach t $(need_Free)
+procedure Free$t( var e: $t  ); forward;
+.endforeach
+.foreach t $(need_Free_list)
+procedure Free$tlist( var l: $tlist ); forward;
+.endforeach
+
+.foreach t $(need_Free)
+{ dispose an element of type $t }
+procedure Free$t;
+begin
+    if (e <> nil) then begin
+.if ${member $t ${ttypelist}}
+.if ${index Stat$(basename) $(need_misc)}
+	CntFre$t := CntFre$t+1;
+	dispose( e );
+.endif
+.else
+	case e^.tag of
+.foreach c ${conslist $t}
+	    Tag$c: begin
+.if ${index Stat$(basename) $(need_misc)}
+		CntFre$c := CntFre$c+1;
+.endif
+		dispose( e, Tag$c );
+	    end;
+.endforeach
+	end;
+.endif
+    end
+end; { Free$t }
+
+.endforeach
+.foreach t $(need_Free_list)
+{ free a list of $t elements }
+procedure Free$tlist;
+var
+    h1: $tlist;
+    h2: $tlist;
+begin
+    h1:=l;
+    while h1<>nil do begin
+	h2:=h1^.next;
+	Free$t( h1 );
+	h1:=h2
+    end;
+    l := nil
+end; (* Free$tlist *)
+
+.endforeach
+
+{***************************************************************
+ *    Rfre<type> and Rfre<type>list routines                   *
+ ***************************************************************}
+
+{ Forward declarations }
+.foreach t $(need_Rfre)
+procedure Rfre$t( var e: $t ); forward;
+.endforeach
+.foreach t $(need_Rfre_list)
+procedure Rfre$tlist( var l: $tlist ); forward;
+.endforeach
+
+.foreach t $(need_Rfre)
+{ Recursively free an element of type '$t'
+   and all elements in it.
+}
+procedure Rfre$t;
+begin
+    if (e <> nil ) then begin
+.if ${member $t ${ttypelist}}
+.foreach sname ${telmlist $t}
+.if ${eq list ${ttypeclass $t $(sname)}}
+	Rfre${ttypename $t $(sname)}list( e^.$(sname) );
+.else
+	Rfre${ttypename $t $(sname)}( e^.$(sname) );
+.endif
+.endforeach
+.else
+	case e^.tag of
+.foreach c ${conslist $t}
+	    Tag$c:
+	    begin
+.foreach sname ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(sname)}}
+		Rfre${ctypename $t $c $(sname)}list( e^.$(sname) );
+.else
+		Rfre${ctypename $t $c $(sname)}( e^.$(sname) );
+.endif
+.endforeach
+	    end;
+
+.endforeach
+	end;
+.endif
+	Free$t( e )
+    end
+end; { Rfre$t }
+
+.endforeach
+.foreach t $(need_Rfre_list)
+{ Recursively free a list of elements of type $t }
+procedure Rfre$tlist;
+var
+    h1: $tlist;
+    h2: $tlist;
+
+begin
+    h1:=l;
+    while h1<>nil do begin
+	h2:=h1^.next;
+	Rfre$t( h1 );
+	h1:=h2
+    end;
+    l := nil
+end; { Free$tlist }
+
+.endforeach
+
+{***************************************************************
+ *    App<type> functions                                      *
+ ***************************************************************}
+
+.foreach t $(need_App)
+{ Append an element after a list of type $t }
+function App$t( var list: $tlist; element: $t ): $tlist;
+var h: $t;
+begin
+    if list=nil then
+	App$t:=element
+    else begin
+	h:=list;
+	while h^.next<>nil do h:=h^.next;
+	h^.next:=element;
+	App$t := list
+   end
+end; { App$t }
+
+.endforeach
+
+{***************************************************************
+ *    Write<type>, Write<cons> and Write<type>list routines    *
+ ***************************************************************}
+
+{ Forward declarations }
+.foreach t $(need_Write)
+procedure Write$t( var f: text; t: $t ); forward;
+.endforeach
+.foreach t $(need_Write_list)
+procedure Write$tlist( var f: text; l: $tlist ); forward;
+.endforeach
+
+.foreach t $(need_Write)
+{ Print an element of type '$t'. }
+procedure Write$t;
+begin
+    if ( t=nil ) then
+	writeln( f, '<nil>' )
+    else begin
+.if ${member $t ${ttypelist}}
+	write( f, '(' );
+.set first 1
+.foreach sname ${telmlist $t}
+.if $(first)
+.set first 0
+.else
+	write( f, ',' );
+.endif
+.if ${eq list ${ttypeclass $t $(sname)}}
+	Write${ttypename $t $(sname)}list( f, t^.$(sname) );
+.else
+	Write${ttypename $t $(sname)}( f, t^.$(sname) );
+.endif
+.endforeach
+	writeln( f, ')' );
+    end
+.else
+	write( f, '(' );
+	case t^.tag of
+.foreach c ${conslist $t}
+	    Tag$c:
+	    begin
+		write( f, '$c' );
+.foreach sname ${celmlist $t $c}
+		write( f, ' ' );
+.if ${eq list ${ctypeclass $t $c $(sname)}}
+		Write${ctypename $t $c $(sname)}list( f, t^.$(sname) );
+.else
+		Write${ctypename $t $c $(sname)}( f, t^.$(sname) );
+.endif
+.endforeach
+	    end;
+
+.endforeach
+	end
+    end;
+    writeln( f, ')' );
+.endif 
+end; { Write$t }
+
+.endforeach
+.foreach t $(need_Write_list)
+{ Print list of elements of type '$t' to file 'f' }
+procedure Write$tlist;
+var
+    p: $t;
+
+begin
+    p := l;
+    write( f, '[' );
+    while p<>nil do begin
+	Write$t( f, p );
+	p:=p^.next;
+	if( p<>nil ) then
+	    write( f, ',' );
+    end;
+    writeln( f, ']' )
+end; { Write$tlist}
+
+.endforeach
+{***************************************************************
+ *    Copy<type> and Copy<type>list routines                   *
+ ***************************************************************}
+
+{ Forward declarations }
+.foreach t $(need_Copy)
+function Copy$t( i: $t ): $t; forward;
+.endforeach
+.foreach t $(need_Copy_list)
+function Copy$tlist( i: $tlist ): $tlist; forward;
+.endforeach
+
+.foreach t $(need_Copy)
+{ Recursively duplicate instance `i' of type `$t'
+  and all elements in it. }
+function Copy$t;
+.if ${member $t ${ttypelist}}
+.. Copy tuple
+var
+.foreach e ${telmlist $t}
+.if ${eq list ${ttypeclass $t $e}}
+    tmp$e: ${ttypename $t $e}list;
+.else
+    tmp$e: ${ttypename $t $e};
+.endif
+.endforeach
+    out: $t;
+
+begin
+    if ( i=nil ) then
+	out := nil
+    else begin
+.foreach e ${telmlist $t}
+.if ${eq list ${ttypeclass $t $e}}
+	tmp$e := Copy${ttypename $t $e}list( i^.$e );
+.else
+	tmp$e := Copy${ttypename $t $e}( i^.$e );
+.endif
+.endforeach
+	New$t( ${suffix ", " ${prefix "tmp" ${telmlist $t}}} out )
+    end;
+    Copy$t := out
+.else
+.. Copy constructor
+var
+    out: $t;
+
+.foreach c ${conslist $t}
+    function Copy$c( i: $t ): $t;
+    var
+.foreach e ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $e}}
+	tmp$e: ${ctypename $t $c $e}list;
+.else
+	tmp$e: ${ctypename $t $c $e};
+.endif
+.endforeach
+        out : $t;
+
+    begin
+.foreach e ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $e}}
+	tmp$e := Copy${ctypename $t $c $e}list( i^.$e );
+.else
+	tmp$e := Copy${ctypename $t $c $e}( i^.$e );
+.endif
+.endforeach
+	New$c( ${suffix ", " ${prefix "tmp" ${celmlist $t $c}}} out );
+	Copy$c := out
+    end; { Copy$c }
+
+.endforeach
+begin
+    if ( i=nil ) then
+	out := nil
+    else begin
+	case i^.tag of
+.foreach c ${conslist $t}
+	    Tag$c: out:= Copy$c( i );
+.endforeach
+	end
+    end;
+    Copy$t := out
+.endif
+end; { Copy$t }
+
+.endforeach
+.foreach t $(need_Copy_list)
+{ recursively duplicate an instance of a `$t' list }
+function Copy$tlist;
+var
+    out: $tlist;
+    prev: $tlist;
+
+begin
+    if (i=nil) then
+	out:=nil
+    else begin
+	out := Copy$t( i );
+	prev := out;
+	i := i^.next;
+	while i <> nil do begin
+	    prev^.next := Copy$t( i );
+	    prev := prev^.next;
+	    i := i^.next;
+	end;
+    end;
+    Copy$tlist := out
+end;
+
+.endforeach
+{***************************************************************
+ *    Read<type> and Read<type>list routines                   *
+ ***************************************************************}
+
+{ Forward declarations }
+.foreach t $(need_Read)
+function Read$t( var f, rf: text; var p: $t ): boolean; forward;
+.endforeach
+.foreach t $(need_Read_list)
+function Read$tlist( var f, rf: text; var p: $tlist ): boolean; forward;
+.endforeach
+
+.foreach t $(need_Read)
+.if ${member $t ${ttypelist}}
+.. Read tuple
+{ Read a $t tuple from file 'f', and create an instance of
+  a Pascal structure for it. Set 'p' to this new structure.
+}
+function Read$t;
+var
+.foreach ename ${telmlist $t}
+.if ${eq list ${ttypeclass $t $(ename)}}
+.set tn ${ttypename $t $(ename)}list
+.else
+.set tn ${ttypename $t $(ename)}
+.endif
+    tmp$(ename): $(tn);
+.endforeach
+    err: boolean;
+
+begin
+    p := nil;
+    err := tmneedc( f, rf, '(' );
+.set first 1
+.foreach ename ${telmlist $t}
+.if $(first)
+.set first 0
+.else
+    if not err then err := tmneedc( f, rf, ',' );
+.endif
+.if ${eq list ${ttypeclass $t $(ename)}}
+.set tn ${ttypename $t $(ename)}list
+.else
+.set tn ${ttypename $t $(ename)}
+.endif
+    if not err then err := Read$(tn)( f, rf, tmp$(ename) );
+.endforeach
+    if not err then begin
+	New$t( ${suffix , ${prefix tmp ${telmlist $t}}} p );
+	err := tmneedc( f, rf, ')' );
+    end;
+    Read$t := err
+end; { Read$t }
+
+.else
+.. Read constructor
+.. Some internal calculations
+..
+.. Determine the maximum length of the constructor names
+.. for this type
+.set maxclen 0
+.foreach c ${conslist $t}
+.set maxclen ${max $(maxclen) ${strlen $c}}
+.endforeach
+{ Read a constructor $t from file 'f' and allocate space for it.
+  Set 'p' to that structure. }
+function Read$t;
+const
+    maxlen = $(maxclen);
+
+type
+    consnm = packed array [1..maxlen] of char;
+
+var
+    braccnt: integer;
+    word: consnm;
+    err: boolean;
+
+    { Try to read a constructor name in buffer `buf' }
+    function readcons( var f, rf: text; var buf: consnm ): boolean;
+    var
+	ix: integer;
+	err: boolean;
+	busy: boolean;
+	alnumset: set of char;
+
+    begin
+	alnumset := ['a'..'z','A'..'Z','0'..'9'];
+	buf := '${strpad "" $(maxclen) " "}';
+	ix := 1;
+	tmreadspc( f );
+	err := false;
+	if not (tmcurchar in alnumset) then begin
+	    write( rf, 'expected $t constructor but got ' );
+	    if tmcurchar = tmeofchar then
+		writeln( rf,  'EOF' )
+	    else
+		writeln( rf,  'char with code ', ord( tmcurchar ):3 );
+	    err := true
+	end;
+	busy := true;
+	while (not err) and busy and (tmcurchar in alnumset) do begin
+	    if ix>maxlen then begin
+		writeln( rf,  '$t constructor name too long: "', buf, tmcurchar,'"' );
+		err := true
+	    end
+	    else begin
+		buf[ix] := tmcurchar;
+		tmgetc( f );
+		ix := ix+1
+	    end;
+	    if not (tmcurchar in alnumset) then
+		busy := false;
+	end;
+	readcons := err
+    end; { readcons }
+
+.foreach c ${conslist $t}
+    { Constructor name '$c' was encountered in file 'f',
+      read remainder of constructor, and create an instance of
+      a Pascal structure for it. Set 'p' to this new structure.
+    }
+    function Read$c( var f, rf: text; var p: $t ): boolean;
+    var
+.foreach ename ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(ename)}}
+	tmp$(ename): ${ctypename $t $c $(ename)}list;
+.else
+	tmp$(ename): ${ctypename $t $c $(ename)};
+.endif
+.endforeach
+	err: boolean;
+
+    begin
+	err := false;
+.foreach ename ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(ename)}}
+.set fn Read${ctypename $t $c $(ename)}list
+.else
+.set fn Read${ctypename $t $c $(ename)}
+.endif
+	if not err then err := $(fn)( f, rf, tmp$(ename) );
+.endforeach
+	if not err then New$c( ${suffix , ${prefix tmp ${celmlist $t $c}}} p );
+	Read$c := err
+    end;
+
+.endforeach
+begin
+    p := nil;
+    tmreadobrac( f, braccnt );
+    err := readcons( f, rf, word );
+    if not err then begin
+.set els
+.foreach c ${conslist $t}
+	$(els)if word = '${strpad $c $(maxclen) " "}' then begin
+		err := Read$c( f, rf, p );
+	end
+.set els "else "
+.endforeach
+	else begin
+	    writeln( rf, 'bad constructor for type $t: "', word, '"' );
+	    err:=true
+	end;
+    end;
+    if not err then err := tmreadcbrac( f, rf, braccnt );
+    Read$t := err;
+end; { Read$t }
+
+.endif
+.endforeach
+.foreach t $(need_Read_list)
+{ Read an instance of a list of datastructure of type $t.
+  from file 'f' and allocate space for it. Set 'p' to
+  point to the list.
+}
+function Read$tlist;
+var
+    braccnt: integer;
+    n: $t;
+    err: boolean;
+    busy: boolean;
+
+begin
+    p := nil;
+    tmreadobrac( f, braccnt );
+    err := tmneedc( f, rf, '[' );
+    if not err then tmreadspc( f );
+    busy := (tmcurchar <> ']');
+    while (busy and (not err)) do begin
+	err := Read$t( f, rf, n );
+	if not err then begin
+	    p := App$t( p, n );
+	    tmreadspc( f );
+	    if( tmcurchar = ',' ) then
+		tmgetc( f )
+	    else
+		busy := false
+	end
+    end;
+    if not err then err := tmneedc( f, rf, ']' );
+    if not err then err := tmreadcbrac( f, rf, braccnt );
+    Read$tlist := err
+end; { Read$tlist }
+
+.endforeach
+{***************************************************************
+ *    Cmp<type> and Cmp<type>list routines                     *
+ ***************************************************************}
+
+{ Forward declarations }
+.foreach t $(need_Cmp)
+function Cmp$t( a, b: $t ): integer; forward;
+.endforeach
+.foreach t $(need_Cmp_list)
+function Cmp$tlist( a, b: $tlist ): integer; forward;
+.endforeach
+
+.foreach t $(need_Cmp)
+.if ${member $t ${ttypelist}}
+.. Cmp tuple
+{ Compare two $t tuples. }
+function Cmp$t;
+var
+    res: integer;
+begin
+    res := 0;
+.foreach ename ${telmlist $t}
+.if ${eq list ${ttypeclass $t $(ename)}}
+.set tn ${ttypename $t $(ename)}list
+.else
+.set tn ${ttypename $t $(ename)}
+.endif
+    if (res = 0) then res := Cmp$(tn)( a^.$(ename), b^.$(ename) );
+.endforeach
+    Cmp$t := res
+end; { Cmp$t }
+
+.else
+.. Cmp tuple
+{ Compare two $t constructors }
+function Cmp$t;
+var
+    res: integer;
+begin
+    res := 0;
+    if a^.tag>b^.tag then res := 1;
+    if a^.tag<b^.tag then res := -1;
+    if( res = 0 ) then begin
+	case a^.tag of
+.foreach c ${conslist $t}
+	    Tag$c: begin
+.foreach ename ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(ename)}}
+.set tn ${ctypename $t $c $(ename)}list
+.else
+.set tn ${ctypename $t $c $(ename)}
+.endif
+		if (res = 0) then res := Cmp$(tn)( a^.$(ename), b^.$(ename) );
+.endforeach
+	    end;
+.endforeach
+	end;
+    end;
+    Cmp$t := res
+end; { Cmp$t }
+
+.endif
+.endforeach
+.foreach t $(need_Cmp_list)
+{ Compare two $t lists. }
+function Cmp$tlist;
+var
+    res: integer;
+
+begin
+    res := 0;
+    while (res = 0) and ((a<>nil) or (b<>nil)) do begin
+	if (a=nil) then res := -1;
+	if (b=nil) then res := 1;
+	if( res = 0 ) then begin
+	    res := Cmp$t( a, b );
+	    a := a^.next;
+	    b := b^.next;
+	end;
+    end;
+    Cmp$tlist := res
+end; { Cmp$tlist }
+
+.endforeach
+{ Initalizations for $(basename) }
+procedure Init$(basename);
+begin
+    tmeolnchar := chr( 10 );
+    tmeofchar := chr( 0 );
+    tmcurchar := tmeofchar;
+.if ${index Stat$(basename) $(need_misc)}
+.foreach t $(need_stat)
+.if ${member $t ${ttypelist}}
+    CntNew$t := 0;
+    CntFre$t := 0;
+.else
+.foreach c ${conslist $t}
+    CntNew$c := 0;
+    CntFre$c := 0;
+.endforeach
+.endif
+.endforeach
+.endif
+end;
+
+.if ${index Stat$(basename) $(need_misc)}
+{***************************************************************
+ *    Statistics printing routines                             *
+ ***************************************************************}
+
+{ give statistics }
+procedure Stat$(basename)( var f: text );
+const
+    al = ' allocated, ';
+    fr = ' freed.';
+begin
+.foreach t $(need_stat)
+.if ${member $t ${ttypelist}}
+    write( f, '$t:':20, CntNew$t:6, al, CntFre$t:6, fr );
+    if CntNew$t = CntFre$t then
+	writeln( f )
+    else
+	writeln( f, ' <-' );
+.else
+.foreach c ${conslist $t}
+    write( f, '$c:':20, CntNew$c:6, al, CntFre$c:6, fr );
+    if CntNew$c = CntFre$c then
+	writeln( f )
+    else
+	writeln( f, ' <-' );
+.endforeach
+.endif
+.endforeach
+end;
+
+.endif
+{ ---- end of ${tplfilename} ---- }
