@@ -174,6 +174,18 @@ int main( void )
 	fprintf( stderr, "Out of bounds delete affects datastructure?\n" );
 	exit( 1 );
     }
+    ds = insert_toplevel_list( ds, 0, new_TopNone() );
+    ds = insert_toplevel_list( ds, 0, new_TopNone() );
+    ds = insert_toplevel_list( ds, 0, new_TopNone() );
+    if( isequal_toplevel_list( ds, dscopy ) ){
+	fprintf( stderr, "Inserts fail?\n" );
+	exit( 1 );
+    }
+    ds = deletelist_toplevel_list( ds, 0, 3 );
+    if( !isequal_toplevel_list( ds, dscopy ) ){
+	fprintf( stderr, "deletelist does not affect datastructure?\n" );
+	exit( 1 );
+    }
 #ifdef CODEtmc
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
 #endif

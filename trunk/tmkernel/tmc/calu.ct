@@ -51,7 +51,7 @@ static char tm_srcfile[] = __FILE__;
 #endif
 
 /* Error strings. */
-.if ${len $(need_delete_list) $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
+.if ${len $(need_delete_list) ${len $(need_deletelist_list)} $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
 static char tm_nilptr[] = "NIL pointer";
 .endif
 .if ${len ${comm $(need_fscan) "" ${ctypelist} ${classlist}}}
@@ -1460,6 +1460,46 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
     for( ix=pos; ix<l->sz; ix++ ){
 	l->arr[ix] = l->arr[ix+1];
     }
+    return l;
+}
+
+.endforeach
+.endif
+.if ${len $(need_deletelist_list)}
+/**************************************************
+ *    deletelist_<type>_list routines                 *
+ **************************************************/
+
+.call ansi_static deletelist_list "$$t_list deletelist_$$t_list( $$t_list, const unsigned int, const unsigned int )"
+.foreach t $(need_deletelist_list)
+.set stic_$t "static "
+.endforeach
+.foreach t $(want_deletelist_list)
+.set stic_$t
+.endforeach
+.foreach t $(need_deletelist_list)
+/* delete '$t' elements at positions 'from' to 'to' in list 'l'. */
+$(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int to )
+{
+    unsigned int ix;
+
+    if( l == $t_listNIL ){
+	FATAL( tm_nilptr );
+    }
+    if( to>=l->sz ){
+	to = l->sz;
+    }
+    if( from>to ){
+	return l;
+    }
+    for( ix=from; ix<to; ix++ ){
+	rfre_$t( l->arr[ix] );
+    }
+    unsigned int shift = to-from;
+    for( ix=from; (ix+shift)<l->sz; ix++ ){
+	l->arr[ix] = l->arr[ix+shift];
+    }
+    l->sz -= shift;
     return l;
 }
 
