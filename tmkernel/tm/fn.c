@@ -738,8 +738,8 @@ static tmstring fnsuffix( const tmstring_list sl )
 
 static int sortcmp( const void *pa, const void *pb )
 {
-     const tmstring *sa = (const tmstring *) pa;
-     const tmstring *sb = (const tmstring *) pb;
+     const char **sa = (const char **) pa;
+     const char **sb = (const char **) pb;
 
      return strcmp( *sa, *sb );
 }
@@ -758,13 +758,11 @@ static tmstring fnsort( const tmstring_list sl )
 
 static int sizesortcmp( const void *pa, const void *pb )
 {
-     const tmstring *sa = (const tmstring *) pa;
-     const tmstring *sb = (const tmstring *) pb;
-     size_t sza;
-     size_t szb;
+     const char **sa = (const char **) pa;
+     const char **sb = (const char **) pb;
+     size_t sza = strlen( *sa );
+     size_t szb = strlen( *sb );
 
-     sza = strlen( *sa );
-     szb = strlen( *sb );
      if( sza<szb ){
 	 return -1;
      }
