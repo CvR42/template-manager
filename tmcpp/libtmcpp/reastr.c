@@ -10,12 +10,12 @@
 
 #include <ctype.h>
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Reallocate tmstring size to 'sz'. Notice that the tmstring
  * count is unaffected.
  */
-tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz )
+tmstring realloc_tmstring( tmstring s, const size_t sz )
 {
     tmstring adr;
     size_t realsz = sz;

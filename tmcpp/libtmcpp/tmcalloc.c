@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Allocate the given amount of memory and check if
    it has been done. If not, complain, and stop.

@@ -9,7 +9,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Print 'out of memory' using tm_fatal. */
 void tm_noroom( void )

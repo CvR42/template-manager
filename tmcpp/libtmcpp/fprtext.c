@@ -9,19 +9,17 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
-/* Definition of 'print' for a 'tmtext'. */
-void fprint_tmtext( FILE *f, const tmtext t )
+/* Definition of 'fprint' for a 'tmtext'. */
+void fprint_tmtext( FILE *f, const tmtext *t )
 {
-    long ix;
-
     if( t == tmtextNIL ){
 	fputc( '@', f );
 	return;
     }
     putc( '"', f );
-    for( ix=0; ix<t->sz; ix++ ){
+    for( long ix=0; ix<t->sz; ix++ ){
 	fputs( tm_escapestring( t->arr[ix] ), f );
     }
     putc( '"', f );

@@ -9,7 +9,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* definition of 'print' for a 'tmstring' */
 void fprint_tmstring( FILE *f, tmconststring s )

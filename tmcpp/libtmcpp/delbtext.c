@@ -5,23 +5,18 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Given a tmtext 't', a position 'from' and a size 'sz', delete 'sz'
  * characters from the tmtext, starting at position 'from'.
  */
-tmtext delblock_tmtext( tmtext t, const long from, const long to )
+tmtext *delblock_tmtext( tmtext *t, const long from, const long to )
 {
-    tmtextptr s;
-    tmtextptr d;
-    long sz;
-    long z;		/* The size of the block to move. */
-
-    sz = to-from;
+    long sz = to-from;
     if( sz <= 0 ){
 	return t;
     }
-    z = t->sz-(from+sz);
+    long z = t->sz-(from+sz);
     if( z<=0 ){
 	/* All chars until the end of the tmtext are to be deleted,
 	 * simply adjust the tmtext size..
@@ -29,8 +24,8 @@ tmtext delblock_tmtext( tmtext t, const long from, const long to )
 	t->sz = from;
 	return t;
     }
-    d = t->arr+from;
-    s = t->arr+from+sz;
+    char *d = t->arr+from;
+    char *s = t->arr+from+sz;
     t->sz -= sz;
 #if HAVE_MEMMOVE
     memmove( d, s, z );

@@ -11,7 +11,7 @@
  */
 
 #include <ctype.h>
-#include "tmc.h"
+#include "tmcpp.h"
 #include "config.h"
 
 #define CLOSEBRAC ')'

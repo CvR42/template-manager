@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 void tm_badtag( const char *file, const int line, const int tag ) 
 {

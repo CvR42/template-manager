@@ -7,10 +7,10 @@
 /* File: cmpdbl.c */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Compare two texts. */
-int cmp_tmtext( const tmtext a, const tmtext b )
+int cmp_tmtext( const tmtext *a, const tmtext *b )
 {
     long sz;
     long i;

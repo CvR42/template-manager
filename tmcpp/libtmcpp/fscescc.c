@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include <ctype.h>
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Try to read a (possibly escaped) character from the file 'f'. Give
    an error message if this is not successful. 

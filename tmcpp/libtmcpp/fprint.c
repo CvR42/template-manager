@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 void fprint_int( FILE *f, const int i )
 {

@@ -26,7 +26,7 @@
 LOCALLIB=d:\lib
 LOCALINC=d:\include
 CC = BCC32
-CFLAGS = -wall -wstu -4 -O2
+CFLAGS = -Ve -xp -xf -v -P -wall -wstu -4 -O2
 LIBFILE=tmcpp32.lib
 #LIBFILE=tmc.lib
 
@@ -78,20 +78,7 @@ LIBSRCS	      = \
                 fscwrd.c \
                 insblock.c \
                 instext.c \
-                lncrstr.c \
-                lnfrestr.c \
-                lnfretxt.c \
-                lnfscstr.c \
-                lnfsctxt.c \
-                lnfscwrd.c \
-                lnnewstr.c \
-                lnnewtxt.c \
-                lnreastr.c \
-                lns2t.c \
-                lnsltxt.c \
-                lnt2s.c \
                 lognew.c \
-                lrduptxt.c \
                 newstr.c \
                 noroom.c \
                 prdbl.c \
@@ -142,7 +129,7 @@ help:
 all: $(LIBFILE) testprog.exe
 
 testprog.exe: testprog.c $(LIBFILE)
-	$(CC) $(SYSCFLAGS) -DLOGNEW -DSTAT -ULOGNEW -I$(LOCALINCLUDE) testprog.c $(LIBFILE)
+	$(CC) $(CFLAGS) -DLOGNEW -DSTAT -ULOGNEW -I$(LOCALINCLUDE) testprog.c $(LIBFILE)
 
 test: testprog.exe testin
 	-.\testprog.exe

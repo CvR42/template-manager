@@ -11,7 +11,7 @@
 /* other standard UNIX functions */
 #include <ctype.h>
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 static long newcnt_tmstring = 0;
 static long frecnt_tmstring = 0;
@@ -20,7 +20,7 @@ static long frecnt_tmstring = 0;
 /* Given a size 'sz', create an empty tmstring with that many characters
  * in it.
  */
-tmstring create_tmstring_nolognew( const size_t sz )
+tmstring create_tmstring( const size_t sz )
 {
     tmstring adr;
     size_t realsz = sz;
@@ -35,7 +35,7 @@ tmstring create_tmstring_nolognew( const size_t sz )
 }
 
 /* Allocate space for tmstring 's' and copy the text into it. */
-tmstring new_tmstring_nolognew( const char *s )
+tmstring new_tmstring( const char *s )
 {
     size_t len;
     tmstring adr;
@@ -51,7 +51,7 @@ tmstring new_tmstring_nolognew( const char *s )
 }
 
 /* De-allocate space for tmstring 's'. */
-void fre_tmstring_nolognew( tmstring s )
+void fre_tmstring( tmstring s )
 {
     if( s==NULL ){
 	return;

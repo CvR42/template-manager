@@ -9,22 +9,21 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
-/* definition of 'print' for a 'tmstring' */
+// definition of 'print' for a 'tmstring'
 void print_tmstring( TMPRINTSTATE *st, tmconststring s )
 {
     tmstring buf;
     const char *sp;
-    unsigned int sz;
     unsigned int ix = 0;
 
     if( s == tmstringNIL ){
 	tm_printword( st, "@" );
 	return;
     }
-    sz = strlen( s )+20;
-    buf = create_tmstring_nolognew( sz );
+    unsigned int sz = strlen( s )+20;
+    buf = create_tmstring( sz );
     sp = s;
     buf[ix++] = '"';
     while( *sp != '\0' ){
@@ -37,7 +36,7 @@ void print_tmstring( TMPRINTSTATE *st, tmconststring s )
 	esz = strlen( pp );
 	if( ix+esz+2>=sz ){
 	    sz += TEXTGROWSTEP+2+esz;
-	    buf = realloc_tmstring_nolognew( buf, sz );
+	    buf = realloc_tmstring( buf, sz );
 	}
 	while( *pp != '\0' ){
 	    buf[ix++] = *pp++;
@@ -49,5 +48,5 @@ void print_tmstring( TMPRINTSTATE *st, tmconststring s )
     buf[ix++] = '"';
     buf[ix] = '\0';
     tm_printword( st, buf );
-    fre_tmstring_nolognew( buf );
+    fre_tmstring( buf );
 }
