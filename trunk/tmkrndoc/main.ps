@@ -8,7 +8,7 @@
 %DVIPSWebPage: (www.radicaleye.com)
 %DVIPSCommandLine: dvips main
 %DVIPSParameters: dpi=600, compressed
-%DVIPSSource:  TeX output 1999.12.07:1642
+%DVIPSSource:  TeX output 2000.02.10:1725
 %%BeginProcSet: texc.pro
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
@@ -4383,11 +4383,12 @@ h(of)g(a)g(class)g(or)g(constructor)f(base,)h(a)g(cast)g(m)n(ust)h(b)r
 b(clear_leaf\()h(btree)f(tree)f(\))198 1178 y({)339 1257
 y(if\()g(tree->tag)i(==)e(TAGBLeaf)i(\){)480 1336 y(/*)e(This)h(is)f
 (not)g(recommended.)i(*/)480 1414 y(\(\(BLeaf\))g(tree\)->v)g(=)d(0;)
-339 1493 y(})198 1572 y(})-9 1713 y Fo(It)i(is)h(not)f(recommended)g
-(to)h(access)e(elemen)n(ts)i(this)f(w)n(a)n(y)-7 b(.)66
-b(Instead,)40 b(one)d(should)g(use)h(the)g Fi(to_<type>\(\))-9
-1813 y Fo(macros)26 b(that)h(are)g(pro)n(vided)g(for)g(that)h(purp)r
-(ose:)198 1933 y Ft(void)37 b(clear_leaf\()h(btree)f(tree)f(\))198
+339 1493 y(})198 1572 y(})-9 1713 y Fo(It)28 b(is)f(not)h(recommended)f
+(to)g(access)g(elemen)n(ts)g(this)h(w)n(a)n(y)-7 b(.)36
+b(Instead,)27 b(one)g(should)h(use)f(the)h Fi(to_<type>\(\))23
+b Fo(and)-9 1813 y Fi(to_const_<type>)o(\(\))e Fo(macros)26
+b(that)i(are)f(pro)n(vided)f(for)h(that)h(purp)r(ose:)198
+1933 y Ft(void)37 b(clear_leaf\()h(btree)f(tree)f(\))198
 2012 y({)339 2091 y(if\()g(tree->tag)i(==)e(TAGBLeaf)i(\){)480
 2170 y(to_BLeaf\()g(tree)f(\)->v)f(=)g(0;)339 2248 y(})198
 2327 y(})-9 2468 y Fo(These)g(macros)e(ha)n(v)n(e)h(as)h(adv)-5
@@ -4740,354 +4741,357 @@ g(in)g(the)g(giv)n(en)e(list.)p eop
 %%Page: 51 51
 51 50 bop 227 -28 a Fn(6.5.)63 b(RECURSIVE)28 b(DUPLICA)-7
 b(TION)2152 b Fo(51)227 315 y Fp(6.5)135 b(Recursiv)l(e)46
-b(duplication)227 544 y Fo(These)29 b(functions)i(handle)f(recursiv)n
+b(duplication)227 541 y Fo(These)29 b(functions)i(handle)f(recursiv)n
 (e)e(duplication)i(of)g(instances)f(of)h(t)n(yp)r(es)g(and)g(lists)f
-(of)h(t)n(yp)r(es.)44 b(Duplication)227 644 y(means)27
+(of)h(t)n(yp)r(es.)44 b(Duplication)227 641 y(means)27
 b(that)h(new)f(instances)h(are)e(created)h(for)g(all)g(elemen)n(ts)h
-(in)g(the)g(data-structures.)227 852 y Fi(<type>)41 b(rdup_<type>\()d
-(<type>)k(e)h(\);)227 951 y(<type>_list)c(rdup_<type>_list)o(\()e
-(<type>_list)i(e)44 b(\);)351 1033 y Fo(Recursiv)n(ely)27
+(in)g(the)g(data-structures.)227 839 y Fi(<type>)41 b(rdup_<type>\()d
+(const_<type>)h(e)k(\);)227 939 y(<type>_list)c(rdup_<type>_list)o(\()e
+(const_<type>_list)g(e)43 b(\);)351 1019 y Fo(Recursiv)n(ely)27
 b(duplicate)g(instance)h Fi(e)f Fo(of)h(t)n(yp)r(e)f
-Fi(<type>)f Fo(or)g Fi(<type>)p 2489 1033 27 4 v 29 w(list)p
-Fo(.)227 1256 y Fi(<type>_list)39 b(slice_<type>_lis)o(t\()e
-(<type>_list)i(e,)k(unsigned)d(int)i(b,)h(unsigned)d(int)j(e)g(\);)351
-1353 y Fo(Create)28 b(a)h(new)g(list)g(that)g(con)n(tains)f(recursiv)n
-(e)f(duplicates)i(of)g(the)g(elemen)n(ts)g(of)g(list)g
-Fi(l)g Fo(with)g(indices)g Fi(b)351 1453 y Fo(up)e(to)f(but)h
-Fj(not)f Fo(including)g Fi(e)p Fo(.)36 b(If)27 b Fi(b>e)e
-Fo(or)g Fi(b)h Fo(p)r(oin)n(ts)g(b)r(ey)n(ond)g(the)g(list,)h(an)f
-(empt)n(y)g(list)h(is)f(returned.)36 b(If)26 b Fi(e)351
-1553 y Fo(p)r(oin)n(ts)i(b)r(ey)n(ond)f Fi(l)p Fo(,)g(it)h(is)g(tak)n
-(en)f(to)g(p)r(oin)n(t)h(to)g(the)g(last)f(elemen)n(t)h(in)g
-Fi(l)p Fo(.)227 1873 y Fp(6.6)135 b(Data)46 b(structure)f(input)g(and)f
-(output)227 2102 y Fo(These)d(functions)i(handle)e(reading)g(of)h(a)f
-(textual)h(description)f(of)h(the)g(data)g(structures)f(and)h(allo)r
-(cation)227 2202 y(of)j(new)g(instances)f(of)h(the)g(t)n(yp)r(e)g(and)g
-(list)g(structures)g(for)f(the)h(read)f(data.)89 b(The)45
-b Fi(print)p 3311 2202 V 29 w(<type>)e Fo(and)227 2302
-y Fi(print)p 452 2302 V 29 w(<type>)p 745 2302 V 29 w(list)31
+Fi(<type>)f Fo(or)g Fi(<type>)p 2489 1019 27 4 v 29 w(list)p
+Fo(.)227 1232 y Fi(<type>_list)39 b(slice_<type>_lis)o(t\()270
+1331 y(const_<type>_list)e(e,)270 1431 y(unsigned)k(int)h(b,)270
+1531 y(unsigned)f(int)h(e)227 1630 y(\);)351 1724 y Fo(Create)28
+b(a)h(new)g(list)g(that)g(con)n(tains)f(recursiv)n(e)f(duplicates)i(of)
+g(the)g(elemen)n(ts)g(of)g(list)g Fi(l)g Fo(with)g(indices)g
+Fi(b)351 1824 y Fo(up)e(to)f(but)h Fj(not)f Fo(including)g
+Fi(e)p Fo(.)36 b(If)27 b Fi(b>e)e Fo(or)g Fi(b)h Fo(p)r(oin)n(ts)g(b)r
+(ey)n(ond)g(the)g(list,)h(an)f(empt)n(y)g(list)h(is)f(returned.)36
+b(If)26 b Fi(e)351 1923 y Fo(p)r(oin)n(ts)i(b)r(ey)n(ond)f
+Fi(l)p Fo(,)g(it)h(is)g(tak)n(en)f(to)g(p)r(oin)n(t)h(to)g(the)g(last)f
+(elemen)n(t)h(in)g Fi(l)p Fo(.)227 2240 y Fp(6.6)135
+b(Data)46 b(structure)f(input)g(and)f(output)227 2466
+y Fo(These)d(functions)i(handle)e(reading)g(of)h(a)f(textual)h
+(description)f(of)h(the)g(data)g(structures)f(and)h(allo)r(cation)227
+2565 y(of)j(new)g(instances)f(of)h(the)g(t)n(yp)r(e)g(and)g(list)g
+(structures)g(for)f(the)h(read)f(data.)89 b(The)45 b
+Fi(print)p 3311 2565 V 29 w(<type>)e Fo(and)227 2665
+y Fi(print)p 452 2665 V 29 w(<type>)p 745 2665 V 29 w(list)31
 b Fo(functions)h(rely)g(on)g(the)h(prin)n(t)f(optimizer)g(in)h(the)g
 Fm(C)f Fo(supp)r(ort)g(library)g(to)g(handle)g(the)227
-2401 y(actual)27 b(prin)n(ting)g(to)g(a)h(\014le,)f(see)h(section)f
-(6.9.)227 2548 y(As)20 b(an)f(extension)g(to)h(the)g(standard)f
+2764 y(actual)27 b(prin)n(ting)g(to)g(a)h(\014le,)f(see)h(section)f
+(6.9.)227 2908 y(As)20 b(an)f(extension)g(to)h(the)g(standard)f
 Fm(Tm)g Fo(in)n(ternal)g(represen)n(tation,)h(the)g Fi(print_<type>)15
-b Fo(and)20 b Fi(fprint_<type>)227 2648 y Fo(functions)25
+b Fo(and)20 b Fi(fprint_<type>)227 3008 y Fo(functions)25
 b(prin)n(t)f(n)n(ull)g(p)r(oin)n(ters)g(as)g(the)h(sym)n(b)r(ol)f(`)p
 Fi(@)p Fo('.)35 b(The)25 b Fi(fscan_<type>)19 b Fo(functions)25
-b(for)f(the)h(arra)n(y)d(list)j(co)r(de)227 2747 y(recognizes)h(this)h
-(sym)n(b)r(ol.)227 2971 y Fi(int)42 b(fscan_<type>\()c(FILE)k(*f,)h
-(<type>)e(*p)h(\);)227 3070 y(int)g(fscan_<type>_lis)o(t\()37
-b(FILE)42 b(*f,)h(<type>_list)c(*p)j(\);)351 3167 y Fo(Read)30
+b(for)f(the)h(arra)n(y)d(list)j(co)r(de)227 3107 y(recognizes)h(this)h
+(sym)n(b)r(ol.)227 3320 y Fi(int)42 b(fscan_<type>\()c(FILE)k(*f,)h
+(<type>)e(*p)h(\);)227 3420 y(int)g(fscan_<type>_lis)o(t\()37
+b(FILE)42 b(*f,)h(<type>_list)c(*p)j(\);)351 3514 y Fo(Read)30
 b(an)g(instance)f(of)h(data)g(structure)f Fi(<type>)f
-Fo(or)h Fi(<type>)p 2322 3167 V 28 w(list)g Fo(from)g(\014le)i
-Fi(f)p Fo(,)f(allo)r(cate)f(new)h(ro)r(om)351 3267 y(to)25
+Fo(or)h Fi(<type>)p 2322 3514 V 28 w(list)g Fo(from)g(\014le)i
+Fi(f)p Fo(,)f(allo)r(cate)f(new)h(ro)r(om)351 3613 y(to)25
 b(hold)g(the)h(data)f(that)g(is)g(read,)g(and)g(set)g(p)r(oin)n(ter)g
 Fi(p)g Fo(to)g(p)r(oin)n(t)g(to)g(the)g(new)h(data.)35
-b(If)26 b(no)f(error)e(o)r(ccurs,)351 3367 y(a)32 b(v)-5
+b(If)26 b(no)f(error)e(o)r(ccurs,)351 3713 y(a)32 b(v)-5
 b(alue)32 b Fi(0)g Fo(is)g(returned.)50 b(If)32 b(an)g(error)e
 Fj(do)l(es)j Fo(o)r(ccur,)f(a)g(v)-5 b(alue)32 b Fi(1)g
-Fo(is)g(returned,)h(and)e(an)h(error)e(message)351 3466
-y(is)g(put)h(in)f(the)g(arra)n(y)e Fi(tm)p 1149 3466
+Fo(is)g(returned,)h(and)e(an)h(error)e(message)351 3812
+y(is)g(put)h(in)f(the)g(arra)n(y)e Fi(tm)p 1149 3812
 V 30 w(errmsg)g Fo(pro)n(vided)h(b)n(y)g(the)h Fm(C)g
 Fo(supp)r(ort)g(library)-7 b(.)43 b(Elemen)n(ts)29 b(are)g(created)g
-(all)351 3566 y(the)h(data)e(that)h(has)f(b)r(een)i(read)e(b)r(efore)g
+(all)351 3912 y(the)h(data)e(that)h(has)f(b)r(een)i(read)e(b)r(efore)g
 (the)i(error)c(elemen)n(ts,)k(and)e(they)h(m)n(ust)g(b)r(e)h(freed)e
-(to)h(k)n(eep)g(the)351 3666 y(allo)r(cation)g(statistics)g(in)h
+(to)h(k)n(eep)g(the)351 4012 y(allo)r(cation)g(statistics)g(in)h
 (balance.)41 b(The)30 b Fi(fscan_<type>\(\))24 b Fo(routines)29
-b(will)g(ensure)g(that)h(in)g(all)f(cases)351 3765 y(the)f
+b(will)g(ensure)g(that)h(in)g(all)f(cases)351 4111 y(the)f
 (data-structures)e(can)h(b)r(e)h(destro)n(y)n(ed)e(again)h(using)g
-Fi(rfre_<type>)p Fo(.)227 3988 y Fi(void)42 b(print_<type>\()c
-(TMPRINTSTATE)h(*st,)i(<type>)h(t)h(\);)227 4088 y(void)f
-(print_<type>_li)o(st\()37 b(TMPRINTSTATE)h(*st,)k(<type>_list)d(l)44
-b(\);)351 4185 y Fo(Giv)n(en)24 b(a)f(prin)n(t)g(state)h
-Fi(st)p Fo(,)g(prin)n(t)f(an)g(instance)h(of)f(data)g(structure)g
-Fi(<type>)f Fo(or)g Fi(<type>)p 3100 4185 V 29 w(list)g
-Fo(using)i(the)351 4285 y(prin)n(t)k(optimizer,)f(see)g(section)g(6.9.)
-227 4508 y Fi(void)42 b(fprint_<type>\()37 b(FILE)42
-b(*f,)h(<type>)e(t)i(\);)227 4608 y(void)f(fprint_<type>_l)o(ist)o(\()
-37 b(FILE)42 b(*f,)h(<type>_list)c(t)k(\);)351 4705 y
-Fo(Prin)n(t)27 b(an)g(instance)h(of)f(data)g(structure)h
-Fi(<type>)d Fo(or)h Fi(<type>)p 2305 4705 V 29 w(list)g
-Fo(to)i(\014le)g Fi(f)p Fo(.)227 5025 y Fp(6.7)135 b(Comparison)227
-5255 y Fo(These)26 b(functions)i(handle)f(recursiv)n(e)e(comparison)g
-(of)i(structures.)36 b(Giv)n(en)27 b(t)n(w)n(o)f(data)g(structures)h
-Fi(a)f Fo(and)h Fi(b)p Fo(,)g(an)227 5354 y(in)n(t)h
+Fi(rfre_<type>)p Fo(.)227 4324 y Fi(void)42 b(print_<type>\()c
+(TMPRINTSTATE)h(*st,)i(const_<type>)e(t)k(\);)227 4423
+y(void)f(print_<type>_li)o(st\()37 b(TMPRINTSTATE)h(*st,)k
+(const_<type>_list)37 b(l)43 b(\);)351 4517 y Fo(Giv)n(en)24
+b(a)f(prin)n(t)g(state)h Fi(st)p Fo(,)g(prin)n(t)f(an)g(instance)h(of)f
+(data)g(structure)g Fi(<type>)f Fo(or)g Fi(<type>)p 3100
+4517 V 29 w(list)g Fo(using)i(the)351 4617 y(prin)n(t)k(optimizer,)f
+(see)g(section)g(6.9.)227 4830 y Fi(void)42 b(fprint_<type>\()37
+b(FILE)42 b(*f,)h(const_<type>)38 b(t)44 b(\);)227 4929
+y(void)e(fprint_<type>_l)o(ist)o(\()37 b(FILE)42 b(*f,)h
+(const_<type>_li)o(st)37 b(t)43 b(\);)351 5023 y Fo(Prin)n(t)27
+b(an)g(instance)h(of)f(data)g(structure)h Fi(<type>)d
+Fo(or)h Fi(<type>)p 2305 5023 V 29 w(list)g Fo(to)i(\014le)g
+Fi(f)p Fo(.)227 5339 y Fp(6.7)135 b(Comparison)227 5565
+y Fo(These)26 b(functions)i(handle)f(recursiv)n(e)e(comparison)g(of)i
+(structures.)36 b(Giv)n(en)27 b(t)n(w)n(o)f(data)g(structures)h
+Fi(a)f Fo(and)h Fi(b)p Fo(,)g(an)227 5665 y(in)n(t)h
 Fi(n)22 b Fd(<)h Fo(0)k(is)h(returned)f(if)h Fi(a)22
 b Fd(<)h Fi(b)p Fo(,)k(0)h(if)g Fi(a)22 b Fo(=)h Fi(b)p
 Fo(,)k(and)h(an)f(in)n(t)h Fi(n)23 b Fd(>)f Fo(0)27 b(if)h
-Fi(a)23 b Fd(>)g Fi(b)p Fo(.)227 5501 y(F)-7 b(or)27
-b(comparison)f(the)i(follo)n(wing)e(rules)h(are)g(applied:)351
-5709 y Fk(\017)41 b Fo(T)-7 b(uples)31 b(are)f(equal)g(if)h(all)f
-(their)h(elemen)n(ts)g(are)e(equal,)i(otherwise)f(the)h(\014rst)g
-(di\013ering)f(elemen)n(t)h(\(in)g(the)434 5809 y(order)c(in)g(whic)n
-(h)h(they)g(o)r(ccur)f(in)h(the)g(tuple)g(de\014nition\))g(determines)f
-(the)h(comparison.)p eop
+Fi(a)23 b Fd(>)g Fi(b)p Fo(.)227 5809 y(F)-7 b(or)27
+b(comparison)f(the)i(follo)n(wing)e(rules)h(are)g(applied:)p
+eop
 %%Page: 52 52
 52 51 bop -9 -28 a Fo(52)2401 b Fn(CHAPTER)27 b(6.)64
-b(C)28 b(SUPPOR)-7 b(T)115 315 y Fk(\017)41 b Fo(Constructors)19
-b(are)g(ordered)g(according)f(to)i(their)h(order)d(of)j(de\014nition)f
-(in)h(the)f(data)g(structure)g(\014le,)i(where)198 415
-y(the)30 b(\014rst)f(de\014ned)h(constructor)e(is)i(the)g(smallest.)42
-b(Constructors)28 b(are)g(equal)h(if)h(all)f(their)h(elemen)n(ts)f(are)
-198 514 y(equal,)37 b(otherwise)e(the)h(\014rst)g(di\013ering)f(elemen)
-n(t)h(\(in)g(the)h(order)d(in)i(whic)n(h)g(they)g(o)r(ccur)f(in)h(the)g
-(tuple)198 614 y(de\014nition\))28 b(determines)g(the)g(comparison.)115
-780 y Fk(\017)41 b Fo(Lists)30 b(are)e(equal)i(if)g(all)g(their)f
-(elemen)n(ts)h(are)f(equal,)h(else)f(the)h(\014rst)g(di\013ering)f
-(elemen)n(t)h(determines)g(the)198 879 y(comparison,)c(or)h(else)g(the)
-h(shortest)f(list)h(is)f(the)h(smallest.)-9 1095 y(Resem)n(blance)e(to)
-i Fi(strcmp\(\))c Fo(is)k(in)n(ten)n(tional.)36 b(In)28
-b(fact)g(it)g(is)f(p)r(ossible)g(to)h(do:)198 1224 y
-Ft(#define)37 b(cmp_tmstring)i(strcmp)-9 1373 y Fo(also)26
-b(note)i(that)f(it)h(is)g(p)r(ossible)f(to)h(do)198 1502
-y Ft(#define)37 b(cmp_int)h(\(a-b\))-9 1652 y Fo(Ho)n(w)n(ev)n(er,)19
-b(it)i(is)g(not)f(wise)g(to)g(do)h(this)f(for)g Fi(float)f
-Fo(or)g Fi(double)p Fo(,)h(since)g(rounding)f(errors)g(ma)n(y)g(lead)h
-(to)h(unexp)r(ected)-9 1751 y(b)r(eha)n(vior.)35 b(There)27
-b(are)g(a)g Fi(cmp)p 947 1751 27 4 v 30 w(float\(\))e
-Fo(and)i Fi(cmp)p 1603 1751 V 30 w(double\(\))e Fo(in)j(the)g(supp)r
-(ort)f(library)-7 b(,)26 b(see)i(section)f(6.9.)-9 1901
+b(C)28 b(SUPPOR)-7 b(T)115 315 y Fk(\017)41 b Fo(T)-7
+b(uples)31 b(are)f(equal)g(if)h(all)f(their)h(elemen)n(ts)f(are)g
+(equal,)h(otherwise)f(the)h(\014rst)f(di\013ering)h(elemen)n(t)g(\(in)g
+(the)198 415 y(order)26 b(in)i(whic)n(h)g(they)g(o)r(ccur)e(in)i(the)g
+(tuple)g(de\014nition\))h(determines)e(the)h(comparison.)115
+578 y Fk(\017)41 b Fo(Constructors)19 b(are)g(ordered)g(according)f(to)
+i(their)h(order)d(of)j(de\014nition)f(in)h(the)f(data)g(structure)g
+(\014le,)i(where)198 678 y(the)30 b(\014rst)f(de\014ned)h(constructor)e
+(is)i(the)g(smallest.)42 b(Constructors)28 b(are)g(equal)h(if)h(all)f
+(their)h(elemen)n(ts)f(are)198 777 y(equal,)37 b(otherwise)e(the)h
+(\014rst)g(di\013ering)f(elemen)n(t)h(\(in)g(the)h(order)d(in)i(whic)n
+(h)g(they)g(o)r(ccur)f(in)h(the)g(tuple)198 877 y(de\014nition\))28
+b(determines)g(the)g(comparison.)115 1040 y Fk(\017)41
+b Fo(Lists)30 b(are)e(equal)i(if)g(all)g(their)f(elemen)n(ts)h(are)f
+(equal,)h(else)f(the)h(\014rst)g(di\013ering)f(elemen)n(t)h(determines)
+g(the)198 1140 y(comparison,)c(or)h(else)g(the)h(shortest)f(list)h(is)f
+(the)h(smallest.)-9 1348 y(Resem)n(blance)e(to)i Fi(strcmp\(\))c
+Fo(is)k(in)n(ten)n(tional.)36 b(In)28 b(fact)g(it)g(is)f(p)r(ossible)g
+(to)h(do:)198 1474 y Ft(#define)37 b(cmp_tmstring)i(strcmp)-9
+1621 y Fo(also)26 b(note)i(that)f(it)h(is)g(p)r(ossible)f(to)h(do)198
+1747 y Ft(#define)37 b(cmp_int)h(\(a-b\))-9 1894 y Fo(Ho)n(w)n(ev)n
+(er,)19 b(it)i(is)g(not)f(wise)g(to)g(do)h(this)f(for)g
+Fi(float)f Fo(or)g Fi(double)p Fo(,)h(since)g(rounding)f(errors)g(ma)n
+(y)g(lead)h(to)h(unexp)r(ected)-9 1994 y(b)r(eha)n(vior.)35
+b(There)27 b(are)g(a)g Fi(cmp)p 947 1994 27 4 v 30 w(float\(\))e
+Fo(and)i Fi(cmp)p 1603 1994 V 30 w(double\(\))e Fo(in)j(the)g(supp)r
+(ort)f(library)-7 b(,)26 b(see)i(section)f(6.9.)-9 2140
 y(These)37 b(functions)g(are)g(mainly)g(in)n(tended)h(for)f(equalit)n
 (y)g(comparison,)h(and)f(to)h(imp)r(ose)f(`some')g(rep)r(eatable)-9
-2000 y(ordering)f(on)j(the)f(data)g(structures.)69 b(The)39
+2240 y(ordering)f(on)j(the)f(data)g(structures.)69 b(The)39
 b(ordering)e(ma)n(y)g(b)r(e)i(di\013eren)n(t)g(from)f(the)h(desired)f
-(ordering.)68 b(If)-9 2100 y(another)29 b(comparison)g(function)j(is)e
+(ordering.)68 b(If)-9 2340 y(another)29 b(comparison)g(function)j(is)e
 (required)g(for)g(a)h(data)f(t)n(yp)r(e,)i(the)f(generation)e(of)i(the)
-g(standard)f(function)-9 2200 y(can)d(b)r(e)h(suppressed)e(b)n(y)i
+g(standard)f(function)-9 2439 y(can)d(b)r(e)h(suppressed)e(b)n(y)i
 (using)f Fi(notwantdefs)p Fo(,)c(see)k(section)h(6.10.)-9
-2415 y Fi(int)42 b(cmp_<type>\()d(<type>)i(a,)i(<type>)e(b)i(\);)-9
-2515 y(int)f(cmp_<type>_list\()37 b(<type>_list)i(a,)k(<type>_list)c(b)
-k(\);)115 2598 y Fo(Compare)22 b(data)g(structures)g
-Fi(a)h Fo(and)f Fi(b)p Fo(,)i(and)e(return)h(a)f(co)r(de)h(according)e
-(to)i(the)g(table)g(listed)g(previously)-7 b(.)-9 2922
-y Fp(6.8)135 b(The)44 b(tree)i(w)l(alk)l(er)-9 3154 y
-Fo(In)29 b(man)n(y)f(programs)f(it)i(is)g(necessary)e(to)i(tra)n(v)n
-(erse)d(\(\\w)n(alk"\))i(a)g(tree)h(of)g(datastructures,)f(and)g(so)h
-(that)g(infor-)-9 3254 y(mation)e(can)g(b)r(e)g(collected,)g(or)g(c)n
-(hec)n(king)f(or)g(mo)r(di\014cation)h(can)g(b)r(e)h(done.)37
+2647 y Fi(int)42 b(cmp_<type>\()d(const_<type>)g(a,)j(const_<type>)d(b)
+k(\);)-9 2747 y(int)f(cmp_<type>_list\()37 b(const_<type>_lis)o(t)g(a,)
+43 b(const_<type>_list)37 b(b)43 b(\);)115 2829 y Fo(Compare)22
+b(data)g(structures)g Fi(a)h Fo(and)f Fi(b)p Fo(,)i(and)e(return)h(a)f
+(co)r(de)h(according)e(to)i(the)g(table)g(listed)g(previously)-7
+b(.)-9 3149 y Fp(6.8)135 b(The)44 b(tree)i(w)l(alk)l(er)-9
+3379 y Fo(In)29 b(man)n(y)f(programs)f(it)i(is)g(necessary)e(to)i(tra)n
+(v)n(erse)d(\(\\w)n(alk"\))i(a)g(tree)h(of)g(datastructures,)f(and)g
+(so)h(that)g(infor-)-9 3478 y(mation)e(can)g(b)r(e)g(collected,)g(or)g
+(c)n(hec)n(king)f(or)g(mo)r(di\014cation)h(can)g(b)r(e)h(done.)37
 b(In)27 b(man)n(y)g(cases)f(only)h(a)g(few)g(t)n(yp)r(es)-9
-3353 y(of)33 b(no)r(des)h(ha)n(v)n(e)f(to)g(b)r(e)h(visited,)i(but)e
+3578 y(of)33 b(no)r(des)h(ha)n(v)n(e)f(to)g(b)r(e)h(visited,)i(but)e
 (no)r(des)g(of)g(man)n(y)f(other)g(t)n(yp)r(es)h(ha)n(v)n(e)f(to)g(b)r
-(e)h(tra)n(v)n(ersed)e(to)i(reac)n(h)e(these)-9 3453
+(e)h(tra)n(v)n(ersed)e(to)i(reac)n(h)e(these)-9 3677
 y(no)r(des.)39 b(Also,)29 b(it)f(is)h(v)n(ery)e(simple)i(to)f(o)n(v)n
 (erlo)r(ok)e(a)i(path)h(to)f(a)h(no)r(de)f(of)h(the)g(giv)n(en)e(t)n
-(yp)r(e.)40 b(F)-7 b(or)28 b(that)h(reason)e(the)-9 3553
-y Fi(tmc)h Fo(template)469 3522 y Fh(1)537 3553 y Fo(is)h(supplemen)n
+(yp)r(e.)40 b(F)-7 b(or)28 b(that)h(reason)e(the)-9 3777
+y Fi(tmc)h Fo(template)469 3747 y Fh(1)537 3777 y Fo(is)h(supplemen)n
 (ted)i(with)f(a)f(template)h(that)h(generates)d(co)r(de)h(to)h(tra)n(v)
-n(erse)e(trees)h(of)h(Tm)g(data)-9 3652 y(structures.)-9
-3802 y(Giv)n(en)35 b(a)g(list)h(of)g(t)n(yp)r(es)f(to)h(start)f(from,)i
+n(erse)e(trees)h(of)h(Tm)g(data)-9 3877 y(structures.)-9
+4024 y(Giv)n(en)35 b(a)g(list)h(of)g(t)n(yp)r(es)f(to)h(start)f(from,)i
 (and)e(a)h(list)g(of)f(t)n(yp)r(es)h(to)f(visit,)j(the)e(template)g
-(generates)e(co)r(de)h(to)-9 3901 y(tra)n(v)n(erse)28
+(generates)e(co)r(de)h(to)-9 4123 y(tra)n(v)n(erse)28
 b(the)j(tree)f(of)h(Tm)g(data)f(structures)g(from)g(the)h(giv)n(en)f
 (starting)g(p)r(oin)n(ts,)h(and)g(visit)g(all)f(the)h(sp)r(eci\014ed)-9
-4001 y(t)n(yp)r(es.)36 b(F)-7 b(or)27 b(ev)n(ery)g(instance)g(of)h(the)
+4223 y(t)n(yp)r(es.)36 b(F)-7 b(or)27 b(ev)n(ery)g(instance)g(of)h(the)
 g(target)e(t)n(yp)r(es)i(the)g(action)f(function)h(of)g(the)g(t)n(yp)r
-(e)f(is)h(in)n(v)n(ok)n(ed.)-9 4150 y(T)-7 b(o)31 b(mak)n(e)h(the)g
+(e)f(is)h(in)n(v)n(ok)n(ed.)-9 4370 y(T)-7 b(o)31 b(mak)n(e)h(the)g
 (template)h(su\016cien)n(tly)f(\015exible,)i(the)e(user)g(m)n(ust)g(sp)
 r(ecify)h(the)f(signature)f(and)h(in)n(v)n(o)r(cation)f(of)-9
-4250 y(the)25 b(w)n(alk)n(er)e(functions.)37 b(This)25
+4469 y(the)25 b(w)n(alk)n(er)e(functions.)37 b(This)25
 b(m)n(ust)g(b)r(e)g(done)g(b)n(y)g(de\014ning)g(a)g(n)n(um)n(b)r(er)f
-(of)h(macros)f(that)h(generate)f(these)h(parts)-9 4350
+(of)h(macros)f(that)h(generate)f(these)h(parts)-9 4569
 y(of)i(the)h(w)n(alk)n(er)e(functions.)38 b(The)28 b(user)f(m)n(ust)h
 (also)f(sp)r(ecify)h(the)g(t)n(yp)r(es)g(to)f(start)h(from)f(and)h(the)
-g(t)n(yp)r(es)f(to)h(visit,)-9 4449 y(and)f(pro)n(vide)f(action)h
+g(t)n(yp)r(es)f(to)h(visit,)-9 4669 y(and)f(pro)n(vide)f(action)h
 (functions)h(for)f(eac)n(h)g(of)h(the)g(target)e(t)n(yp)r(es.)-9
-4599 y(The)h(use)h(of)f(the)h(tree)f(w)n(alk)n(er)f(template)i(is)g
-(demonstrated)f(in)g(app)r(endix)h(B.)-9 4881 y Fg(6.8.1)112
-b(Global)37 b(structure)-9 5084 y Fo(A)26 b(tree)f(w)n(alk)n(er)f
+4815 y(The)h(use)h(of)f(the)h(tree)f(w)n(alk)n(er)f(template)i(is)g
+(demonstrated)f(in)g(app)r(endix)h(B.)-9 5094 y Fg(6.8.1)112
+b(Global)37 b(structure)-9 5294 y Fo(A)26 b(tree)f(w)n(alk)n(er)f
 (template)i(will)h(normally)d(con)n(tain)h(the)i(comp)r(onen)n(ts)e
 (listed)h(b)r(elo)n(w.)36 b(They)26 b(should)f(b)r(e)i(placed)-9
-5184 y(in)g(the)h(order)f(sho)n(wn)f(here:)92 5399 y(1.)41
-b(De\014nitions)28 b(for)f(the)h(w)n(alk)n(er)e(macros.)92
-5565 y(2.)41 b(In)n(v)n(o)r(cation)26 b(of)i(the)g(standard)e(w)n(alk)n
-(er)g(template.)37 b(This)28 b(will)g(de\014ne)g(some)f(additional)g
-(macros.)p -9 5635 1420 4 v 83 5688 a Ff(1)118 5712 y
-Fe(The)h(tree)h(w)n(alk)n(er)g(template)g(that)g(is)f(describ)r(ed)h
-(here)g(is)e(sp)r(eci\014c)j(for)d(the)j Ft(tmc)f Fe(template.)46
-b(Ho)n(w)n(ev)n(er,)30 b(it)e(w)n(ould)h(b)r(e)f(fairly)-9
-5791 y(simple)21 b(to)k(write)e(a)h(similar)d(template)j(for)f(other)h
-(standard)g(templates.)p eop
+5394 y(in)g(the)h(order)f(sho)n(wn)f(here:)92 5602 y(1.)41
+b(De\014nitions)28 b(for)f(the)h(w)n(alk)n(er)e(macros.)p
+-9 5653 1420 4 v 83 5706 a Ff(1)118 5730 y Fe(The)i(tree)h(w)n(alk)n
+(er)g(template)g(that)g(is)f(describ)r(ed)h(here)g(is)e(sp)r(eci\014c)j
+(for)d(the)j Ft(tmc)f Fe(template.)46 b(Ho)n(w)n(ev)n(er,)30
+b(it)e(w)n(ould)h(b)r(e)f(fairly)-9 5809 y(simple)21
+b(to)k(write)e(a)h(similar)d(template)j(for)f(other)h(standard)g
+(templates.)p eop
 %%Page: 53 53
 53 52 bop 227 -28 a Fn(6.8.)63 b(THE)28 b(TREE)f(W)-9
-b(ALKER)2430 b Fo(53)328 315 y(3.)41 b(De\014nition)29
-b(of)e(the)h(list)g(of)g(target)e(t)n(yp)r(es.)328 473
-y(4.)41 b(Generation)27 b(of)h(forw)n(ard)e(declarations)f(of)j(the)g
-(w)n(alk)n(er)e(functions.)328 632 y(5.)41 b(De\014nition)29
-b(of)e(the)h(action)f(functions.)328 790 y(6.)41 b(Generation)27
-b(of)h(the)g(w)n(alk)n(er)d(functions.)328 949 y(7.)41
-b(De\014nition)29 b(of)e(in)n(terface)g(functions)h(to)f(the)h(outside)
-g(w)n(orld.)227 1220 y Fg(6.8.2)112 b(Macros)38 b(supplied)f(b)m(y)h
-(the)f(user)227 1416 y Fo(These)27 b(macros)f(m)n(ust)i(b)r(e)g
-(de\014ned)g(b)r(efore)f(the)h(template)g(itself)g(is)g(included)g
-(\(see)f(b)r(elo)n(w\).)227 1558 y(T)-7 b(o)22 b(illustrate)g(the)h
-(description)g(of)f(the)h(macros,)f(a)h(simple)g(w)n(alk)n(er)d(is)j
-(constructed)f(that)h(returns)f(the)h(n)n(um)n(b)r(err)227
-1657 y(of)k Fi(int)g Fo(\014elds)g(in)h(a)f(tree.)227
-1850 y Fi(.macro)41 b(generate_walker_)o(si)o(gna)o(tu)o(re)c(var)42
-b(t)351 1930 y Fo(Giv)n(en)27 b(the)h(name)f Fi(var)f
-Fo(of)i(the)f(v)-5 b(ariable)26 b(that)i(holds)f(the)h(datastructure)e
-(w)n(e`re)g(w)n(alking)g(on,)h(and)h(the)351 2029 y(t)n(yp)r(e)g
-Fi(t)f Fo(of)h(that)g(v)-5 b(ariable,)26 b(generate)h(a)g(signature)f
-(for)h(the)h(w)n(alk)n(er)e(function)i(of)g(the)g(giv)n(en)f(t)n(yp)r
-(e.)351 2158 y(The)c(signature)e(should)i(con)n(tain)e(\\)p
-Fi($t)43 b($\(var\))p Fo(")19 b(somewhere)j(in)g(the)h(list)g(of)g
-(parameters.)33 b(Apart)22 b(from)351 2258 y(that,)28
+b(ALKER)2430 b Fo(53)328 315 y(2.)41 b(In)n(v)n(o)r(cation)27
+b(of)g(the)h(standard)f(w)n(alk)n(er)f(template.)37 b(This)27
+b(will)h(de\014ne)g(some)f(additional)g(macros.)328 481
+y(3.)41 b(De\014nition)29 b(of)e(the)h(list)g(of)g(target)e(t)n(yp)r
+(es.)328 647 y(4.)41 b(Generation)27 b(of)h(forw)n(ard)e(declarations)f
+(of)j(the)g(w)n(alk)n(er)e(functions.)328 813 y(5.)41
+b(De\014nition)29 b(of)e(the)h(action)f(functions.)328
+979 y(6.)41 b(Generation)27 b(of)h(the)g(w)n(alk)n(er)d(functions.)328
+1145 y(7.)41 b(De\014nition)29 b(of)e(in)n(terface)g(functions)h(to)f
+(the)h(outside)g(w)n(orld.)227 1427 y Fg(6.8.2)112 b(Macros)38
+b(supplied)f(b)m(y)h(the)f(user)227 1630 y Fo(These)27
+b(macros)f(m)n(ust)i(b)r(e)g(de\014ned)g(b)r(efore)f(the)h(template)g
+(itself)g(is)g(included)g(\(see)f(b)r(elo)n(w\).)227
+1780 y(T)-7 b(o)22 b(illustrate)g(the)h(description)g(of)f(the)h
+(macros,)f(a)h(simple)g(w)n(alk)n(er)d(is)j(constructed)f(that)h
+(returns)f(the)h(n)n(um)n(b)r(err)227 1879 y(of)k Fi(int)g
+Fo(\014elds)g(in)h(a)f(tree.)227 2095 y Fi(.macro)41
+b(generate_walker_)o(si)o(gna)o(tu)o(re)c(var)42 b(t)351
+2178 y Fo(Giv)n(en)27 b(the)h(name)f Fi(var)f Fo(of)i(the)f(v)-5
+b(ariable)26 b(that)i(holds)f(the)h(datastructure)e(w)n(e`re)g(w)n
+(alking)g(on,)h(and)h(the)351 2278 y(t)n(yp)r(e)g Fi(t)f
+Fo(of)h(that)g(v)-5 b(ariable,)26 b(generate)h(a)g(signature)f(for)h
+(the)h(w)n(alk)n(er)e(function)i(of)g(the)g(giv)n(en)f(t)n(yp)r(e.)351
+2411 y(The)c(signature)e(should)i(con)n(tain)e(\\)p Fi($t)43
+b($\(var\))p Fo(")19 b(somewhere)j(in)g(the)h(list)g(of)g(parameters.)
+33 b(Apart)22 b(from)351 2510 y(that,)28 b(the)g(function)g(can)g(ha)n
+(v)n(e)e(an)n(y)h(signature.)351 2643 y(It)38 b(is)g(recommended)f(to)h
+(declare)f(the)h(functions)g(as)f Fi(static)p Fo(,)h(so)f(that)h(un)n
+(used)g(functions)g(can)g(b)r(e)351 2743 y(rep)r(orted.)i(This)29
+b(usually)g(means)f(that)h(the)h(action)e(function)h(do)r(es)g(not)g
+(in)n(v)n(ok)n(e)e(its)i(w)n(alk)n(er)e(function,)351
+2843 y(as)g(it)h(should.)351 2975 y(F)-7 b(or)27 b(example:)351
+3108 y Fi(.macro)41 b(generate_walker_s)o(ign)o(at)o(ur)o(e)d(var)k(t)
+351 3208 y(static)f(int)i(count_$t_walker\()37 b(const)k($t)i($\(var)f
+(\))351 3307 y(.endmacro)227 3540 y(.macro)f(generate_walker_)o(de)o
+(cla)o(ra)o(tio)o(n)c(var)43 b(t)351 3640 y Fo(Giv)n(en)25
+b(the)f(name)g Fi(var)g Fo(of)g(the)h(v)-5 b(ariable)23
+b(that)i(holds)f(the)h(datastructure)e(w)n(e)h(are)f(w)n(alking)h(on,)g
+(and)h(the)351 3739 y(t)n(yp)r(e)k Fi(t)f Fo(of)h(that)g(v)-5
+b(ariable,)27 b(generate)h(a)g(forw)n(ard)e(declaration)i(for)g(the)h
+(w)n(alk)n(er)d(function)j(of)g(the)g(giv)n(en)351 3839
+y(t)n(yp)r(e.)351 3972 y(The)23 b(signature)e(should)i(con)n(tain)e(\\)
+p Fi($t)43 b($\(var\))p Fo(")19 b(somewhere)j(in)g(the)h(list)g(of)g
+(parameters.)33 b(Apart)22 b(from)351 4071 y(that,)28
 b(the)g(function)g(can)g(ha)n(v)n(e)e(an)n(y)h(signature.)351
-2387 y(It)38 b(is)g(recommended)f(to)h(declare)f(the)h(functions)g(as)f
-Fi(static)p Fo(,)h(so)f(that)h(un)n(used)g(functions)g(can)g(b)r(e)351
-2487 y(rep)r(orted.)i(This)29 b(usually)g(means)f(that)h(the)h(action)e
-(function)h(do)r(es)g(not)g(in)n(v)n(ok)n(e)e(its)i(w)n(alk)n(er)e
-(function,)351 2586 y(as)g(it)h(should.)351 2715 y(F)-7
-b(or)27 b(example:)351 2844 y Fi(.macro)41 b(generate_walker_s)o(ign)o
-(at)o(ur)o(e)d(var)k(t)351 2944 y(static)f(int)i(count_$t_walker\()37
-b(const)k($t)i($\(var)f(\))351 3044 y(.endmacro)227 3250
-y(.macro)f(generate_walker_)o(de)o(cla)o(ra)o(tio)o(n)c(var)43
-b(t)351 3342 y Fo(Giv)n(en)25 b(the)f(name)g Fi(var)g
-Fo(of)g(the)h(v)-5 b(ariable)23 b(that)i(holds)f(the)h(datastructure)e
-(w)n(e)h(are)f(w)n(alking)h(on,)g(and)h(the)351 3441
-y(t)n(yp)r(e)k Fi(t)f Fo(of)h(that)g(v)-5 b(ariable,)27
-b(generate)h(a)g(forw)n(ard)e(declaration)i(for)g(the)h(w)n(alk)n(er)d
-(function)j(of)g(the)g(giv)n(en)351 3541 y(t)n(yp)r(e.)351
-3670 y(The)23 b(signature)e(should)i(con)n(tain)e(\\)p
-Fi($t)43 b($\(var\))p Fo(")19 b(somewhere)j(in)g(the)h(list)g(of)g
-(parameters.)33 b(Apart)22 b(from)351 3769 y(that,)28
-b(the)g(function)g(can)g(ha)n(v)n(e)e(an)n(y)h(signature.)351
-3899 y(This)21 b(macro)e(is)i(usually)f(iden)n(tical)g(to)h
+4204 y(This)21 b(macro)e(is)i(usually)f(iden)n(tical)g(to)h
 Fi(generate_walker_)o(si)o(gna)o(tu)o(re)p Fo(,)16 b(except)k(that)h
-(the)g(declaration)351 3998 y(is)28 b(ended)g(with)g(a)f(semicolon.)351
-4127 y(F)-7 b(or)27 b(example:)351 4256 y Fi(.macro)41
+(the)g(declaration)351 4304 y(is)28 b(ended)g(with)g(a)f(semicolon.)351
+4437 y(F)-7 b(or)27 b(example:)351 4569 y Fi(.macro)41
 b(generate_walker_d)o(ecl)o(ar)o(at)o(ion)c(var)42 b(t)351
-4356 y(static)f(int)i(count_$t_walker\()37 b(const)k($t)i($\(var)f(\);)
-351 4456 y(.endmacro)227 4661 y(.macro)f(generate_descent)o(_c)o(all)c
-(indent)k(var)h(type)g(nowtype)351 4754 y Fo(Giv)n(en)26
+4669 y(static)f(int)i(count_$t_walker\()37 b(const)k($t)i($\(var)f(\);)
+351 4769 y(.endmacro)227 5001 y(.macro)f(generate_descent)o(_c)o(all)c
+(indent)k(var)h(type)g(nowtype)351 5101 y Fo(Giv)n(en)26
 b(an)f(inden)n(t)h Fi(indent)p Fo(,)e(a)h(v)-5 b(ariable)25
 b Fi(var)g Fo(to)g(w)n(alk)g(in)n(to,)h(the)g(t)n(yp)r(e)g(of)g(the)g
-(v)-5 b(ariable)24 b Fi(type)p Fo(,)h(and)h(the)351 4853
+(v)-5 b(ariable)24 b Fi(type)p Fo(,)h(and)h(the)351 5200
 y(curren)n(t)h(t)n(yp)r(e)h(of)f(the)h(v)-5 b(ariable)27
 b Fi(nowtype)p Fo(,)e(generate)h(an)h(in)n(v)n(o)r(cation)g(to)g(an)g
-(action)h(or)e(w)n(alk)n(er.)351 4982 y(Assuming)20 b(that)h(the)f(Tm)h
+(action)h(or)e(w)n(alk)n(er.)351 5333 y(Assuming)20 b(that)h(the)f(Tm)h
 (v)-5 b(ariable)19 b Fi(actors)e Fo(con)n(tains)j(the)g(list)g(of)g(t)n
 (yp)r(es)h(that)f(ha)n(v)n(e)f(actions)g(asso)r(ciated)351
-5082 y(with)28 b(them,)h(it)f(is)f(recommended)g(to)h(de\014ne)f(this)h
-(macro)f(as)g(follo)n(ws:)351 5211 y Fi(.macro)41 b(generate_descent_)o
-(cal)o(l)c(indent)k(var)i(type)f(nowtype)351 5311 y(.if)h(${member)d
-($\(type\))h($\(actors\)})351 5410 y(.call)h(generate_action_)o(ca)o
-(ll)37 b("$\(indent\)")i("$\(var\)")h("$\(type\)")g("$\(nowtype\)")351
-5510 y(.else)351 5609 y(.call)i(generate_walker_)o(ca)o(ll)37
-b("$\(indent\)")i("$\(var\)")h("$\(type\)")g("$\(nowtype\)")351
-5709 y(.endif)351 5809 y(.endmacro)p eop
+5433 y(with)28 b(them,)h(it)f(is)f(recommended)g(to)h(de\014ne)f(this)h
+(macro)f(as)g(follo)n(ws:)p eop
 %%Page: 54 54
 54 53 bop -9 -28 a Fo(54)2401 b Fn(CHAPTER)27 b(6.)64
-b(C)28 b(SUPPOR)-7 b(T)115 315 y Fo(This)32 b(assumes)g(macros)e
-Fi(generate_action_c)o(al)o(l)c Fo(and)32 b Fi(generate_walker_c)o(all)
-o Fo(,)c(that)k(ha)n(v)n(e)f(the)115 415 y(same)37 b(parameters)f(as)i
-(this)g(macro,)h(and)e(generate)g(a)g(call)h(to)f(an)h(action)f
-(function)h(and)g(a)f(w)n(alk)n(er)115 514 y(function)31
-b(resp)r(ectiv)n(ely)-7 b(.)42 b(Note)30 b(that)g(since)g(action)f
-(functions)i(are)d(exp)r(ected)j(to)e(in)n(v)n(ok)n(e)g(their)g(w)n
-(alk)n(er)115 614 y(function,)34 b(they)f(usually)e(ha)n(v)n(e)g(the)i
-(same)f(signature)f(as)g(the)i(w)n(alk)n(er)e(function,)j(so)d(the)i(t)
-n(w)n(o)e(macros)115 713 y(will)k(lo)r(ok)f(v)n(ery)f(similar.)58
-b(In)35 b(fact,)h(it)f(is)g(recommended)f(to)g(in)n(v)n(ok)n(e)g(the)h
-(w)n(alk)n(er)d(function)k(from)e(an)115 813 y(action)27
-b(function)h(with)g(a)g(call)f(to)g(the)h(macro)f Fi(generate_walker)o
-(_ca)o(ll)o Fo(.)115 946 y(F)-7 b(or)24 b(example,)h(assuming)f(w)n(e)h
-(ha)n(v)n(e)f(de\014ned)h Fi(generate_descent)o(_c)o(al)o(l)19
+b(C)28 b(SUPPOR)-7 b(T)115 315 y Fi(.macro)41 b(generate_descent_)o(ca)
+o(ll)c(indent)k(var)i(type)e(nowtype)115 415 y(.if)h(${member)f
+($\(type\))f($\(actors\)})115 514 y(.call)i(generate_action)o(_ca)o(ll)
+37 b("$\(indent\)")i("$\(var\)")h("$\(type\)")g("$\(nowtype\)")115
+614 y(.else)115 713 y(.call)i(generate_walker)o(_ca)o(ll)37
+b("$\(indent\)")i("$\(var\)")h("$\(type\)")g("$\(nowtype\)")115
+813 y(.endif)115 913 y(.endmacro)115 1046 y Fo(This)32
+b(assumes)g(macros)e Fi(generate_action_c)o(al)o(l)c
+Fo(and)32 b Fi(generate_walker_c)o(all)o Fo(,)c(that)k(ha)n(v)n(e)f
+(the)115 1145 y(same)37 b(parameters)f(as)i(this)g(macro,)h(and)e
+(generate)g(a)g(call)h(to)f(an)h(action)f(function)h(and)g(a)f(w)n(alk)
+n(er)115 1245 y(function)31 b(resp)r(ectiv)n(ely)-7 b(.)42
+b(Note)30 b(that)g(since)g(action)f(functions)i(are)d(exp)r(ected)j(to)
+e(in)n(v)n(ok)n(e)g(their)g(w)n(alk)n(er)115 1344 y(function,)34
+b(they)f(usually)e(ha)n(v)n(e)g(the)i(same)f(signature)f(as)g(the)i(w)n
+(alk)n(er)e(function,)j(so)d(the)i(t)n(w)n(o)e(macros)115
+1444 y(will)k(lo)r(ok)f(v)n(ery)f(similar.)58 b(In)35
+b(fact,)h(it)f(is)g(recommended)f(to)g(in)n(v)n(ok)n(e)g(the)h(w)n(alk)
+n(er)d(function)k(from)e(an)115 1544 y(action)27 b(function)h(with)g(a)
+g(call)f(to)g(the)h(macro)f Fi(generate_walker)o(_ca)o(ll)o
+Fo(.)115 1676 y(F)-7 b(or)24 b(example,)h(assuming)f(w)n(e)h(ha)n(v)n
+(e)f(de\014ned)h Fi(generate_descent)o(_c)o(al)o(l)19
 b Fo(as)24 b(sho)n(wn)g(ab)r(o)n(v)n(e,)g(w)n(e)h(could)115
-1046 y(de\014ne)j Fi(enerate_action_c)o(al)o(l)22 b Fo(and)27
+1776 y(de\014ne)j Fi(enerate_action_c)o(al)o(l)22 b Fo(and)27
 b Fi(generate_walker_c)o(al)o(l)22 b Fo(as)k(follo)n(ws:)115
-1178 y Fi(.macro)41 b(generate_action_c)o(al)o(l)c(indent)42
-b(var)g(type)g(nowtype)115 1278 y(.if)g(${eq)g($\(type\))f
-($\(nowtype\)})115 1378 y($\(indent\)n)f(+=)i(count_$t_action\()37
-b($\(var\))k(\);)115 1477 y(.else)115 1577 y($\(indent\)n)f(+=)i
+1909 y Fi(.macro)41 b(generate_action_c)o(al)o(l)c(indent)42
+b(var)g(type)g(nowtype)115 2009 y(.if)g(${eq)g($\(type\))f
+($\(nowtype\)})115 2108 y($\(indent\)n)f(+=)i(count_$t_action\()37
+b($\(var\))k(\);)115 2208 y(.else)115 2307 y($\(indent\)n)f(+=)i
 (count_$t_action\()37 b(to_$\(type\)\()i($\(var\))i(\))j(\);)115
-1676 y(.endif)115 1776 y(.endmacro)115 1876 y(..)115
-1975 y(.macro)d(generate_walker_c)o(al)o(l)c(indent)42
-b(var)g(type)g(nowtype)115 2075 y(.if)g(${eq)g($\(type\))f
-($\(nowtype\)})115 2175 y($\(indent\)n)f(+=)i(count_$t_walker\()37
-b($\(var\))k(\);)115 2274 y(.else)115 2374 y($\(indent\)n)f(+=)i
+2407 y(.endif)115 2507 y(.endmacro)115 2606 y(..)115
+2706 y(.macro)d(generate_walker_c)o(al)o(l)c(indent)42
+b(var)g(type)g(nowtype)115 2806 y(.if)g(${eq)g($\(type\))f
+($\(nowtype\)})115 2905 y($\(indent\)n)f(+=)i(count_$t_walker\()37
+b($\(var\))k(\);)115 3005 y(.else)115 3104 y($\(indent\)n)f(+=)i
 (count_$t_walker\()37 b(to_$\(type\)\()i($\(var\))i(\))j(\);)115
-2474 y(.endif)115 2573 y(.endmacro)-9 2806 y(.macro)d(generate_walker)o
-(_re)o(tu)o(rn)c(indent)k(var)i(t)115 2905 y Fo(Giv)n(en)28
+3204 y(.endif)115 3304 y(.endmacro)-9 3536 y(.macro)d(generate_walker)o
+(_re)o(tu)o(rn)c(indent)k(var)i(t)115 3636 y Fo(Giv)n(en)28
 b(an)h(inden)n(t)f Fi(indent)p Fo(,)f(the)h(name)h Fi(var)e
 Fo(of)h(the)h(v)-5 b(ariable)28 b(that)g(holds)g(the)h(datastructure)f
-(w)n(e)g(are)115 3005 y(w)n(alking)e(on,)i(and)f(a)g(t)n(yp)r(e)h
+(w)n(e)g(are)115 3735 y(w)n(alking)e(on,)i(and)f(a)g(t)n(yp)r(e)h
 Fi(t)p Fo(,)g(of)f(that)h(v)-5 b(ariable,)27 b(generate)f(a)h(return)g
-(statemen)n(t.)115 3138 y(If)h(the)g(tree)f(w)n(alk)n(er)f(function)i
+(statemen)n(t.)115 3868 y(If)h(the)g(tree)f(w)n(alk)n(er)f(function)i
 (is)g(de\014ned)g(as)f(a)g Fi(void)f Fo(function,)i(the)g(macro)e
-(should)i(con)n(tain)f(the)h(line)115 3271 y Fi($\(indent\)return;)115
-3403 y Fo(Otherwise)f(a)g(return)g(statemen)n(t)h(should)f(b)r(e)h
+(should)i(con)n(tain)f(the)h(line)115 4001 y Fi($\(indent\)return;)115
+4134 y Fo(Otherwise)f(a)g(return)g(statemen)n(t)h(should)f(b)r(e)h
 (generated)f(that)g(returns)g(the)h(appropriate)e(v)-5
-b(alue.)115 3536 y(F)e(or)27 b(example:)115 3669 y Fi(.macro)41
+b(alue.)115 4267 y(F)e(or)27 b(example:)115 4400 y Fi(.macro)41
 b(generate_walker_r)o(et)o(ur)o(n)d(indent)j(var)h(t)115
-3769 y($\(indent\)return)37 b(n;)115 3868 y(.endmacro)-9
-4101 y(.macro)k(generate_walker)o(_lo)o(ca)o(ls)c(indent)k(var)i(t)115
-4200 y Fo(Giv)n(en)31 b(an)g(inden)n(t)h Fi(ident)p Fo(,)e(the)i(name)f
+4499 y($\(indent\)return)37 b(n;)115 4599 y(.endmacro)-9
+4831 y(.macro)k(generate_walker)o(_lo)o(ca)o(ls)c(indent)k(var)i(t)115
+4931 y Fo(Giv)n(en)31 b(an)g(inden)n(t)h Fi(ident)p Fo(,)e(the)i(name)f
 Fi(var)f Fo(of)h(the)h(v)-5 b(ariable)30 b(that)i(holds)f(the)h
-(datastructure)e(w)n(e)h(are)115 4300 y(w)n(alking)24
+(datastructure)e(w)n(e)h(are)115 5031 y(w)n(alking)24
 b(on,)i(and)f(a)g(t)n(yp)r(e)h Fi(t)f Fo(of)g(that)h(v)-5
 b(ariable,)24 b(generate)h(a)f(list)i(of)f(lo)r(cal)g(declarations)f
-(for)h(the)g(w)n(alk)n(er)115 4400 y(function)j(of)g(that)g(t)n(yp)r
-(e.)115 4532 y(F)-7 b(or)27 b(example:)115 4665 y Fi(.macro)41
+(for)h(the)g(w)n(alk)n(er)115 5130 y(function)j(of)g(that)g(t)n(yp)r
+(e.)115 5263 y(F)-7 b(or)27 b(example:)115 5396 y Fi(.macro)41
 b(generate_walker_l)o(oc)o(al)o(s)d(indent)j(var)h(t)115
-4765 y($\(indent\)int)d(n)k(=)g(0;)115 4865 y(.endmacro)-9
-5097 y(.macro)e(generate_empty_)o(wal)o(ke)o(r_b)o(od)o(y)c(indent)42
-b(var)g(t)115 5197 y Fo(Giv)n(en)27 b(an)f(inden)n(t)h
-Fi(indent)p Fo(,)e(the)i(name)f Fi(var)g Fo(of)g(the)h(v)-5
-b(ariable)26 b(that)h(holds)f(the)h(data)f(structure)g(w)n(e)h(are)115
-5296 y(w)n(aling)g(on,)g(and)g(a)h(t)n(yp)r(e)f Fi(t)p
-Fo(,)h(generate)e(a)h(b)r(o)r(dy)h(for)f(an)h(empt)n(y)f(function.)115
-5429 y(Usually)-7 b(,)26 b(this)g(macro)e(con)n(tains)g(co)r(de)h(to)h
-(prev)n(en)n(t)e(compiler)h(w)n(arnings)f(ab)r(out)h(un)n(used)h(v)-5
-b(ariables)24 b(and)115 5529 y(parameters.)35 b(F)-7
-b(or)27 b(example,)g(this)h(macro)f(will)g(usually)h(con)n(tain)e(the)i
-(follo)n(wing)f(line:)115 5662 y Fi($\(indent\)\(void\))37
-b($\(var\);)p eop
+5496 y($\(indent\)int)d(n)k(=)g(0;)115 5595 y(.endmacro)-9
+5828 y(.macro)e(generate_empty_)o(wal)o(ke)o(r_b)o(od)o(y)c(indent)42
+b(var)g(t)p eop
 %%Page: 55 55
 55 54 bop 227 -28 a Fn(6.8.)63 b(THE)28 b(TREE)f(W)-9
-b(ALKER)2430 b Fo(55)351 315 y(This)30 b(will)g(generate)e(a)h(prop)r
-(erly)g(inden)n(ted)h(source)e(co)r(de)i(line)g(that)g(casts)f(the)h(v)
--5 b(ariable)28 b(holding)i(the)351 415 y(data)d(structure)g(to)h(v)n
+b(ALKER)2430 b Fo(55)351 315 y(Giv)n(en)27 b(an)f(inden)n(t)h
+Fi(indent)p Fo(,)e(the)i(name)f Fi(var)g Fo(of)g(the)h(v)-5
+b(ariable)26 b(that)h(holds)f(the)h(data)g(structure)f(w)n(e)g(are)351
+415 y(w)n(aling)h(on,)g(and)h(a)f(t)n(yp)r(e)h Fi(t)p
+Fo(,)f(generate)f(a)i(b)r(o)r(dy)f(for)g(an)h(empt)n(y)f(function.)351
+547 y(Usually)-7 b(,)26 b(this)g(macro)e(con)n(tains)g(co)r(de)i(to)f
+(prev)n(en)n(t)g(compiler)f(w)n(arnings)g(ab)r(out)i(un)n(used)f(v)-5
+b(ariables)24 b(and)351 647 y(parameters.)35 b(F)-7 b(or)27
+b(example,)h(this)g(macro)e(will)i(usually)f(con)n(tain)g(the)h(follo)n
+(wing)e(line:)351 780 y Fi($\(indent\)\(void\))38 b($\(var\);)351
+913 y Fo(This)30 b(will)g(generate)e(a)h(prop)r(erly)g(inden)n(ted)h
+(source)e(co)r(de)i(line)g(that)g(casts)f(the)h(v)-5
+b(ariable)28 b(holding)i(the)351 1012 y(data)d(structure)g(to)h(v)n
 (oid.)36 b(Most)27 b(compilers)g(consider)g(this)h(a)f(use)g(of)h(the)g
-(v)-5 b(ariable.)351 547 y(F)e(or)27 b(example:)351 680
-y Fi(.macro)41 b(generate_empty_wa)o(lke)o(r_)o(bo)o(dy)c(indent)k(var)
-i(t)351 780 y($\(indent\)\(void\))38 b($\(var\);)351
-879 y(.endmacro)227 1162 y Fg(6.8.3)112 b(In)m(v)m(oking)37
-b(the)h(tree)f(w)m(alk)m(er)f(template)227 1365 y Fo(After)28
+(v)-5 b(ariable.)351 1145 y(F)e(or)27 b(example:)351
+1278 y Fi(.macro)41 b(generate_empty_wa)o(lke)o(r_)o(bo)o(dy)c(indent)k
+(var)i(t)351 1378 y($\(indent\)\(void\))38 b($\(var\);)351
+1477 y(.endmacro)227 1759 y Fg(6.8.3)112 b(In)m(v)m(oking)37
+b(the)h(tree)f(w)m(alk)m(er)f(template)227 1963 y Fo(After)28
 b(the)g(macros)e(describ)r(e)h(in)h(the)g(previous)f(section)g(ha)n(v)n
 (e)f(b)r(een)j(de\014ned,)f(the)g(tree)f(w)n(alk)n(er)f(template)i(can)
-227 1464 y(b)r(e)g(in)n(v)n(ok)n(ed.)35 b(This)28 b(is)f(done)h(as)e
-(follo)n(ws:)227 1680 y Fi(.insert)40 b(tmcwalk.t)227
-1896 y Fo(The)27 b(template)h(will)f(c)n(hec)n(k)g(whether)g(the)h
+227 2062 y(b)r(e)g(in)n(v)n(ok)n(ed.)35 b(This)28 b(is)f(done)h(as)e
+(follo)n(ws:)227 2278 y Fi(.insert)40 b(tmcwalk.t)227
+2494 y Fo(The)27 b(template)h(will)f(c)n(hec)n(k)g(whether)g(the)h
 (macros)d(describ)r(ed)i(ab)r(o)n(v)n(e)f(ha)n(v)n(e)g(b)r(een)i
-(de\014ned,)g(and)f(it)h(will)f(de\014ne)227 1996 y(the)h(follo)n(wing)
-e(macros:)227 2212 y Fi(.macro)41 b(calc_treewalk)d(starts)j(targets)
-351 2295 y Fo(Giv)n(en)29 b(the)h(list)g(of)f(t)n(yp)r(es)g(to)h(start)
+(de\014ned,)g(and)f(it)h(will)f(de\014ne)227 2593 y(the)h(follo)n(wing)
+e(macros:)227 2809 y Fi(.macro)41 b(calc_treewalk)d(starts)j(targets)
+351 2892 y Fo(Giv)n(en)29 b(the)h(list)g(of)f(t)n(yp)r(es)g(to)h(start)
 e(from)h Fi(starts)p Fo(,)f(and)h(the)h(list)f(of)g(t)n(yp)r(es)h(to)f
-(visit)g Fi(targets)p Fo(,)e(return)351 2394 y(the)h(list)g(of)g(t)n
-(yp)r(es)f(that)h(m)n(ust)g(b)r(e)g(visited.)227 2627
+(visit)g Fi(targets)p Fo(,)e(return)351 2992 y(the)h(list)g(of)g(t)n
+(yp)r(es)f(that)h(m)n(ust)g(b)r(e)g(visited.)227 3224
 y Fi(.macro)41 b(generate_walker_)o(fo)o(rwa)o(rd)o(s)d(list)351
-2726 y Fo(Giv)n(en)25 b(a)f(list)g(of)h(t)n(yp)r(es)f(the)h(tree)g(w)n
+3324 y Fo(Giv)n(en)25 b(a)f(list)g(of)h(t)n(yp)r(es)f(the)h(tree)g(w)n
 (alk)n(er)d(should)j(visit)f Fi(list)p Fo(,)g(generate)f(forw)n(ard)g
-(declarations)g(for)h(the)351 2826 y(w)n(alk)n(er)i(functions)i(for)f
-(these)h(t)n(yp)r(es.)227 3058 y Fi(.macro)41 b(generate_walker)c
-(visit_types)351 3158 y Fo(Giv)n(en)30 b(a)f(list)h(of)g(t)n(yp)r(es)g
+(declarations)g(for)h(the)351 3424 y(w)n(alk)n(er)i(functions)i(for)f
+(these)h(t)n(yp)r(es.)227 3656 y Fi(.macro)41 b(generate_walker)c
+(visit_types)351 3756 y Fo(Giv)n(en)30 b(a)f(list)h(of)g(t)n(yp)r(es)g
 (the)g(tree)f(w)n(alk)n(er)f(should)i(visit)f Fi(list)p
 Fo(,)g(generate)g(w)n(alk)n(er)f(functions)i(for)f(these)351
-3258 y(t)n(yp)r(es.)227 3424 y(F)-7 b(or)27 b(example:)227
-3640 y Fi(.set)42 b(actors)f(int)227 3739 y(.set)h(startnodes)d(expr)
-227 3839 y(..)227 3938 y(.insert)h(tmcwalk.t)227 4038
-y(..)227 4138 y(.set)i(visit_types)d(${call)i(calc_treewalk)d
-("$\(startnodes\)")f("$\(actors\)"})227 4420 y Fg(6.8.4)112
-b(Generating)38 b(forw)m(ard)f(declarations)227 4623
+3855 y(t)n(yp)r(es.)227 4021 y(F)-7 b(or)27 b(example:)227
+4237 y Fi(.set)42 b(actors)f(int)227 4337 y(.set)h(startnodes)d(expr)
+227 4437 y(..)227 4536 y(.insert)h(tmcwalk.t)227 4636
+y(..)227 4735 y(.set)i(visit_types)d(${call)i(calc_treewalk)d
+("$\(startnodes\)")f("$\(actors\)"})227 5018 y Fg(6.8.4)112
+b(Generating)38 b(forw)m(ard)f(declarations)227 5221
 y Fo(T)-7 b(o)27 b(generate)g(forw)n(ard)g(declarations)f(for)i(all)f
 (w)n(alk)n(er)g(functions,)h(the)h Fi(generate_walker)o(_fo)o(rw)o(ar)o
-(ds)22 b Fo(macro)227 4723 y(should)i(b)r(e)h(in)n(v)n(ok)n(ed.)35
+(ds)22 b Fo(macro)227 5320 y(should)i(b)r(e)h(in)n(v)n(ok)n(ed.)35
 b(Since)25 b(action)f(functions)h(should)g(in)n(v)n(ok)n(e)e(their)i
 (corresp)r(onding)d(w)n(alk)n(er)h(function,)j(these)227
-4822 y(forw)n(ard)g(declarations)g(should)h(b)r(e)h(placed)f(b)r(efore)
+5420 y(forw)n(ard)g(declarations)g(should)h(b)r(e)h(placed)f(b)r(efore)
 h(the)g(de\014nition)f(of)h(the)g(action)f(functions.)227
-4972 y(F)-7 b(or)27 b(example:)227 5188 y Fi(.call)41
+5569 y(F)-7 b(or)27 b(example:)227 5785 y Fi(.call)41
 b(generate_walker_f)o(or)o(war)o(ds)c("$\(visit_types\)")p
 eop
 %%Page: 56 56

@@ -213,7 +213,7 @@ void clear_leaf( btree tree )
 \end{verbatim}
 \end{showfile}
 It is not recommended to access elements this way. Instead, one should
-use the \verb'to_<type>()' macros that are provided for that purpose:
+use the \verb'to_<type>()' and \verb'to_const_<type>()' macros that are provided for that purpose:
 \begin{showfile}
 \begin{verbatim}
 void clear_leaf( btree tree )
@@ -670,8 +670,8 @@ lists of types.
 Duplication means that new instances are created for all elements
 in the data-structures.
 \begin{verbatim}
-<type> rdup_<type>( <type> e );
-<type>_list rdup_<type>_list( <type>_list e );
+<type> rdup_<type>( const_<type> e );
+<type>_list rdup_<type>_list( const_<type>_list e );
 \end{verbatim}
 \begin{desc}
 \index{rdup_<type>@\verb+rdup_<type>()+}
@@ -680,7 +680,11 @@ Recursively duplicate instance {\tt e} of type {\tt <type>} or
 {\tt <type>\_list}.
 \end{desc}
 \begin{verbatim}
-<type>_list slice_<type>_list( <type>_list e, unsigned int b, unsigned int e );
+<type>_list slice_<type>_list(
+ const_<type>_list e,
+ unsigned int b,
+ unsigned int e
+);
 \end{verbatim}
 \begin{desc}
 \index{slice_<type>_list@\verb+slice_<type>_list()+}
@@ -728,8 +732,8 @@ The \verb+fscan_<type>()+ routines will ensure that in all cases the
 data-structures can be destroyed again using \verb+rfre_<type>+.
 \end{desc}
 \begin{verbatim}
-void print_<type>( TMPRINTSTATE *st, <type> t );
-void print_<type>_list( TMPRINTSTATE *st, <type>_list l );
+void print_<type>( TMPRINTSTATE *st, const_<type> t );
+void print_<type>_list( TMPRINTSTATE *st, const_<type>_list l );
 \end{verbatim}
 \begin{desc}
 \index{print_<type>@\verb+print_<type>()+}
@@ -739,8 +743,8 @@ print an instance of data structure {\tt <type>} or {\tt <type>\_list}
 using the print optimizer, see section~\ref{s.csupportlib}.
 \end{desc}
 \begin{verbatim}
-void fprint_<type>( FILE *f, <type> t );
-void fprint_<type>_list( FILE *f, <type>_list t );
+void fprint_<type>( FILE *f, const_<type> t );
+void fprint_<type>_list( FILE *f, const_<type>_list t );
 \end{verbatim}
 \begin{desc}
 \index{fprint_<type>@\verb+fprint_<type>()+}
@@ -798,8 +802,8 @@ If another comparison function is required for a data type,
 the generation of the standard function can be suppressed by
 using {\tt notwantdefs}, see section~\ref{s.config}.
 \begin{verbatim}
-int cmp_<type>( <type> a, <type> b );
-int cmp_<type>_list( <type>_list a, <type>_list b );
+int cmp_<type>( const_<type> a, const_<type> b );
+int cmp_<type>_list( const_<type>_list a, const_<type>_list b );
 \end{verbatim}
 \begin{desc}
 \index{cmp_<type>@\verb+cmp_<type>()+}
