@@ -18,6 +18,7 @@
 .endmacro
 .endif
 .endforeach
+..
 .macro calc_treewalk starts targets
 .set res
 .set types ${reach $(starts)}
@@ -68,7 +69,7 @@
 	unsigned int ix;
 
 	for( ix=0; ix<e->sz; ix++ ){
-.call generate_descent_call "	" e->arr[ix] ${delisttypes $t} ${delisttypes $t}
+.call generate_descent_call "	    " e->arr[ix] ${delisttypes $t} ${delisttypes $t}
 .set empty 0
 	}
     }
