@@ -34,9 +34,7 @@
 #include "srchfile.h"
 
 /* Forward declarations. */
-static Type_list update_reach_Type( Type_list tl, bool *visited, const Type t );
-
-
+static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list blocking, const Type t );
 
 /* Given a list prefix 'pre' and suffix 'suff', and a type 't',
  * return the element type of this type, or tmstringNIL if there is none.
@@ -1989,52 +1987,82 @@ static Type_list add_Type_list( Type_list tl, Type t )
     return append_Type_list( tl, t );
 }
 
+static bool member_Type_list( Type_list tl, Type t )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<tl->sz; ix++ ){
+	Type e = tl->arr[ix];
+
+	if( e->level == t->level && strcmp( e->basetype, t->basetype ) == 0 ){
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
+static bool is_blocked_type( Type_list tl, tmstring t )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<tl->sz; ix++ ){
+	Type e = tl->arr[ix];
+
+	if( e->level == 0 && strcmp( e->basetype, t ) == 0 ){
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
 /* Given a list of type 'tl', an array of 'visited' flags and a type name,
  * update the list of types with the reach of this type.
  */
-static Type_list update_reach( Type_list tl, bool *visited, tmstring tnm )
+static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, tmstring tnm )
 {
     const unsigned int ix = find_type_ix( allds, tnm );
     Type t;
 
     if( ix<allds->sz ){
-	unsigned int tix;
-	tmstring_list inheritors;
-	const ds d = allds->arr[ix];
-	tmstring_list fieldnames;
-
 	if( visited[ix] ){
 	    /* Been there, done that, got the T-shirt. */
 	    return tl;
 	}
 	visited[ix] = TRUE;
-	inheritors = new_tmstring_list();
-	collect_inheritors( &inheritors, allds, tnm );
-	for( tix=0; tix<inheritors->sz; tix++ ){
-	    tl = update_reach( tl, visited, inheritors->arr[tix] );
-	}
-	rfre_tmstring_list( inheritors );
-	fieldnames = new_tmstring_list();
-	collect_all_fields( &fieldnames, allds, tnm );
-	for( tix=0; tix<fieldnames->sz; tix++ ){
-	    Field f = find_field( allds, tnm, fieldnames->arr[tix] );
+	if( !is_blocked_type( blocking, tnm ) ){
+	    tmstring_list inheritors;
+	    tmstring_list fieldnames;
+	    const ds d = allds->arr[ix];
+	    unsigned int tix;
 
-	    if( f != FieldNIL ){
-		tl = update_reach_Type( tl, visited, f->type );
+	    inheritors = new_tmstring_list();
+	    collect_inheritors( &inheritors, allds, tnm );
+	    for( tix=0; tix<inheritors->sz; tix++ ){
+		tl = update_reach( tl, visited, blocking, inheritors->arr[tix] );
 	    }
-	}
-	rfre_tmstring_list( fieldnames );
-	switch( d->tag ){
-	    case TAGDsAlias:
-		tl = update_reach_Type( tl, visited, to_DsAlias(d)->type );
-		break;
+	    rfre_tmstring_list( inheritors );
+	    fieldnames = new_tmstring_list();
+	    collect_all_fields( &fieldnames, allds, tnm );
+	    for( tix=0; tix<fieldnames->sz; tix++ ){
+		Field f = find_field( allds, tnm, fieldnames->arr[tix] );
 
-	    case TAGDsConstructorBase:
-	    case TAGDsTuple:
-	    case TAGDsClass:
-	    case TAGDsConstructor:
-		break;
+		if( f != FieldNIL ){
+		    tl = update_reach_Type( tl, visited, blocking, f->type );
+		}
+	    }
+	    rfre_tmstring_list( fieldnames );
+	    switch( d->tag ){
+		case TAGDsAlias:
+		    tl = update_reach_Type( tl, visited, blocking, to_DsAlias(d)->type );
+		    break;
 
+		case TAGDsConstructorBase:
+		case TAGDsTuple:
+		case TAGDsClass:
+		case TAGDsConstructor:
+		    break;
+
+	    }
 	}
     }
     t = new_Type( 0, rdup_tmstring( tnm ) );
@@ -2042,10 +2070,10 @@ static Type_list update_reach( Type_list tl, bool *visited, tmstring tnm )
     return tl;
 }
 
-/* Given a list of type 'tl', an array of 'visited' flags and a type 't',
+/* Given a list of types 'tl', an array of 'visited' flags and a type 't',
  * update the list of types with the reach of this type.
  */
-static Type_list update_reach_Type( Type_list tl, bool *visited, const Type t )
+static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list blocking, const Type t )
 {
     unsigned int level;
 
@@ -2054,13 +2082,17 @@ static Type_list update_reach_Type( Type_list tl, bool *visited, const Type t )
 
 	dt->level = level;
 	tl = add_Type_list( tl, dt );
+	if( member_Type_list( blocking, dt ) ){
+	    return tl;
+	}
     }
-    tl = update_reach( tl, visited, t->basetype );
+    tl = update_reach( tl, visited, blocking, t->basetype );
     return tl;
 }
 
 /* Given a list of types, return the reach of each of these types.
  * Unknown types have only themselves as reach.
+ * Types in the 'blocking' list have only themselves as reach.
  * List types have themselves as reach, plus the reach of their element type.
  * All other types have themselves as reach, plus the reach of the
  * subclasses of the type, and the fields (including inherited ones) of
@@ -2073,12 +2105,15 @@ static tmstring fnreach( const tmstring_list pl )
     Type_list tl;
     tmstring ans;
     bool *visited;
+    Type_list blocking;
     unsigned int sz;
     const char *pre;
     const char *suff;
+    bool in_blocking;
 
     sz = allds->sz;
     tl = new_Type_list();
+    blocking = new_Type_list();
     visited = TM_MALLOC( bool *, sizeof(bool)*sz );
     if( visited == NULL ){                          
         return new_tmstring( "" );
@@ -2094,15 +2129,34 @@ static tmstring fnreach( const tmstring_list pl )
     for( ix=0; ix<sz; ix++ ){
         visited[ix] = FALSE;
     }
+    in_blocking = FALSE;
     for( ix=0; ix<pl->sz; ix++ ){
-	Type t = split_type( pre, suff, pl->arr[ix] );
+	Type t;
+	tmstring tnm = pl->arr[ix];
 
-	tl = update_reach_Type( tl, visited, t );
+	if( tnm[0] == '\0' ){
+	    in_blocking = TRUE;
+	}
+	else if( in_blocking ){
+	    t = split_type( pre, suff, tnm );
+	    blocking = append_Type_list( blocking, t );
+	}
+    }
+    for( ix=0; ix<pl->sz; ix++ ){
+	Type t;
+	tmstring tnm = pl->arr[ix];
+
+	if( tnm[0] == '\0' ){
+	    break;
+	}
+	t = split_type( pre, suff, tnm );
+	tl = update_reach_Type( tl, visited, blocking, t );
 	rfre_Type( t );
     }
     TM_FREE( visited );          
     ans = flat_Type_list( tl );
     rfre_Type_list( tl );
+    rfre_Type_list( blocking );
     return ans;
 }
 
@@ -2589,7 +2643,7 @@ static tmstring fndefinedmacro( const tmstring_list sl )
 	return newboolstr( 0 );
     }
     v = findmacro( sl->arr[0] );
-    return newboolstr( v != CHARNIL );
+    return newboolstr( v != macroNIL );
 }
 
 /* matchmacro pat
