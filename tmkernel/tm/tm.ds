@@ -8,22 +8,24 @@
 || it is represented as a classComponent list.
 ds = { name:tmstring, inherits:[tmstring] } +
     DsConstructorBase: { constructors:[tmstring] } |
-    DsTuple: { fields:[field] } |
-    DsClass: { fields:[field], isvirtual:tmbool } |
-    DsConstructor: { fields:[field] } |
-    DsAlias: {}
+    DsTuple: { fields:[Field] } |
+    DsClass: { fields:[Field], isvirtual:tmbool } |
+    DsConstructor: { fields:[Field] } |
+    DsAlias: { type:Type }
     ;
 
 classComponent =
     CCSuper: { super:tmstring } |
-    CCFields: { fields:[field] } |
+    CCFields: { fields:[Field] } |
     CCAlternatives: { alternatives:[alternative] } |
     CCSublist:  { components:[classComponent] }
     ;
 
 alternative == ( label:tmstring, component:classComponent );
 
-field == ( level:uint, name:tmstring, type:tmstring );
+Type == ( level:uint, basetype:tmstring );
+
+Field == ( name:tmstring, type:Type );
 
 || The internal representation of a macro.
 macro == (
@@ -41,14 +43,14 @@ var == (
     val:tmstring	|| The value of the variable
 );
 
-switchcase == ( cases:tmstring, action:[tplelm] );
+Switchcase == ( cases:tmstring, action:[tplelm] );
 
 tplelm = { lno:int } +
     Plain: { line:tmstring } |
     Foreach: { felist:tmstring, body:[tplelm] } |
     While: { cond:tmstring, body:[tplelm] } |
     If: { cond:tmstring, ifthen:[tplelm], ifelse:[tplelm] } |
-    Switch: { val:tmstring, cases:[switchcase], deflt:[tplelm] } |
+    Switch: { val:tmstring, cases:[Switchcase], deflt:[tplelm] } |
     Set: { line:tmstring } |
     Rename: { line:tmstring } |
     GlobalSet: { line:tmstring } |

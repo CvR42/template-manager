@@ -1,4 +1,4 @@
-/* Requirement analysis took 380 milliseconds. */
+/* Requirement analysis took 400 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ht ---- */
@@ -7,7 +7,7 @@
    template file:      /usr/local/lib/tmc.ht
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta14
+   tm kernel version:  2.0-beta15
  */
 
 /* data structures */
@@ -16,18 +16,20 @@
  * C does not like the use of undefined types, but does not
  * mind the use of pointers to (yet) undefined types.
  */
+typedef struct str_Field_list *Field_list;
+typedef struct str_Switchcase_list *Switchcase_list;
+typedef struct str_Type_list *Type_list;
 typedef struct str_alternative_list *alternative_list;
 typedef struct str_classComponent_list *classComponent_list;
 typedef struct str_ds_list *ds_list;
-typedef struct str_field_list *field_list;
 typedef struct str_macro_list *macro_list;
-typedef struct str_switchcase_list *switchcase_list;
 typedef struct str_tmstring_list *tmstring_list;
 typedef struct str_tplelm_list *tplelm_list;
 typedef struct str_var_list *var_list;
-typedef struct str_field *field;
+typedef struct str_Switchcase *Switchcase;
+typedef struct str_Type *Type;
+typedef struct str_Field *Field;
 typedef struct str_macro *macro;
-typedef struct str_switchcase *switchcase;
 typedef struct str_var *var;
 typedef struct str_classComponent *classComponent;
 typedef struct str_CCAlternatives *CCAlternatives;
@@ -65,12 +67,13 @@ typedef struct str_Set *Set;
 typedef struct str_Switch *Switch;
 typedef struct str_While *While;
 
+#define Field_listNIL (Field_list)0
+#define Switchcase_listNIL (Switchcase_list)0
+#define Type_listNIL (Type_list)0
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
 #define ds_listNIL (ds_list)0
-#define field_listNIL (field_list)0
 #define macro_listNIL (macro_list)0
-#define switchcase_listNIL (switchcase_list)0
 #define tmstring_listNIL (tmstring_list)0
 #define tplelm_listNIL (tplelm_list)0
 #define var_listNIL (var_list)0
@@ -91,6 +94,7 @@ typedef struct str_While *While;
 #define DsTupleNIL (DsTuple)0
 #define ErrorNIL (Error)0
 #define ExitNIL (Exit)0
+#define FieldNIL (Field)0
 #define ForeachNIL (Foreach)0
 #define GlobalAppendNIL (GlobalAppend)0
 #define GlobalSetNIL (GlobalSet)0
@@ -104,11 +108,11 @@ typedef struct str_While *While;
 #define ReturnNIL (Return)0
 #define SetNIL (Set)0
 #define SwitchNIL (Switch)0
+#define SwitchcaseNIL (Switchcase)0
+#define TypeNIL (Type)0
 #define WhileNIL (While)0
 #define alternativeNIL (alternative)0
-#define fieldNIL (field)0
 #define macroNIL (macro)0
-#define switchcaseNIL (switchcase)0
 #define varNIL (var)0
 #define classComponentNIL (classComponent)0
 #define dsNIL (ds)0
@@ -128,6 +132,33 @@ typedef enum en_tags_tplelm {
 
 
 #ifdef __cplusplus
+/* Structure for tuple 'Field'. */
+struct str_Field {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring name;
+    Type type;
+};
+
+/* Structure for tuple 'Switchcase'. */
+struct str_Switchcase {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring cases;
+    tplelm_list action;
+};
+
+/* Structure for tuple 'Type'. */
+struct str_Type {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    uint level;
+    tmstring basetype;
+};
+
 /* Structure for tuple 'alternative'. */
 struct str_alternative {
 #ifdef LOGNEW
@@ -135,16 +166,6 @@ struct str_alternative {
 #endif
     tmstring label;
     classComponent component;
-};
-
-/* Structure for tuple 'field'. */
-struct str_field {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    uint level;
-    tmstring name;
-    tmstring type;
 };
 
 /* Structure for tuple 'macro'. */
@@ -157,15 +178,6 @@ struct str_macro {
     tmstring orgfile;
     tmstring_list fpl;
     tplelm_list body;
-};
-
-/* Structure for tuple 'switchcase'. */
-struct str_switchcase {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tmstring cases;
-    tplelm_list action;
 };
 
 /* Structure for tuple 'var'. */
@@ -196,7 +208,7 @@ public:
 /* Structure for class 'CCFields'. */
 class str_CCFields: public str_classComponent {
 public:
-    field_list fields;
+    Field_list fields;
 };
 
 /* Structure for class 'CCSublist'. */
@@ -225,19 +237,20 @@ public:
 /* Structure for class 'DsAlias'. */
 class str_DsAlias: public str_ds {
 public:
+    Type type;
 };
 
 /* Structure for class 'DsClass'. */
 class str_DsClass: public str_ds {
 public:
-    field_list fields;
+    Field_list fields;
     tmbool isvirtual;
 };
 
 /* Structure for class 'DsConstructor'. */
 class str_DsConstructor: public str_ds {
 public:
-    field_list fields;
+    Field_list fields;
 };
 
 /* Structure for class 'DsConstructorBase'. */
@@ -249,7 +262,7 @@ public:
 /* Structure for class 'DsTuple'. */
 class str_DsTuple: public str_ds {
 public:
-    field_list fields;
+    Field_list fields;
 };
 
 /* Structure for class 'tplelm'. */
@@ -391,7 +404,7 @@ public:
 class str_Switch: public str_tplelm {
 public:
     tmstring val;
-    switchcase_list cases;
+    Switchcase_list cases;
     tplelm_list deflt;
 };
 
@@ -403,14 +416,31 @@ public:
 };
 
 #else
-/* Structure for tuple 'field'. */
-struct str_field {
+/* Structure for tuple 'Switchcase'. */
+struct str_Switchcase {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring cases;
+    tplelm_list action;
+};
+
+/* Structure for tuple 'Type'. */
+struct str_Type {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
     uint level;
+    tmstring basetype;
+};
+
+/* Structure for tuple 'Field'. */
+struct str_Field {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
     tmstring name;
-    tmstring type;
+    Type type;
 };
 
 /* Structure for tuple 'macro'. */
@@ -423,15 +453,6 @@ struct str_macro {
     tmstring orgfile;
     tmstring_list fpl;
     tplelm_list body;
-};
-
-/* Structure for tuple 'switchcase'. */
-struct str_switchcase {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tmstring cases;
-    tplelm_list action;
 };
 
 /* Structure for tuple 'var'. */
@@ -467,7 +488,7 @@ struct str_CCFields {
     long int lognew_id;
 #endif
     tags_classComponent tag;
-    field_list fields;
+    Field_list fields;
 };
 
 /* Structure for class 'CCSublist'. */
@@ -515,6 +536,7 @@ struct str_DsAlias {
     tags_ds tag;
     tmstring name;
     tmstring_list inherits;
+    Type type;
 };
 
 /* Structure for class 'DsClass'. */
@@ -525,7 +547,7 @@ struct str_DsClass {
     tags_ds tag;
     tmstring name;
     tmstring_list inherits;
-    field_list fields;
+    Field_list fields;
     tmbool isvirtual;
 };
 
@@ -537,7 +559,7 @@ struct str_DsConstructor {
     tags_ds tag;
     tmstring name;
     tmstring_list inherits;
-    field_list fields;
+    Field_list fields;
 };
 
 /* Structure for class 'DsConstructorBase'. */
@@ -559,7 +581,7 @@ struct str_DsTuple {
     tags_ds tag;
     tmstring name;
     tmstring_list inherits;
-    field_list fields;
+    Field_list fields;
 };
 
 /* Structure for class 'tplelm'. */
@@ -784,7 +806,7 @@ struct str_Switch {
     tags_tplelm tag;
     int lno;
     tmstring val;
-    switchcase_list cases;
+    Switchcase_list cases;
     tplelm_list deflt;
 };
 
@@ -800,6 +822,33 @@ struct str_While {
 };
 
 #endif
+
+struct str_Field_list {
+    unsigned int sz;
+    unsigned int room;
+    Field *arr;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_Switchcase_list {
+    unsigned int sz;
+    unsigned int room;
+    Switchcase *arr;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_Type_list {
+    unsigned int sz;
+    unsigned int room;
+    Type *arr;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
 
 struct str_alternative_list {
     unsigned int sz;
@@ -828,28 +877,10 @@ struct str_ds_list {
 #endif
 };
 
-struct str_field_list {
-    unsigned int sz;
-    unsigned int room;
-    field *arr;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
 struct str_macro_list {
     unsigned int sz;
     unsigned int room;
     macro *arr;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_switchcase_list {
-    unsigned int sz;
-    unsigned int room;
-    switchcase *arr;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -900,6 +931,7 @@ struct str_var_list {
 #define to_DsTuple(e) ((DsTuple)e)
 #define to_Error(e) ((Error)e)
 #define to_Exit(e) ((Exit)e)
+#define to_Field(e) ((Field)e)
 #define to_Foreach(e) ((Foreach)e)
 #define to_GlobalAppend(e) ((GlobalAppend)e)
 #define to_GlobalSet(e) ((GlobalSet)e)
@@ -913,11 +945,11 @@ struct str_var_list {
 #define to_Return(e) ((Return)e)
 #define to_Set(e) ((Set)e)
 #define to_Switch(e) ((Switch)e)
+#define to_Switchcase(e) ((Switchcase)e)
+#define to_Type(e) ((Type)e)
 #define to_While(e) ((While)e)
 #define to_alternative(e) ((alternative)e)
-#define to_field(e) ((field)e)
 #define to_macro(e) ((macro)e)
-#define to_switchcase(e) ((switchcase)e)
 #define to_var(e) ((var)e)
 #define to_classComponent(e) ((classComponent)e)
 #define to_ds(e) ((ds)e)
@@ -935,13 +967,14 @@ struct str_var_list {
 #define new_Case(lno,val) real_new_Case(lno,val,__FILE__,__LINE__)
 #define new_Default(lno) real_new_Default(lno,__FILE__,__LINE__)
 #define new_DeleteType(lno,line) real_new_DeleteType(lno,line,__FILE__,__LINE__)
-#define new_DsAlias(name,inherits) real_new_DsAlias(name,inherits,__FILE__,__LINE__)
+#define new_DsAlias(name,inherits,type) real_new_DsAlias(name,inherits,type,__FILE__,__LINE__)
 #define new_DsClass(name,inherits,fields,isvirtual) real_new_DsClass(name,inherits,fields,isvirtual,__FILE__,__LINE__)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
 #define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
 #define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,__FILE__,__LINE__)
 #define new_Error(lno,str) real_new_Error(lno,str,__FILE__,__LINE__)
 #define new_Exit(lno,str) real_new_Exit(lno,str,__FILE__,__LINE__)
+#define new_Field(name,type) real_new_Field(name,type,__FILE__,__LINE__)
 #define new_Foreach(lno,felist,body) real_new_Foreach(lno,felist,body,__FILE__,__LINE__)
 #define new_GlobalAppend(lno,line) real_new_GlobalAppend(lno,line,__FILE__,__LINE__)
 #define new_GlobalSet(lno,line) real_new_GlobalSet(lno,line,__FILE__,__LINE__)
@@ -955,24 +988,26 @@ struct str_var_list {
 #define new_Return(lno,retval) real_new_Return(lno,retval,__FILE__,__LINE__)
 #define new_Set(lno,line) real_new_Set(lno,line,__FILE__,__LINE__)
 #define new_Switch(lno,val,cases,deflt) real_new_Switch(lno,val,cases,deflt,__FILE__,__LINE__)
+#define new_Switchcase(cases,action) real_new_Switchcase(cases,action,__FILE__,__LINE__)
+#define new_Type(level,basetype) real_new_Type(level,basetype,__FILE__,__LINE__)
 #define new_While(lno,cond,body) real_new_While(lno,cond,body,__FILE__,__LINE__)
 #define new_alternative(label,component) real_new_alternative(label,component,__FILE__,__LINE__)
-#define new_field(level,name,type) real_new_field(level,name,type,__FILE__,__LINE__)
 #define new_macro(lvl,name,orgfile,fpl,body) real_new_macro(lvl,name,orgfile,fpl,body,__FILE__,__LINE__)
-#define new_switchcase(cases,action) real_new_switchcase(cases,action,__FILE__,__LINE__)
 #define new_var(lvl,name,val) real_new_var(lvl,name,val,__FILE__,__LINE__)
+#define new_Field_list() real_new_Field_list(__FILE__,__LINE__)
+#define new_Switchcase_list() real_new_Switchcase_list(__FILE__,__LINE__)
+#define new_Type_list() real_new_Type_list(__FILE__,__LINE__)
 #define new_alternative_list() real_new_alternative_list(__FILE__,__LINE__)
 #define new_classComponent_list() real_new_classComponent_list(__FILE__,__LINE__)
 #define new_ds_list() real_new_ds_list(__FILE__,__LINE__)
-#define new_field_list() real_new_field_list(__FILE__,__LINE__)
 #define new_macro_list() real_new_macro_list(__FILE__,__LINE__)
-#define new_switchcase_list() real_new_switchcase_list(__FILE__,__LINE__)
 #define new_tmstring_list() real_new_tmstring_list(__FILE__,__LINE__)
 #define new_tplelm_list() real_new_tplelm_list(__FILE__,__LINE__)
 #define new_var_list() real_new_var_list(__FILE__,__LINE__)
+#define rdup_Type(e) real_rdup_Type(e,__FILE__,__LINE__)
 #define rdup_ds(e) real_rdup_ds(e,__FILE__,__LINE__)
 #define rdup_tplelm(e) real_rdup_tplelm(e,__FILE__,__LINE__)
-#define rdup_field_list(e) real_rdup_field_list(e,__FILE__,__LINE__)
+#define rdup_Field_list(e) real_rdup_Field_list(e,__FILE__,__LINE__)
 #define rdup_tmstring_list(e) real_rdup_tmstring_list(e,__FILE__,__LINE__)
 #define rdup_tplelm_list(e) real_rdup_tplelm_list(e,__FILE__,__LINE__)
 #endif
@@ -981,20 +1016,21 @@ struct str_var_list {
 extern Append real_new_Append( int, tmstring, const char *, const int );
 extern Appendfile real_new_Appendfile( int, tmstring, tplelm_list, const char *, const int );
 extern CCAlternatives real_new_CCAlternatives( alternative_list, const char *, const int );
-extern CCFields real_new_CCFields( field_list, const char *, const int );
+extern CCFields real_new_CCFields( Field_list, const char *, const int );
 extern CCSublist real_new_CCSublist( classComponent_list, const char *, const int );
 extern CCSuper real_new_CCSuper( tmstring, const char *, const int );
 extern Call real_new_Call( int, tmstring, const char *, const int );
 extern Case real_new_Case( int, tmstring, const char *, const int );
 extern Default real_new_Default( int, const char *, const int );
 extern DeleteType real_new_DeleteType( int, tmstring, const char *, const int );
-extern DsAlias real_new_DsAlias( tmstring, tmstring_list, const char *, const int );
-extern DsClass real_new_DsClass( tmstring, tmstring_list, field_list, tmbool, const char *, const int );
-extern DsConstructor real_new_DsConstructor( tmstring, tmstring_list, field_list, const char *, const int );
+extern DsAlias real_new_DsAlias( tmstring, tmstring_list, Type, const char *, const int );
+extern DsClass real_new_DsClass( tmstring, tmstring_list, Field_list, tmbool, const char *, const int );
+extern DsConstructor real_new_DsConstructor( tmstring, tmstring_list, Field_list, const char *, const int );
 extern DsConstructorBase real_new_DsConstructorBase( tmstring, tmstring_list, tmstring_list, const char *, const int );
-extern DsTuple real_new_DsTuple( tmstring, tmstring_list, field_list, const char *, const int );
+extern DsTuple real_new_DsTuple( tmstring, tmstring_list, Field_list, const char *, const int );
 extern Error real_new_Error( int, tmstring, const char *, const int );
 extern Exit real_new_Exit( int, tmstring, const char *, const int );
+extern Field real_new_Field( tmstring, Type, const char *, const int );
 extern Foreach real_new_Foreach( int, tmstring, tplelm_list, const char *, const int );
 extern GlobalAppend real_new_GlobalAppend( int, tmstring, const char *, const int );
 extern GlobalSet real_new_GlobalSet( int, tmstring, const char *, const int );
@@ -1007,19 +1043,20 @@ extern Redirect real_new_Redirect( int, tmstring, tplelm_list, const char *, con
 extern Rename real_new_Rename( int, tmstring, const char *, const int );
 extern Return real_new_Return( int, tmstring, const char *, const int );
 extern Set real_new_Set( int, tmstring, const char *, const int );
-extern Switch real_new_Switch( int, tmstring, switchcase_list, tplelm_list, const char *, const int );
+extern Switch real_new_Switch( int, tmstring, Switchcase_list, tplelm_list, const char *, const int );
+extern Switchcase real_new_Switchcase( tmstring, tplelm_list, const char *, const int );
+extern Type real_new_Type( uint, tmstring, const char *, const int );
 extern While real_new_While( int, tmstring, tplelm_list, const char *, const int );
 extern alternative real_new_alternative( tmstring, classComponent, const char *, const int );
-extern field real_new_field( uint, tmstring, tmstring, const char *, const int );
 extern macro real_new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list, const char *, const int );
-extern switchcase real_new_switchcase( tmstring, tplelm_list, const char *, const int );
 extern var real_new_var( uint, tmstring, tmstring, const char *, const int );
+extern Field_list real_new_Field_list( const char *file, const int line );
+extern Switchcase_list real_new_Switchcase_list( const char *file, const int line );
+extern Type_list real_new_Type_list( const char *file, const int line );
 extern alternative_list real_new_alternative_list( const char *file, const int line );
 extern classComponent_list real_new_classComponent_list( const char *file, const int line );
 extern ds_list real_new_ds_list( const char *file, const int line );
-extern field_list real_new_field_list( const char *file, const int line );
 extern macro_list real_new_macro_list( const char *file, const int line );
-extern switchcase_list real_new_switchcase_list( const char *file, const int line );
 extern tmstring_list real_new_tmstring_list( const char *file, const int line );
 extern tplelm_list real_new_tplelm_list( const char *file, const int line );
 extern var_list real_new_var_list( const char *file, const int line );
@@ -1027,20 +1064,21 @@ extern var_list real_new_var_list( const char *file, const int line );
 extern Append new_Append( int, tmstring );
 extern Appendfile new_Appendfile( int, tmstring, tplelm_list );
 extern CCAlternatives new_CCAlternatives( alternative_list );
-extern CCFields new_CCFields( field_list );
+extern CCFields new_CCFields( Field_list );
 extern CCSublist new_CCSublist( classComponent_list );
 extern CCSuper new_CCSuper( tmstring );
 extern Call new_Call( int, tmstring );
 extern Case new_Case( int, tmstring );
 extern Default new_Default( int );
 extern DeleteType new_DeleteType( int, tmstring );
-extern DsAlias new_DsAlias( tmstring, tmstring_list );
-extern DsClass new_DsClass( tmstring, tmstring_list, field_list, tmbool );
-extern DsConstructor new_DsConstructor( tmstring, tmstring_list, field_list );
+extern DsAlias new_DsAlias( tmstring, tmstring_list, Type );
+extern DsClass new_DsClass( tmstring, tmstring_list, Field_list, tmbool );
+extern DsConstructor new_DsConstructor( tmstring, tmstring_list, Field_list );
 extern DsConstructorBase new_DsConstructorBase( tmstring, tmstring_list, tmstring_list );
-extern DsTuple new_DsTuple( tmstring, tmstring_list, field_list );
+extern DsTuple new_DsTuple( tmstring, tmstring_list, Field_list );
 extern Error new_Error( int, tmstring );
 extern Exit new_Exit( int, tmstring );
+extern Field new_Field( tmstring, Type );
 extern Foreach new_Foreach( int, tmstring, tplelm_list );
 extern GlobalAppend new_GlobalAppend( int, tmstring );
 extern GlobalSet new_GlobalSet( int, tmstring );
@@ -1053,28 +1091,31 @@ extern Redirect new_Redirect( int, tmstring, tplelm_list );
 extern Rename new_Rename( int, tmstring );
 extern Return new_Return( int, tmstring );
 extern Set new_Set( int, tmstring );
-extern Switch new_Switch( int, tmstring, switchcase_list, tplelm_list );
+extern Switch new_Switch( int, tmstring, Switchcase_list, tplelm_list );
+extern Switchcase new_Switchcase( tmstring, tplelm_list );
+extern Type new_Type( uint, tmstring );
 extern While new_While( int, tmstring, tplelm_list );
 extern alternative new_alternative( tmstring, classComponent );
-extern field new_field( uint, tmstring, tmstring );
 extern macro new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list );
-extern switchcase new_switchcase( tmstring, tplelm_list );
 extern var new_var( uint, tmstring, tmstring );
+extern Field_list new_Field_list( void );
+extern Switchcase_list new_Switchcase_list( void );
+extern Type_list new_Type_list( void );
 extern alternative_list new_alternative_list( void );
 extern classComponent_list new_classComponent_list( void );
 extern ds_list new_ds_list( void );
-extern field_list new_field_list( void );
 extern macro_list new_macro_list( void );
-extern switchcase_list new_switchcase_list( void );
 extern tmstring_list new_tmstring_list( void );
 extern tplelm_list new_tplelm_list( void );
 extern var_list new_var_list( void );
 #endif
+extern tmstring_list setroom_tmstring_list( tmstring_list, const unsigned int );
+extern Field_list append_Field_list( Field_list, Field );
+extern Switchcase_list append_Switchcase_list( Switchcase_list, Switchcase );
+extern Type_list append_Type_list( Type_list, Type );
 extern alternative_list append_alternative_list( alternative_list, alternative );
 extern classComponent_list append_classComponent_list( classComponent_list, classComponent );
 extern ds_list append_ds_list( ds_list, ds );
-extern field_list append_field_list( field_list, field );
-extern switchcase_list append_switchcase_list( switchcase_list, switchcase );
 extern tmstring_list append_tmstring_list( tmstring_list, tmstring );
 extern tplelm_list append_tplelm_list( tplelm_list, tplelm );
 extern var_list append_var_list( var_list, var );
@@ -1086,17 +1127,19 @@ extern macro_list delete_macro_list( macro_list, const unsigned int );
 extern tmstring_list delete_tmstring_list( tmstring_list, const unsigned int );
 extern var_list delete_var_list( var_list, const unsigned int );
 extern tmstring_list extract_tmstring_list( tmstring_list, const unsigned int, tmstring *, int * );
+extern Field_list concat_Field_list( Field_list, Field_list );
 extern ds_list concat_ds_list( ds_list, ds_list );
-extern field_list concat_field_list( field_list, field_list );
 extern tmstring_list concat_tmstring_list( tmstring_list, tmstring_list );
+extern void rfre_Field_list( Field_list );
+extern void rfre_Type_list( Type_list );
 extern void rfre_alternative_list( alternative_list );
 extern void rfre_classComponent_list( classComponent_list );
 extern void rfre_ds_list( ds_list );
-extern void rfre_field_list( field_list );
 extern void rfre_macro_list( macro_list );
 extern void rfre_tmstring_list( tmstring_list );
 extern void rfre_tplelm_list( tplelm_list );
 extern void rfre_var_list( var_list );
+extern void rfre_Type( Type );
 extern void rfre_classComponent( classComponent );
 extern void rfre_ds( ds );
 extern void rfre_macro( macro );
@@ -1104,19 +1147,21 @@ extern void rfre_tplelm( tplelm );
 extern void print_ds_list( TMPRINTSTATE *, const ds_list );
 extern void print_tmstring_list( TMPRINTSTATE *, const tmstring_list );
 #ifdef LOGNEW
+extern Type real_rdup_Type( const Type, const char *_f, const int _l );
 extern ds real_rdup_ds( const ds, const char *_f, const int _l );
 extern tplelm real_rdup_tplelm( const tplelm, const char *_f, const int _l );
-extern field_list real_rdup_field_list( const field_list, const char *_f, const int _l );
+extern Field_list real_rdup_Field_list( const Field_list, const char *_f, const int _l );
 extern tmstring_list real_rdup_tmstring_list( const tmstring_list, const char *_f, const int _l );
 extern tplelm_list real_rdup_tplelm_list( const tplelm_list, const char *_f, const int _l );
 #else
+extern Type rdup_Type( const Type );
 extern ds rdup_ds( const ds );
 extern tplelm rdup_tplelm( const tplelm );
-extern field_list rdup_field_list( const field_list );
+extern Field_list rdup_Field_list( const Field_list );
 extern tmstring_list rdup_tmstring_list( const tmstring_list );
 extern tplelm_list rdup_tplelm_list( const tplelm_list );
 #endif
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
 /* ---- end of /usr/local/lib/tmc.ht ---- */
-/* Code generation required 610 milliseconds. */
+/* Code generation required 650 milliseconds. */
