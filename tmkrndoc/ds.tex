@@ -27,7 +27,7 @@ of coordinate specifications {\tt [xyplot]}.
 An {\tt YPlot} consists of a color specification,
 a start and end x coordinate and a list of y values.
 A coordinate {\tt xypoint} consists of a x coordinate and a y coordinate.
-This type has only one possible set of elements, and no constructor.
+This type has only one possible set of fields, and no constructor.
 Such a type is called a \dfn{tuple type}.
 \par
 If the same type is defined repeatedly, {\Tm} will merge the definitions.
@@ -49,39 +49,34 @@ Redefinition of constructors is not allowed.
 In general the data structure description consists of a list of
 {\em type}\index{type} definitions.
 A type is either a \dfn{tuple} type or a \dfn{constructor} type.
-In a tuple type only one group of elements is possible,
-in a constructor type several different groups of elements are
+In a tuple type only one group of fields is possible,
+in a constructor type several different groups of fields are
 possible,
 and the possible groups are distinguished by the use of a \dfn{constructor}.
 For example, the data-structure definitions shown above define two types: 
 \verb+plot+ and \verb+xypoint+. The first is a constructor type,
 and the second is a tuple type.
 \par
-Each constructor and tuple contains a number of \dfn{elements}.
-An element contains either a type name,
-denoting a single element of that type,
+Each constructor and tuple contains a number of \dfn{fields}.
+An field contains either a type name,
+denoting a single field of that type,
 or a type name surrounded by square brackets (`{\tt [}' and `{\tt ]}'),
-denoting a list of arbitrary length of elements of that type.
-Each constructor element must be given a name---called the
-\dfn{element name}---by prefixing the type
+denoting a list of arbitrary length of fields of that type.
+Each constructor field must be given a name---called the
+\dfn{field name}---by prefixing the type
 specification with `{\it name\/}{\tt :}'.
-This element name is used to refer to the element.
-It is not allowed to use the same element name more than once in the same type,
-but the same element name can be used in different types.
+This field name is used to refer to the field.
+It is not allowed to use the same field name more than once in the same type,
+but the same field name can be used in different types.
 \par
 The following restrictions are enforced by {\Tm}:
 \index{data structure!restrictions|(}
 \begin{itemize}
 \item
-Constructor names must start with an upper-case character.
+All type and constructor names must be distinct.
 \item
-Type names must start with a lower-case character.
-\item
-Different types may not use the same constructor.
-\item
-All element names of a tuple or constructor must differ.
-\item
-No underscores are allowed in type, constructor or element names.
+All field names (including inherited field names) of a given type must
+be distinct. Different types can use the same field name, though.
 \end{itemize}
 \index{data structure!restrictions|)}
 \par
@@ -139,24 +134,25 @@ the {\Miranda} textual representation.
 This standard text representation is as follows:
 \begin{itemize}
 \item
-Each constructor is represented by the constructor name followed
-by the representation of the elements of that constructor.
-The constructor may be surrounded by any number of `{\tt (}'~`{\tt )}' pairs
+Each constructor and class is represented by the constructor or class
+name followed
+by the representation of the fields of that constructor or class.
+The entire representation may be surrounded by any number of `{\tt (}'~`{\tt )}' pairs
 to avoid ambiguity.
 \item
 Lists are surrounded by `{\tt [}' and `{\tt ]}',
-and the elements in the list are separated by commas.
+and the members of the list are separated by commas.
 \item
 Tuples are surrounded by exactly {\em one} \/pair of round brackets
 (`{\tt (}' and `{\tt )}'),
-and all elements of the tuple are separated by commas (`{\tt ,}').
+and all fields of the tuple are separated by commas (`{\tt ,}').
 \item
 The representation of primitive cannot be proscribed by standards; it
 is entirely dependent on the primitive type involved.
 \item
-Between constructor elements, constructor names and punctuation any
-number of spaces, tabs, carriage returns, newlines or form-feeds may
-be inserted.
+Between constructor and class fields, constructor and class names and
+punctuation any number of spaces, tabs, carriage returns, newlines or
+form-feeds may be inserted.
 Also, any number of comment lines may be inserted.
 Comment starts with the characters `{\tt ||}' and ends at the end of the line.
 \end{itemize}

@@ -1,11 +1,12 @@
-.foreach t ${ttypelist}
+.foreach t ${typelist}
 struct str_$t *$t;
 .endforeach
 
-.foreach t ${ctypelist}
+.foreach t ${typelist}
+.set l ${subclasses $t}
+.if ${len $l}
 typedef enum en_$t {
-.foreach c ${conslist $t}
-    TAG$c,
-.endforeach
+ ${seplist ", " ${prefix TAG $l}}
 } $t;
+.endif
 .endforeach
