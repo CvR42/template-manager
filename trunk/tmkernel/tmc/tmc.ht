@@ -237,7 +237,7 @@ struct str_$t_list {
 .append tl ${type $t $e}
 .endforeach
 .if ${len $(tl)}
-extern $t real_new_$t( ${seplist ", " $(tl)}, const char *, const int );
+extern $t real_new_$t( ${seplist ", " $(tl)}, const char *, int );
 .else
 extern $t real_new_$t( const char *, const int );
 .endif
@@ -270,7 +270,7 @@ extern $t_list new_$t_list( void );
 .. setroom_<type>_list functions.
 .. For this library they are dummy functions.
 .foreach t $(want_setroom_list)
-extern $t_list setroom_$t_list( $t_list, const unsigned int );
+extern $t_list setroom_$t_list( $t_list, unsigned int );
 .endforeach
 ..
 .. append_<type>_list() routines.
@@ -285,28 +285,33 @@ extern $t_list reverse_$t_list( $t_list );
 ..
 .. insert_<type>_list() routines.
 .foreach t $(want_insert_list)
-extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
+extern $t_list insert_$t_list( $t_list, unsigned int, $t  );
 .endforeach
 ..
 .. insertlist_<type>_list() routines.
 .foreach t $(want_insertlist_list)
-extern $t_list insertlist_$t_list( $t_list, const unsigned int, $t_list  );
+extern $t_list insertlist_$t_list( $t_list, unsigned int, $t_list  );
 .endforeach
 ..
 .. delete_<type>_list() routines.
 .foreach t $(want_delete_list)
-extern $t_list delete_$t_list( $t_list, const unsigned int );
+extern $t_list delete_$t_list( $t_list, unsigned int );
+.endforeach
+..
+.. deletelist_<type>_list() routines.
+.foreach t $(want_deletelist_list)
+extern $t_list deletelist_$t_list( $t_list, unsigned int, unsigned int );
 .endforeach
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
+extern $t_list extract_$t_list( $t_list, unsigned int, $t *, int * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.
 #ifdef LOGNEW
 .foreach t $(want_extractlist_list)
-extern $t_list real_extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list *, const char *, const int );
+extern $t_list real_extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list *, const char *, int );
 .endforeach
 #else
 .foreach t $(want_extractlist_list)
@@ -357,15 +362,15 @@ extern void fprint_$t_list( FILE *, const const_$t_list );
 .foreach t $(want_slice_list)
 extern $t_list real_slice_$t_list(
  const const_$t_list l,
- const unsigned int b,
- const unsigned int e,
+ unsigned int b,
+ unsigned int e,
  const char *_f,
- const int _l
+ int _l
 );
 .endforeach
 #else
 .foreach t $(want_slice_list)
-extern $t_list slice_$t_list( const_$t_list, const unsigned int, const unsigned int );
+extern $t_list slice_$t_list( const_$t_list, unsigned int, unsigned int );
 .endforeach
 #endif
 .endif
@@ -374,10 +379,10 @@ extern $t_list slice_$t_list( const_$t_list, const unsigned int, const unsigned 
 .if ${len $(want_rdup) $(want_rdup_list)}
 #ifdef LOGNEW
 .foreach t $(want_rdup)
-extern $t real_rdup_$t( const const_$t, const char *_f, const int _l );
+extern $t real_rdup_$t( const const_$t, const char *_f, int _l );
 .endforeach
 .foreach t $(want_rdup_list)
-extern $t_list real_rdup_$t_list( const const_$t_list, const char *_f, const int _l );
+extern $t_list real_rdup_$t_list( const const_$t_list, const char *_f, int _l );
 .endforeach
 #else
 .foreach t $(want_rdup)
@@ -393,10 +398,10 @@ extern $t_list rdup_$t_list( const const_$t_list );
 .if ${len $(want_fscan) $(want_fscan_list)}
 #ifdef LOGNEW
 .foreach t $(want_fscan)
-extern int real_fscan_$t( FILE *, $t *, const char *, const int );
+extern int real_fscan_$t( FILE *, $t *, const char *, int );
 .endforeach
 .foreach t $(want_fscan_list)
-extern int real_fscan_$t_list( FILE *, $t_list *, const char *, const int );
+extern int real_fscan_$t_list( FILE *, $t_list *, const char *, int );
 .endforeach
 #else
 .foreach t $(want_fscan)
