@@ -146,7 +146,7 @@ PROGS   =
 MAKEFILE = Makefile
 
 FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
-    config.hts makefile.tos
+    config.hts makefile.tos libtmcpp.mcp
 
 CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
 

@@ -26,7 +26,7 @@ static long search_plist( const tm_neutralp p )
 {
     for( size_t ix=0; ix<plistsz; ix++ ){
         if( plist[ix].ptr == p ){
-            return ix;
+            return (long) ix;
         }
     }
     return -1;
