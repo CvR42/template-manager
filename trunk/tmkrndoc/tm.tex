@@ -63,9 +63,13 @@ Append the given list of values after the current values of variable
 {\tt <var>}.
 The new value of the variable is visible in the current context.
 For example:
+\begin{showfile}
 \verbatiminput{append.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{append.out}
+\end{showfile}
 \end{desc}
 \begin{verbatim}
 .globalappend <var> <val> <val> <val>
@@ -103,9 +107,13 @@ for each of these values of {\tt <var>}.
 The new value of the variable is visible in the current context.
 \par
 For example:
+\begin{showfile}
 \verbatiminput{foreach.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{foreach.out}
+\end{showfile}
 \end{desc}
 \begin{verbatim}
 .if <expr>
@@ -124,9 +132,13 @@ only translate all lines between the following unbalanced
 If no {\tt .else} is encountered, no translation is done.
 \par
 For example:
+\begin{showfile}
 \verbatiminput{if.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{if.out}
+\end{showfile}
 \end{desc}
 \begin{verbatim}
 .switch <expr>
@@ -150,9 +162,13 @@ including 0.  There can be at most one \verb'.default' section. Note
 that more than one case can be executed for a switch value.
 \par
 For example:
+\begin{showfile}
 \verbatiminput{switch.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{switch.out}
+\end{showfile}
 \end{desc}
 \begin{verbatim}
 .while <expr>
@@ -246,9 +262,13 @@ value is ignored.  If you want to use it, use the
 \verb+${call <macro> <parm>..<parm>}+ form instead.
 \par
 For example:
+\begin{showfile}
 \verbatiminput{linemacro.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{linemacro.out}
+\end{showfile}
 \end{desc}
 \begin{verbatim}
 .macro <name> <parm>..<parm>
@@ -266,9 +286,13 @@ of the form \verb+${call <macro> parm..parm}+.
 See the description of these commands for further details.
 \par
 For example (a \verb'$[]' expression evaluates a numerical expression):
+\begin{showfile}
 \verbatiminput{macro.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{macro.out}
+\end{showfile}
 Note that the variable \verb'n' retains the value it had before the
 invocations of the macro, because all changes to \verb'n' that are
 done in the macro are removed upon completion of the macro.
@@ -300,9 +324,13 @@ a reference to a variable with name `{\tt <letter>}' or {\tt <digit>}
 respectively.
 \par
 For example:
+\begin{showfile}
 \verbatiminput{var.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{var.out}
+\end{showfile}
 Note that the result for `\verb+$bla+' is `{\tt +la}', since the
 variable `{\tt b}' is referenced, not the variable `{\tt bla}'.
 \par
@@ -418,9 +446,13 @@ Return {\it true} \/if ${\tt na} > {\tt nb}$.
 Return {\it true} \/if ${\tt na} \geq {\tt nb}$.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{cmp.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{cmp.out}
+\end{showfile}
 \subsection{Arithmetic functions}
 All arithmetic functions only work on numbers.
 \par
@@ -459,9 +491,13 @@ Return the minimum of ${\tt n1} \cdots {\tt nn}$.
 The list must contain at least 1 element.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{arith.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{arith.out}
+\end{showfile}
 \subsection{Boolean functions}
 \nopagebreak
 \par
@@ -490,9 +526,13 @@ Evaluate the expression {\tt cond}, and if it is {\it true}, return
 If {\tt a} or {\tt b} are absent, an empty string is assumed.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{boolean.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{boolean.out}
+\end{showfile}
 \subsection{String functions}
 \nopagebreak
 \begin{desctab}
@@ -524,9 +564,13 @@ Return the given words with all upper case characters converted to lower case.
 Return the given words with all lower case characters converted to upper case.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{textfn.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{textfn.out}
+\end{showfile}
 \subsection{List manipulation functions}
 \par
 \begin{desctab}
@@ -589,9 +633,13 @@ word. If two words are equally long, they are sorted lexicographically.
 Reverse the elements in the list.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{listfn.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{listfn.out}
+\end{showfile}
 \subsection{Set operations}
 \nopagebreak
 These functions implement common operations on sets,
@@ -627,9 +675,13 @@ an arbitrary list to a set.
 \\
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{setfn.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{setfn.out}
+\end{showfile}
 \subsection{Regular expressions}
 \label{s.regex}\nopagebreak
 \par
@@ -716,9 +768,13 @@ with the proper substitutions for any {\tt \&} and \verb!\d!.
 All elements that do not match {\tt ps} are copied without change.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{regex.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{regex.out}
+\end{showfile}
 \subsection{Environment access functions}
 \nopagebreak
 \par
@@ -876,9 +932,13 @@ of the type.
 \\
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{fnds.xt}
+\end{showfile}
 will produce (assuming the data structure definitions of page \pageref{plotds}):
+\begin{showfile}
 \verbatiminput{fnds.out}
+\end{showfile}
 \subsection{Class inquery functions}
 The functions listed below all access the inheritance information
 of the defined types.
@@ -904,9 +964,13 @@ or indirectly.
 \\
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{fnclass.xt}
+\end{showfile}
 will produce (assuming the data structure definitions of page \pageref{plotds}):
+\begin{showfile}
 \verbatiminput{fnclass.out}
+\end{showfile}
 \subsection{Obsolete data structure access functions}
 \par
 These functions have been used in previous version of {\Tm} to retrieve
@@ -1062,9 +1126,13 @@ If both are empty the list is returned unchanged, and an error
 is emitted.
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{service.xt}
+\end{showfile}
 will produce (assuming the data structure definitions of page \pageref{plotds}):
+\begin{showfile}
 \verbatiminput{service.out}
+\end{showfile}
 \subsection{Deferred evaluation}
 \begin{desctab}
 {\tt call m p1..pn}\index{call@{\tt call}}
@@ -1096,9 +1164,13 @@ and return them in a list.
 \\
 \end{desctab}
 For example:
+\begin{showfile}
 \verbatiminput{eval.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{eval.out}
+\end{showfile}
 \section{Arithmetic expressions}
 \label{s.intexpr}
 \index{arithmetic expressions|(}
@@ -1141,7 +1213,11 @@ Binary operators are right binding.
 That is,
 \[ a\ {\rm op}\ b\ {\rm op}\ c = a\ {\rm op}\ (b\ {\rm op}\ c) \]
 For example:
+\begin{showfile}
 \verbatiminput{math.xt}
+\end{showfile}
 will produce:
+\begin{showfile}
 \verbatiminput{math.out}
+\end{showfile}
 \index{arithmetic expressions|)}

@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <tmc.h>
 
-#include "token.h"
+#include "calc.h"
+#include "tokens.h"
 
 #ifdef LINUX
 #define yywrap() (1)
@@ -14,16 +15,15 @@
 %option nounput
 
 white_space	[ \t\f\n]
-sign		[\+\-]
 letter		[A-Za-z_]
 identifier	{letter}({letter}|[0-9])*
-number		{sign}?[0-9]+
+number		[0-9]+
 
 %%
 
 {white_space}+	{}
 {number}	{
-		    yylval._vnus_int = atio( yytext );
+		    yylval._literal = atoi( yytext );
 		    return LITERAL;
 		}
 {identifier}	{
