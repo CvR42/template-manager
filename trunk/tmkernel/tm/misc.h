@@ -18,7 +18,7 @@ extern bool any_member_tmstring_list( const tmstring_list sl, const tmstring_lis
 extern Field find_field( const ds_list types, const char *type, const char *nm );
 extern Field find_field_super( const ds_list types, tmstring_list supers, const char *nm );
 
-extern const tmstring_list extract_inherits( const ds_list types, const char *type );
+extern tmstring_list extract_inherits( const ds_list types, const char *type );
 extern void collect_subclasses( tmstring_list *res, const ds_list types, const tmstring type );
 extern void collect_superclasses( tmstring_list *res, const ds_list types, const char *type );
 extern void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring type );

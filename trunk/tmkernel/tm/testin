@@ -28,6 +28,9 @@ VARIABLES:
 .append unknownvariable bla bla bla
 unknownvariable: '$(unknownvariable)'
 '$(av)'
+.set x "a"
+.set y "\"a"
+$x $y
 ----
 Special variables:
 dollar: '$$'

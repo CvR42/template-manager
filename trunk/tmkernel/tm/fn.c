@@ -1977,7 +1977,7 @@ static Type_list add_Type_list( Type_list tl, Type t )
     unsigned int ix;
 
     for( ix=0; ix<tl->sz; ix++ ){
-	const Type lt = tl->arr[ix];
+	const_Type lt = tl->arr[ix];
 
 	if( lt->level == t->level && strcmp( lt->basetype, t->basetype ) == 0 ){
 	    rfre_Type( t );
@@ -1992,7 +1992,7 @@ static bool member_Type_list( Type_list tl, Type t )
     unsigned int ix;
 
     for( ix=0; ix<tl->sz; ix++ ){
-	Type e = tl->arr[ix];
+	const_Type e = tl->arr[ix];
 
 	if( e->level == t->level && strcmp( e->basetype, t->basetype ) == 0 ){
 	    return TRUE;
@@ -2079,10 +2079,12 @@ static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list block
 
     for( level=1; level<=t->level; level++ ){
 	Type dt = rdup_Type( t );
+	bool is_blocked;
 
 	dt->level = level;
+	is_blocked = member_Type_list( blocking, dt );
 	tl = add_Type_list( tl, dt );
-	if( member_Type_list( blocking, dt ) ){
+	if( is_blocked ){
 	    return tl;
 	}
     }
