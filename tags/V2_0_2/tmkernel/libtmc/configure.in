@@ -1,0 +1,30 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(tmc.h)
+
+dnl Checks for programs.
+AC_PROG_CC
+if test "$GCC" = "yes"; then
+  CFLAGS="-O6 -Wall -W -Wtraditional -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
+fi
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+AC_PROG_LN_S
+
+dnl Checks for libraries.
+dnl Replace `main' with a function in -linux:
+AC_CHECK_LIB(inux, main)
+dnl Replace `main' with a function in -lmalloc:
+AC_CHECK_LIB(malloc, main)
+
+dnl Checks for header files.
+AC_CONFIG_HEADER(config.h:config.hin)
+AC_HEADER_STDC
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(strerror memmove)
+
+AC_OUTPUT(Makefile)

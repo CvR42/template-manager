@@ -1,0 +1,7 @@
+.foreach v 0 1 42
+.if $v
+Yes
+.else
+No
+.endif
+.endforeach

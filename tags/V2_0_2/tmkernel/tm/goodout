@@ -1,0 +1,1023 @@
+
+VARIABLES:
+----
+'12'
+'12'
+'GOOD!'
+''
+'
+''
+''
+'$' '.' '"'
+unknownvariable: 'bla bla bla'
+'z y x z y x'
+----
+Special variables:
+dollar: '$'
+dot: '.'
+double quote: '"'
+
+COMMANDS:
+---------
+
+if:
+----
+if 1 done
+----
+if 0 not done
+----
+if "" done
+----
+
+switch:
+----
+--
+Default of switch
+--
+Case 'bla'
+--
+--
+Case 'bla'
+--
+a: 1
+a: 3
+b: default
+c: 1
+d: 2
+d: 3
+e: default
+f: default
+----
+
+insert:
+----
+var = `ladidah'
+
+---- start of testsub ----
+var = ladidah
+var = 123
+'testsub(10)'
+'test.ds'
+
+---- end of testsub ----
+This line is not terminated, but should still appear in the output
+var = `123'
+----
+
+include:
+----
+var = `ladidah'
+
+---- start of testsub ----
+var = ladidah
+var = 123
+'testsub(10)'
+'test.ds'
+
+---- end of testsub ----
+This line is not terminated, but should still appear in the output
+var = `ladidah'
+----
+
+redirect:
+----
+----
+
+error:
+----
+----
+
+foreach:
+----
+a
+b
+c
+d
+----
+----
+
+while:
+----
+1 2 3 4 5 6 7
+2 3 4 5 6 7
+3 4 5 6 7
+4 5 6 7
+5 6 7
+6 7
+7
+----
+
+FUNCTIONS:
+----------
+
+Comparison functions:
+----
+eq : '1' '0' '0'
+neq: '0' '1' '1'
+strcmp: '0' '-1' '1' '-1'
+== : '1' '0' '0' '0'
+!= : '0' '1' '1' '1'
+<  : '1' '0' '0'
+<= : '1' '1' '0'
+>  : '0' '0' '1'
+>= : '0' '1' '1'
+----
+
+Aritmetic functions:
+----
++: '15' '3' '0'
+-: '4' '-4' ''
+*: '120' '3' '1'
+/: '4' '3' '4' '0'
+%: '0' '2' '1' '3'
+max: '5' '3' '0'
+min: '-1' '3' '0'
+----
+
+Boolean:
+----
+and: '1' '0' '1'
+not: '0' '1' '0' '1'
+or:  '0' '1' '0'
+----
+
+If
+--
+if 0: [false] [] []
+if 1: [true] [true] []
+[]
+
+List manipulation:
+----
+index:   '1' '0' '0' '0'
+member:  '1' '0' '0' '0'
+shift:   'b c d e f' ''
+first:   'a' ''
+seplist: 'a, b, c, d, e, f' 'a' ''
+prefix:  'pfx_a pfx_b pfx_c pfx_d pfx_e pfx_f' 'pfx_a' ''
+suffix:  'a_sfx b_sfx c_sfx d_sfx e_sfx f_sfx' 'a_sfx' ''
+len:     '6' '1' '0'
+sort:    'a a b b c c d d e e f f' '-1 1 12 2' ''
+sizesort:'Top expr orig Thing thing number TopNone notuple SubNamed Toptuple exprOrig exprPlus subclass sublevel subtuple toplevel aliastype exprConst testclass aliastype2 subNamedlist SubNamedlistlist' '1 2 -1 12' ''
+uniq:    'a b c d e f' '-1 1 12 2' ''
+rev:     'f e d c b a' ''
+----
+
+Regular expressions:
+----
+funtion: subs
+* [&]: [[foobar] [fobar] [foo] [bar] [blabar] [a] [b] [barf] [foofoo] [barbar] [ian]]
+foo* 1: [1 fobar 1 bar blabar a b barf 1 barbar ian]
+foo* &&: [foobarfoobar fobar foofoo bar blabar a b barf foofoofoofoo barbar ian]
+(foo)* &\1: [foobarfoo fobar foofoo bar blabar a b barf foofoofoo barbar ian]
+(foo)(*) \2\1: [barfoo fobar foo bar blabar a b barf foofoo barbar ian]
+[a-e]* !&: [foobar fobar foo !bar !blabar !a !b !barf foofoo !barbar ian]
+(?)(*)(?) \3\2\1: [roobaf robaf oof rab rlabab a b farb ooofof rarbab nai]
+
+funtion: filt
+* [&]: [[foobar] [fobar] [foo] [bar] [blabar] [a] [b] [barf] [foofoo] [barbar] [ian]]
+foo* 1: [1 1 1]
+foo* &&: [foobarfoobar foofoo foofoofoofoo]
+(foo)* &\1: [foobarfoo foofoo foofoofoo]
+(foo)(*) \2\1: [barfoo foo foofoo]
+[a-e]* !&: [!bar !blabar !a !b !barf !barbar]
+(?)(*)(?) \3\2\1: [roobaf robaf oof rab rlabab farb ooofof rarbab nai]
+
+funtion: rmlist
+foo*: [fobar bar blabar a b barf barbar ian]
+foo*: [fobar bar blabar a b barf barbar ian]
+(foo)*: [fobar bar blabar a b barf barbar ian]
+foo(*): [fobar bar blabar a b barf barbar ian]
+(foo)(*): [fobar bar blabar a b barf barbar ian]
+[a-e]*: [foobar fobar foo foofoo ian]
+(?)(*)(?): [a b]
+----
+
+Filename access functions:
+----
+dsfilename: 'test.ds'
+tplfilename: 'testin'
+tpllineno: '243'
+1 bla
+testsub
+----
+Datastructure access functions:
+
+Pass 1
+mklist: test a test a test a  
+stemname: a b] [c [d] [e]] a[f] [[g]]
+listtypes: 
+delisttypes: 
+singletypes: a b] [c [d] [e]] a[f] [[g]]
+Pass 2
+mklist: test a [test [a [[[[[test [[[[[a  
+stemname: a b] c d] e]] a[f] g]]
+listtypes: [c [d] [e]] [[g]]
+delisttypes: c d] e]] [g]]
+singletypes: a b] a[f]
+Pass 3
+mklist: test a [test] [a] [[[[[test]]]]] [[[[[a]]]]]  
+stemname: a b] [c d e] a[f] g
+listtypes: [d] [e]] [[g]]
+delisttypes: d e] [g]
+singletypes: a b] [c a[f]
+Pass 4
+mklist: test a test] a] test]]]]] a]]]]]  
+stemname: a b [c [d [e a[f [[g
+listtypes: b] [d] [e]] a[f] [[g]]
+delisttypes: b [d [e] a[f [[g]
+singletypes: a [c
+inherits:  
+inheritors:  
+superclasses:  
+subclasses:  
+reach:  iserniet
+conslist:   
+fields:   
+allfields:   
+types: ''
+alias <aliases>: 'int expr expr'
+alias <mklist 2 aliases>: '[[number]] [[aliastype]] [[aliastype2]]'
+alias <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr int expr expr bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [number] [aliastype] [aliastype2]'
+fields <all>: 'file line la lb tup tl tn n thinglist thinglistlist a b n a b lbl'
+allfields <all>: 'file line file line tl tn la lb file line tl tn tup file line tl tn file line tl tn file line tl tn n file line tl tn thinglist file line tl tn file line tl tn thinglistlist file line tl tn file line tl tn a b file line a b file line n file line a b file line a b lbl file line'
+metatype <all>: 'tuple constructor constructor constructor tuple constructor constructor constructorbase constructor tuple constructorbase constructorbase constructor class class class class class class alias alias alias atom list list list list list list list list list list list list list list list list list list list list list list'
+virtual <all>: 'sublevel toplevel thing testclass expr'
+nonvirtual <all>: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist SubNamedlistlist notuple Thing subclass exprConst exprPlus exprOrig number aliastype aliastype2 bla [orig] [Top] [Toptuple] [TopNone] [subtuple] [SubNamed] [subNamedlist] [sublevel] [SubNamedlistlist] [notuple] [toplevel] [thing] [Thing] [subclass] [testclass] [exprConst] [exprPlus] [exprOrig] [expr] [number] [aliastype] [aliastype2]'
+virtual and nonvirtual behave as they should
+virtual and nonvirtual behave as they should
+types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int number expr expr tmstring'
+alltypes <all>: 'string int string int [thing] int [sublevel] [[sublevel]] string int [thing] int subtuple string int [thing] int string int [thing] int string int [thing] int int string int [thing] int [thing] string int [thing] int string int [thing] int [[thing]] string int [thing] int string int [thing] int [[int]] int string int [[int]] int string int number string int expr expr string int [[int]] int tmstring string int'
+subclasses <all>: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist Thing'
+reach <all>: 'string int [thing] Thing thing notuple [sublevel] SubNamed subNamedlist [[thing]] SubNamedlistlist sublevel [[sublevel]] Top Toptuple TopNone toplevel subtuple [int] [[int]] subclass number exprConst exprPlus tmstring exprOrig expr orig testclass aliastype2 aliastype'
+conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thing'
+metatype:  atom atom atom atom list
+
+=-=-=-=
+typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr number aliastype aliastype2'
+tuplelist: 'orig subtuple notuple'
+ctypelist: 'sublevel toplevel thing'
+classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
+aliases: 'number aliastype aliastype2'
+    conslist orig: ''
+    inherits orig: ''
+    inheritors orig: 'subtuple subclass expr'
+    superclasses orig: ''
+    subclasses orig: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
+    reach orig: 'string int thing_list Thing thing notuple sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top Toptuple TopNone toplevel subtuple int_list int_list_list subclass number exprConst exprPlus tmstring exprOrig expr orig'
+    isvirtual orig: '0'
+    metatype orig: 'tuple'
+    fields orig: 'file line'
+    allfields orig: 'file line'
+	ttypeclass orig file: 'single'
+	typelevel orig file: 0
+	typename orig file: 'string'
+	type orig file: 'string'
+	ttypeclass orig line: 'single'
+	typelevel orig line: 0
+	typename orig line: 'int'
+	type orig line: 'int'
+    conslist Top: ''
+    inherits Top: 'toplevel'
+    inheritors Top: ''
+    superclasses Top: 'orig subtuple toplevel'
+    subclasses Top: ''
+    reach Top: 'string int thing_list Thing thing sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top'
+    isvirtual Top: '0'
+    metatype Top: 'constructor'
+    fields Top: 'la lb'
+    allfields Top: 'file line tl tn la lb'
+	ttypeclass Top file: 'single'
+	typelevel Top file: 0
+	typename Top file: 'string'
+	type Top file: 'string'
+	ttypeclass Top line: 'single'
+	typelevel Top line: 0
+	typename Top line: 'int'
+	type Top line: 'int'
+	ttypeclass Top tl: 'list'
+	typelevel Top tl: 1
+	typename Top tl: 'thing'
+	type Top tl: 'thing_list'
+	ttypeclass Top tn: 'single'
+	typelevel Top tn: 0
+	typename Top tn: 'int'
+	type Top tn: 'int'
+	ttypeclass Top la: 'list'
+	typelevel Top la: 1
+	typename Top la: 'sublevel'
+	type Top la: 'sublevel_list'
+	ttypeclass Top lb: 'list'
+	typelevel Top lb: 2
+	typename Top lb: 'sublevel'
+	type Top lb: 'sublevel_list_list'
+    conslist Toptuple: ''
+    inherits Toptuple: 'toplevel'
+    inheritors Toptuple: ''
+    superclasses Toptuple: 'orig subtuple toplevel'
+    subclasses Toptuple: ''
+    reach Toptuple: 'string int thing_list Thing thing notuple sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top TopNone toplevel subtuple Toptuple'
+    isvirtual Toptuple: '0'
+    metatype Toptuple: 'constructor'
+    fields Toptuple: 'tup'
+    allfields Toptuple: 'file line tl tn tup'
+	ttypeclass Toptuple file: 'single'
+	typelevel Toptuple file: 0
+	typename Toptuple file: 'string'
+	type Toptuple file: 'string'
+	ttypeclass Toptuple line: 'single'
+	typelevel Toptuple line: 0
+	typename Toptuple line: 'int'
+	type Toptuple line: 'int'
+	ttypeclass Toptuple tl: 'list'
+	typelevel Toptuple tl: 1
+	typename Toptuple tl: 'thing'
+	type Toptuple tl: 'thing_list'
+	ttypeclass Toptuple tn: 'single'
+	typelevel Toptuple tn: 0
+	typename Toptuple tn: 'int'
+	type Toptuple tn: 'int'
+	ttypeclass Toptuple tup: 'single'
+	typelevel Toptuple tup: 0
+	typename Toptuple tup: 'subtuple'
+	type Toptuple tup: 'subtuple'
+    conslist TopNone: ''
+    inherits TopNone: 'toplevel'
+    inheritors TopNone: ''
+    superclasses TopNone: 'orig subtuple toplevel'
+    subclasses TopNone: ''
+    reach TopNone: 'string int thing_list Thing thing TopNone'
+    isvirtual TopNone: '0'
+    metatype TopNone: 'constructor'
+    fields TopNone: ''
+    allfields TopNone: 'file line tl tn'
+	ttypeclass TopNone file: 'single'
+	typelevel TopNone file: 0
+	typename TopNone file: 'string'
+	type TopNone file: 'string'
+	ttypeclass TopNone line: 'single'
+	typelevel TopNone line: 0
+	typename TopNone line: 'int'
+	type TopNone line: 'int'
+	ttypeclass TopNone tl: 'list'
+	typelevel TopNone tl: 1
+	typename TopNone tl: 'thing'
+	type TopNone tl: 'thing_list'
+	ttypeclass TopNone tn: 'single'
+	typelevel TopNone tn: 0
+	typename TopNone tn: 'int'
+	type TopNone tn: 'int'
+    conslist subtuple: ''
+    inherits subtuple: 'orig'
+    inheritors subtuple: 'notuple toplevel'
+    superclasses subtuple: 'orig'
+    subclasses subtuple: 'notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
+    reach subtuple: 'string int thing_list Thing thing notuple sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top Toptuple TopNone toplevel subtuple'
+    isvirtual subtuple: '0'
+    metatype subtuple: 'tuple'
+    fields subtuple: 'tl tn'
+    allfields subtuple: 'file line tl tn'
+	ttypeclass subtuple file: 'single'
+	typelevel subtuple file: 0
+	typename subtuple file: 'string'
+	type subtuple file: 'string'
+	ttypeclass subtuple line: 'single'
+	typelevel subtuple line: 0
+	typename subtuple line: 'int'
+	type subtuple line: 'int'
+	ttypeclass subtuple tl: 'list'
+	typelevel subtuple tl: 1
+	typename subtuple tl: 'thing'
+	type subtuple tl: 'thing_list'
+	ttypeclass subtuple tn: 'single'
+	typelevel subtuple tn: 0
+	typename subtuple tn: 'int'
+	type subtuple tn: 'int'
+    conslist SubNamed: ''
+    inherits SubNamed: 'sublevel'
+    inheritors SubNamed: ''
+    superclasses SubNamed: 'orig subtuple toplevel sublevel'
+    subclasses SubNamed: ''
+    reach SubNamed: 'string int thing_list Thing thing SubNamed'
+    isvirtual SubNamed: '0'
+    metatype SubNamed: 'constructor'
+    fields SubNamed: 'n'
+    allfields SubNamed: 'file line tl tn n'
+	ttypeclass SubNamed file: 'single'
+	typelevel SubNamed file: 0
+	typename SubNamed file: 'string'
+	type SubNamed file: 'string'
+	ttypeclass SubNamed line: 'single'
+	typelevel SubNamed line: 0
+	typename SubNamed line: 'int'
+	type SubNamed line: 'int'
+	ttypeclass SubNamed tl: 'list'
+	typelevel SubNamed tl: 1
+	typename SubNamed tl: 'thing'
+	type SubNamed tl: 'thing_list'
+	ttypeclass SubNamed tn: 'single'
+	typelevel SubNamed tn: 0
+	typename SubNamed tn: 'int'
+	type SubNamed tn: 'int'
+	ttypeclass SubNamed n: 'single'
+	typelevel SubNamed n: 0
+	typename SubNamed n: 'int'
+	type SubNamed n: 'int'
+    conslist subNamedlist: ''
+    inherits subNamedlist: 'sublevel'
+    inheritors subNamedlist: ''
+    superclasses subNamedlist: 'orig subtuple toplevel sublevel'
+    subclasses subNamedlist: ''
+    reach subNamedlist: 'string int thing_list Thing thing subNamedlist'
+    isvirtual subNamedlist: '0'
+    metatype subNamedlist: 'constructor'
+    fields subNamedlist: 'thinglist'
+    allfields subNamedlist: 'file line tl tn thinglist'
+	ttypeclass subNamedlist file: 'single'
+	typelevel subNamedlist file: 0
+	typename subNamedlist file: 'string'
+	type subNamedlist file: 'string'
+	ttypeclass subNamedlist line: 'single'
+	typelevel subNamedlist line: 0
+	typename subNamedlist line: 'int'
+	type subNamedlist line: 'int'
+	ttypeclass subNamedlist tl: 'list'
+	typelevel subNamedlist tl: 1
+	typename subNamedlist tl: 'thing'
+	type subNamedlist tl: 'thing_list'
+	ttypeclass subNamedlist tn: 'single'
+	typelevel subNamedlist tn: 0
+	typename subNamedlist tn: 'int'
+	type subNamedlist tn: 'int'
+	ttypeclass subNamedlist thinglist: 'list'
+	typelevel subNamedlist thinglist: 1
+	typename subNamedlist thinglist: 'thing'
+	type subNamedlist thinglist: 'thing_list'
+    conslist sublevel: 'SubNamed subNamedlist SubNamedlistlist'
+    inherits sublevel: 'toplevel'
+    inheritors sublevel: 'SubNamed subNamedlist SubNamedlistlist'
+    superclasses sublevel: 'orig subtuple toplevel'
+    subclasses sublevel: 'SubNamed subNamedlist SubNamedlistlist'
+    reach sublevel: 'string int thing_list Thing thing SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel'
+    isvirtual sublevel: '1'
+    metatype sublevel: 'constructorbase'
+        celmlist sublevel SubNamed: 'n'
+        fields SubNamed: 'n'
+        allfields SubNamed: 'file line tl tn n'
+            ctypeclass sublevel SubNamed n: 'single'
+	    ctypellev sublevel SubNamed n: 0
+            ctypename sublevel SubNamed n: 'int'
+	    ttypeclass SubNamed n: 'single'
+	    typelevel SubNamed n: 0
+	    typename SubNamed n: 'int'
+	    type SubNamed n: 'int'
+        celmlist sublevel subNamedlist: 'thinglist'
+        fields subNamedlist: 'thinglist'
+        allfields subNamedlist: 'file line tl tn thinglist'
+            ctypeclass sublevel subNamedlist thinglist: 'list'
+	    ctypellev sublevel subNamedlist thinglist: 1
+            ctypename sublevel subNamedlist thinglist: 'thing'
+	    ttypeclass subNamedlist thinglist: 'list'
+	    typelevel subNamedlist thinglist: 1
+	    typename subNamedlist thinglist: 'thing'
+	    type subNamedlist thinglist: 'thing_list'
+        celmlist sublevel SubNamedlistlist: 'thinglistlist'
+        fields SubNamedlistlist: 'thinglistlist'
+        allfields SubNamedlistlist: 'file line tl tn thinglistlist'
+            ctypeclass sublevel SubNamedlistlist thinglistlist: 'list'
+	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
+            ctypename sublevel SubNamedlistlist thinglistlist: 'thing'
+	    ttypeclass SubNamedlistlist thinglistlist: 'list'
+	    typelevel SubNamedlistlist thinglistlist: 2
+	    typename SubNamedlistlist thinglistlist: 'thing'
+	    type SubNamedlistlist thinglistlist: 'thing_list_list'
+    fields sublevel: ''
+    allfields sublevel: 'file line tl tn'
+	ttypeclass sublevel file: 'single'
+	typelevel sublevel file: 0
+	typename sublevel file: 'string'
+	type sublevel file: 'string'
+	ttypeclass sublevel line: 'single'
+	typelevel sublevel line: 0
+	typename sublevel line: 'int'
+	type sublevel line: 'int'
+	ttypeclass sublevel tl: 'list'
+	typelevel sublevel tl: 1
+	typename sublevel tl: 'thing'
+	type sublevel tl: 'thing_list'
+	ttypeclass sublevel tn: 'single'
+	typelevel sublevel tn: 0
+	typename sublevel tn: 'int'
+	type sublevel tn: 'int'
+    conslist SubNamedlistlist: ''
+    inherits SubNamedlistlist: 'sublevel'
+    inheritors SubNamedlistlist: ''
+    superclasses SubNamedlistlist: 'orig subtuple toplevel sublevel'
+    subclasses SubNamedlistlist: ''
+    reach SubNamedlistlist: 'string int thing_list Thing thing thing_list_list SubNamedlistlist'
+    isvirtual SubNamedlistlist: '0'
+    metatype SubNamedlistlist: 'constructor'
+    fields SubNamedlistlist: 'thinglistlist'
+    allfields SubNamedlistlist: 'file line tl tn thinglistlist'
+	ttypeclass SubNamedlistlist file: 'single'
+	typelevel SubNamedlistlist file: 0
+	typename SubNamedlistlist file: 'string'
+	type SubNamedlistlist file: 'string'
+	ttypeclass SubNamedlistlist line: 'single'
+	typelevel SubNamedlistlist line: 0
+	typename SubNamedlistlist line: 'int'
+	type SubNamedlistlist line: 'int'
+	ttypeclass SubNamedlistlist tl: 'list'
+	typelevel SubNamedlistlist tl: 1
+	typename SubNamedlistlist tl: 'thing'
+	type SubNamedlistlist tl: 'thing_list'
+	ttypeclass SubNamedlistlist tn: 'single'
+	typelevel SubNamedlistlist tn: 0
+	typename SubNamedlistlist tn: 'int'
+	type SubNamedlistlist tn: 'int'
+	ttypeclass SubNamedlistlist thinglistlist: 'list'
+	typelevel SubNamedlistlist thinglistlist: 2
+	typename SubNamedlistlist thinglistlist: 'thing'
+	type SubNamedlistlist thinglistlist: 'thing_list_list'
+    conslist notuple: ''
+    inherits notuple: 'subtuple'
+    inheritors notuple: ''
+    superclasses notuple: 'orig subtuple'
+    subclasses notuple: ''
+    reach notuple: 'string int thing_list Thing thing notuple'
+    isvirtual notuple: '0'
+    metatype notuple: 'tuple'
+    fields notuple: ''
+    allfields notuple: 'file line tl tn'
+	ttypeclass notuple file: 'single'
+	typelevel notuple file: 0
+	typename notuple file: 'string'
+	type notuple file: 'string'
+	ttypeclass notuple line: 'single'
+	typelevel notuple line: 0
+	typename notuple line: 'int'
+	type notuple line: 'int'
+	ttypeclass notuple tl: 'list'
+	typelevel notuple tl: 1
+	typename notuple tl: 'thing'
+	type notuple tl: 'thing_list'
+	ttypeclass notuple tn: 'single'
+	typelevel notuple tn: 0
+	typename notuple tn: 'int'
+	type notuple tn: 'int'
+    conslist toplevel: 'Top Toptuple TopNone'
+    inherits toplevel: 'subtuple'
+    inheritors toplevel: 'Top Toptuple TopNone sublevel'
+    superclasses toplevel: 'orig subtuple'
+    subclasses toplevel: 'Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
+    reach toplevel: 'string int thing_list Thing thing sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top notuple subtuple Toptuple TopNone toplevel'
+    isvirtual toplevel: '1'
+    metatype toplevel: 'constructorbase'
+        celmlist toplevel Top: 'la lb'
+        fields Top: 'la lb'
+        allfields Top: 'file line tl tn la lb'
+            ctypeclass toplevel Top la: 'list'
+	    ctypellev toplevel Top la: 1
+            ctypename toplevel Top la: 'sublevel'
+	    ttypeclass Top la: 'list'
+	    typelevel Top la: 1
+	    typename Top la: 'sublevel'
+	    type Top la: 'sublevel_list'
+            ctypeclass toplevel Top lb: 'list'
+	    ctypellev toplevel Top lb: 2
+            ctypename toplevel Top lb: 'sublevel'
+	    ttypeclass Top lb: 'list'
+	    typelevel Top lb: 2
+	    typename Top lb: 'sublevel'
+	    type Top lb: 'sublevel_list_list'
+        celmlist toplevel Toptuple: 'tup'
+        fields Toptuple: 'tup'
+        allfields Toptuple: 'file line tl tn tup'
+            ctypeclass toplevel Toptuple tup: 'single'
+	    ctypellev toplevel Toptuple tup: 0
+            ctypename toplevel Toptuple tup: 'subtuple'
+	    ttypeclass Toptuple tup: 'single'
+	    typelevel Toptuple tup: 0
+	    typename Toptuple tup: 'subtuple'
+	    type Toptuple tup: 'subtuple'
+        celmlist toplevel TopNone: ''
+        fields TopNone: ''
+        allfields TopNone: 'file line tl tn'
+    fields toplevel: ''
+    allfields toplevel: 'file line tl tn'
+	ttypeclass toplevel file: 'single'
+	typelevel toplevel file: 0
+	typename toplevel file: 'string'
+	type toplevel file: 'string'
+	ttypeclass toplevel line: 'single'
+	typelevel toplevel line: 0
+	typename toplevel line: 'int'
+	type toplevel line: 'int'
+	ttypeclass toplevel tl: 'list'
+	typelevel toplevel tl: 1
+	typename toplevel tl: 'thing'
+	type toplevel tl: 'thing_list'
+	ttypeclass toplevel tn: 'single'
+	typelevel toplevel tn: 0
+	typename toplevel tn: 'int'
+	type toplevel tn: 'int'
+    conslist thing: 'Thing'
+    inherits thing: ''
+    inheritors thing: 'Thing'
+    superclasses thing: ''
+    subclasses thing: 'Thing'
+    reach thing: 'Thing thing'
+    isvirtual thing: '1'
+    metatype thing: 'constructorbase'
+        celmlist thing Thing: ''
+        fields Thing: ''
+        allfields Thing: ''
+    fields thing: ''
+    allfields thing: ''
+    conslist Thing: ''
+    inherits Thing: 'thing'
+    inheritors Thing: ''
+    superclasses Thing: 'thing'
+    subclasses Thing: ''
+    reach Thing: 'Thing'
+    isvirtual Thing: '0'
+    metatype Thing: 'constructor'
+    fields Thing: ''
+    allfields Thing: ''
+    conslist subclass: ''
+    inherits subclass: 'testclass orig'
+    inheritors subclass: ''
+    superclasses subclass: 'testclass orig'
+    subclasses subclass: ''
+    reach subclass: 'int_list int_list_list int string subclass'
+    isvirtual subclass: '0'
+    metatype subclass: 'class'
+    fields subclass: ''
+    allfields subclass: 'a b file line'
+	ttypeclass subclass a: 'list'
+	typelevel subclass a: 2
+	typename subclass a: 'int'
+	type subclass a: 'int_list_list'
+	ttypeclass subclass b: 'single'
+	typelevel subclass b: 0
+	typename subclass b: 'int'
+	type subclass b: 'int'
+	ttypeclass subclass file: 'single'
+	typelevel subclass file: 0
+	typename subclass file: 'string'
+	type subclass file: 'string'
+	ttypeclass subclass line: 'single'
+	typelevel subclass line: 0
+	typename subclass line: 'int'
+	type subclass line: 'int'
+    conslist testclass: ''
+    inherits testclass: ''
+    inheritors testclass: 'subclass exprOrig'
+    superclasses testclass: ''
+    subclasses testclass: 'subclass exprOrig'
+    reach testclass: 'int_list int_list_list int string subclass tmstring exprOrig testclass'
+    isvirtual testclass: '1'
+    metatype testclass: 'class'
+    fields testclass: 'a b'
+    allfields testclass: 'a b'
+	ttypeclass testclass a: 'list'
+	typelevel testclass a: 2
+	typename testclass a: 'int'
+	type testclass a: 'int_list_list'
+	ttypeclass testclass b: 'single'
+	typelevel testclass b: 0
+	typename testclass b: 'int'
+	type testclass b: 'int'
+    conslist exprConst: ''
+    inherits exprConst: 'expr'
+    inheritors exprConst: ''
+    superclasses exprConst: 'orig expr'
+    subclasses exprConst: ''
+    reach exprConst: 'string int number exprConst'
+    isvirtual exprConst: '0'
+    metatype exprConst: 'class'
+    fields exprConst: 'n'
+    allfields exprConst: 'file line n'
+	ttypeclass exprConst file: 'single'
+	typelevel exprConst file: 0
+	typename exprConst file: 'string'
+	type exprConst file: 'string'
+	ttypeclass exprConst line: 'single'
+	typelevel exprConst line: 0
+	typename exprConst line: 'int'
+	type exprConst line: 'int'
+	ttypeclass exprConst n: 'single'
+	typelevel exprConst n: 0
+	typename exprConst n: 'number'
+	type exprConst n: 'number'
+    conslist exprPlus: ''
+    inherits exprPlus: 'expr'
+    inheritors exprPlus: ''
+    superclasses exprPlus: 'orig expr'
+    subclasses exprPlus: ''
+    reach exprPlus: 'string int number exprConst int_list int_list_list tmstring exprOrig expr exprPlus'
+    isvirtual exprPlus: '0'
+    metatype exprPlus: 'class'
+    fields exprPlus: 'a b'
+    allfields exprPlus: 'file line a b'
+	ttypeclass exprPlus file: 'single'
+	typelevel exprPlus file: 0
+	typename exprPlus file: 'string'
+	type exprPlus file: 'string'
+	ttypeclass exprPlus line: 'single'
+	typelevel exprPlus line: 0
+	typename exprPlus line: 'int'
+	type exprPlus line: 'int'
+	ttypeclass exprPlus a: 'single'
+	typelevel exprPlus a: 0
+	typename exprPlus a: 'expr'
+	type exprPlus a: 'expr'
+	ttypeclass exprPlus b: 'single'
+	typelevel exprPlus b: 0
+	typename exprPlus b: 'expr'
+	type exprPlus b: 'expr'
+    conslist exprOrig: ''
+    inherits exprOrig: 'expr testclass'
+    inheritors exprOrig: ''
+    superclasses exprOrig: 'orig expr testclass'
+    subclasses exprOrig: ''
+    reach exprOrig: 'string int int_list int_list_list tmstring exprOrig'
+    isvirtual exprOrig: '0'
+    metatype exprOrig: 'class'
+    fields exprOrig: 'lbl'
+    allfields exprOrig: 'file line a b lbl'
+	ttypeclass exprOrig file: 'single'
+	typelevel exprOrig file: 0
+	typename exprOrig file: 'string'
+	type exprOrig file: 'string'
+	ttypeclass exprOrig line: 'single'
+	typelevel exprOrig line: 0
+	typename exprOrig line: 'int'
+	type exprOrig line: 'int'
+	ttypeclass exprOrig a: 'list'
+	typelevel exprOrig a: 2
+	typename exprOrig a: 'int'
+	type exprOrig a: 'int_list_list'
+	ttypeclass exprOrig b: 'single'
+	typelevel exprOrig b: 0
+	typename exprOrig b: 'int'
+	type exprOrig b: 'int'
+	ttypeclass exprOrig lbl: 'single'
+	typelevel exprOrig lbl: 0
+	typename exprOrig lbl: 'tmstring'
+	type exprOrig lbl: 'tmstring'
+    conslist expr: ''
+    inherits expr: 'orig'
+    inheritors expr: 'exprConst exprPlus exprOrig'
+    superclasses expr: 'orig'
+    subclasses expr: 'exprConst exprPlus exprOrig'
+    reach expr: 'string int number exprConst exprPlus int_list int_list_list tmstring exprOrig expr'
+    isvirtual expr: '1'
+    metatype expr: 'class'
+    fields expr: ''
+    allfields expr: 'file line'
+	ttypeclass expr file: 'single'
+	typelevel expr file: 0
+	typename expr file: 'string'
+	type expr file: 'string'
+	ttypeclass expr line: 'single'
+	typelevel expr line: 0
+	typename expr line: 'int'
+	type expr line: 'int'
+    conslist number: ''
+    inherits number: ''
+    inheritors number: ''
+    superclasses number: ''
+    subclasses number: ''
+    reach number: 'int number'
+    isvirtual number: '0'
+    metatype number: 'alias'
+    fields number: ''
+    allfields number: ''
+    conslist aliastype: ''
+    inherits aliastype: ''
+    inheritors aliastype: ''
+    superclasses aliastype: ''
+    subclasses aliastype: ''
+    reach aliastype: 'string int number exprConst exprPlus int_list int_list_list tmstring exprOrig expr aliastype2 aliastype'
+    isvirtual aliastype: '0'
+    metatype aliastype: 'alias'
+    fields aliastype: ''
+    allfields aliastype: ''
+    conslist aliastype2: ''
+    inherits aliastype2: ''
+    inheritors aliastype2: ''
+    superclasses aliastype2: ''
+    subclasses aliastype2: ''
+    reach aliastype2: 'string int number exprConst exprPlus int_list int_list_list tmstring exprOrig expr aliastype2'
+    isvirtual aliastype2: '0'
+    metatype aliastype2: 'alias'
+    fields aliastype2: ''
+    allfields aliastype2: ''
+----
+
+Datastructure dependency
+----
+Testing error handling:
+Type sorting:
+depsort: [int int_list orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprPlus exprOrig number exprConst aliastype2 aliastype ]
+inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig number aliastype aliastype2 ]
+----
+
+String manipulation functions:
+----
+strpad: 'bla   ' 'abc' 'blawowwowwo'
+strpad: '00000' ''
+strlen: '6' '0' '0'
+strindex: '3' '0'
+toupper: 'BLA' 'BLA BLA BLA' ''
+tolower: 'bla' 'bla bla bla' ''
+capitalize: 'Bla' 'BLA Bla Bla' ''
+tr: 'ble ere e Ab vever vevor' '' '' ''
+tr: 'string list words [a   a]'
+----
+
+Miscellaneous functions:
+----
+1 0 0
+isinenv: [0] [1] [0]
+----
+
+verbose flag and other command line settings:
+----
+verbose = ''
+test1 = ''
+test2 = 'a'
+----
+
+comm:
+----
+'a e a e'
+''
+''
+''
+----
+
+excl:
+----
+'b c d f b c d f'
+''
+'a b c d'
+''
+----
+
+
+Integer expressions
+-------------------
+
+'-12' '12'
+'0' '28'
+'313' '5040' '1' '3'
+<: '1' '0' '1' '0' '0'
+<=: '1' '0' '1' '0' '1'
+>: '0' '1' '0' '1' '0'
+>=: '0' '1' '0' '1' '1'
+!=: '1' '1' '1' '1' '0'
+==: '0' '0' '0' '0' '1'
+ |
+-------
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 1
+
+ &
+-------
+0 0 | 0
+0 1 | 0
+1 0 | 0
+1 1 | 1
+
+ ==
+-------
+0 0 | 1
+0 1 | 0
+1 0 | 0
+1 1 | 1
+
+ !=
+-------
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 0
+
+ <
+-------
+0 0 | 0
+0 1 | 1
+1 0 | 0
+1 1 | 0
+
+ <=
+-------
+0 0 | 1
+0 1 | 1
+1 0 | 0
+1 1 | 1
+
+ >=
+-------
+0 0 | 1
+0 1 | 0
+1 0 | 1
+1 1 | 1
+
+ >
+-------
+0 0 | 0
+0 1 | 0
+1 0 | 1
+1 1 | 0
+
+12
+'0' '12' '
+'0' '0' '0'
+
+Buffer size test.
+Create a list with 2k worth elements.
+2
+4
+8
+16
+32
+64
+128
+256
+
+Macros
+------
+v:[toplevelv]
+[Start macro]
+a:[12]
+b:[34]
+v:[12 34]
+[end macro]
+v:[toplevelv]
+[Start macro]
+a:[a]
+b:[b]
+v:[a b]
+[end macro]
+v:[toplevelv]
+[Start macro]
+a:[1 2 3 4 5 6 7]
+b:[a b c d e]
+v:[1 2 3 4 5 6 7 a b c d e]
+[end macro]
+v:[toplevelv]
+v:[toplevelv]
+[Start new macro]
+a:[12] (done by macro 'submacro')
+b:[34] (done by macro 'submacro')
+v:[12 34] (done by macro 'submacro')
+[end new macro]
+v:[toplevelv]
+[Start new macro]
+a:[a] (done by macro 'submacro')
+b:[b] (done by macro 'submacro')
+v:[a b] (done by macro 'submacro')
+[end new macro]
+v:[toplevelv]
+[Start new macro]
+a:[1 2 3 4 5 6 7] (done by macro 'submacro')
+b:[a b c d e] (done by macro 'submacro')
+v:[1 2 3 4 5 6 7 a b c d e] (done by macro 'submacro')
+[end new macro]
+v:[toplevelv]
+[-1 -9 1 1 12 2 2343 3 4 4 5]
+  
+[]
+[]
+gv: 1, ngv: 1 gl: [123], ngl: [123]
+gv: 2, ngv: 1 gl: [123 test], ngl: [123]
+matchmacro: 'testglobal test tv' '' ''
+matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff i var l bad op libpath pass t av test2 msg v test1 tmvers ngl gv pats z wildstring unknownvariable pathsep yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
+----
+
+Eval
+----
+[$[1+2]] [3]
+----
+
+Delete all alias types
+----------------------
+Before: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr number aliastype aliastype2
+After: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr
+
+Test time formatting
+--------------------
+01/01/1970 00:00:01
+01/01/1970 00:00:10
+01/01/1970 00:16:40
+01/01/1970 02:46:40
+01/02/1970 03:46:40
+01/12/1970 13:46:40
+04/26/1970 17:46:40
+03/03/1973 09:46:40
+09/09/2001 01:46:40

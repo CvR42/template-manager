@@ -1,0 +1,16 @@
+.set listpre [
+.set listsuff ]
+classlist: ${classlist}
+ctypelist: ${ctypelist}
+tuplelist: ${tuplelist}
+.foreach t ${typelist}
+metatype $t: ${metatype $t}
+isvirtual $t: ${isvirtual $t}
+allfields $t: ${fields $t}
+alltypes $t: ${alltypes $t}
+.foreach e ${fields $t}
+  type $t $e: ${type $t $e}
+  typename $t $e: ${typename $t $e}
+  typelevel $t $e: ${typelevel $t $e}
+.endforeach
+.endforeach
