@@ -6,8 +6,8 @@ tuplelist: ${tuplelist}
 .foreach t ${typelist}
 metatype $t: ${metatype $t}
 isvirtual $t: ${isvirtual $t}
-fields $t: ${fields $t}
-types $t: ${types $t}
+allfields $t: ${fields $t}
+alltypes $t: ${alltypes $t}
 .foreach e ${fields $t}
   type $t $e: ${type $t $e}
   typename $t $e: ${typename $t $e}

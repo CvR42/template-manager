@@ -1,5 +1,0 @@
-Defined tuple types  : LinScale, LogScale, XYCurve, YCurve, plot, scale, xypoint
-Defined const. types : curve
-Defined constructors : XYCurve, YCurve
-Defined element names: color, points, xend, xstart
-Used types           : curve, int, num, scale, tmstring, xypoint

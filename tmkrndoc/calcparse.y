@@ -3,7 +3,7 @@
 
 #include "calc.h"
 
-static statement_list result;
+static command_list result;
 
 static void yyerror( const char *s )
 {
@@ -15,8 +15,8 @@ static void yyerror( const char *s )
 
 %union {
     expr			_expr;
-    statement			_statement;
-    statement_list		_statementList;
+    command			_command;
+    command_list		_commandList;
     tmstring			_identifier;
     int				_literal;
 }
@@ -27,8 +27,8 @@ static void yyerror( const char *s )
 %token <_literal>		LITERAL
 
 %type	<_expr>			expr
-%type	<_statement>		statement
-%type	<_statementList>	statementList
+%type	<_command>		command
+%type	<_commandList>	commandList
 
 %left '+' '-'
 %left '*'
@@ -36,21 +36,21 @@ static void yyerror( const char *s )
 %%
 
 program:
-    statementList
+    commandList
 	{ result = $1; }
 ;
 
-statementList:
+commandList:
     /* empty */
-	{ $$ = new_statement_list(); }
+	{ $$ = new_command_list(); }
 |
-    statementList statement
-	{ $$ = append_statement_list( $1, $2 ); }
+    commandList command
+	{ $$ = append_command_list( $1, $2 ); }
 ;
 
-statement:
+command:
     IDENTIFIER '=' expr ';'
-	{ $$ = new_statement( $1, $3 ); }
+	{ $$ = new_command( $1, $3 ); }
 ;
 
 expr:
@@ -87,13 +87,13 @@ int main( void )
 	exit( 1 );
     }
     st = tm_setprint( stdout, 1, 75, 8, 0 );
-    print_statement_list( st, result );
+    print_command_list( st, result );
     level = tm_endprint( st );
     if( level != 0 ){
 	fprintf( stderr, "Internal error: bracket level = %d\n", level );
 	exit( 1 );
     }
-    rfre_statement_list( result );
+    rfre_command_list( result );
     if( get_balance_calc() != 0 || get_balance_tmstring() != 0 ){
         fprintf( stderr, "Tm object allocation not balanced\n" );
         stat_calc( stderr );

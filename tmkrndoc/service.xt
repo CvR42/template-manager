@@ -10,3 +10,6 @@ listtypes: [${listtypes $(tl)}]
 mklist: [${mklist 3 a z}]
 singletypes: [${singletypes $(tl)}]
 stemname: [${stemname $(tl)}]
+.foreach t int ${typelist}
+reach $t: ${reach $t}
+.endforeach

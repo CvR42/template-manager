@@ -1,5 +1,5 @@
 || Representation of a stream of variable assignments.
-statement = { lhs:tmstring, rhs:expr };
+command = { lhs:tmstring, rhs:expr };
 
 expr ~=
     ExprPlus: { a:expr, b:expr } |
