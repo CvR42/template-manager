@@ -73,9 +73,9 @@ typedef int tags_$t;
 .foreach t ${depsort $(need_ds)}
 .. Structure definitions for all the constructors of the type
 .. That have elements (C does not like empty structures or unions).
+/* Structure for ${metatype $t} $t. */
 .switch ${metatype $t}
 .case constructor constructorbase class
-/* Structure for ${metatype $t} $t. */
 struct str_$t {
 #ifdef LOGNEW
     long int lognew_id;
@@ -86,7 +86,6 @@ struct str_$t {
 .endforeach
 };
 .case tuple
-/* Structure for $t. */
 struct str_$t {
 #ifdef LOGNEW
     long int lognew_id;
@@ -94,11 +93,11 @@ struct str_$t {
 .foreach e ${fields $t inherited}
     ${type $t $e} $e;
 .endforeach
-#ifndef LOGNEW
 .if ${not ${len ${fields $t inherited}}}
+#ifndef LOGNEW
     int _dummy_field;
-.endif
 #endif
+.endif
 };
 .endswitch
 
