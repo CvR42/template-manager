@@ -130,6 +130,7 @@ struct str_$t_list {
 .foreach c ${conslist $t}
 .foreach e ${fields $c}
 #define to_$c(e) (&(e->u.ue_$c))
+#define $c u.ue_$c
 .endforeach
 .endforeach
 .endif
