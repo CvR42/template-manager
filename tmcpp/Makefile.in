@@ -30,6 +30,9 @@ all:
 install:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done
 
+uninstall:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) uninstall; cd ..; done
+
 distclean:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
 	rm -f $(JUNK)
