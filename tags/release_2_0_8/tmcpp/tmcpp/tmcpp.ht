@@ -1,0 +1,288 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+..
+.. file: tmcpp.ht
+.. Tm C++ support.
+//////// WARNING: THIS IS GENERATED CODE. //////
+
+.call no_multiple_inheritance "$(need_ds)"
+.call no_childless_virtual "$(need_ds)"
+.set problem 0
+.foreach t ${tuplelist}
+.if ${len ${inherits $t}}
+.error A tuple should not inherit:
+.error $t inherits from ${inherits $t}
+.set problem 1
+.endif
+.if ${len ${inheritors $t}}
+.error A tuple should not have inheritors:
+.error ${seplist ", " ${inheritors $t}} inherits from $t
+.set problem 1
+.endif
+.endforeach
+.if $(problem)
+.exit 1
+.endif
+// ---- start of ${tplfilename} ----
+// External definitions (Version for array list).
+//
+// template file:      ${tplfilename}
+// datastructure file: ${dsfilename}
+// tm version:         $(tmvers)
+// tm kernel version:  $(kernel-version)
+
+// data structures
+
+// Forward class declarations for all types.
+.foreach t ${depsort $(need_ds)}
+class $t;
+.endforeach
+.foreach t $(need_ds_list)
+class $t_list;
+.endforeach
+
+.foreach t $(need_ds)
+#define $tNIL ($t *)0
+.endforeach
+.foreach t $(need_ds_list)
+#define $t_listNIL ($t_list *)0
+.endforeach
+
+.set tl
+.foreach t ${singletypes ${excl $(need_ds) "" ${tuplelist}}}
+.append tl ${call rootclass $t}
+.endforeach
+.set tl ${uniq $(tl)}
+.foreach t $(tl)
+.set l ${nonvirtual ${inheritsort $t ${subclasses $t}}}
+.if ${len $l}
+typedef enum en_tags_$t {
+    ${seplist ", " ${prefix TAG $l}}
+} tags_$t;
+.else
+typedef int tags_$t;
+.endif
+
+.endforeach
+
+.foreach t $(need_is)
+.switch ${metatype $t}
+.case tuple
+#define is_$t(e) (1)
+.case constructor class constructorbase
+.if ${len ${inherits $t}}
+.set l ${nonvirtual ${inheritsort $t ${subclasses $t}}}
+.if ${== ${len $l} 1}
+#define is_$t(e) ((e)->tag==TAG$l)
+.else
+#define is_$t(e) (((e)->tag>=TAG${first $l})&&((e)->tag<=TAG${first ${rev $l}}))
+.endif
+.else
+#define is_$t(e) (1)
+.endif
+.endswitch
+.endforeach
+.foreach t $(need_is_list)
+#define is_$t_list(e) (1)
+.endforeach
+
+.foreach t ${inheritsort $(need_ds)}
+.. Class definitions for all the constructors of the type
+// Class for ${metatype $t} '$t'.
+.if ${len ${inherits $t}}
+class $t: ${prefix "public " ${seplist ", " ${inherits $t}}} {
+.else
+class $t {
+.endif
+public:
+    static unsigned long newcount;
+    static unsigned long freecount;
+
+.switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
+.case constructor constructorbase class
+
+public:
+.if ${len ${inherits $t}}
+.else
+    tags_${call rootclass $t} tag;
+.endif
+.foreach e ${fields $t}
+.set et ${type $t $e}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
+    $(et) $e;
+.else
+    $(et) *$e;
+.endif
+.endforeach
+
+.set tl
+.foreach e ${allfields $t}
+.set et ${type $t $e}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
+.append tl ${type $t $e}
+.else
+.append tl ${type $t $e}*
+.endif
+.endforeach
+    $t( ${seplist ", " $(tl)} );
+//    virtual $t& operator=( const $t & );
+.case tuple
+public:
+.foreach e ${fields $t}
+.set et ${type $t $e}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
+    ${type $t $e} $e;
+.else
+    ${type $t $e} *$e;
+.endif
+.endforeach
+
+.set tl
+.foreach e ${allfields $t}
+.set et ${type $t $e}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
+.append tl ${type $t $e}
+.else
+.append tl ${type $t $e}*
+.endif
+.endforeach
+    $t( ${seplist ", " $(tl)} );
+//    virtual $t& operator=( const $t & );
+.endswitch
+    $t( const $t & );
+    virtual ~$t();
+    virtual $t *clone() const { return new $t( *this ); }
+.if ${member $t $(need_destroy)}
+    virtual void destroy();
+.endif
+};
+
+.endforeach
+
+.foreach t $(need_ds_list)
+class $t_list {
+public:
+    unsigned int sz;
+    unsigned int room;
+
+public:
+.if ${member $t $(valuetypes) $(legacytypes)}
+    typedef $t value_type;
+.else
+    typedef $t *value_type;
+.endif
+    typedef value_type *iterator;
+    typedef const value_type *const_iterator;
+    typedef unsigned int size_type;
+    typedef int difference_type;
+    static unsigned long newcount;
+    static unsigned long freecount;
+    value_type *arr;
+
+    $t_list( const size_type rm = 0 );
+    $t_list( const $t_list &l );
+    virtual ~$t_list();
+    virtual $t_list *clone() const { return new $t_list( *this ); }
+
+    virtual inline size_type size() const { return sz; }
+    virtual inline size_type capacity() const { return room; }
+    virtual inline bool empty() const { return sz == 0; }
+
+    virtual void reserve( const size_type rm );
+    virtual inline void resize( size_type new_sz ) { $t_list::reserve( new_sz ); sz = new_sz; }
+
+    virtual inline iterator begin() { return arr; }
+    virtual inline iterator end() { return arr+sz; }
+.if ${member $t $(need_reverse_list)}
+    virtual void reverse();
+.endif
+.if ${member $t $(need_extract_list)}
+    virtual bool extract( const unsigned int, value_type * );
+.endif
+.if ${member $t $(need_erase_list)}
+    virtual void erase( const unsigned int );
+    virtual void erase( const unsigned int, const unsigned int );
+.endif
+.if ${member $t $(need_slice_list)}
+    virtual $t_list *slice( const unsigned int, const unsigned int ) const;
+.endif
+.if ${member $t $(need_append_list)}
+    virtual void append( value_type );
+.endif
+.if ${member $t $(need_insert_list)}
+    virtual void insert( const unsigned int, value_type );
+.endif
+.if ${member $t $(need_insertlist_list)}
+    virtual void insertlist( unsigned int, $t_list & );
+.endif
+.if ${member $t $(need_extractlist_list)}
+    virtual $t_list *extractlist( unsigned int, unsigned int );
+.endif
+.if ${member $t $(need_concat_list)}
+    virtual void concat( $t_list * );
+.endif
+.if ${member $t $(need_destroy_list)}
+    virtual void destroy();
+.endif
+};
+
+.endforeach
+.foreach t $(need_ds)
+#define to_$t(e) (($t *)e)
+.endforeach
+
+.. print() routines
+.foreach t $(want_print)
+extern void print_$t( TmPrintState *, const $t * );
+.endforeach
+.foreach t $(want_print_list)
+extern void print_$t_list( TmPrintState *, const $t_list * );
+.endforeach
+..
+.. fprint() routines
+.foreach t $(want_fprint)
+extern void fprint_$t( FILE *, const $t * );
+.endforeach
+.foreach t $(want_fprint_list)
+extern void fprint_$t_list( FILE *, const $t_list * );
+.endforeach
+..
+.. fscan_<type>() routines
+.if ${len $(want_fscan) $(want_fscan_list)}
+.foreach t $(want_fscan)
+.if ${member $t $(valuetypes)}
+extern int fscan_$t( FILE *, $t * );
+.else
+extern int fscan_$t( FILE *, $t ** );
+.endif
+.endforeach
+.foreach t $(want_fscan_list)
+extern int fscan_$t_list( FILE *, $t_list ** );
+.endforeach
+.endif
+..
+.. compare() routines
+.foreach t $(want_compare)
+extern int compare( const $t &, const $t & );
+.endforeach
+.foreach t $(want_compare_list)
+extern int compare( const $t_list &, const $t_list & );
+.endforeach
+..
+.. Misc. functions.
+.if ${member flush_$(basename) $(want_misc)}
+extern void flush_$(basename)( void );
+.endif
+.if ${member stat_$(basename) $(want_misc)}
+extern void stat_$(basename)( FILE * );
+.endif
+.if ${member get_balance_$(basename) $(want_misc)}
+extern int get_balance_$(basename)( void );
+.endif
+..
+// ---- end of ${tplfilename} ----
+// Code generation required ${processortime} milliseconds.

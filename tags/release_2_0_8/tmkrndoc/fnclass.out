@@ -1,0 +1,28 @@
+inherits plot: 
+inheritors plot: XYPlot YPlot
+subclasses plot: XYPlot YPlot
+superclasses plot: 
+inherits XYPlot: plot
+inheritors XYPlot: 
+subclasses XYPlot: 
+superclasses XYPlot: plot
+inherits YPlot: plot
+inheritors YPlot: 
+subclasses YPlot: 
+superclasses YPlot: plot
+inherits xypoint: 
+inheritors xypoint: 
+subclasses xypoint: 
+superclasses xypoint: 
+inherits LinScale: scale
+inheritors LinScale: 
+subclasses LinScale: 
+superclasses LinScale: scale
+inherits LogScale: scale
+inheritors LogScale: 
+subclasses LogScale: 
+superclasses LogScale: scale
+inherits scale: 
+inheritors scale: LinScale LogScale
+subclasses scale: LinScale LogScale
+superclasses scale: 

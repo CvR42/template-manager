@@ -1,0 +1,25 @@
+\setlength{\unitlength}{1mm}
+\begin{picture}(130,140)
+%\put(0,0){\circle{1}}
+%\put(130,0){\circle{1}}
+%\put(130,140){\circle{1}}
+%\put(0,140){\circle{1}}
+\put(0,95){\framebox(60,45)[t]{\begin{minipage}{58\unitlength}\vspace{1mm}\begin{footnotesize}\verbatiminput{title.ds}\end{footnotesize}\end{minipage}}}
+\put(70,95){\framebox(60,45)[t]{\begin{minipage}{58\unitlength}\vspace{1mm}\begin{footnotesize}\verbatiminput{title.ct}\end{footnotesize}\end{minipage}}}
+\put(0,90){\makebox(60,5)[l]{\bf Data structure (.ds) file}}
+\put(70,90){\makebox(60,5)[r]{\bf Template (.ct) file}}
+%
+\put(55,95){\vector(0,-1){10}}    % Ds to Tm
+\put(75,95){\vector(0,-1){10}}    % template to Tm
+%
+\put(65,70){\oval(50,30)}
+\put(40,55){\makebox(50,30){\Large \bf Tm}}
+%
+\put(65,55){\vector(0,-1){10}}    % Tm to .c
+%
+%
+\put(35,5){\framebox(60,40)[t]{\begin{minipage}{58\unitlength}\vspace{1mm}\begin{footnotesize}\verbatiminput{title.c}\end{footnotesize}\end{minipage}}}
+%%
+%%
+\put(35,0){\makebox(60,5){\bf Output (.c) file}}
+\end{picture}

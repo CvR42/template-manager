@@ -1,0 +1,34 @@
+\chapter{Invoking Tm}
+\label{s.command}
+\index{invoking Tm}
+\index{command line}
+\index{option}
+In its simplest form, {\Tm} is invoked as follows:
+\begin{verbatim}
+tm <ds-file> <template-file>
+\end{verbatim}
+Where \verb'<ds-file>' is a data structure definition file, and
+\verb'<template-file>' is a template file.
+If no \verb'<template-file>' is given, input is read from standard input.
+If neither file is given, an empty \verb'<ds-file>' is assumed, and
+input is read from standard input.
+\par
+Also, the following flags can be given:
+
+\begin{flushleft}
+\begin{tabular}{ll}
+\verb'-d<debugflags>'  & Set given debug flags. \\
+\verb'-e<file>'        & Redirect errors to file \verb'<file>'. \\
+\verb'-h'              & Show a help text. \\
+\verb'-I<path>'        & Append \verb'<path>' to the search path. \\
+\verb'-o<file>'        & Redirect output to file \verb'<file>'. \\
+\verb'-s<var>'         & Set variable \verb'<var>' to the empty string. \\
+\verb'-s<var>=<val>'   & Set variable \verb'<var>' to string \verb'<val>'. \\
+\verb'-v'              & equivalent to \verb'-sverbose'. \\
+\end{tabular}
+\end{flushleft}
+
+For the debugging flags, see the online help text given for
+\begin{verbatim}
+tm -h
+\end{verbatim}

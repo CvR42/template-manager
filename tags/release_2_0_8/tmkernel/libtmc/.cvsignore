@@ -1,0 +1,9 @@
+configure
+dist.lst
+Makefile
+config.h
+testprog
+testout
+testerr
+config.log
+config.status

@@ -1,0 +1,9 @@
+alutest.tos
+.c [-DLOGNEW -DSTAT]
+=
+PCSTART.O
+alutest.c
+alucode.c
+tmc.lib
+pcfltlib.lib
+PCSTDLIB.LIB

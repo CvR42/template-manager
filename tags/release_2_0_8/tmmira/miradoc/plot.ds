@@ -1,0 +1,6 @@
+|| representation of plot data
+plot ::=
+    XYPlot xycolor:int points:[xypoint] |
+    YPlot ycolor:int xstart:num xend:num points:[num] ;
+
+xypoint == ( x:num, y:num );
