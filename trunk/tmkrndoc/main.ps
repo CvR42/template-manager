@@ -8,7 +8,7 @@
 %DVIPSWebPage: (www.radicaleye.com)
 %DVIPSCommandLine: dvips main
 %DVIPSParameters: dpi=600, compressed
-%DVIPSSource:  TeX output 1999.10.21:1655
+%DVIPSSource:  TeX output 1999.11.22:1828
 %%BeginProcSet: texc.pro
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
@@ -3602,11 +3602,11 @@ b Fi(nm)p Fo(.)43 b(If)30 b(the)h(v)-5 b(ariable)29 b(do)r(es)g(not)h
 (vironmen)n(t)f(v)-5 b(ariable)28 b Fi(nm)g Fo(exists.)41
 b(Return)29 b Fj(true)f Fo(if)i(it)f(exists,)1018 795
 y(or)d Fj(false)j Fo(if)f(it)g(do)r(es)g(not.)277 895
-y Fi(processortime)169 b Fo(Return)27 b(the)h(name)g(of)f(the)h(\014le)
-g(that)g(describ)r(es)f(the)h(data)f(structures.)277
-995 y Fi(searchfile)39 b(fn..fn)n Fo(Giv)n(en)c(a)h(list)g(of)g(\014le)
-h(names,)g(return)f(a)g(list)g(of)g(full)h(names)e(\014les)h(that)h(ha)
-n(v)n(e)e(b)r(een)1018 1094 y(lo)r(cated)27 b(using)g(the)h(searc)n(h)e
+y Fi(dsfilename)301 b Fo(Return)27 b(the)h(name)g(of)f(the)h(\014le)g
+(that)g(describ)r(es)f(the)h(data)f(structures.)277 995
+y Fi(searchfile)39 b(fn..fn)n Fo(Giv)n(en)c(a)h(list)g(of)g(\014le)h
+(names,)g(return)f(a)g(list)g(of)g(full)h(names)e(\014les)h(that)h(ha)n
+(v)n(e)e(b)r(een)1018 1094 y(lo)r(cated)27 b(using)g(the)h(searc)n(h)e
 (path,)i(see)f(the)h(function)g Fi(searchpath)p Fo(.)1018
 1194 y(If)h(a)f(\014le)h(can)g(not)f(b)r(e)i(found)f(in)g(the)g(searc)n
 (h)e(path,)j(the)f(string)f Fi(?)g Fo(\(a)h(single)f(question)1018
@@ -4044,17 +4044,18 @@ g(alias)f(t)n(yp)r(e)i(is)f(the)g(target)f(t)n(yp)r(e)i(of)f(the)h
 (t)n(yp)r(e)h(is)g(empt)n(y)-7 b(.)980 3945 y(The)34
 b Fj(r)l(e)l(ach)g Fo(of)f(a)g(t)n(yp)r(e)h(is)g(the)f(union)h(of)f
 (the)h(t)n(yp)r(e)g(itself,)h(the)f(direct)g(reac)n(h)e(of)h(the)980
-4045 y(t)n(yp)r(e,)f(and)e(the)i(reac)n(h)d(of)i(the)g(t)n(yp)r(es)g
-(in)g(the)g(direct)f(reac)n(h)g(of)g(the)h(t)n(yp)r(e.)47
-b(Th)n(us,)31 b(the)980 4145 y(reac)n(h)26 b(is)i(the)g(transitiv)n(e)f
-(closure)f(of)i(the)g(direct)f(reac)n(h.)227 4441 y(F)-7
-b(or)27 b(example:)434 4563 y Ft(inheritsort)39 b(${typelist}:)505
-4641 y(${inheritsort)g(${typelist}})434 4720 y(depsort)f(${typelist}:)
-505 4799 y(${depsort)g(${typelist}})434 4878 y(.set)f(listpre)g(<)434
-4957 y(.set)g(listsuff)g(>)434 5036 y(.set)g(tl)f(a)f(<b>)h(<<c>>)h
-(<<<d>>>)g(e>)f(<f)434 5115 y(delisttypes:)j([${delisttypes)g
-($\(tl\)}])434 5194 y(listtypes:)f([${listtypes)h($\(tl\)}])434
-5272 y(mklist:)f([${mklist)f(3)f(a)g(z}])434 5351 y(singletypes:)j
+4045 y(t)n(yp)r(e,)j(and)e(the)g(reac)n(h)f(of)h(the)g(t)n(yp)r(es)g
+(in)g(the)h(direct)f(reac)n(h)e(of)i(the)h(t)n(yp)r(e.)56
+b(In)34 b(other)980 4145 y(w)n(ords,)26 b(the)i(reac)n(h)f(is)g(the)h
+(transitiv)n(e)f(closure)f(of)i(the)g(direct)f(reac)n(h.)227
+4441 y(F)-7 b(or)27 b(example:)434 4563 y Ft(inheritsort)39
+b(${typelist}:)505 4641 y(${inheritsort)g(${typelist}})434
+4720 y(depsort)f(${typelist}:)505 4799 y(${depsort)g(${typelist}})434
+4878 y(.set)f(listpre)g(<)434 4957 y(.set)g(listsuff)g(>)434
+5036 y(.set)g(tl)f(a)f(<b>)h(<<c>>)h(<<<d>>>)g(e>)f(<f)434
+5115 y(delisttypes:)j([${delisttypes)g($\(tl\)}])434
+5194 y(listtypes:)f([${listtypes)h($\(tl\)}])434 5272
+y(mklist:)f([${mklist)f(3)f(a)g(z}])434 5351 y(singletypes:)j
 ([${singletypes)g($\(tl\)}])434 5430 y(stemname:)f([${stemname)h
 ($\(tl\)}])434 5509 y(.foreach)f(t)d(int)i(${typelist})434
 5588 y(reach)g($t:)f(${reach)h($t})434 5667 y(.endforeach)227
