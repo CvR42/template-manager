@@ -20,12 +20,9 @@
  */
 int fscan_tmtext( FILE *f, tmtext **s )
 {
-    int c;
-    int brac;
-
     *s = tmtextNIL;
-    brac = tm_fscanopenbrac( f );
-    c = fgetc( f );
+    int brac = tm_fscanopenbrac( f );
+    int c = fgetc( f );
     if( c == '@' ){
 	*s = tmtextNIL;
 	return 0;

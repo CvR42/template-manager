@@ -8,25 +8,25 @@
 #include "tmcpp.h"
 #include "config.h"
 
-/* Given a tmtext 't', a position 'pos' and a size 'sz', make room for 'sz'
- * characters in the tmtext, starting at position 'pos'.
+/* Given a position 'pos' and a size 'blk_sz', make room for 'blk_sz'
+ * characters in the ext, starting at position 'pos'.
  */
-void insblock_tmtext( tmtext *t, const long pos, const long sz )
+void tmtext::insblock( const long pos, const long blk_sz )
 {
-    t->reserve( t->sz+sz );
-    long z = t->sz-pos;
+    reserve( sz+blk_sz );
+    long z = sz-pos;
     if( z<=0 ){
-	/* The chars are to be inserted at the end of the tmtext,	 */
-	t->sz += sz;
+	// The chars are to be inserted at the end of the tmtext
+	sz += blk_sz;
 	return;
     }
 #if HAVE_MEMMOVE
-    char *s = t->arr+pos;
-    char *d = t->arr+pos+sz;
+    char *s = arr+pos;
+    char *d = arr+pos+blk_sz;
     memmove( d, s, z );
 #else
-    char *s = t->arr+t->sz;
-    char *d = t->arr+t->sz+sz;
+    char *s = arr+sz;
+    char *d = arr+sz+blk_sz;
     while( z>0 ){
 	d--;
 	s--;
@@ -34,5 +34,5 @@ void insblock_tmtext( tmtext *t, const long pos, const long sz )
 	z--;
     }
 #endif
-    t->sz += sz;
+    sz += blk_sz;
 }

@@ -2,5 +2,5 @@ bracket level: 0
 get_balance_tmstring(): 0
 tmtext::get_balance(): 0
 tmstring            :    355 allocated,    355 freed.
-tmtext              :     37 allocated,     37 freed.
-testprog.c(770): *** fatal error: test of 'tm_fatal'
+tmtext              :     38 allocated,     38 freed.
+testprog.c(787): *** fatal error: test of 'tm_fatal'

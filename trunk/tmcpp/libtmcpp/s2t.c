@@ -10,7 +10,7 @@
 // Construct a text from a string
 tmtext::tmtext( const char *s ): arr(0), curpos(0), sz(0), room(0)
 {
-    puts_tmtext( s, this );
+    append( s );
     curpos = 0;
     newcount++;
 }

@@ -20,14 +20,13 @@ void print_tmtext( TmPrintState *st, const tmtext *t )
 	st->printWord( "@" );
 	return;
     }
-    tmtext *fmt = new tmtext();
-    fmt->reserve( t->sz+2 );
-    putc_tmtext( '"', fmt );
+    tmtext *fmt = new tmtext( t->sz+2 );
+    fmt->append( '"' );
     for( long ix=0; ix<t->sz; ix++ ){
 	unsigned int c = ((unsigned int) t->arr[ix]) & 0xff;
-	puts_tmtext( tm_escapestring( c ), fmt );
+	fmt->append( tm_escapestring( c ) );
     }
-    putc_tmtext( '"', fmt );
+    fmt->append( '"' );
     str_fmt = tmtext_to_tmstring( fmt );
     fmt->destroy();
     st->printWord( str_fmt );

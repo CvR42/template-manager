@@ -8,11 +8,11 @@
 #include "tmcpp.h"
 #include <string.h>
 
-/* Given two pointers to tmtext blocks 'd' and 's', and a block size 'sz',
+/* Given two pointers to text blocks 'd' and 's', and a block size 'sz',
  * copy 'sz' characters from 's' to 'd'. The blocks should not overlap,
- * there are special functions to insert or delete blocks in a tmtext.
+ * there are special functions to insert or delete blocks in a text.
  */
-void copyblock_tmtext( char *d, const char *s, const long sz )
+void tmtext::copyblock( char *d, const char *s, const long sz )
 {
     const char *p = s;
     long cnt = sz;
