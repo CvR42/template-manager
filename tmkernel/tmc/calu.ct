@@ -1121,7 +1121,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .. Add some space for '\0' and safety..
 .set maxlen $[$(maxlen)+4]
     char tm_word[$(maxlen)];	/* Largest constructor should fit in it.. */
-    int err = 0;
+    int err;
 
 .if ${not ${len ${nonvirtual $t ${subclasses $t}}}}
 #ifdef LOGNEW
@@ -1146,8 +1146,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .. First time in loop there should be no 'else' before the if,
 .. in all other cases there should.
 .set els
-.if ${isvirtual $t}
-.else
+.if ${not ${isvirtual $t}}
     $(els)if( strcmp( tm_word, "$t" ) == 0 ){
 .foreach e ${allfields $t}
 	${type $t $e} l_$e;
@@ -1181,7 +1180,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .endforeach
     else {
 	(void) sprintf( tm_errmsg, tm_badcons, "$t", tm_word );
-	return 1;
+	err = 1;
     }
     if( err ){
 	return 1;
