@@ -17,97 +17,85 @@ testin(205): not a constructor type: 'orig'
 testin(208): not a constructor type: 'orig'
 testin(205): not a constructor type: 'subtuple'
 testin(208): not a constructor type: 'subtuple'
-testin(216): 'memberlist' does not work on a constructor type: type `sublevel'
-testin(217): 'memberlist' does not work on a constructor type: type `sublevel'
-testin(218): 'memberlist' does not work on a constructor type: type `sublevel'
-testin(223): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(216): 'fields' does not work on a constructor type: type `sublevel'
+testin(217): 'fields' does not work on a constructor type: type `sublevel'
 testin(205): not a constructor type: 'notuple'
 testin(208): not a constructor type: 'notuple'
-testin(216): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(217): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(218): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(223): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(216): 'memberlist' does not work on a constructor type: type `thing'
-testin(217): 'memberlist' does not work on a constructor type: type `thing'
-testin(218): 'memberlist' does not work on a constructor type: type `thing'
-testin(223): 'memberlist' does not work on a constructor type: type `thing'
+testin(216): 'fields' does not work on a constructor type: type `toplevel'
+testin(217): 'fields' does not work on a constructor type: type `toplevel'
+testin(216): 'fields' does not work on a constructor type: type `thing'
+testin(217): 'fields' does not work on a constructor type: type `thing'
 testin(205): not a constructor type: 'subclass'
 testin(208): not a constructor type: 'subclass'
 testin(205): not a constructor type: 'testclass'
 testin(208): not a constructor type: 'testclass'
+testin(223): 'mklist' requires at least one parameter
+testin(226): 'mklist' requires at least one parameter
 testin(229): 'mklist' requires at least one parameter
 testin(232): 'mklist' requires at least one parameter
-testin(235): 'mklist' requires at least one parameter
-testin(238): 'mklist' requires at least one parameter
-testin(240): 'inherits' requires exactly one parameter
-testin(240): unknown type: 'iserniet'
-testin(241): 'conslist' requires a type name
-testin(241): 'conslist' requires a type name
-testin(241): unknown type: notatype
-testin(242): 'memberlist' requires one or two parameters
-testin(242): 'memberlist' second parameter must be absent or `inherited'
-testin(242): unknown type: bla
-testin(242): unknown type: notatype
-testin(255): bad parameter: reutel
-testin(256): 'ctypellev' requires at least one parameter
+testin(234): 'inherits' requires exactly one parameter
+testin(234): unknown type: 'iserniet'
+testin(235): 'conslist' requires a type name
+testin(235): 'conslist' requires a type name
+testin(235): unknown type: notatype
+testin(236): 'fields' requires one or two parameters
+testin(236): 'fields' second parameter must be absent or `inherited'
+testin(236): unknown type: bla
+testin(236): unknown type: notatype
+testin(249): bad parameter: reutel
+testin(250): 'ctypellev' requires at least one parameter
 testin(205): not a constructor type: 'orig'
 testin(208): not a constructor type: 'orig'
 testin(205): not a constructor type: 'subtuple'
 testin(208): not a constructor type: 'subtuple'
-testin(216): 'memberlist' does not work on a constructor type: type `sublevel'
-testin(217): 'memberlist' does not work on a constructor type: type `sublevel'
-testin(218): 'memberlist' does not work on a constructor type: type `sublevel'
-testin(223): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(216): 'fields' does not work on a constructor type: type `sublevel'
+testin(217): 'fields' does not work on a constructor type: type `sublevel'
 testin(205): not a constructor type: 'notuple'
 testin(208): not a constructor type: 'notuple'
-testin(216): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(217): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(218): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(223): 'memberlist' does not work on a constructor type: type `toplevel'
-testin(216): 'memberlist' does not work on a constructor type: type `thing'
-testin(217): 'memberlist' does not work on a constructor type: type `thing'
-testin(218): 'memberlist' does not work on a constructor type: type `thing'
-testin(223): 'memberlist' does not work on a constructor type: type `thing'
+testin(216): 'fields' does not work on a constructor type: type `toplevel'
+testin(217): 'fields' does not work on a constructor type: type `toplevel'
+testin(216): 'fields' does not work on a constructor type: type `thing'
+testin(217): 'fields' does not work on a constructor type: type `thing'
 testin(205): not a constructor type: 'subclass'
 testin(208): not a constructor type: 'subclass'
 testin(205): not a constructor type: 'testclass'
 testin(208): not a constructor type: 'testclass'
+testin(223): 'mklist' requires at least one parameter
+testin(226): 'mklist' requires at least one parameter
 testin(229): 'mklist' requires at least one parameter
 testin(232): 'mklist' requires at least one parameter
-testin(235): 'mklist' requires at least one parameter
-testin(238): 'mklist' requires at least one parameter
-testin(240): 'inherits' requires exactly one parameter
-testin(240): unknown type: 'iserniet'
-testin(241): 'conslist' requires a type name
-testin(241): 'conslist' requires a type name
-testin(241): unknown type: notatype
-testin(242): 'memberlist' requires one or two parameters
-testin(242): 'memberlist' second parameter must be absent or `inherited'
-testin(242): unknown type: bla
-testin(242): unknown type: notatype
-testin(255): bad parameter: reutel
-testin(256): 'ctypellev' requires at least one parameter
-testin(265): empty padding string
-testin(277): 'isinenv' requires exactly one parameter
-testin(291): no separator
-testin(291): no separator
-testin(318): bad expression
-testin(318): bad expression
-testin(318): missing close bracket: ']'
-testin(319): bad expression
-testin(319): bad expression: a
-testin(372): no such macro: 'submacro'
-testin(373): wrong number of parameters: 1 instead of 2 (macro 'test')
-testin(374): wrong number of parameters: 3 instead of 2 (macro 'test')
-testin(375): no such macro: 'iserniet'
-testin(376): no macro name given
-testin(377): wrong number of parameters: 0 instead of 2 (macro 'test')
-testin(383): wrong number of parameters: 2 instead of 1 (macro 'tv')
-testin(383): no macro name given
-testin(383): wrong number of parameters: 0 instead of 1 (macro 'tv')
-testin(358): no output allowed in expression macro
-testin(355): no output allowed in expression macro
-testin(355): no output allowed in expression macro
-testin(355): no output allowed in expression macro
-testin(362): no output allowed in expression macro
+testin(234): 'inherits' requires exactly one parameter
+testin(234): unknown type: 'iserniet'
+testin(235): 'conslist' requires a type name
+testin(235): 'conslist' requires a type name
+testin(235): unknown type: notatype
+testin(236): 'fields' requires one or two parameters
+testin(236): 'fields' second parameter must be absent or `inherited'
+testin(236): unknown type: bla
+testin(236): unknown type: notatype
+testin(249): bad parameter: reutel
+testin(250): 'ctypellev' requires at least one parameter
+testin(259): empty padding string
+testin(271): 'isinenv' requires exactly one parameter
+testin(285): no separator
+testin(285): no separator
+testin(312): bad expression
+testin(312): bad expression
+testin(312): missing close bracket: ']'
+testin(313): bad expression
+testin(313): bad expression: a
+testin(366): no such macro: 'submacro'
+testin(367): wrong number of parameters: 1 instead of 2 (macro 'test')
+testin(368): wrong number of parameters: 3 instead of 2 (macro 'test')
+testin(369): no such macro: 'iserniet'
+testin(370): no macro name given
+testin(371): wrong number of parameters: 0 instead of 2 (macro 'test')
+testin(377): wrong number of parameters: 2 instead of 1 (macro 'tv')
+testin(377): no macro name given
+testin(377): wrong number of parameters: 0 instead of 1 (macro 'tv')
+testin(352): no output allowed in expression macro
+testin(349): no output allowed in expression macro
+testin(349): no output allowed in expression macro
+testin(349): no output allowed in expression macro
+testin(356): no output allowed in expression macro
 errors detected, program aborted

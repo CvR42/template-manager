@@ -213,17 +213,11 @@ classtypelist: '${classtypelist}'
             ctypename $t $c $e: '${ctypename $t $c $e }'
 .endforeach
 .endforeach
-    telmlist $t: '${telmlist $t $(mode)}'
-    memberlist $t: '${memberlist $t }'
-.foreach e ${telmlist $t $(mode)}
-	ttypeclass $t $e: '${ttypeclass $t $e }'
-	ttypellev $t $e: ${ttypellev $t $e}
-	ttypename $t $e: '${ttypename $t $e }'
-.endforeach
-.foreach e ${memberlist $t }
-..	membertypeclass $t $e: '${membertypeclass $t $e }'
-..	membertypellev $t $e: ${membertypellev $t $e}
-..	membertypename $t $e: '${membertypename $t $e }'
+    fields $t $(mode): '${fields $t $(mode)}'
+.foreach e ${fields $t $(mode)}
+	fieldtypeclass $t $e: '${fieldtypeclass $t $e }'
+	fieldtypellev $t $e: ${fieldtypellev $t $e}
+	fieldtypename $t $e: '${fieldtypename $t $e }'
 .endforeach
 .endforeach
 mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
@@ -239,7 +233,7 @@ mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mkl
 stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
 inherits: ${inherits} ${inherits iserniet}
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
-telmlist: ${telmlist} ${telmlist bla bla} ${telmlist notatype}
+fields: ${fields} ${fields bla bla} ${fields notatype}
 ----
 
 Datastructure dependency
