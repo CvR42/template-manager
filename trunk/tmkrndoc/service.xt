@@ -1,0 +1,9 @@
+depsort: ${depsort ${typelist}}
+.set listpre <
+.set listsuff >
+.set tl a <b> <<c>> <<<d>>> e> <f
+delisttypes: [${delisttypes $(tl)}]
+listtypes: [${listtypes $(tl)}]
+mklist: [${mklist 3 a z}]
+singletypes: [${singletypes $(tl)}]
+stemname: [${stemname $(tl)}]

@@ -1,0 +1,6 @@
+.foreach t ${typelist}
+inherits $t: ${inherits $t}
+inheritors $t: ${inheritors $t}
+subclasses $t: ${subclasses $t}
+superclasses $t: ${superclasses $t}
+.endforeach

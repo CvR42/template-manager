@@ -1,0 +1,4 @@
+.set s a list of WORDS
+.set w bicycle
+${len $s}, ${tolower $s}, ${toupper $s}, ${capitalize $s}
+${strindex c $w}, ${strpad $w 15 -=}, ${strpad $w 3 -}

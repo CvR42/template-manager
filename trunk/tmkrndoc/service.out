@@ -1,0 +1,6 @@
+depsort: curve XYCurve YCurve xypoint LinScale LogScale scale plot
+delisttypes: [b <c> <<d>>]
+listtypes: [<b> <<c>> <<<d>>>]
+mklist: [<<<a>>> <<<z>>>]
+singletypes: [a e> <f]
+stemname: [a b c d e> <f]
