@@ -1,4 +1,4 @@
-.. File: tmcwalktest.ct
+.. File: walktest.ct
 ..
 .. Tree walker for rewriting operations.
 ..
@@ -27,14 +27,22 @@ $(indent)return $(var);
 .. we`re walking on, and the type 't' of that variable, generate a
 .. signature for the walker function of the given type.
 .macro generate_walker_signature var t
+.if ${member $t $(valuetypes)}
 static $t add_$t_walker( $t $(var), const int n )
+.else
+static $t *add_$t_walker( $t *$(var), const int n )
+.endif
 .endmacro
 ..
 .. Given the name 'var' of the variable that holds the datastructure
 .. we're walking on, and the type 't' of that variable, generate a forward
 .. declaration for the walker function of the given type.
 .macro generate_walker_declaration var t
+.if ${member $t $(valuetypes)}
 static $t add_$t_walker( $t $(var), const int n );
+.else
+static $t *add_$t_walker( $t *$(var), const int n );
+.endif
 .endmacro
 ..
 .. Given an indent 'indent', a variable 'var' to walk into, the type of
@@ -42,9 +50,13 @@ static $t add_$t_walker( $t $(var), const int n );
 .. generate an invokation to an action.
 .macro generate_action_call indent var type nowtype
 .if ${eq $(type) $(nowtype)}
-$(indent)$(var) = ($(nowtype)) add_$(type)_action( $(var), n );
+$(indent)$(var) = add_$(type)_action( $(var), n );
 .else
+.if ${member $(nowtype) $(valuetypes)}
 $(indent)$(var) = ($(nowtype)) add_$(type)_action( to_$(type)( $(var) ), n );
+.else
+$(indent)$(var) = ($(nowtype) *) add_$(type)_action( to_$(type)( $(var) ), n );
+.endif
 .endif
 .endmacro
 ..
@@ -53,9 +65,13 @@ $(indent)$(var) = ($(nowtype)) add_$(type)_action( to_$(type)( $(var) ), n );
 .. generate an invokation to a walker.
 .macro generate_walker_call indent var type nowtype
 .if ${eq $(type) $(nowtype)}
-$(indent)$(var) = ($(nowtype)) add_$(type)_walker( $(var), n );
+$(indent)$(var) = add_$(type)_walker( $(var), n );
 .else
+.if ${member $(nowtype) $(valuetypes)}
 $(indent)$(var) = ($(nowtype)) add_$(type)_walker( to_$(type)( $(var) ), n );
+.else
+$(indent)$(var) = ($(nowtype) *) add_$(type)_walker( to_$(type)( $(var) ), n );
+.endif
 .endif
 .endmacro
 ..
@@ -73,11 +89,11 @@ $(indent)$(var) = ($(nowtype)) add_$(type)_walker( to_$(type)( $(var) ), n );
 .. For which types are there actions defines?
 .set actors int foldexpr
 ..
-.insert tmcwalk.t
+.insert cppwalk.t
 ..
 .set visit_types ${call calc_treewalk "expr" "int"}
 ..
-/* File: tmcwalktest.c
+/* File: walktest.c
  *
  * A test tree walker that adds the given parameter 'n' to all ints in
  * expr tree.
@@ -102,7 +118,7 @@ static int add_int_action( int elm, int n )
 }
 
 /* Add action for 'foldexpr'. */
-static foldexpr add_foldexpr_action( foldexpr elm, int n )
+static foldexpr *add_foldexpr_action( foldexpr *elm, int n )
 {
 .call generate_walker_call "    " elm foldexpr foldexpr
     return elm;
@@ -114,24 +130,24 @@ int main( void )
 {
     TMPRINTSTATE *st;
     int level;
-    expr x;                                                     
+    expr *x;                                                     
     FILE *infile;
     FILE *outfile;
     int n = 2;
 
-    infile = fopen( "tmcwalkin", "r" );
+    infile = fopen( "walkin", "r" );
     if( infile == NULL ){
-        fprintf( stderr, "Cannot open input file" );
+        fprintf( stderr, "Cannot open input file\n" );
         exit( 1 );
     }
     outfile = fopen( "testout", "w" );
     if( outfile == NULL ){
-        fprintf( stderr, "Cannot open output file" );
+        fprintf( stderr, "Cannot open output file\n" );
         exit( 1 );
     }
     tm_lineno = 1;
     if( fscan_expr( infile, &x ) ){
-        fprintf( stderr, "tmcwalktest: %d: %s\n", tm_lineno, tm_errmsg );
+        fprintf( stderr, "walktest: %d: %s\n", tm_lineno, tm_errmsg );
         exit( 1 );
     }
 .call generate_descent_call "    " x expr expr
