@@ -130,7 +130,11 @@ $t::$t( const $t &c )
 .if ${member $(et) $(valuetypes)}
     $(comma)$e( c.$e )
 .else
+.if ${member $(et) $(legacytypes)}
+    $(comma)$e( rdup_$(et)( c.$e ) )
+.else
     $(comma)$e( c.$e->clone() )
+.endif
 .endif
 .set comma ,
 .set used 1
@@ -180,7 +184,11 @@ $t_list::$t_list( const $t_list &l ): sz(0), room(0), arr(0)
 .if ${member $t $(valuetypes)}
 	arr[ix] = l.arr[ix];
 .else
+.if ${member $t $(legacytypes)}
+	arr[ix] = rdup_$t( l.arr[ix] );
+.else
 	arr[ix] = l.arr[ix]->clone();
+.endif
 .endif
     }
     sz = l.sz;
@@ -379,9 +387,14 @@ void $t::destroy()
 .error Internal error: alias $t still present.
 .case tuple constructor class constructorbase
 .foreach e ${allfields $t}
-.if ${not ${member ${type $t $e} $(valuetypes)}}
-    if( $e != ${type $t $e}NIL ){
+.set et ${type $t $e}
+.if ${not ${member $(et) $(valuetypes)}}
+    if( $e != $(et)NIL ){
+.if ${member $(et) $(legacytypes)}
+	rfre_$(et)( $e );
+.else
 	$e->destroy();
+.endif
     }
 .endif
 .endforeach
@@ -397,7 +410,11 @@ void $t_list::destroy()
 .if ${not ${member $t $(valuetypes)}}
     for( size_type ix=0; ix<sz; ix++ ){
 	if( arr[ix] != $tNIL ){
+.if ${member $t $(legacytypes)}
+	    rfre_$t( arr[ix] );
+.else
 	    arr[ix]->destroy();
+.endif
 	}
     }
 .endif
@@ -842,7 +859,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t **p )
     int err;
 .foreach e ${allfields $t}
 .set et ${type $t $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
     $(et) l_$e;
 .else
     $(et) *l_$e;
@@ -907,7 +924,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t **p )
     $(els)if( strcmp( tm_word, "$t" ) == 0 ){
 .foreach e ${allfields $t}
 .set et ${type $t $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
 	${type $t $e} l_$e = $(et)NIL;
 .else
 	${type $t $e} *l_$e = $(et)NIL;
@@ -927,7 +944,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t **p )
     $(els)if( strcmp( tm_word, "$c" ) == 0 ){
 .foreach e ${allfields $c}
 .set et ${type $c $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
 	$(et) l_$e;
 .else
 	$(et) *l_$e;
@@ -1036,7 +1053,11 @@ void $t_list::erase( const size_type pos )
 	return;
     }
 .if ${not ${member $t $(valuetypes)}}
+.if ${member $t $(legacytypes)}
+    rfre_$t( arr[pos] );
+.else
     arr[pos]->destroy();
+.endif
 .endif
     sz--;
     for( size_type ix=pos; ix<sz; ix++ ){
@@ -1057,7 +1078,11 @@ void $t_list::erase( const size_type from, const size_type to )
     }
 .if ${not ${member $t $(valuetypes)}}
     for( size_type ix=from; ix<real_to; ix++ ){
+.if ${member $t $(legacytypes)}
+	rfre_$t( arr[ix] );
+.else
 	arr[ix]->destroy();
+.endif
     }
 .endif
     size_type dist = real_to-from;

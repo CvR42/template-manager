@@ -112,7 +112,7 @@ public:
 .endif
 .foreach e ${fields $t}
 .set et ${type $t $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
     $(et) $e;
 .else
     $(et) *$e;
@@ -122,7 +122,7 @@ public:
 .set tl
 .foreach e ${allfields $t}
 .set et ${type $t $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
 .append tl ${type $t $e}
 .else
 .append tl ${type $t $e}*
@@ -134,7 +134,7 @@ public:
 public:
 .foreach e ${fields $t}
 .set et ${type $t $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
     ${type $t $e} $e;
 .else
     ${type $t $e} *$e;
@@ -144,7 +144,7 @@ public:
 .set tl
 .foreach e ${allfields $t}
 .set et ${type $t $e}
-.if ${member $(et) $(valuetypes)}
+.if ${member $(et) $(valuetypes) $(legacytypes)}
 .append tl ${type $t $e}
 .else
 .append tl ${type $t $e}*
@@ -170,7 +170,7 @@ public:
     unsigned int room;
 
 public:
-.if ${member $t $(valuetypes)}
+.if ${member $t $(valuetypes) $(legacytypes)}
     typedef $t value_type;
 .else
     typedef $t *value_type;
@@ -181,11 +181,7 @@ public:
     typedef int difference_type;
     static unsigned long newcount;
     static unsigned long freecount;
-.if ${member $t $(valuetypes)}
-    $t *arr;
-.else
-    $t **arr;
-.endif
+    value_type *arr;
 
     $t_list( const size_type rm = 0 );
     $t_list( const $t_list &l );

@@ -14,6 +14,7 @@ emptytuple          :    207 allocated,    205 freed.<-
 exprConst           :    209 allocated,    207 freed.<-
 exprFold            :      0 allocated,      0 freed.
 exprPlus            :      1 allocated,      1 freed.
+exprString          :      0 allocated,      0 freed.
 exprSubtract        :      0 allocated,      0 freed.
 label               :   1450 allocated,   1436 freed.<-
 subtuple            :    207 allocated,    205 freed.<-
