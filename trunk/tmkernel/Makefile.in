@@ -28,6 +28,9 @@ test:
 all:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
 
+depend:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) depend; cd ..; done
+
 install:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done
 
