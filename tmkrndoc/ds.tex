@@ -8,7 +8,7 @@ four meta-types: \defn{class}, \defn{tuple}, \defn{constructor}
 or \defn{constructor base}\footnote{In previous versions of Tm
 constructors were not considered types, only the constructor base
 type. For reasons of regularity this has been changed.}.
-\par
+
 The exact syntax of the type definitions is given in appendix~\ref{s.dsgram},
 in the following sections an informal overview of each type is given.
 \subsection{Fields}
@@ -22,7 +22,7 @@ be given a name---called the \defn{field name}---by prefixing the type
 specification with \verb'<name>:'.  This name is used to refer to
 the field. It is not allowed to use the same field name more than once
 in the same type, but the same field name can be used in different types.
-\par
+
 For example, the following are all valid fields:
 \begin{showfile}
 \begin{verbatim}
@@ -59,7 +59,7 @@ ifStatement = statement + { cond:expr, then:block, else:block };
 \end{showfile}
 means that the \texttt{ifStatement} class inherits from the \texttt{statement}
 class.
-\par
+
 A class can be defined to be \defn{virtual} by using the `\verb'~=''
 operator instead of the `\verb'='' operator. For example:
 \begin{showfile}
@@ -69,7 +69,7 @@ statement ~= { pos:position };
 \end{showfile}
 Labeling a class 'virtual', indicates that the class itself will
 never be created, only subclasses of this class.
-\par
+
 To allow compact and clear specification of a class with many
 subclasses, these subclasses can be specified in the class itself.
 For example:
@@ -96,7 +96,7 @@ forStatement = statement + { var:string, bound:expr, body:block };
 assignStatement = statement + { lhs:expr, rhs:expr };
 \end{verbatim}
 \end{showfile}
-\par
+
 A list of components can be grouped by surrounding it with parentheses.
 For example:
 \begin{showfile}
@@ -119,7 +119,7 @@ position == ( file:tmstring, line:int );
 \end{verbatim}
 \end{showfile}
 The `\verb'=='' operator indicates that the following is a tuple type.
-\par
+
 A tuple can inherit from other types. For example:
 \begin{showfile}
 \begin{verbatim}
@@ -127,7 +127,7 @@ ifStatement = statement + ( cond:expr, then:block, else:block );
 \end{verbatim}
 \end{showfile}
 A tuple statement cannot contain alternatives or multiple lists of fields.
-\par
+
 Clearly, every tuple type can be converted to an equivalent class type.
 Tuple types are mainly provided for backward compatibility with
 older versions of {\Tm}.
@@ -152,7 +152,7 @@ Types \texttt{constExpr} and \texttt{plusExpr} are \defn{constructor} types;
 type \texttt{expr} is a \defn{constructor base} type.
 The `\verb'::='' operator indicates that the following is a group of
 constructor type.
-\par
+
 A constructor type can inherit. For example:
 \begin{showfile}
 \begin{verbatim}
@@ -165,7 +165,7 @@ operatorExpression ::= expression +
 \end{showfile}
 All constructors types are considered to be subclasses of their
 constructor base type. All constructor base types are virtual.
-\par
+
 If the same constructor base type is defined repeatedly, {\Tm} will merge the
 definitions.
 Thus, a definition like
@@ -178,7 +178,7 @@ plot ::= YPlot ycolor:int xstart:num xend:num points:[num];
 \end{showfile}
 is allowed, and defines a constructor base type \texttt{plot} with two
 constructor types.
-\par
+
 Clearly, every constructor type can be converted to a similar class type.
 Constructor types are mainly provided for backward compatibility with
 older versions of {\Tm}.
@@ -193,7 +193,7 @@ twice.
 a field with the same name as one of its own fields.
 \end{itemize}
 \index{data structure!restrictions|)}
-\par
+
 Also, some templates (for example the standard C template) allow inheritance
 from only one type.
 \subsection{Comment}
@@ -237,8 +237,8 @@ The following file shows the use of all meta-types in a more-or-less
 useful definition file. The mixing of classes and constructor types
 in one file is not realistic, though. In practice either constructors
 or classes will be used consistently.
-\par
-This file will be used in the examples of chapter \ref{s.tm} to demonstrate
+
+This file will be used in the examples of chapter~\ref{s.tm} to demonstrate
 the use of the various template language functions.
 \begin{showfile}
 \verbatiminput{plot.ds}
@@ -272,9 +272,9 @@ newlines or form-feeds may be inserted.  Also, any number of comment
 lines may be inserted.  Comment starts with the characters `\texttt{||}'
 and ends at the end of the line.
 \end{itemize}
-\par
+
 For example, a valid text representation of an instance of type \texttt{curve}
-as defined in section \pageref{plotds} is:
+as defined in section~\ref{plotds} is:
 \begin{showfile}
 \begin{verbatim}
 XYCurve 1
