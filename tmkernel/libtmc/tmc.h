@@ -36,6 +36,9 @@ extern "C" {
 typedef struct _tmc_sym *tmsymbol;
 
 typedef char *tmstring;
+typedef char *tmword;
+typedef const char *tmconststring;
+typedef const char *tmconstword;
 
 struct str_Sstack {
     struct str_Sstack *next;
@@ -150,6 +153,20 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 #define ulongNIL (0)
 #define null_ulong() ulongNIL
 
+/* 'tmword' functions */
+#define cmp_tmword(a,b) strcmp(a,b)
+#define tmwordNIL tmstringNIL
+#define null_tmword() tmstringNIL
+#define new_tmword new_tmstring
+#define fre_tmword fre_tmstring
+#define rdup_tmword rdup_tmstring
+#define rfre_tmword rfre_tmstring
+#if defined( LOGNEW )
+#define fscan_tmword(f,p) fscan_tmword_lognew(f,p,__FILE__,__LINE__)
+#else
+#define fscan_tmword fscan_tmword_nolognew
+#endif
+
 /* 'tmstring' functions */
 #define cmp_tmstring(a,b) strcmp(a,b)
 #define tmstringNIL ((tmstring)0)
@@ -174,7 +191,7 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 #define create_tmstring create_tmstring_nolognew
 #define tmtext_to_tmstring tmtext_to_tmstring_nolognew
 #endif
-#ifdef LOGNEW
+#if defined( LOGNEW )
 #define new_tmtext() new_tmtext_lognew(__FILE__,__LINE__)
 #define fscan_tmtext(f,p) fscan_tmtext_lognew(f,p,__FILE__,__LINE__)
 #define string_to_tmtext(s) string_to_tmtext_lognew(s,__FILE__,__LINE__)
@@ -356,6 +373,12 @@ extern int fscan_ulong( FILE *f, ulong *p );
 extern void print_ulong( TMPRINTSTATE *st, const ulong u );
 extern void fprint_ulong( FILE *f, const ulong u );
 
+/* 'tmword' functions */
+extern int fscan_tmword_nolognew( FILE *f, tmword *s );
+extern int fscan_tmword_lognew( FILE *f, tmword *p, const char *file, const int line );
+extern void print_tmword( TMPRINTSTATE *st, const tmconstword s );
+extern void fprint_tmword( FILE *f, const tmconstword s );
+
 /* 'tmstring' functions */
 extern tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz );
 extern tmstring realloc_tmstring_lognew( tmstring s, const size_t sz, const char *file, const int line );
@@ -367,8 +390,8 @@ extern int fscan_tmstring_lognew( FILE *f, tmstring *p, const char *file, const 
 extern tmstring new_tmstring_nolognew( const char *s );
 extern void fre_tmstring_nolognew( tmstring s );
 extern int fscan_tmstring_nolognew( FILE *f, tmstring *p );
-extern void print_tmstring( TMPRINTSTATE *st, const tmstring s );
-extern void fprint_tmstring( FILE *f, const tmstring s );
+extern void print_tmstring( TMPRINTSTATE *st, tmconststring s );
+extern void fprint_tmstring( FILE *f, tmconststring s );
 extern void stat_tmstring( FILE *f );
 extern int get_balance_tmstring( void );
 
@@ -391,7 +414,7 @@ extern void tm_noroom( void );
 /* Storage for a tmsymbol string */
 struct _tmc_sym {
     struct _tmc_sym *next;		/* next in list */
-    tmstring name;			/* pointer to the string */
+    tmconststring name;			/* pointer to the string */
     tm_neutralp data;			/* any info for it. */
 };
 

@@ -24,8 +24,8 @@ static void bad( const char *msg )
    exit( 1 );
 }
 
-/* testprintopt: test printopt routines */
-static void testprintopt( TMPRINTSTATE *st )
+/* test_printopt: test printopt routines */
+static void test_printopt( TMPRINTSTATE *st )
 {
     int k;
     int i;
@@ -76,7 +76,7 @@ static void testprintopt( TMPRINTSTATE *st )
  * to the output file with the tm_opencons( st ) and tm_closecons( st )
  * functions.
  */
-static void testbrac( TMPRINTSTATE *st )
+static void test_brac( TMPRINTSTATE *st )
 {
     int bracs;
     int i;
@@ -100,7 +100,7 @@ static void testbrac( TMPRINTSTATE *st )
 /* Test of tm_fscancons(). Read and write constructors until one
    with name "StopFscanCons" is encountered.
  */
-static void testcons( TMPRINTSTATE *st )
+static void test_cons( TMPRINTSTATE *st )
 {
     char buf[1000];
 
@@ -121,7 +121,7 @@ static void testcons( TMPRINTSTATE *st )
 /* Test of print_ulong() and fscan_ulong(): read and write
    long's until one with value 42 is encountered.
  */
-static void testulong( TMPRINTSTATE *st )
+static void test_ulong( TMPRINTSTATE *st )
 {
     ulong ul;
 
@@ -139,7 +139,7 @@ static void testulong( TMPRINTSTATE *st )
 /* Test of print_long() and fscan_long(): read and write
    long's until one with value 42 is encountered.
  */
-static void testlong( TMPRINTSTATE *st )
+static void test_long( TMPRINTSTATE *st )
 {
     long l;
 
@@ -157,7 +157,7 @@ static void testlong( TMPRINTSTATE *st )
 /* Test of print_sshrt() and fscan_sshrt(): read and write sshrt's until
    one with value -1 is encountered.
  */
-static void testsshrt( TMPRINTSTATE *st )
+static void test_sshrt( TMPRINTSTATE *st )
 {
     sshrt i;
 
@@ -175,7 +175,7 @@ static void testsshrt( TMPRINTSTATE *st )
 /* Test of print_ushrt() and fscan_ushrt(): read and write
    unsigned's until one with value 42 is encountered.
  */
-static void testushrt( TMPRINTSTATE *st )
+static void test_ushrt( TMPRINTSTATE *st )
 {
     ushrt u;
 
@@ -193,7 +193,7 @@ static void testushrt( TMPRINTSTATE *st )
 /* Test of print_int() and fscan_int(): read and write int's until
    one with value -1 is encountered.
  */
-static void testint( TMPRINTSTATE *st )
+static void test_int( TMPRINTSTATE *st )
 {
     int i;
 
@@ -211,7 +211,7 @@ static void testint( TMPRINTSTATE *st )
 /* Test of print_uint() and fscan_uint(): read and write
    unsigned's until one with value 42 is encountered.
  */
-static void testuint( TMPRINTSTATE *st )
+static void test_uint( TMPRINTSTATE *st )
 {
     uint u;
 
@@ -229,7 +229,7 @@ static void testuint( TMPRINTSTATE *st )
 /* Test of print_schar() and fscan_schar(): read and write schar's until
    one with value 'q' is encountered.
  */
-static void testschar( TMPRINTSTATE *st )
+static void test_schar( TMPRINTSTATE *st )
 {
     schar c;
 
@@ -247,7 +247,7 @@ static void testschar( TMPRINTSTATE *st )
 /* Test of print_uchar() and fscan_uchar(): read and write uchar's until
    one with value 'q' is encountered.
  */
-static void testuchar( TMPRINTSTATE *st )
+static void test_uchar( TMPRINTSTATE *st )
 {
     uchar c;
 
@@ -263,7 +263,7 @@ static void testuchar( TMPRINTSTATE *st )
 }
 
 /* test cmp_double() */
-static void testdouble( void )
+static void test_double( void )
 {
     int res;
     double a = 1.2e3;
@@ -295,7 +295,7 @@ static void testdouble( void )
 }
 
 /* test cmp_float() */
-static void testfloat( void )
+static void test_float( void )
 {
     int res;
     float a = 1.2e3;
@@ -326,7 +326,7 @@ static void testfloat( void )
     }
 }
 
-static void testtmstring( TMPRINTSTATE *st )
+static void test_tmstring( TMPRINTSTATE *st )
 {
     tmstring s;
     int stop;
@@ -357,6 +357,32 @@ static void testtmstring( TMPRINTSTATE *st )
 	    stop = 1;
 	}
 	fre_tmstring( s );
+    } while( stop == 0 );
+    tm_closecons( st );
+}
+
+static void test_tmword( TMPRINTSTATE *st )
+{
+    tmword s;
+    int stop;
+
+    tm_opencons( st );
+    tm_printword( st, "Wordouttest" );
+    print_tmword( st, "Test" );
+    tm_closecons( st );
+    tm_opencons( st );
+    tm_printword( st, "Wordintest" );
+    stop = 0;
+    do {
+	if( fscan_tmword( infile, &s ) ){
+	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
+	    fflush( stderr );
+	}
+	print_tmword( st, s );
+	if( s != tmwordNIL && strcmp( s, "STOP"  ) == 0 ){
+	    stop = 1;
+	}
+	fre_tmword( s );
     } while( stop == 0 );
     tm_closecons( st );
 }
@@ -473,7 +499,7 @@ static void test_tmtext( TMPRINTSTATE *st )
     rfre_tmtext( t );
 }
 
-static void testtmbool( TMPRINTSTATE *st )
+static void test_tmbool( TMPRINTSTATE *st )
 {
     tmbool b;
 
@@ -491,7 +517,7 @@ static void testtmbool( TMPRINTSTATE *st )
 }
 
 /* Test of fprint_uchar() */
-static void ftestuchar( FILE *f )
+static void ftest_uchar( FILE *f )
 {
     fputs( "fprint_uchar: [", f );
     fprint_uchar( f, 'a' );
@@ -505,7 +531,7 @@ static void ftestuchar( FILE *f )
 }
 
 /* Test of fprint_schar() */
-static void ftestschar( FILE *f )
+static void ftest_schar( FILE *f )
 {
     fputs( "fprint_schar: [", f );
     fprint_schar( f, 'a' );
@@ -521,7 +547,7 @@ static void ftestschar( FILE *f )
 }
 
 /* Test of fprint_sshrt() */
-static void ftestsshrt( FILE *f )
+static void ftest_sshrt( FILE *f )
 {
     fputs( "fprint_sshrt: [", f );
     fprint_sshrt( f, 12 );
@@ -533,7 +559,7 @@ static void ftestsshrt( FILE *f )
 }
 
 /* Test of fprint_uint() */
-static void ftestushrt( FILE *f )
+static void ftest_ushrt( FILE *f )
 {
     fputs( "fprint_ushrt: [", f );
     fprint_ushrt( f, 12 );
@@ -545,7 +571,7 @@ static void ftestushrt( FILE *f )
 }
 
 /* Test of fprint_int() */
-static void ftestint( FILE *f )
+static void ftest_int( FILE *f )
 {
     fputs( "fprint_int: [", f );
     fprint_int( f, 12 );
@@ -557,7 +583,7 @@ static void ftestint( FILE *f )
 }
 
 /* Test of fprint_uint() */
-static void ftestuint( FILE *f )
+static void ftest_uint( FILE *f )
 {
     fputs( "fprint_uint: [", f );
     fprint_uint( f, 12 );
@@ -569,7 +595,7 @@ static void ftestuint( FILE *f )
 }
 
 /* Test of fprint_long() */
-static void ftestlong( FILE *f )
+static void ftest_long( FILE *f )
 {
     fputs( "fprint_long: [", f );
     fprint_long( f, 12 );
@@ -581,7 +607,7 @@ static void ftestlong( FILE *f )
 }
 
 /* Test of fprint_ulong() */
-static void ftestulong( FILE *f )
+static void ftest_ulong( FILE *f )
 {
     fputs( "fprint_ulong: [", f );
     fprint_ulong( f, 12 );
@@ -592,7 +618,7 @@ static void ftestulong( FILE *f )
     fputs( "]\n", f );
 }
 
-static void ftesttmstring( FILE *f )
+static void ftest_tmstring( FILE *f )
 {
     fputs( "fprint_tmstring: [", f );
     fprint_tmstring( f, "blabla" );
@@ -605,8 +631,19 @@ static void ftesttmstring( FILE *f )
     fputs( "]\n", f );
 }
 
+static void ftest_tmword( FILE *f )
+{
+    fputs( "fprint_tmword: [", f );
+    fprint_tmword( f, "blabla" );
+    fputs( " ", f );
+    fprint_tmword( f,  "reutel" );
+    fputs( " ", f );
+    fprint_tmword( f,  tmwordNIL );
+    fputs( "]\n", f );
+}
+
 /* Test the tmsymbol handling routines. */
-static void testtmsymbol( void )
+static void test_tmsymbol( void )
 {
     tmsymbol a;
     tmsymbol b;
@@ -671,34 +708,36 @@ int main( void )
     if( freopen( "testerr", "w", stderr ) == NULL ){
 	bad( "cannot redirect stderr" );
     }
-    testtmsymbol();
+    test_tmsymbol();
     tm_lineno = 1;
     st = tm_setprint( outfile, 4, 80, 8, 0 );
-    testprintopt( st );
-    testbrac( st );
-    testcons( st );
-    testschar( st );
-    testuchar( st );
-    testsshrt( st );
-    testushrt( st );
-    testint( st );
-    testuint( st );
-    testlong( st );
-    testulong( st );
-    testdouble();
-    testfloat();
-    testtmstring( st );
+    test_printopt( st );
+    test_brac( st );
+    test_cons( st );
+    test_schar( st );
+    test_uchar( st );
+    test_sshrt( st );
+    test_ushrt( st );
+    test_int( st );
+    test_uint( st );
+    test_long( st );
+    test_ulong( st );
+    test_double();
+    test_float();
+    test_tmstring( st );
+    test_tmword( st );
     test_tmtext( st );
-    testtmbool( st );
-    ftestschar( outfile );
-    ftestuchar( outfile );
-    ftestsshrt( outfile );
-    ftestushrt( outfile );
-    ftestint( outfile );
-    ftestuint( outfile );
-    ftestlong( outfile );
-    ftestulong( outfile );
-    ftesttmstring( outfile );
+    test_tmbool( st );
+    ftest_schar( outfile );
+    ftest_uchar( outfile );
+    ftest_sshrt( outfile );
+    ftest_ushrt( outfile );
+    ftest_int( outfile );
+    ftest_uint( outfile );
+    ftest_long( outfile );
+    ftest_ulong( outfile );
+    ftest_tmstring( outfile );
+    ftest_tmword( outfile );
     lev = tm_endprint( st );
     fprintf( stderr, "bracket level: %d\n", lev );
     fprintf( stderr, "get_balance_tmstring(): %d\n", get_balance_tmstring() );
