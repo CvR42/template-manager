@@ -12,7 +12,7 @@ JUNK = dist.lst
 
 help:
 	@echo "possible targets:"
-	@echo "all      Compile, test and install all sources."
+	@echo "all      Compile all sources."
 	@echo "check    Test all sources."
 	@echo "install  Install all compilation results."
 	@echo "clean    Delete intermediate files."
