@@ -1,0 +1,83 @@
+classlist: plot LinScale LogScale scale
+ctypelist: curve
+tuplelist: xypoint
+metatype plot: class
+isvirtual plot: 0
+fields plot: xscale yscale curves
+types plot: scale scale [curve]
+  type plot xscale: scale
+  typename plot xscale: scale
+  typelevel plot xscale: 0
+  type plot yscale: scale
+  typename plot yscale: scale
+  typelevel plot yscale: 0
+  type plot curves: [curve]
+  typename plot curves: curve
+  typelevel plot curves: 1
+metatype curve: constructorbase
+isvirtual curve: 1
+fields curve: 
+types curve: 
+metatype XYCurve: constructor
+isvirtual XYCurve: 0
+fields XYCurve: color points
+types XYCurve: int [xypoint]
+  type XYCurve color: int
+  typename XYCurve color: int
+  typelevel XYCurve color: 0
+  type XYCurve points: [xypoint]
+  typename XYCurve points: xypoint
+  typelevel XYCurve points: 1
+metatype YCurve: constructor
+isvirtual YCurve: 0
+fields YCurve: color xstart xend points
+types YCurve: int num num [num]
+  type YCurve color: int
+  typename YCurve color: int
+  typelevel YCurve color: 0
+  type YCurve xstart: num
+  typename YCurve xstart: num
+  typelevel YCurve xstart: 0
+  type YCurve xend: num
+  typename YCurve xend: num
+  typelevel YCurve xend: 0
+  type YCurve points: [num]
+  typename YCurve points: num
+  typelevel YCurve points: 1
+metatype xypoint: tuple
+isvirtual xypoint: 0
+fields xypoint: x y
+types xypoint: num num
+  type xypoint x: num
+  typename xypoint x: num
+  typelevel xypoint x: 0
+  type xypoint y: num
+  typename xypoint y: num
+  typelevel xypoint y: 0
+metatype LinScale: class
+isvirtual LinScale: 0
+fields LinScale: from to
+types LinScale: num num
+  type LinScale from: num
+  typename LinScale from: num
+  typelevel LinScale from: 0
+  type LinScale to: num
+  typename LinScale to: num
+  typelevel LinScale to: 0
+metatype LogScale: class
+isvirtual LogScale: 0
+fields LogScale: from to
+types LogScale: num num
+  type LogScale from: num
+  typename LogScale from: num
+  typelevel LogScale from: 0
+  type LogScale to: num
+  typename LogScale to: num
+  typelevel LogScale to: 0
+metatype scale: class
+isvirtual scale: 0
+fields scale: title
+types scale: tmstring
+  type scale title: tmstring
+  typename scale title: tmstring
+  typelevel scale title: 0
