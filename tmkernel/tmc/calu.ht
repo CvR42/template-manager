@@ -8,13 +8,15 @@
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of ${tplfilename} ---- */
-/* Definition C datastructures (Version for array list).
+/* External definitions (Version for array list).
 
    template file:      ${tplfilename}
    datastructure file: ${dsfilename}
    tm version:         $(tmvers)
    tm kernel version:  $(kernel-version)
  */
+
+/* data structures */
 
 /* forward reference typedefs for all types.
  * C does not like the use of undefined types, but does not
@@ -38,7 +40,9 @@ typedef struct str_$t *$t;
 .foreach c ${conslist $t}
 #define $c u.ue_$c
 .endforeach
+.endforeach
 
+.foreach t ${comm $(need_ds) "" ${ctypelist}}
 .if ${len ${conslist $t}}
 typedef enum en_tags_$t {
     ${seplist ", " ${prefix TAG ${conslist $t}}}
@@ -52,29 +56,37 @@ typedef int tags_$t;
 .foreach t ${depsort $(need_ds)}
 .. Structure definitions for all the constructors of the type
 .. That have elements (C does not like empty structures or unions).
-.. Set 'makeunion' to true if a constructor structure has been
-.. generated, because otherwise a union is not necessary.
-.set makeunion 0
 .if ${member $t ${ctypelist}}
 .. Constructor type
+.. Generate structure definitions for all constructors with
+.. fields.
+.. Also set 'makeunion' if at least one such structure is
+.. generated, because otherwise no union must be generated for
+.. the structure of the entire type.
+.set makeunion 0
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.. Constructors with 0 elements do not have a structure..
+.if ${len ${fields $c inherited}}
 .set makeunion 1
 /* Structure for constructor $c */
 typedef struct str_$c {
-.foreach e ${celmlist $t $c}
-    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} $e;
+.foreach e ${fields $c inherited}
+    ${type $c $e} $e;
 .endforeach
 } C_$c;
-
+.else
+/* Constructor $t has no fields */
 .endif
+
 .endforeach
+/* Constructor type $t */
 struct str_$t {
     tags_$t tag;
 .if $(makeunion)
     union uni_$t {
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.. Constructors with 0 elements do not have a structure..
+.if ${len ${fields $c inherited}}
 	C_$c ue_$c;
 .endif
 .endforeach
@@ -85,12 +97,13 @@ struct str_$t {
 #endif
 };
 
-.else
+.endif
+.if ${member $t ${ttypelist} ${classlist}}
 struct str_$t {
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} $e;
+.foreach e ${fields $t inherited}
+    ${type $t $e} $e;
 .endforeach
-.if ${not ${len ${telmlist $t}}}
+.if ${not ${len ${fields $t inherited}}}
     int _dummy_field;
 .endif
 #ifdef LOGNEW
@@ -114,11 +127,11 @@ struct str_$t_list {
 
 #ifdef LOGNEW
 .foreach t $(want_new)
-.if ${member $t ${ttypelist}}
-#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} __FILE__ __LINE__})
+.if ${member $t ${ttypelist} ${classlist}}
+#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
 .else
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} __FILE__ __LINE__})
+#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} __FILE__ __LINE__})
 .endforeach
 .endif
 .endforeach
@@ -150,10 +163,10 @@ struct str_$t_list {
 
 .. new_<cons> and new_<type> routines
 .foreach t $(want_new)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${ttypelist} ${classlist}}
 .set tl
-.foreach e ${telmlist $t}
-.append tl ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.foreach e ${fields $t inherited}
+.append tl ${type $t $e}
 .endforeach
 #ifdef LOGNEW
 .if ${== ${len $(tl)} 0}
@@ -171,8 +184,8 @@ extern $t new_$t( ${seplist ", " $(tl)} );
 .else
 .foreach c ${conslist $t}
 .set tl
-.foreach e ${celmlist $t $c}
-.append tl ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.append tl ${type $c $e}
 .endforeach
 #ifdef LOGNEW
 .if ${== ${len $(tl)} 0}
@@ -200,7 +213,8 @@ extern $t_list new_$t_list( void );
 .endforeach
 #endif
 ..
-.. setroom_<type>_list() routines
+.. setroom_<type>_list functions.
+.. For this library they are dummy functions.
 .foreach t $(want_setroom_list)
 extern $t_list setroom_$t_list( $t_list, const unsigned int );
 .endforeach
@@ -253,10 +267,10 @@ extern void rfre_$t( $t );
 ..
 .. print_<type>() routines
 .foreach t $(want_print)
-extern void print_$t( TMPRINTSTATE *st, const $t );
+extern void print_$t( TMPRINTSTATE *, const $t );
 .endforeach
 .foreach t $(want_print_list)
-extern void print_$t_list( TMPRINTSTATE *st, const $t_list );
+extern void print_$t_list( TMPRINTSTATE *, const $t_list );
 .endforeach
 ..
 .. fprint_<type>() routines
@@ -271,7 +285,7 @@ extern void fprint_$t_list( FILE *, const $t_list );
 #ifdef LOGNEW
 .foreach t $(want_slice_list)
 extern $t_list real_slice_$t_list(
- $t_list l,
+ const $t_list l,
  const unsigned int b,
  const unsigned int e,
  const char *_f,
@@ -320,13 +334,13 @@ extern int fscan_$t_list( FILE *, $t_list * );
 ..
 .. cmp_<type>() routines
 .foreach t $(want_cmp)
-extern int cmp_$t( const $t, const $t );
+extern int cmp_$t( const $t a, const $t b );
 .endforeach
 .foreach t $(want_cmp_list)
-extern int cmp_$t_list( const $t_list, const $t_list );
+extern int cmp_$t_list( const $t_list a, const $t_list b );
 .endforeach
 ..
-.. misc. functions
+.. Misc. functions.
 .if ${member flush_$(basename) $(want_misc)}
 extern void flush_$(basename)( void );
 .endif
@@ -336,4 +350,5 @@ extern void stat_$(basename)( FILE * );
 .if ${member get_balance_$(basename) $(want_misc)}
 extern int get_balance_$(basename)( void );
 .endif
+..
 /* ---- end of ${tplfilename} ---- */

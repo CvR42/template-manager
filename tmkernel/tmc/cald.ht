@@ -8,7 +8,7 @@
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of ${tplfilename} ---- */
-/* Definition C datastructures (Version for array list).
+/* External definitions (Version for array list, direct representation).
 
    template file:      ${tplfilename}
    datastructure file: ${dsfilename}
@@ -16,14 +16,10 @@
    tm kernel version:  $(kernel-version)
  */
 
-#if defined( __TOS__ ) && defined( __PUREC__ ) && !defined( const )
-/* Pure C on Atari ST cannot cope with const and passed structures. */
-#define const
-#define TM_CONST_HIDDEN
-#endif
+/* data structures */
 
 .. Definition of all list types.
-.foreach t $(need_ds_list)
+.foreach t ${sizesort $(need_ds_list)}
 typedef struct str_$t_list {
     unsigned int sz;
     unsigned int room;
@@ -45,7 +41,7 @@ typedef struct str_$t_list {
 .. mind the use of pointers to (yet) undefined types.
 .foreach t ${comm ${ctypelist} "" $(need_ds)}
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
 typedef struct str_C_$c *C_$c;
 .endif
 .endforeach
@@ -75,7 +71,7 @@ typedef int tags_$t;
 .if ${member $t ${ctypelist}}
 .. Constructor type
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
 .set makeunion 1
 .endif
 .endforeach
@@ -84,7 +80,8 @@ typedef struct str_$t {
 .if $(makeunion)
     union uni_$t {
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.. Constructors with 0 elements do not have a structure..
+.if ${len ${fields $c inherited}}
 	C_$c ue_$c;
 .endif
 .endforeach
@@ -95,12 +92,13 @@ typedef struct str_$t {
 #endif
 } $t;
 
-.else
+.endif
+.if ${member $t ${ttypelist} ${classlist}}
 typedef struct str_$t {
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} $e;
+.foreach e ${fields $t inherited}
+    ${type $t $e} $e;
 .endforeach
-.if ${not ${len ${telmlist $t}}}
+.if ${not ${len ${fields $t inherited}}}
     int _dummy_field;
 .endif
 #ifdef LOGNEW
@@ -114,11 +112,11 @@ typedef struct str_$t {
 .. that have elements (C does not like empty structures or unions).
 .foreach t ${comm ${ctypelist} "" $(need_ds)}
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c}}
 /* Structure for constructor $c */
 struct str_C_$c {
-.foreach e ${celmlist $t $c}
-    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} $e;
+.foreach e ${fields $c inherited}
+    ${type $c $e} $e;
 .endforeach
 };
 
@@ -128,11 +126,11 @@ struct str_C_$c {
 
 #ifdef LOGNEW
 .foreach t $(want_new)
-.if ${member $t ${ttypelist}}
-#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} __FILE__ __LINE__})
+.if ${member $t ${ttypelist} ${classlist}}
+#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
 .else
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} __FILE__ __LINE__})
+#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} __FILE__ __LINE__})
 .endforeach
 .endif
 .endforeach
@@ -164,16 +162,16 @@ struct str_C_$c {
 
 .. new_<cons> and new_<type> routines
 .foreach t $(want_new)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${ttypelist} ${classlist}}
 .set tl
-.foreach e ${telmlist $t}
-.append tl ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.foreach e ${fields $t inherited}
+.append tl ${type $t $e}
 .endforeach
 #ifdef LOGNEW
 .if ${== ${len $(tl)} 0}
-extern $t real_new_$t( const char *, const int );
+extern $t real_new_$t( const char *_f, const int _l );
 .else
-extern $t real_new_$t( ${seplist ", " $(tl)}, const char *, const int );
+extern $t real_new_$t( ${seplist ", " $(tl)}, const char *_f, const int _l );
 .endif
 #else
 .if ${== ${len $(tl)} 0}
@@ -185,8 +183,8 @@ extern $t new_$t( ${seplist ", " $(tl)} );
 .else
 .foreach c ${conslist $t}
 .set tl
-.foreach e ${celmlist $t $c}
-.append tl ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.append tl ${type $c $e}
 .endforeach
 #ifdef LOGNEW
 .if ${== ${len $(tl)} 0}
@@ -227,27 +225,27 @@ extern $t null_$t( void );
 extern $t_list null_$t_list( void );
 .endforeach
 ..
-.. append_<type>_list() routines
+.. append_<type>_list() routines.
 .foreach t $(want_append_list)
 extern $t_list append_$t_list( $t_list, $t );
 .endforeach
 ..
-.. reverse_<type>_list() routines
+.. reverse_<type>_list() routines.
 .foreach t $(want_reverse_list)
-extern $t_list reverse_$t_list( $t_list  );
+extern $t_list reverse_$t_list( $t_list );
 .endforeach
 ..
-.. insert_<type>_list() routines
+.. insert_<type>_list() routines.
 .foreach t $(want_insert_list)
 extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
 .endforeach
 ..
-.. delete_<type>_list() routines
+.. delete_<type>_list() routines.
 .foreach t $(want_delete_list)
 extern $t_list delete_$t_list( $t_list, const unsigned int );
 .endforeach
 ..
-.. extract_<type>_list() routines
+.. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
 extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
 .endforeach
@@ -275,10 +273,10 @@ extern void rfre_$t( $t );
 ..
 .. print_<type>() routines
 .foreach t $(want_print)
-extern void print_$t( TMPRINTSTATE *st, const $t );
+extern void print_$t( TMPRINTSTATE *, const $t );
 .endforeach
 .foreach t $(want_print_list)
-extern void print_$t_list( TMPRINTSTATE *st, const $t_list );
+extern void print_$t_list( TMPRINTSTATE *, const $t_list );
 .endforeach
 ..
 .. fprint_<type>() routines
@@ -292,11 +290,11 @@ extern void fprint_$t_list( FILE *, const $t_list );
 .. slice_<type>() routines
 #ifdef LOGNEW
 extern $t_list real_slice_$t_list(
- const $t_list,
- const unsigned int,
- const unsigned int,
- const char *,
- const int
+ const $t_list l,
+ const unsigned int b,
+ const unsigned int e,
+ const char *_f,
+ const int _l
 );
 #else
 .foreach t $(want_slice_list)
@@ -311,10 +309,10 @@ extern $t_list slice_$t_list(
 .. rdup_<type>() routines
 #ifdef LOGNEW
 .foreach t $(want_rdup)
-extern $t real_rdup_$t( const $t, const char *, const int );
+extern $t real_rdup_$t( const $t, const char *_f, const int _l );
 .endforeach
 .foreach t $(want_rdup_list)
-extern $t_list real_rdup_$t_list( const $t_list, const char *, const int );
+extern $t_list real_rdup_$t_list( const $t_list, const char *_f, const int _l );
 .endforeach
 #else
 .foreach t $(want_rdup)
@@ -350,7 +348,7 @@ extern int cmp_$t( const $t a, const $t b );
 extern int cmp_$t_list( const $t_list a, const $t_list b );
 .endforeach
 ..
-.. misc. functions
+.. Misc. functions.
 .if ${member flush_$(basename) $(want_misc)}
 #define flush_$(basename)()
 .endif
@@ -360,9 +358,5 @@ extern void stat_$(basename)( FILE * );
 .if ${member get_balance_$(basename) $(want_misc)}
 extern int get_balance_$(basename)( void );
 .endif
-
-#ifdef TM_CONST_HIDDEN
-#undef const
-#endif
-
+..
 /* ---- end of ${tplfilename} ---- */
