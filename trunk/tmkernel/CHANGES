@@ -1,4 +1,6 @@
 New in version 1.2:
+- Documentation moved to a separate package.
+
 - Tm now implements the expansion of inherited types. The .expandinherits
   command recursively replaces all references to inherited types by their
   definition. Only tuple types are allowed as superclass.
