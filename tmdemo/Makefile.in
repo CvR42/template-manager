@@ -35,9 +35,9 @@ DOC	      = README
 
 DSFILES       = calc.ds
 
-TMFILES       = calc.ct calc.ht calcconf.t
+TMFILES       = subst.ct calc.ct calc.ht calcconf.t
 
-TESTFILES     = test.calc oktest.clc okopt.clc
+TESTFILES     = test.calc oktest.clc okopt.clc oksubst.clc
 
 HDRS	      =
 
