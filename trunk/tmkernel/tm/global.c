@@ -10,6 +10,7 @@
 
 #include "config.h"
 
+#include <time.h>
 #include <stdio.h>
 
 #include <tmc.h>
@@ -28,6 +29,10 @@ tmstring dsfilename = tmstringNIL;
 FILE *dsfile = stdin;
 int dslineno = 0;
 ds_list allds;
+tmstring_list searchpath = tmstring_listNIL;
+
+time_t start_time;
+
 int fntr = FALSE;
 int listing = FALSE;
 int maintr = FALSE;
@@ -36,4 +41,3 @@ int sevaltr = FALSE;
 int vartr = FALSE;
 int lextr = FALSE;
 int noerrorline = FALSE;
-tmstring_list searchpath = tmstring_listNIL;

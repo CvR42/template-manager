@@ -9,6 +9,7 @@
  */
 
 #include <assert.h>
+#include <time.h>
 
 #include "config.h"
 
@@ -270,6 +271,7 @@ int main( int argc, char **argv )
     int lev;
     char buf[10];
 
+    start_time = clock();
     init_error();
     init_lex();
     init_var();
@@ -317,6 +319,7 @@ int main( int argc, char **argv )
     rfre_tmstring( active_libpath );
     end_var();
     flush_tm();
+    errcheck();
     if( get_balance_tm() != 0 || get_balance_tmstring() != 0 ){
 	fprintf( statstream, "Object allocation not balanced.\n" );
 	prstat = TRUE;
@@ -328,7 +331,6 @@ int main( int argc, char **argv )
 	report_lognew( statstream );
     }
     flush_lognew();
-    errcheck();
     exit( 0 );
     return 0;
 }
