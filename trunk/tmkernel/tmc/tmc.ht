@@ -337,18 +337,18 @@ extern void rfre_$t( $t );
 ..
 .. print_<type>() routines
 .foreach t $(want_print)
-extern void print_$t( TMPRINTSTATE *, const $t );
+extern void print_$t( TMPRINTSTATE *, const const_$t );
 .endforeach
 .foreach t $(want_print_list)
-extern void print_$t_list( TMPRINTSTATE *, const $t_list );
+extern void print_$t_list( TMPRINTSTATE *, const const_$t_list );
 .endforeach
 ..
 .. fprint_<type>() routines
 .foreach t $(want_fprint)
-extern void fprint_$t( FILE *, const $t );
+extern void fprint_$t( FILE *, const const_$t );
 .endforeach
 .foreach t $(want_fprint_list)
-extern void fprint_$t_list( FILE *, const $t_list );
+extern void fprint_$t_list( FILE *, const const_$t_list );
 .endforeach
 ..
 .. slice_<type>() routines
@@ -356,7 +356,7 @@ extern void fprint_$t_list( FILE *, const $t_list );
 #ifdef LOGNEW
 .foreach t $(want_slice_list)
 extern $t_list real_slice_$t_list(
- const $t_list l,
+ const const_$t_list l,
  const unsigned int b,
  const unsigned int e,
  const char *_f,
@@ -365,7 +365,7 @@ extern $t_list real_slice_$t_list(
 .endforeach
 #else
 .foreach t $(want_slice_list)
-extern $t_list slice_$t_list( $t_list, const unsigned int, const unsigned int );
+extern $t_list slice_$t_list( const_$t_list, const unsigned int, const unsigned int );
 .endforeach
 #endif
 .endif
@@ -374,17 +374,17 @@ extern $t_list slice_$t_list( $t_list, const unsigned int, const unsigned int );
 .if ${len $(want_rdup) $(want_rdup_list)}
 #ifdef LOGNEW
 .foreach t $(want_rdup)
-extern $t real_rdup_$t( const $t, const char *_f, const int _l );
+extern $t real_rdup_$t( const const_$t, const char *_f, const int _l );
 .endforeach
 .foreach t $(want_rdup_list)
-extern $t_list real_rdup_$t_list( const $t_list, const char *_f, const int _l );
+extern $t_list real_rdup_$t_list( const const_$t_list, const char *_f, const int _l );
 .endforeach
 #else
 .foreach t $(want_rdup)
-extern $t rdup_$t( const $t );
+extern $t rdup_$t( const const_$t );
 .endforeach
 .foreach t $(want_rdup_list)
-extern $t_list rdup_$t_list( const $t_list );
+extern $t_list rdup_$t_list( const const_$t_list );
 .endforeach
 #endif
 .endif
@@ -410,10 +410,10 @@ extern int fscan_$t_list( FILE *, $t_list * );
 ..
 .. cmp_<type>() routines
 .foreach t $(want_cmp)
-extern int cmp_$t( const $t a, const $t b );
+extern int cmp_$t( const const_$t a, const const_$t b );
 .endforeach
 .foreach t $(want_cmp_list)
-extern int cmp_$t_list( const $t_list a, const $t_list b );
+extern int cmp_$t_list( const const_$t_list a, const const_$t_list b );
 .endforeach
 ..
 .. Misc. functions.
