@@ -3,7 +3,7 @@
 ..
 .. All rights reserved.
 ..
-.. File: aluneed.t
+.. File: need.t
 .. CvR
 ..
 .. Analysis of required code for given set of routines.
@@ -130,18 +130,17 @@
 .call require new "$l"
 .call require setroom "$l"
 .call require append "$l"
-.call require ds "$l"
 .endmacro
 ..
 .. ** rdup **
 .macro req_rdup l
 .call require new "$l"
-.call require setroom "$l"
-.call require ds "$l"
-.call require rdup "${delisttypes $l}"
-.call require rdup "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require setroom "${listtypes $l}"
+.call require rdup "${delisttypes $l} ${types ${singletypes $l}}"
 .if ${eq $(template) tmc}
 .call require rdup "${subclasses $l}"
+.else
+.call require rdup "${types ${subclasses ${singletypes $l}}}"
 .endif
 .endmacro
 ..
@@ -149,9 +148,8 @@
 .macro req_fscan l
 .call require new "$l"
 .call require append "$l"
-.call require ds "$l"
-.call require fscan "${delisttypes $l}"
-.call require fscan "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require fscan "${delisttypes $l} ${types ${singletypes $l}}"
+.call require fscan "${types ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) ald}
 .call require null "$l"
 .endif
@@ -161,7 +159,7 @@
 .macro req_print l
 .call require ds "$l"
 .call require print "${delisttypes $l}"
-.call require print "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require print "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
 .call require print "${subclasses $l}"
 .endif
@@ -171,7 +169,7 @@
 .macro req_fprint l
 .call require ds "$l"
 .call require fprint "${delisttypes $l}"
-.call require fprint "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require fprint "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
 .call require fprint "${subclasses $l}"
 .endif
@@ -181,7 +179,7 @@
 .macro req_cmp l
 .call require ds "$l"
 .call require cmp "${delisttypes $l}"
-.call require cmp "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require cmp "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
 .call require cmp "${subclasses $l}"
 .endif
@@ -227,7 +225,7 @@
 .. ** rfre **
 .macro req_rfre l
 .call require rfre "${delisttypes $l}"
-.call require rfre "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require rfre "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
 .call require rfre "${subclasses $l}"
 .endif
@@ -238,7 +236,7 @@
 .if ${eq $(template) ald}
 .macro req_null l
 .call require null "${delisttypes $l}"
-.call require null "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require null "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .call require ds "$l"
 .endmacro
 .endif
@@ -259,7 +257,7 @@
 .. ** ds **
 .macro req_ds l
 .call require ds "${delisttypes $l}"
-.call require ds "${types ${singletypes $l} ${conslist ${singletypes $l}}}"
+.call require ds "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
 .call require ds "${subclasses $l}"
 .endif
@@ -310,9 +308,9 @@
 .set need_stat
 .set want_stat
 .endif
-.foreach g $(groups) stat
-/* ${prefix $g_ $(need_$g)} */
-.endforeach
+...foreach g $(groups) stat
+../* ${prefix $g_ $(need_$g)} */
+...endforeach
 ..
 .. Derive the contents of the want_*_list and need_*_list variables
 .. from the want_ and need_ variables
@@ -326,3 +324,4 @@
 . set need_$g ${comm ${singletypes $(need_$g)} "" ${typelist}}
 .endforeach
 .set need_ds ${comm $(need_ds) "" ${typelist}}
+/* Requirement analysis took ${processortime} milliseconds. */
