@@ -1161,7 +1161,7 @@ static tmstring fntypelist( const tmstring_list sl )
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
 	d = allds->arr[ix];
-	vp = get_type_name( d );
+	vp = d->name;
 	nl = append_tmstring_list( nl, new_tmstring( vp ) );
     }
     ans = flatstrings( nl );
