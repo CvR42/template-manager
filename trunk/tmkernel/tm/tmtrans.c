@@ -35,10 +35,12 @@
 /* tags for command table */
 typedef enum en_tmcommands {
     APPEND,
+    APPENDFILE,
     CALL,
     CASE,
     DEFAULT,
     ELSE,
+    ENDAPPENDFILE,
     ENDFOREACH,
     ENDIF,
     ENDMACRO,
@@ -76,10 +78,12 @@ struct dotcom {
 
 static struct dotcom dotcomlist[] = {
     { "append", APPEND },
+    { "appendfile", APPENDFILE },
     { "call", CALL },
     { "case", CASE },
     { "default", DEFAULT },
     { "else", ELSE },
+    { "endappendfile", ENDAPPENDFILE },
     { "endforeach", ENDFOREACH },
     { "endif", ENDIF },
     { "endmacro", ENDMACRO },
@@ -242,10 +246,11 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
    elements. End commands are:
       <eof>
       .else
+      .endappendfile
       .endforeach
-      .endredirect
       .endif
       .endmacro
+      .endredirect
       .endswitch
       .endwhile
 
@@ -311,11 +316,12 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 		fre_tmstring( com );
 		switch( cp->dotcomtag ){
 		    case ELSE:
+		    case ENDAPPENDFILE:
 		    case ENDFOREACH:
 		    case ENDIF:
-		    case ENDSWITCH:
 		    case ENDMACRO:
 		    case ENDREDIRECT:
+		    case ENDSWITCH:
 		    case ENDWHILE:
 		    case EOFLINE:
 			*endcom = cp->dotcomtag;
@@ -391,6 +397,16 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			    unbalance( firstlno, subendcom, ENDMACRO );
 			}
 			te = new_Macro( firstlno, new_tmstring( p ), e1 );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case APPENDFILE:
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
+			if( subendcom != ENDAPPENDFILE ){
+			    unbalance( firstlno, subendcom, ENDAPPENDFILE );
+			}
+			te = new_Appendfile( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -699,6 +715,29 @@ static void doredirect( const tplelm e )
     }
     outfile = ckfopen( fname, "w" );
     dotrans( to_Redirect(e)->body, outfile );
+    fclose( outfile );
+    fre_tmstring( fname );
+}
+
+/* Handle 'appendfile' command. */
+static void doappendfile( const tplelm e )
+{
+    tmstring fname;
+    FILE *outfile;
+    char *is;
+    char *os;
+
+    tpllineno = to_Appendfile(e)->lno;
+    is = to_Appendfile(e)->fname;
+    os = alevalto( &is, '\0' );
+    scan1par( os, &fname );
+    fre_tmstring( os );
+    if( fname == tmstringNIL ){
+	line_error( "missing filename" );
+	return;
+    }
+    outfile = ckfopen( fname, "a" );
+    dotrans( to_Appendfile(e)->body, outfile );
     fclose( outfile );
     fre_tmstring( fname );
 }
@@ -1165,6 +1204,10 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
 	    case TAGRedirect:
 		doredirect( e );
+		break;
+
+	    case TAGAppendfile:
+		doappendfile( e );
 		break;
 
 	    case TAGInclude:

@@ -1,4 +1,7 @@
-depsort: ${depsort ${typelist}}
+inheritsort ${typelist}:
+  ${inheritsort ${typelist}}
+depsort ${typelist}:
+  ${depsort ${typelist}}
 .set listpre <
 .set listsuff >
 .set tl a <b> <<c>> <<<d>>> e> <f

@@ -34,6 +34,6 @@ expr =
     exprPlus: { a:expr, b:expr }
     ;
 
-smt ~= { line:int } +
+smt = { line:int } +
 	SmtAssign: { lhs:expr, rhs:expr } |
 	SmtIf: { cond:expr, thencode:[smt], elsecode:[smt] } ;

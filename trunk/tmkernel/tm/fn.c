@@ -1400,7 +1400,7 @@ static tmstring fnmetatype( const tmstring_list sl )
     return new_tmstring( "atom" );
 }
 
-/* Given a type name, return the subclasses (transitive closure of inherits)
+/* Given a type name, return the subclasses (transitive closure of inheritors)
  * of this type.
  */
 static tmstring fnsubclasses( const tmstring_list sl )
@@ -1440,21 +1440,19 @@ static tmstring fnsuperclasses( const tmstring_list sl )
 static tmstring fninherits( const tmstring_list sl )
 {
     tmstring ans;
+    unsigned int ix;
+    tmstring_list allinherits;
 
-    if( sl->sz != 1 ){
-	line_error( "'inherits' requires exactly one parameter" );
-	return new_tmstring( "" );
-    }
-    {
-	const tmstring_list inherits = extract_inherits( allds, sl->arr[0] );
+    allinherits = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	const tmstring_list inherits = rdup_tmstring_list( extract_inherits( allds, sl->arr[ix] ) );
 
-	if( inherits == tmstring_listNIL ){
-	    sprintf( errarg, "'%s'", sl->arr[0] );
-	    line_error( "unknown type" );
-	    return new_tmstring( "" );
+	if( inherits != tmstring_listNIL ){
+	    allinherits = concat_tmstring_list( allinherits, inherits );
 	}
-	ans = flatstrings( inherits );
     }
+    ans = flatstrings( allinherits );
+    rfre_tmstring_list( allinherits );
     return ans;
 }
 
@@ -1465,13 +1463,12 @@ static tmstring fninheritors( const tmstring_list sl )
 {
     tmstring ans;
     tmstring_list inheritors;
+    unsigned int ix;
 
-    if( sl->sz != 1 ){
-	line_error( "'inheritors' requires exactly one parameter" );
-	return new_tmstring( "" );
-    }
     inheritors = new_tmstring_list();
-    collect_inheritors( &inheritors, allds, sl->arr[0] );
+    for( ix=0; ix<sl->sz; ix++ ){
+	collect_inheritors( &inheritors, allds, sl->arr[ix] );
+    }
     ans = flatstrings( inheritors );
     rfre_tmstring_list( inheritors );
     return ans;

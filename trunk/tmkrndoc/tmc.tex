@@ -1,35 +1,37 @@
 \chapter{C support}
 \label{s.tmc}
-This chapter a detailed description of the {\C} templates is given.
+In this chapter a detailed description of the {\C} templates is given.
 In appendix \ref{s.calc} an example project is shown that demonstrates
 the use of these templates.
 \par
 The {\C} support consists of two template files: {\tt tmc.ht} is used
 to generate a header file, and {\tt tmc.ct} is used to generate a code
-file.
+file. Also, a library is provided that contains service functions
+needed by the templates, and the equivalent of the generated routines
+for a number of {\C} types.
 \par
 \index{ANSI C@ANSI {\C}}
 The functions are described using ANSI {\C} style type specifications,
 and require an ANSI {\C} compiler.
 \section{Restrictions}
 These templates impose the following restrictions:
-\begin{enumerate}
+\begin{itemize}
 \item Tuple types cannot inherit or have inheritors.
 \item Only inheritance from a single type is allowed (no multiple inheritance).
 \item Virtual types must have at least one inheritor.
-\end{enumerate}
+\end{itemize}
 \section{Type representation}
 For all {\Tm} meta-types a representation in {\C} must be chosen.
+This is shown in the sections below.
 As illustration the type representation of the following types
 will be shown:
 \verbatiminput{tree.ds}
-In {\C}, {\Tm} types and type lists are pointers
-to appropriate structures.
-For tuple types this is simply a pointer to a structure containing all the
-fields of the tuple.
 \subsection{Tuple representation}
+For tuple types, the representation of the type is simply a pointer to
+a structure containing all the fields of the tuple.
 \index{tuple!C template}\index{C template!tuple}
 For example:
+\begin{showfile}
 \begin{verbatim}
 typedef str_tree *tree;
 
@@ -38,6 +40,7 @@ struct str_tree {
     tree_list t;
 };
 \end{verbatim}
+\end{showfile}
 \subsection{Class representation}
 Class types are pointers to a structure containing
 a tag and all the fields of the type.
@@ -46,6 +49,7 @@ subclasses. To access the fields of a subclass, the pointer must
 be cast to the appropriate subclass type.
 \index{constructor!array list template}\index{array list template!constructor}
 For example, constructor type {\tt btree} is represented as:
+\begin{showfile}
 \begin{verbatim}
 typedef str_ctree *ctree;
 typedef str_treeBranch *treeBranch;
@@ -53,6 +57,10 @@ typedef str_treeNull *treeNull;
 
 enum en_ctree {
     TAGtreeBranch, TAGtreeNull
+};
+
+struct str_ctree {
+    tags_ctree tag;
 };
 
 struct str_treeBranch {
@@ -65,13 +73,43 @@ struct str_treeBranch {
 struct str_treeNull {
     tags_ctree tag;
 };
+\end{verbatim}
+\end{showfile}
+The possible tags for a type are enumerated in the {\tt enum} type
+{\tt tags\_<type>}. Note that no tag is generated for {\tt ctree},
+because this type is virtual.
+\par
+If a C++ compiler is detected (the preprocessor variable \verb'__cplusplus' 
+is defined), a slightly different representation is used:
+\begin{showfile}
+\begin{verbatim}
+typedef str_ctree *ctree;
+typedef str_treeBranch *treeBranch;
+typedef str_treeNull *treeNull;
 
-struct str_ctree {
+enum en_ctree {
+    TAGtreeBranch, TAGtreeNull
+};
+
+class str_ctree {
+public:
     tags_ctree tag;
 };
+
+class str_treeBranch : str_ctree {
+public:
+    int v;
+    ctree l;
+    ctree r;
+};
+
+class str_treeNull : str_ctree {
+public:
+};
 \end{verbatim}
-The possible tags for a type are enumerated in the {\tt enum} type
-{\tt tags\_<type>}.
+\end{showfile}
+This representation avoids some of the casts that are needed in the {\C}
+version for \verb'rdup_<type>' and \verb'new_<type>'.
 \subsection{Constructor and constructor base representation}
 Constructor types are represented in a similar way to class types:
 they are pointers to a structure containing
@@ -81,6 +119,7 @@ subclasses. To access the fields of a subclass, the pointer must
 be cast to the appropriate subclass type.
 \index{constructor!array list template}\index{array list template!constructor}
 For example, constructor type {\tt btree} is represented as:
+\begin{showfile}
 \begin{verbatim}
 typedef str_btree *btree;
 typedef str_BTree *BTree;
@@ -105,28 +144,43 @@ struct str_btree {
     tags_btree tag;
 };
 \end{verbatim}
+\end{showfile}
 The constructor base type is represented by a separate structure containing
 a {\tt tag} field to indicate the actual constructor.
 The possible tags for a type are enumerated in the {\tt enum} type
 {\tt tags\_<type>}.
 \par
-With the general representation of constructors
-one has to access a field of a constructor with an
-expression of the form
+As for classes, a slightly different representation is used if
+the preprocessor variable \verb'__cplusplus' is used:
+\begin{showfile}
 \begin{verbatim}
-<var>->u.ue_<cons>.<elmname>
+typedef str_btree *btree;
+typedef str_BTree *BTree;
+typedef str_BLeaf *BLeaf;
+
+typedef enum en_btree {
+    TAGBTree, TAGBLeaf
+} tags_btree;
+
+struct str_btree {
+    tags_btree tag;
+};
+
+struct str_BTree : str_btree {
+    btree l;
+    btree r;
+};
+
+struct str_BLeaf : str_btree {
+    int v;
+};
 \end{verbatim}
-As a service to the user appropriate {\tt \#define}s are provided
-so that the expression
-\begin{verbatim}
-<var>-><cons>.<elmname>
-\end{verbatim}
-is allowed.
-This is demonstrated at the end of this subsection.
-\par
+\end{showfile}
+\subsection{List representation}
 List types are defined as pointers to a list description structure.
 \index{list!array list template}\index{array list template!list}
 For example:
+\begin{showfile}
 \begin{verbatim}
 typedef struct str_tree_list *tree_list;
 
@@ -136,27 +190,81 @@ struct str_tree_list {
     tree *arr;           /* ptr to array of 'room' elements */
 };
 \end{verbatim}
+\end{showfile}
+\begin{sloppypar}
 Note that in the {\C} representation \verb+[tree]+ is called
 \verb+tree_list+, and \verb+[[tree]]+ is called \verb+tree_list_list+.
-The list description structure contains a pointer to an array,
-the current length of the list,
-and the maximum length of the list before re-allocation is necessary.
+The list description structure contains a pointer to an array, the
+current length of the list, and the maximum length of the list before
+re-allocation is necessary.
+\end{sloppypar}
+\subsection{Casting macros}
+To access subclasses of a class or constructor base, a cast must be used.
+For example:
+\begin{showfile}
+\begin{verbatim}
+void clear_leaf( btree tree )
+{
+    if( tree->tag == TAGBLeaf ){
+        /* This is not recommended. */
+        ((BLeaf) tree)->v = 0;
+    }
+}
+\end{verbatim}
+\end{showfile}
+It is not recommended to access elements this way. Instead, one should
+use the \verb'to_<type>()' macros that are provided for that purpose:
+\begin{showfile}
+\begin{verbatim}
+void clear_leaf( btree tree )
+{
+    if( tree->tag == TAGBLeaf ){
+        to_BLeaf( tree )->v = 0;
+    }
+}
+\end{verbatim}
+\end{showfile}
+These macros have as advantage that they can also be used in older
+Tm templates (the latest version of these templates provide them),
+that future templates are likely to use them, and that the casting
+macro can contain a check on the appropriateness of the cast
+(not yet implemented).
 \par
+Since in the current template every subclass is an independent type,
+it is also possible to have variables of these types. This allows
+constructs such as:
+\begin{showfile}
+\begin{verbatim}
+void clear_leaf( btree tree )
+{
+    if( tree->tag == TAGBLeaf ){
+        BLeaf leaf = to_BLeaf( tree );
+
+        leaf->v = 0;
+    }
+}
+\end{verbatim}
+\end{showfile}
+
+\subsection{Null pointers}
 For each type and type list a suitable {\tt NIL} pointer is defined.
 \index{<type>NIL@\verb+<type>NIL+}
 \index{<type>_listNIL@\verb+<type>_listNIL+}
 For example:
+\begin{showfile}
 \begin{verbatim}
 #define treeNIL (tree)0
 #define btreeNIL (btree)0
 #define tree_listNIL (tree_list)0
 \end{verbatim}
+\end{showfile}
 The following functions show how all the type representations
 (in this case the types {\tt tree}, {\tt btree}, {\tt ctree} and the list type
 \verb+[tree]+)
 are used in a program:
 Each function returns the sum of the leave or node values in a given
 tree.
+\begin{showfile}
 \begin{verbatim}
 /* Return the sum of all the node values in tree 't'. */
 int sum_tree( tree t )
@@ -173,7 +281,9 @@ int sum_tree( tree t )
     return t->v + s;
 }
 \end{verbatim}
+\end{showfile}
 
+\begin{showfile}
 \begin{verbatim}
 /* Return the sum of all the leave values in ctree 't'. */
 int sum_ctree( ctree t )
@@ -184,13 +294,13 @@ int sum_ctree( ctree t )
     {
         case TAGtreeBranch:
             s = sum_ctree( to_treeBranch(t)->l ) +
-		sum_ctree( to_treeBranch(t)->r ) +
-	        to_treeBranch(t)->v;
+                sum_ctree( to_treeBranch(t)->r ) +
+                to_treeBranch(t)->v;
             break;
 
         case TAGtreeNull:
             s = 0;
-	    break;
+            break;
 
         default:
             tm_badtag( __FILE__, __LINE__, (int) t->tag );
@@ -199,7 +309,9 @@ int sum_ctree( ctree t )
     return s;
 }
 \end{verbatim}
+\end{showfile}
 
+\begin{showfile}
 \begin{verbatim}
 /* Return the sum of all the leave values in btree 't'. */
 int sum_btree( btree t )
@@ -214,7 +326,7 @@ int sum_btree( btree t )
 
         case TAGBLeaf:
             s = to_BLeaf(t)->v;
-	    break;
+            break;
 
         default:
             tm_badtag( __FILE__, __LINE__, (int) t->tag );
@@ -223,6 +335,7 @@ int sum_btree( btree t )
     return s;
 }
 \end{verbatim}
+\end{showfile}
 \section{Dynamic memory allocation}
 \label{s.allocation}
 \index{allocation}
@@ -246,7 +359,7 @@ leading to performance degradation or program failure.
 \par
 Therefore,
 in the ideal situation each call to \verb+malloc()+ is balanced with
-{\em exactly} \/one call to \verb+free()+.
+{\em exactly} one call to \verb+free()+.
 \par
 {\Tm} offers two facilities to ensure that the \verb+malloc()+
 and \verb+free()+ calls are in balance.
@@ -299,7 +412,7 @@ Usually the cause of the imbalance is easily determined from this information.
 \par
 The {\tt LOGNEW} facility is a powerful debugging aid, but it has an important
 disadvantage:
-{\em all} \/code must be compiled with this option.
+{\em all} code must be compiled with this option.
 \par
 To find the place where a second \verb+fre_<type>+ of a block is done is
 more difficult;
@@ -329,15 +442,27 @@ When necessary an array will be allocated through \verb+setroom_<type>_list()+.
 \end{verbatim}
 \begin{desc}
 \index{new_<type>@\verb+new_<type>()+}
-\index{new_<cons>@\verb+new_<cons>()+}
 Create a constructor, class or tuple,
 and set the elements to the value of the given parameters.
 For constructor and class types, the {\tt tag} field is set to the appropriate
 value.
-To request the generation of {\tt new\_<cons>} functions for a certain
-constructor type,
-{\tt new\_<type>} must be added to {\tt wantdefs};
-see section~\ref{s.config} for an explanation of the use of {\tt wantdefs}.
+\par
+If the type is a subclass, the fields of the superclasses must also
+be given, in the order described for the {\Tm} template function {\tt fields}.
+\par
+For example, if {\tt expr} is defined as:
+\begin{showfile}
+\begin{verbatim}
+expr = { line:int } + exprPlus: { a:expr, b:expr } | exprConst: { n:int };
+\end{verbatim}
+\end{showfile}
+The following functions can be generated:
+\begin{showfile}
+\begin{verbatim}
+exprPlus new_exprPlus( int line, expr a, expr b );
+exprConst new_exprConst( int line, int n );
+\end{verbatim}
+\end{showfile}
 \end{desc}
 \begin{verbatim}
 <type>_list setroom_<type>_list( <type>_list l, unsigned int rm );
@@ -377,38 +502,14 @@ void rfre_<type>_list( <type>_list e );
 Recursively destroy all elements of {\tt e} and {\tt e} itself.
 \end{desc}
 \begin{verbatim}
-void flush_<basename>();
-\end{verbatim}
-\begin{desc}
-\index{flush_<basename>@\verb+flush_<basename>()+}
-\sloppy
-Internally the array list code will store freed constructors,
-tuples or list descriptors in a special array,
-and will re-use one of these on the next call to {\tt new\_<something>}
-of the same type.
-This mechanism is called \defn>{caching}.
-Calling {\tt flush\_<basename>()} will empty these variables.
-This is useful to balance the number of {\tt malloc()} and {\tt free()}
-calls, for example for profiling of the code.
-Note that this function does {\em not} \/affect the statistics printed by
-{\tt stat\_<basename>}, since for these statistics cached variables are
-considered as freed.
-\par
-Since the other templates do not use caching,
-for these templates the function is a dummy.
-\end{desc}
-\begin{verbatim}
 void stat_<basename>( FILE *f );
 \end{verbatim}
 \begin{desc}
 \index{stat_<basename>@\verb+stat_<basename>()+}
-\begin{sloppypar}
-Write statistics of allocation and freeing for each type and type
-list associated with {\tt <basename>} to file {\tt f}.
-This code is only compiled if the preprocessor variable {\tt STAT} is
-defined (see section~\ref{s.config}),
-otherwise this function does nothing.
-\end{sloppypar}
+Write statistics of allocation and freeing for each type and type list
+associated with {\tt <basename>} to file {\tt f}. The code that counts
+allocations and deallocations is only generated if \verb'stat_<basename>'
+or \verb'get_balance_<basename>' is requested.
 \end{desc}
 \begin{verbatim}
 int get_balance_<basename>( void );
@@ -416,11 +517,12 @@ int get_balance_<basename>( void );
 \begin{desc}
 \index{get_balance_<basename>@\verb+get_balance_<basename>()+}
 \begin{sloppypar}
-Return \verb+-1+ if any of the types managed in \verb"<basename>" has
-been freed more often than allocated.
-Return \verb+1+ if any of the types managed in \verb"<basename>" has
-been freed less often than allocated.
-Return \verb+0+ if the allocation and freeing are in balance.
+Return \verb+-1+ if any of the types managed in \verb"<basename>"
+has been freed more often than allocated.  Return \verb+1+ if any of
+the types managed in \verb"<basename>" has been freed less often than
+allocated. Return \verb+0+ if the allocation and freeing are in balance.
+The code that counts allocations and deallocations is only generated if
+\verb'stat_<basename>' or \verb'get_balance_<basename>' is requested.
 \end{sloppypar}
 \end{desc}
 \subsection{List manipulation}
@@ -520,7 +622,7 @@ Recursively duplicate instance {\tt e} of type {\tt <type>} or
 \begin{desc}
 \index{slice_<type>_list@\verb+slice_<type>_list()+}
 Create a new list that contains recursive duplicates of the elements of
-list {\tt l} with indices {\tt b} up to but {\em not} \/including {\tt e}.
+list {\tt l} with indices {\tt b} up to but {\em not} including {\tt e}.
 If {\tt b>e} or {\tt b} points beyond the list,
 an empty list is returned.
 If {\tt e} points beyond {\tt l},
@@ -536,11 +638,10 @@ print optimizer in the
 see section~\ref{s.csupportlib}.
 \par
 \begin{sloppypar}
-In the array list code,
-as an extension to the standard {\Tm} internal representation,
+As an extension to the standard {\Tm} internal representation,
 the \verb!print_<type>! and \verb'fprint_<type>' functions print null
 pointers as the symbol `{\tt @}'.
-The \verb+fscan_<type>+ functions for the array list code will recognize
+The \verb+fscan_<type>+ functions for the array list code recognizes
 this symbol.
 \end{sloppypar}
 \begin{verbatim}
@@ -555,7 +656,7 @@ from file {\tt f},
 allocate new room to hold the data that is read,
 and set pointer {\tt p} to point to the new data.
 If no error occurs, a value {\tt 0} is returned.
-If an error {\em does} \/occur,
+If an error {\em does} occur,
 a value {\tt 1} is returned, and an error message is put in the array
 {\tt tm\_errmsg} provided by the {\C} support library.
 Elements are created all the data that has been read before the error elements,
@@ -611,13 +712,17 @@ or else the shortest list is the smallest.
 \end{itemize}
 \par
 Resemblance to {\tt strcmp()} is intentional. In fact it is possible to do:
+\begin{showfile}
 \begin{verbatim}
 #define cmp_tmstring strcmp
 \end{verbatim}
+\end{showfile}
 also note that it is possible to do
+\begin{showfile}
 \begin{verbatim}
 #define cmp_int (a-b)
 \end{verbatim}
+\end{showfile}
 However, it is not wise to do this for {\tt float} or {\tt double},
 since rounding errors may lead to unexpected behavior.
 There are a {\tt cmp\_float()} and {\tt cmp\_double()} in the support library,
@@ -639,13 +744,13 @@ int cmp_<type>_list( <type>_list a, <type>_list b );
 Compare data structures {\tt a} and {\tt b}, and return a code
 according to the table listed previously.
 \end{desc}
-\section{C support library}
+\section{{\C} support library}
 \label{s.csupportlib}
 The {\C} support library provides definitions in
 the same class as the generated definitions for a number of commonly used
 primitive types.
 It also provides definitions that are necessary
-for various templates (e.g.\ the {\tt print} functions).
+for various templates (e.g. the {\tt print} functions).
 \par
 For the library the following files are provided:
 
@@ -1045,7 +1150,7 @@ Fatal error handler for bad tags: print the position
 given by source file name {\tt file} and source line {\tt line},
 and print the tag value as a decimal and hexadecimal value.
 After this stop the program.
-This message is {\em not} \/printed through \verb'tm_fatal()',
+This message is {\em not} printed through \verb'tm_fatal()',
 since the occurrence of a bad tag is a symptom of a serious organization
 problem.
 \end{desc}
@@ -1379,9 +1484,11 @@ struct _tmc_sym {
 \end{verbatim}
 The tmstring of this symbol is stored in field \verb+name+.
 The name of a tmsymbol \verb+s+ can be printed with
+\begin{showfile}
 \begin{verbatim}
 printf( "%s", s->name );
 \end{verbatim}
+\end{showfile}
 The field \verb+data+ is never touched by the symbol handling routines,
 it may be used to store user data associated with the symbol.
 \par
@@ -1430,7 +1537,7 @@ It is not allowed to use \verb+add_tmsymbol()+ after you have used
 Otherwise it cannot be guaranteed that the generated symbols remain unique.
 This restriction is enforced by the routines.
 \end{desc}
-\section{Tm and C configuration variables}
+\section{Tm and {\C} configuration variables}
 \label{s.config}
 The templates use a few {\Tm} variables to modify the contents
 of the generated code.
@@ -1443,8 +1550,8 @@ a reasonable default will be chosen.
 &
 This variable is used to generate the names of
 definitions that are generated only once
-(e.g.\ initialization and statistics functions).
-This variable {\em must} \/be set.
+(e.g. initialization and statistics functions).
+This variable {\em must} be set.
 \\
 {\tt wantdefs}\index{wantdefs@{\tt wantdefs}}
 &
@@ -1455,17 +1562,12 @@ If these functions require the definition of other functions,
 the necessary functions will be generated,
 but will be declared {\tt static}.
 If {\tt alldefs} is set all possible definitions are generated.
-\par
-There is one exception:
-to request the generation of {\tt new\_<cons>} functions for a certain
-constructor type {\tt <type>},
-{\tt new\_<type>} must be added to {\tt wantdefs}.
 \\
 {\tt notwantdefs}\index{notwantdefs@{\tt notwantdefs}}
 &
-If set,
-this variable contains the names of the type and function definitions for
-which under {\em all} conditions {\em no} code must be generated.
+If set, this variable contains the names of the type and function
+definitions for which under {\em all} conditions {\em no} code must
+be generated.
 \\
 {\tt alldefs}\index{alldefs@{\tt alldefs}}
 &
@@ -1479,22 +1581,6 @@ At least one of the variables {\tt wantdefs} and {\tt alldefs} must be set.
 In the generated {\C} code a number of preprocessor variables are used:
 \par
 \begin{desctab}
-{\tt CACHESZ}\index{CACHESZ@{\tt CACHESZ}}
-&
-For every tuple, constructor, and list type an array of freed instances
-is maintained.
-When a new instance must be made of a type,
-it is attempted to take it from this list,
-so that the overhead associated with {\tt malloc()} is prevented.
-This process is called \defn>{caching},
-and the array is called the \defn>{cache}.
-Whether the caching effort is worthwhile
-depends on the machine and the application.
-\par
-The size of the cache is determined by {\tt CACHESZ}.
-If the caching is not considered worthwhile, it can be prevented
-by specifying that {\tt CACHESZ} is 0.
-\\
 {\tt FATAL(msg)}\index{FATAL@{\tt FATAL()}}
 &
 {\tt \#define} this if you want to supply a fatal error handler to print
@@ -1528,556 +1614,3 @@ and the balance state can be obtained with \verb'get_balance<basename>()'.
 See section~\ref{s.allocation} for a detailed description.
 \\
 \end{desctab}
-\section{Old Tm templates}
-Next to the {\C} template described above, there are three variants of of old
-templates,
-differing in the way they represent the {\Tm} data-structures in {\C}.
-\begin{enumerate}
-\item
-{\em Linked list template}.
-All {\Tm} types are pointers to dynamically allocated {\C} structures.
-Lists are built by chaining elements together through a {\tt next} field.
-\item
-{\em Array list template}.
-All {\Tm} types are pointers to dynamically allocated {\C} structures.
-{\Tm} lists are built using dynamically growing arrays and are represented by
-pointers to list descriptor structures.
-\item
-{\em Direct representation template}.
-{\Tm} tuple types are {\C} structures,
-{\Tm} constructor types are {\C} structures containing a union of pointers
-to dynamically allocated {\C} structures for all constructors of the
-type.
-{\Tm} lists are built using dynamically growing arrays and are
-represented by list descriptor structures.
-\end{enumerate}
-\par
-All {\C} templates consist of two parts:
-A file to generate {\C} code (a {\tt .ct} file),
-and a file to generate a header file (a {\tt .ht} file).
-One should {\tt \#include} the generated header file in the generated
-{\C} file to prevent problems with mutually recursive functions.
-\par
-The following template files are provided:
-\begin{flushleft}
-\begin{tabular}{ll}
-{\tt cald.ct} & Code template for array list, direct structure implementation. \\
-{\tt cald.ht} & Header template for array list, direct structure implementation. \\
-{\tt calu.ct} & Code template for array list implementation. \\
-{\tt calu.ht} & Header template for array list implementation. \\
-{\tt cllu.ct} & Code template for linked list implementation. \\
-{\tt cllu.ht} & Header template for linked list implementation. \\
-\end{tabular}
-\end{flushleft}
-The functionality they provide is similar to that of the new
-templates, but their support for classes and inheritance is limited.
-\subsection{Type representation}
-In {\C},
-several {\Tm} type representations are possible that all have their advantages
-and disadvantages.
-As a consequence,
-a number of templates have evolved that all make different choices
-in this respect.
-The type representation of each template is described in this section.
-As illustration the type representation of the types
-{\tt tree}, {\tt btree} and \verb+[tree]+ will be shown
-for each of the representations.
-\begin{verbatim}
-tree == ( v:int, t:[tree] );
-
-btree ::= BTree l:btree r:btree | BLeaf v:int;
-\end{verbatim}
-\subsection{Array list template}
-In the array list template {\Tm} types and type lists are pointers
-to appropriate structures.
-For tuple types this is simply a pointer to a structure containing all the
-fields of the tuple.
-\par
-\index{tuple!array list template}\index{array list template!tuple}
-For example:
-\begin{verbatim}
-typedef str_tree *tree;
-
-struct str_tree {
-    int v;
-    tree_list t;
-};
-\end{verbatim}
-Constructor types are pointers to a structure containing
-a tag and a union containing the appropriate structures.
-The tag is used to distinguish between the possible structures
-contained in the union, and is represented by an enumeration type.
-\index{constructor!array list template}\index{array list template!constructor}
-For example:
-\begin{verbatim}
-typedef str_btree *btree;
-
-typedef struct str_BTree {
-    btree l;
-    btree r;
-} C_BTree;
-
-typedef struct str_BLeaf {
-    int v;
-} C_BLeaf;
-
-typedef enum en_btree {
-    TAGBTree, TAGBLeaf
-} tags_btree;
-
-struct str_btree {
-    tags_btree tag;
-    union un_btree {
-        C_BTree ue_BTree;
-        C_BLeaf ue_BLeaf;
-    } u;
-};
-\end{verbatim}
-For each constructor in the type a separate {\tt struct} type is defined
-with name {\tt C\_<cons>}.
-Since {\C} does not like structures without fields,
-no type is defined for empty constructors.
-The constructor type itself is represented by a separate structure containing
-a {\tt tag} field to indicate the actual constructor
-and a {\tt union} of all possible constructor structures of the type.
-The possible tags for a type are enumerated in the {\tt enum} type
-{\tt tags\_<type>}.
-\par
-Since {\C} does not like empty {\tt union} types,
-the union field is only generated if the type has at least
-one non-empty constructor type.
-Thus,
-the representation of constructor type
-\begin{verbatim}
-val ::= VA | VB;
-\end{verbatim}
-degenerates to
-\begin{verbatim}
-typedef struct str_val *val;
-
-enum en_val {
-    TAGVA, TAGVB
-} tags_val;
-
-struct str_val {
-    tags_val tag;
-};
-\end{verbatim}
-\par
-With the general representation of constructors
-one has to access a field of a constructor with an
-expression of the form
-\begin{verbatim}
-<var>->u.ue_<cons>.<elmname>
-\end{verbatim}
-As a service to the user appropriate {\tt \#define}s are provided
-so that the expression
-\begin{verbatim}
-<var>-><cons>.<elmname>
-\end{verbatim}
-is allowed.
-This is demonstrated at the end of this subsection.
-\par
-List types are defined as pointers to a list description structure.
-\index{list!array list template}\index{array list template!list}
-For example:
-\begin{verbatim}
-typedef struct str_tree_list *tree_list;
-
-struct str_tree_list {
-    unsigned int sz;     /* current number of elements */
-    unsigned int room;   /* maximum number of elements */
-    tree *arr;           /* ptr to array of 'room' elements */
-};
-\end{verbatim}
-Note that in the {\C} representation \verb+[tree]+ is called
-\verb+tree_list+, and \verb+[[tree]]+ is called \verb+tree_list_list+.
-The list description structure contains a pointer to an array,
-the current length of the list,
-and the maximum length of the list before re-allocation is necessary.
-\par
-For each type and type list a suitable {\tt NIL} pointer is defined.
-\index{<type>NIL@\verb+<type>NIL+}
-\index{<type>_listNIL@\verb+<type>_listNIL+}
-For example:
-\begin{verbatim}
-#define treeNIL (tree)0
-#define btreeNIL (btree)0
-#define tree_listNIL (tree_list)0
-\end{verbatim}
-The following two functions show how all the type representations
-(in this case the types {\tt tree}, {\tt btree} and the list type
-\verb+[tree]+)
-are used in a program:
-Each function returns the sum of the leave or node values in a given
-tree.
-\begin{verbatim}
-/* Return the sum of all the node values in tree 't'. */
-int sum_tree( tree t )
-{
-    unsigned int ix;
-    tree_list tl;
-    int s;
-
-    s = 0;
-    tl = t->t;
-    for( ix=0; ix<tl->sz; ix++ ){
-       s += sum_tree( tl->arr[ix] );
-    }
-    return t->v + s;
-}
-\end{verbatim}
-
-\begin{verbatim}
-/* Return the sum of all the leave values in btree 't'. */
-int sum_btree( btree t )
-{
-    int s;
-
-    switch( t->tag )
-    {
-        case TAGBTree:
-            s = sum_btree( t->BTree.l ) + sum_btree( t->BTree.r );
-            break;
-
-        case TAGBLeaf:
-            s = t->BLeaf.v;
-
-        default:
-            tm_badtag( __FILE__, __LINE__, (int) t->tag );
-            break;
-    }
-    return s;
-}
-\end{verbatim}
-\subsection{Direct representation template}
-In the direct representation template {\Tm} types and type lists are
-represented by the appropriate structures.
-For tuple types this is simply a structure containing all the
-fields of the tuple.
-\index{tuple!direct representation template}\index{direct representation template!tuple}
-For example:
-\begin{verbatim}
-typedef str_tree {
-    int v;
-    tree_list t;
-} tree;
-\end{verbatim}
-Constructor types are structures containing
-a tag and a union of pointers to the appropriate structures
-for each of the constructors.
-The tag is used to distinguish between the possible structures
-contained in the union, and it is represented by an enumeration type.
-\index{constructor!direct representation template}\index{direct representation template!constructor}
-For example:
-\begin{verbatim}
-typedef struct str_BTree {
-    btree l;
-    btree r;
-} C_BTree;
-
-typedef struct str_BLeaf {
-    int v;
-} C_BLeaf;
-
-typedef enum en_btree {
-    TAGBTree, TAGBLeaf
-} tags_btree;
-
-typedef struct str_btree {
-    tags_btree tag;
-    union un_btree {
-        C_BTree *ue_BTree;
-        C_BLeaf *ue_BLeaf;
-    } u;
-} btree;
-\end{verbatim}
-For each constructor in the type a separate {\tt struct} type is defined
-with name {\tt C\_<cons>}.
-Since {\C} does not like structures without fields,
-no type is defined for empty constructors.
-The constructor type itself is represented by a separate structure containing
-a {\tt tag} field to indicate the actual constructor
-and a {\tt union} of pointer to all possible constructor structures of the type.
-The possible tags for a type are enumerated in the {\tt enum} type
-{\tt tags\_<type>}.
-For obvious reasons it is not allowed to use field name `tag' in constructors,
-and this will be detected.
-\par
-Since {\C} does not like empty {\tt union} types,
-the union field is only generated if the type has at least
-one non-empty constructor type.
-Thus,
-the representation of constructor type
-\begin{verbatim}
-val ::= VA | VB;
-\end{verbatim}
-degenerates to
-\begin{verbatim}
-enum en_val {
-    TAGVA, TAGVB
-} tags_val;
-
-typedef struct str_val {
-    tags_val tag;
-} val;
-\end{verbatim}
-\par
-With the general representation of constructors
-one has to access a field of a constructor with an
-expression of the form
-\begin{verbatim}
-<var>.u.ue_<cons>-><elmname>
-\end{verbatim}
-As a service to the user appropriate {\tt \#define}s are provided
-so that the expression
-\begin{verbatim}
-<cons>(<var>).<elmname>
-\end{verbatim}
-is allowed,
-giving a somewhat clearer expression to access the elements in
-a constructor.
-This is demonstrated at the end of this subsection.
-\par
-List types are defined as a list description structure.
-\index{list!direct representation template}\index{direct representation template!list} %
-For example:
-\begin{verbatim}
-typedef struct str_tree_list {
-    unsigned int sz;     /* current number of elements */
-    unsigned int room;   /* maximum number of elements */
-    tree *arr;           /* ptr to array of 'room' elements */
-} tree_list;
-\end{verbatim}
-Note that in the {\C} representation \verb+[tree]+ is called
-\verb+tree_list+, and \verb+[[tree]]+ is called \verb+tree_list_list+.
-The list description structure contains a pointer to an array,
-the current length of the list,
-and the maximum length of the list before re-allocation is necessary.
-\par
-The following two functions show how all the type representations
-(in this case the types {\tt tree}, {\tt btree} and the list type
-\verb+[tree]+)
-are used in a program:
-Each function returns the sum of the leave or node values in a given
-tree.
-\begin{verbatim}
-/* Return the sum of all the node values in tree 't'. */
-int sum_tree( tree t )
-{
-    unsigned int ix;
-    tree_list tl;
-    int s;
-
-    s = 0;
-    tl = t.t;
-    for( ix=0; ix<tl.sz; ix++ ){
-       s += sum_tree( tl.arr[ix] );
-    }
-    return t.v + s;
-}
-\end{verbatim}
-
-\begin{verbatim}
-/* Return the sum of all the leave values in btree 't'. */
-int sum_btree( btree t )
-{
-    int s;
-
-    switch( t.tag )
-    {
-        case TAGBTree:
-            s = sum_btree( BTree(t).l ) + sum_btree( BTree(t).r );
-            break;
-
-        case TAGBLeaf:
-            s = BLeaf(t).v;
-
-        default:
-            tm_badtag( __FILE__, __LINE__, (int) t.tag );
-            break;
-    }
-    return s;
-}
-\end{verbatim}
-\subsection{Linked list template}
-In the linked list template {\Tm} types are pointers
-to appropriate structures,
-and lists are constructed by linking single elements together using
-a special {\tt next} field.
-Nested lists are constructed by using additional \verb+next+ fields.
-For example, if a list of list is necessary, the template generates
-a \verb+next_list+ field.
-Tuple types are pointers to a structure containing all
-fields of the tuple and a {\tt next} field.
-\index{tuple!linked list template}\index{linked list template!tuple}
-For example:
-\begin{verbatim}
-typedef str_tree *tree;
-typedef str_tree *tree_list;
-typedef str_tree *tree_list_list;
-
-typedef str_tree {
-    int v;
-    tree_list t;
-    tree_list next;
-    tree_list_list next_list;    /* For a list of tree_lists */
-};
-\end{verbatim}
-Type definitions for \verb+tree_list+ and more nested lists
-are only generated when necessary. The same applies for the
-\verb+next+ and \verb+next_list+ pointers. Thus, if a \verb+tree_list_list_list+
-must be generated, an additional type definition and and \verb+next+ pointer
-are generated.
-\par
-Constructor types are pointers to a structure containing
-a tag and a union containing the appropriate structures.
-The tag is used to distinguish between the possible structures
-contained in the union, and it is represented by an enumeration type.
-\index{constructor!linked list template}\index{linked list template!constructor}
-For example:
-\begin{verbatim}
-typedef str_btree *btree;
-typedef str_btree *btree_list;
-
-typedef struct str_BTree {
-    btree l;
-    btree r;
-} C_BTree;
-
-typedef struct str_BLeaf {
-    int v;
-} C_BLeaf;
-
-typedef enum en_btree {
-    TAGBTree, TAGBLeaf
-} tags_btree;
-
-struct str_btree {
-    tags_btree tag;
-    union un_btree {
-        C_BTree ue_BTree;
-        C_BLeaf ue_BLeaf;
-    } u;
-    btree_list next;
-};
-\end{verbatim}
-Type definitions for \verb+tree_list+ and more nested lists
-are only generated when necessary. The same applies for the
-\verb+next+ and \verb+next_list+ pointers. Thus, if a \verb+tree_list_list_list+
-must be generated, an additional type definition and and next pointer
-are generated.
-\par
-For each constructor in the type a separate {\tt struct} type is defined
-with name {\tt C\_<cons>}.
-Since {\C} does not like structures without fields,
-no type is defined for empty constructors.
-The constructor type itself is represented by a separate structure containing
-a {\tt tag} field to indicate the actual constructor
-and a {\tt union} of all possible constructor structures of the type.
-The possible tags for a type are enumerated in the {\tt enum} type
-{\tt tags\_<type>}.
-For obvious reasons it is not allowed to use field name `tag' in constructors,
-and this will be detected.
-\par
-Since {\C} does not like empty {\tt union} types,
-the union field is only generated if the type has at least
-one non-empty constructor type.
-Thus,
-the representation of constructor type
-\begin{verbatim}
-val ::= VA | VB;
-\end{verbatim}
-degenerates to
-\begin{verbatim}
-typedef struct str_val *val;
-typedef struct str_val *val_list;
-
-enum en_val {
-    TAGVA, TAGVB
-} tags_val;
-
-struct str_val {
-    val_list next;
-    tags_val tag;
-};
-\end{verbatim}
-\par
-With the general representation of constructors
-one has to access a field of a constructor with an
-expression of the form
-\begin{verbatim}
-<var>->u.ue_<cons>.<elmname>
-\end{verbatim}
-As a service to the user appropriate {\tt \#define}s are provided
-so that the expression
-\begin{verbatim}
-<var>-><cons>.<elmname>
-\end{verbatim}
-is allowed.
-This is demonstrated at the end of this subsection.
-\par
-\index{list!linked list template}\index{linked list template!list}
-Lists are constructed using the special {\tt next} field defined
-in each tuple and constructor structure.
-Thus, all list types are synonyms of the element types.
-This is shown in the example type definitions of {\tt tree} and
-{\tt btree}, since the type definitions of \verb+[tree]+ and
-\verb+[btree]+ are also shown.
-Note that in the {\C} representation \verb+[tree]+ is called
-\verb+tree_list+; and \verb+[[tree]]+ is called \verb+tree_list_list+.
-\par
-For each type and type list a suitable {\tt NIL} pointer is defined.
-\index{<type>NIL@\verb+<type>NIL+}
-\index{<type>_listNIL@\verb+<type>_listNIL+}
-For example:
-\begin{verbatim}
-#define treeNIL (tree)0
-#define btreeNIL (btree)0
-#define tree_listNIL (tree_list)0
-\end{verbatim}
-The following two functions show how all the type representations
-(in this case the types {\tt tree}, {\tt btree} and the list type
-\verb+[tree]+)
-are used in a program:
-Each function returns the sum of the leave or node values in a given
-tree.
-\begin{verbatim}
-/* Return the sum of all the node values in tree 't'. */
-int sum_tree( tree t )
-{
-    tree_list tl;
-    int s;
-
-    s = 0;
-    tl = t->t;
-    while( tl!=tree_listNIL ){
-       s += sum_tree( tl );
-       tl = tl->next;
-    }
-    return t->v + s;
-}
-\end{verbatim}
-
-\begin{verbatim}
-/* Return the sum of all the leave values in btree 't'. */
-int sum_btree( btree t )
-{
-    int s;
-
-    switch( t->tag )
-    {
-        case TAGBTree:
-            s = sum_btree( t->BTree.l ) + sum_btree( t->BTree.r );
-            break;
-
-        case TAGBLeaf:
-            s = t->BLeaf.v;
-
-        default:
-            tm_badtag( __FILE__, __LINE__, (int) t->tag );
-            break;
-    }
-    return s;
-}
-\end{verbatim}

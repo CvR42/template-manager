@@ -261,8 +261,10 @@ void collect_superclasses( tmstring_list *res, const ds_list types, const char *
     for( ix=0; ix<inherits->sz; ix++ ){
 	const tmstring t = inherits->arr[ix];
 
-	collect_superclasses( res, types, t );
-	*res = append_tmstring_list( *res, rdup_tmstring( t ) );
+	if( !member_tmstring_list( t, *res ) ){
+	    collect_superclasses( res, types, t );
+	    *res = append_tmstring_list( *res, rdup_tmstring( t ) );
+	}
     }
 }
 
@@ -279,10 +281,9 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring
 	const tmstring_list inherits = extract_inherits_type( d );
 
 	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
-	    *res = append_tmstring_list(
-		*res,
-		rdup_tmstring( get_type_name( d ) )
-	    );
+	    const char *nm = get_type_name( d );
+
+	    *res = append_tmstring_list( *res, rdup_tmstring( nm ) );
 	}
     }
 }

@@ -1,53 +1,80 @@
 \chapter{Syntax of Tm data-structure descriptions}
 \label{s.dsgram}
-The data-structure description must have the following syntax:
-\begin{grammar}
-\nonterm{dslist} & \produces & \emptystring \bar \nonterm{ds} \nonterm{dslist}  \\
-\\
-\nonterm{ds} & \produces & \nonterm{name} \term{::=} \nonterm{inherits} \nonterm{constructorlist} \term{{\tt ;}} \\
- & \bar & \nonterm{name} \term{==} \nonterm{inherits} \term{(} \nonterm{tuple} \term{)} \term{;} \\
- & \bar & \nonterm{name} \term{=} \nonterm{classcomponentlist} \term{;} \\
- & \bar & \nonterm{name} \term{~=} \nonterm{classcomponentlist} \term{;} \\
- & \bar & \term{\%include} \nonterm{string} \term{;} \\
-\\
-\nonterm{inherits} & \produces & \emptystring \bar \nonterm{name} \term{+} \nonterm{inherits} \\
-\\
-\nonterm{tuple} & \produces & \nonterm{field}  \\
-& \bar & \nonterm{field} \term{,} \nonterm{tuple} \\
-\\
-\nonterm{constructorlist} & \produces & \nonterm{constructor}  \\
-& \bar & \nonterm{constructor} \term{|} \nonterm{constructorlist}  \\
-\\
-\nonterm{constructor} & \produces & \nonterm{name} \nonterm{fieldlist} \\
-\\
-\nonterm{fieldlist} & \produces & \emptystring \\
-& \bar & \nonterm{field} \nonterm{fieldlist}  \\
-\\
-\nonterm{classcomponentlist} & \produces & \emptystring \\
-& \bar & \nonterm{classcomponent} \\
-& \bar & \nonterm{classcomponent} \term{+} \nonterm{classcomponentlist} \\
-\\
-\nonterm{classcomponent} & \produces & \term{\{} \nonterm{tuple} \term{\}} \\
-& \bar & \nonterm{name} \\
-& \bar & \nonterm{subclasslist} \\
-& \bar & \term{(} \nonterm{classcomponentlist} \term{)} \\
-\\
-\nonterm{subclasslist} & \produces & \nonterm{subclass} \\
-& \bar & \nonterm{subclass} \term{|} \nonterm{subclasslist} \\
-\\
-\nonterm{subclass} & \produces & \nonterm{name} \term{:} \nonterm{classcomponent} \\
-\\
-\nonterm{field} & \produces & \nonterm{name} \term{:} \nonterm{type} \\
-\\
-\nonterm{type} & \produces & \nonterm{name} \\
-& \bar & \term{[} \nonterm{type} \term{]} \\
-\end{grammar}
-Characters in typewriter font ({\tt like this}) are tokens,
+The data structure description must have the following syntax:
+\begin{production}{dsList}
+\emptystring \\
+ds dsList \\
+\end{production}
+
+\begin{production}{ds}
+name \term{::=} inherits constructorList \term{;} \\
+name \term{==} inherits \term{(} tuple \term{)} \term{;} \\
+name \term{=} classcomponentList \term{;} \\
+name \term{~=} classcomponentList \term{;} \\
+\term{\%include} string \term{;} \\
+\end{production}
+
+\begin{production}{inherits}
+\emptystring \\
+name \term{+} inherits \\
+\end{production}
+
+\begin{production}{tuple}
+field \\
+field \term{,} tuple \\
+\end{production}
+
+\begin{production}{constructorList}
+constructor  \\
+constructor \term{|} constructorList  \\
+\end{production}
+
+\begin{production}{constructor}
+name fieldList \\
+\end{production}
+
+\begin{production}{fieldList}
+\emptystring \\
+field fieldList  \\
+\end{production}
+
+\begin{production}{classcomponentList}
+\emptystring \\
+classcomponent \\
+classcomponent \term{+} classcomponentList \\
+\end{production}
+
+\begin{production}{classcomponent}
+\term{\{} tuple \term{\}} \\
+name \\
+subclassList \\
+\term{(} classcomponentList \term{)} \\
+\end{production}
+
+\begin{production}{subclassList}
+subclass \\
+subclass \term{|} subclassList \\
+\end{production}
+
+\begin{production}{subclass}
+name \term{:} classcomponent \\
+\end{production}
+
+\begin{production}{field}
+name \term{:} type \\
+\end{production}
+
+\begin{production}{type}
+name \\
+\term{[} type \term{]} \\
+\end{production}
+
+Characters in typewriter font \term{like this} are tokens,
 {\emptystring} stands for an empty token list,
 \nonterm{name} stands for a token with the regular expression
 \verb![a-zA-Z][a-zA-Z0-9]*!,
 and \nonterm{string} stands for a string of arbitrary characters
 surrounded by double quotes \verb+"+.
 \par
-If a type is defined repeatedly, the constructor or field lists
-are concatenated. Redefinition of constructors is not allowed.
+If a constructor base type is defined repeatedly, the definitions
+are merged. Redefinition of all other types is not allowed.

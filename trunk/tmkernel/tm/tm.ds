@@ -56,6 +56,7 @@ tplelm ::=
     Error lno:int errstr:tmstring |
     Exit lno:int str:tmstring |
     Redirect lno:int fname:tmstring body:[tplelm] |
+    Appendfile lno:int fname:tmstring body:[tplelm] |
     Include lno:int fname:tmstring |
     Macro lno:int formpar:tmstring macbody:[tplelm] |
     Call lno:int callline:tmstring |

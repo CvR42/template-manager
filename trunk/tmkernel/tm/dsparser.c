@@ -510,7 +510,7 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
     else {
 	yyerror( "')' expected" );
     }
-    cktuple( nm, body );
+    cktuple( nm, body, inherits );
     *tp = new_DsTuple( nm, inherits, body );
     return TRUE;
 }

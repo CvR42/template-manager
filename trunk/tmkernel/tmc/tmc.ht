@@ -75,10 +75,47 @@ typedef int tags_$t;
 
 .endforeach
 
+#ifdef __cplusplus
+.foreach t ${inheritsort $(need_ds)}
+.. Structure definitions for all the constructors of the type
+.. That have elements (C does not like empty structures or unions).
+/* Structure for ${metatype $t} '$t'. */
+.switch ${metatype $t}
+.case constructor constructorbase class
+.if ${len ${inherits $t}}
+class str_$t: ${prefix "public " ${seplist ", " ${prefix "str_" ${inherits $t}}}} {
+.else
+class str_$t {
+.endif
+public:
+.if ${len ${inherits $t}}
+.else
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_${call rootclass $t} tag;
+.endif
+.foreach e ${fields $t inherited}
+    ${type $t $e} $e;
+.endforeach
+};
+.case tuple
+struct str_$t {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+.foreach e ${fields $t}
+    ${type $t $e} $e;
+.endforeach
+};
+.endswitch
+
+.endforeach
+#else
 .foreach t ${depsort $(need_ds)}
 .. Structure definitions for all the constructors of the type
 .. That have elements (C does not like empty structures or unions).
-/* Structure for ${metatype $t} $t. */
+/* Structure for ${metatype $t} '$t'. */
 .switch ${metatype $t}
 .case constructor constructorbase class
 struct str_$t {
@@ -107,6 +144,7 @@ struct str_$t {
 .endswitch
 
 .endforeach
+#endif
 
 .foreach t $(need_ds_list)
 struct str_$t_list {

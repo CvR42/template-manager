@@ -48,7 +48,7 @@ because the generation is based on \defn{templates}:
 source texts for the target programming language
 interspersed with text substitution and repetition commands for {\Tm}.
 
-\section{How to read this manual}
+\section{About this manual}
 \begin{figure}
 \begin{center}
 \input{flow.tex}
@@ -59,11 +59,19 @@ a template file (in this figure a {\tt .ct} file), {\Tm} produces
 an output file (in this figure a {\tt .c} file).
 }
 \end{figure}
-This document only describes the template manager itself, and the
+This document is a reference manual for template manager itself, and the
 support for C. Templates for other languages are described in
 separate documents. Since the templates for C are the most
 extensive, and the most frequently used, they have been included
 in this manual.
+\par
+This manual is not intended as a tutorial, but appendix \ref{s.calc}
+shows the construction of two small programs that use the Tm templates.
+Studying these will probably clarify a lot of the things that are
+discussed there. It is therefore a very good idea to examine this example
+before trying to understand the rest of the manual. The example programs
+are available for downloading; compiling and perhaps modifying the code
+is also very useful.
 \par
 Fig.~\ref{f.flow} shows the flow of data through {\Tm}. The syntax and
 meaning of the data structure
@@ -87,7 +95,6 @@ In this manual the following shorthand notations are used:
 \begin{flushleft}
 \begin{tabular}{ll}
 {\tt <type>} \index{type@{\tt <type>}} & A type.  \\
-{\tt <cons>} \index{cons@{\tt <cons>}} & A constructor.  \\
 {\tt <fieldtype>} \index{fieldtype@{\tt <fieldtype>}} & The type of a field.  \\
 {\tt <fieldname>} \index{fieldname@{\tt <fieldname>}} & The name of a field.  \\
 {\tt <something>} \index{something@{\tt <something>}} & The actual contents of this fragment are not important.  \\

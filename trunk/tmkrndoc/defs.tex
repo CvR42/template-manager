@@ -8,29 +8,17 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{\medskipamount}
 
-% To format grammars
-
-% How to typeset terminals and non-terminals
-% Underline causes problems with underlined math expressions.
-% to be corrected...
-\newcommand{\term}[1]{{{\tt #1}}}
-\newcommand{\nonterm}[1]{{\it {#1}}}
-\def\produces{$\rightarrow$}
-\def\kleene{\begin{math}\ast\end{math}}
 \def\emptystring{$\epsilon$}
-\def\bar{$\;{\tt |}\;$}
-
-\newenvironment{grammar}{\begin{quote}\begin{tabular}{lcl}}{\end{tabular}\end{quote}}
 
 \newenvironment{showfile}
 {
-        \list{}{\itemsep 0pt
-%                \itemindent   -1.5em%
+        \list{}{\itemsep 0pt%
+                 \topsep 0pt%
                  \itemindent   -0.0em%
                 \listparindent\itemindent
                 \rightmargin  \leftmargin
                 \advance\leftmargin 0em}%
-        \item\relax\scriptsize%
+        \item\relax\footnotesize%
 }
 {\endlist\par}
 
@@ -44,7 +32,7 @@
 
 % Description environment: Don't add any space after previous item,
 % indent left margin.
-\newenvironment{desc}{\nopagebreak\vspace{-\bigskipamount}\vspace{-\parskip}\begin{list}{}{\setlength{\topsep}{0pt}\setlength{\rightmargin}{0pt}}\item[]}{\end{list}}
+\newenvironment{desc}{\nopagebreak\vspace{-\bigskipamount}\vspace{-\parskip}\begin{list}{}{\setlength{\topsep}{0pt}\setlength{\leftmargin}{1.5em}\setlength{\listparindent}{\itemindent}\setlength{\rightmargin}{\leftmargin}}\item[]}{\end{list}}
 
 % Description table.
 % Width of description column in tabular environments.

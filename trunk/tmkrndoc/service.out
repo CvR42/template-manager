@@ -1,4 +1,7 @@
-depsort: curve XYCurve YCurve xypoint LinScale LogScale scale plot
+inheritsort plot curve XYCurve YCurve xypoint LinScale LogScale scale:
+  plot curve XYCurve YCurve xypoint scale LinScale LogScale
+depsort plot curve XYCurve YCurve xypoint LinScale LogScale scale:
+  curve XYCurve YCurve xypoint LinScale LogScale scale plot
 delisttypes: [b <c> <<d>>]
 listtypes: [<b> <<c>> <<<d>>>]
 mklist: [<<<a>>> <<<z>>>]
