@@ -18,7 +18,7 @@ $(indent)(void) n;
 ..
 .. Given an indent 'indent', the name 'var' of the variable that holds
 .. the datastructure we're walking on, and a type 't', of that variable,
-.. generate a return expr/
+.. generate a return statement.
 .macro generate_walker_return indent var t
 $(indent)return $(var);
 .endmacro

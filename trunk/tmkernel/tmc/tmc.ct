@@ -1018,11 +1018,10 @@ $(stat)int cmp_$t( const $t a, const $t b )
     if( res != 0 ){
 	return res;
     }
-.if ${len ${subclasses $t}}
+.if ${len ${nonvirtual ${subclasses $t}}}
     switch( a->tag )
     {
-.if ${isvirtual $t}
-.else
+.if ${not ${isvirtual $t}}
 	case TAG$t:
 .set first 1
 .foreach e ${allfields $t}
@@ -1036,16 +1035,17 @@ $(stat)int cmp_$t( const $t a, const $t b )
 	    res = cmp_${type $t $e}( a->$e, b->$e );
 .endforeach
 	    break;
-.endif
 
-.foreach c ${subclasses $t}
+.endif
+.foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
 	    res = cmp_$c( ($c) a, ($c) b );
 	    break;
 
 .endforeach
-	    default:
-		FATALTAG( a->tag );
+	default:
+	    FATALTAG( a->tag );
+	    break;
     }
 .else
 .if ${isvirtual $t}
