@@ -12,11 +12,11 @@
  */
 tmtext *putc_tmtext( const char c, tmtext *t )
 {
-    if( t->curpos>=t->room ){
-	t->reserve( t->room+TEXTGROWSTEP );
+    if( t->curpos>=t->capacity() ){
+	t->reserve( t->capacity()+TEXTGROWSTEP );
     }
     t->arr[t->curpos++] = c;
-    if( t->curpos>t->sz ){
+    if( t->curpos>t->size() ){
 	t->sz = t->curpos;
     }
     return t;

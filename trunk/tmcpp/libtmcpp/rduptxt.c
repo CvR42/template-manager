@@ -11,7 +11,7 @@
 tmtext::tmtext( const tmtext &c ): arr(0), curpos(0), sz(0), room(0)
 {
     reserve( c.sz );
-    copyblock_tmtext( arr, c.arr, c.sz );
+    copyblock( arr, c.arr, c.sz );
     sz = c.sz;
     curpos = c.curpos;
     newcount++;

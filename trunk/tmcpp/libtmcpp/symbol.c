@@ -7,8 +7,8 @@
 #include "config.h"
 #include "tmcpp.h"
 
-static tmbool gensymworking = TMFALSE;
-static tmbool initdone = TMFALSE;
+static bool gensymworking = false;
+static bool initdone = false;
 
 /* This is the table of symbol strings. Each used symbol string should
    occur here exactly once, so that a compare on equal names is
@@ -21,13 +21,11 @@ static int symtabcnt[SYMHASHWIDTH];
 /* initalize tmsymbol routines */
 static void init_tmsymbol( void )
 {
-    int i;
-
-    for( i=0; i<SYMHASHWIDTH; i++ ){
+    for( int i=0; i<SYMHASHWIDTH; i++ ){
 	symtab[i] = tmsymbolNIL;
 	symtabcnt[i] = 0;
     }
-    initdone = TMTRUE;
+    initdone = true;
 }
 
 /* The hashing function:
@@ -35,9 +33,7 @@ static void init_tmsymbol( void )
  */
 static unsigned int hash( const char *s )
 {
-    unsigned int sum;
-
-    sum = 0;
+    unsigned int sum = 0;
     while( *s != '\0' ){
 	sum = (5*sum)+(*s++);
 	while( sum>=SYMHASHWIDTH ){
@@ -47,12 +43,10 @@ static unsigned int hash( const char *s )
     return sum;
 }
 
-/* Make a nw storage space for a tmsymbol. */
+// Make a nw storage space for a tmsymbol.
 static tmsymbol newtmsymbol( tmsymbol l, tmstring s )
 {
-    tmsymbol nw;
-
-    nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
+    tmsymbol nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
     nw->next = l;
     nw->name = s;
     nw->data = (tm_neutralp) 0;
@@ -81,14 +75,11 @@ static tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
  */
 tmsymbol find_tmsymbol( const char *name )
 {
-    tmsymbol entry;
-    unsigned int hashval;
-
     if( !initdone ){
 	init_tmsymbol();
     }
-    hashval = hash( name );
-    entry = dofind_tmsymbol( name, symtab[hashval] );
+    unsigned int hashval = hash( name );
+    tmsymbol entry = dofind_tmsymbol( name, symtab[hashval] );
     return entry;
 }
 
@@ -142,16 +133,13 @@ tmsymbol add_tmsymbol( const char *name )
 tmsymbol gen_tmsymbol( const char *pre )
 {
     unsigned int hashval;
-    tmstring name;
-    tmsymbol entry;
-    unsigned long int gensymnum;
 
     if( !initdone ){
 	init_tmsymbol();
     }
-    name = new_tmstring( "" );
+    tmstring name = new_tmstring( "" );
     name = realloc_tmstring( name, strlen( pre ) + 30 );
-    gensymnum = 0;
+    unsigned long int gensymnum = 0;
     for(;;){
 	sprintf( name, "%s%lx", pre, gensymnum++ );
 	hashval = hash( name );
@@ -159,7 +147,7 @@ tmsymbol gen_tmsymbol( const char *pre )
 	    break;
 	}
     }
-    entry = newtmsymbol( symtab[hashval], name );
+    tmsymbol entry = newtmsymbol( symtab[hashval], name );
     symtab[hashval] = entry;
     symtabcnt[hashval]++;
     return entry;
@@ -167,7 +155,6 @@ tmsymbol gen_tmsymbol( const char *pre )
 
 void flush_tmsymbol( void )
 {
-
     for( int i=0; i<SYMHASHWIDTH; i++ ){
 	tmsymbol s = symtab[i];
 	while( s != tmsymbolNIL ){
@@ -178,5 +165,5 @@ void flush_tmsymbol( void )
 	}
 	symtab[i] = tmsymbolNIL;
     }
-    gensymworking = TMFALSE;
+    gensymworking = false;
 }

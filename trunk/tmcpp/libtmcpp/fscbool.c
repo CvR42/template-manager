@@ -4,9 +4,9 @@
  * All rights reserved.
  */
 
-/* File: fscstr.c
+/* File: fscbool.c
  * 
- * Handle 'fscan_<type>' for type 'string'.
+ * Handle 'fscan_<type>' for type 'bool'.
  */
 
 #include <ctype.h>
@@ -15,25 +15,23 @@
 
 #define WORDBUFSZ 20
 
-int fscan_tmbool( FILE *f, tmbool *s )
+int fscan_bool( FILE *f, bool *s )
 {
     char buf[WORDBUFSZ];
-    int braccnt;
-    int err;
 
-    braccnt = tm_fscanopenbrac( f );
-    err = tm_fscancons( f, buf, WORDBUFSZ );
+    int braccnt = tm_fscanopenbrac( f );
+    int err = tm_fscancons( f, buf, WORDBUFSZ );
     if( err ){
 	return err;
     }
-    if( strcmp( buf, TMFALSESTR ) == 0 ){
-	*s = TMFALSE;
+    if( strcmp( buf, "false" ) == 0 ){
+	*s = false;
     }
-    else if( strcmp( buf, TMTRUESTR ) == 0 ){
-	*s = TMTRUE;
+    else if( strcmp( buf, "true" ) == 0 ){
+	*s = true;
     }
     else {
-	(void) strcpy( tm_errmsg, "boolean expected" );
+	(void) strcpy( tm_errmsg, "bool expected" );
 	return 1;
     }
     return tm_fscanclosebrac( f, braccnt );

@@ -80,7 +80,7 @@ tm_printword().
 )
 (Textouttest "" "Test")
 (Textintest "a" "bcdef" "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
-(Tmboolouttest True False True True False)
+(Tmboolouttest true false true true false)
 fprint_schar: ['a' ' ' '\376' '\201' '\000']
 fprint_uchar: ['a' ' ' '\201' '\000']
 fprint_sshrt: [12 0 (-42)]

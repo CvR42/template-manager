@@ -458,27 +458,27 @@ static void test_tmtext( TmPrintState *st )
     nw = new tmtext();
     nw = putc_tmtext( 't', nw );
     nw = putc_tmtext( 's', nw );
-    t = replace_tmtext( t, 2, 4, nw );
+    t->replace( 2, 4, nw );
     if( cmp_string_tmtext( "tetsing", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
-    t = replace_tmtext( t, 0, 1, nw );
+    t->replace( 0, 1, nw );
     if( cmp_string_tmtext( "tsetsing", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
-    t = replace_tmtext( t, 0, 0, nw );
+    t->replace( 0, 0, nw );
     if( cmp_string_tmtext( "tstsetsing", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
-    t = replace_tmtext( t, 0, 4, nw );
+    t->replace( 0, 4, nw );
     if( cmp_string_tmtext( "tsetsing", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
-    t = replace_tmtext( t, 6, 8, nw );
+    t->replace( 6, 8, nw );
     if( cmp_string_tmtext( "tsetsits", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
-    t = replace_tmtext( t, 1, 5, nw );
+    t->replace( 1, 5, nw );
     if( cmp_string_tmtext( "ttsits", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
@@ -516,25 +516,42 @@ static void test_tmtext( TmPrintState *st )
     if( cmp_string_tmtext( "breutellblaablatsitsblablareutel", t ) != 0 ){
 	bad( "string badly inserted" );
     }
+    t->insert( 1, 'X' );
+    if( cmp_string_tmtext( "bXreutellblaablatsitsblablareutel", t ) != 0 ){
+	bad( "char badly inserted" );
+    }
+    t->insert( -1, 'X' );
+    if( cmp_string_tmtext( "XbXreutellblaablatsitsblablareutel", t ) != 0 ){
+	bad( "char badly inserted" );
+    }
     nw->destroy();
     t->destroy();
     t = new tmtext( ", a, z, a, c, z, d, f, blabla" );
+    nw = t->slice( 2, 6 );
+    if( cmp_string_tmtext( "a, z", nw ) != 0 ){
+	bad( "bad tmtext slice" );
+    }
+    t->replace( 1, 2, nw, 0, 1 );
+    if( cmp_string_tmtext( ",aa, z, a, c, z, d, f, blabla", t ) != 0 ){
+	bad( "bad tmtext slice" );
+    }
+    nw->destroy();
     t->destroy();
 }
 
-static void test_tmbool( TmPrintState *st )
+static void test_bool( TmPrintState *st )
 {
-    tmbool b;
+    bool b;
 
     st->openConstructor();
     st->printWord( "Tmboolouttest" );
-    print_tmbool( st, TMTRUE );
-    print_tmbool( st, TMFALSE );
+    print_bool( st, true );
+    print_bool( st, false );
     do {
-	if( fscan_tmbool( infile, &b ) ){
+	if( fscan_bool( infile, &b ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmbool( st, b );
+	print_bool( st, b );
     } while( b );
     st->closeConstructor();
 }
@@ -737,7 +754,7 @@ int main( void )
     test_tmstring( st );
     test_tmword( st );
     test_tmtext( st );
-    test_tmbool( st );
+    test_bool( st );
     ftest_schar( outfile );
     ftest_uchar( outfile );
     ftest_sshrt( outfile );
