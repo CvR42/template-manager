@@ -117,7 +117,7 @@ struct str_$t_list {
 .endforeach
 /* Type casting macros. */
 .foreach t $(need_ds)
-#define cast_$t(e) (($t)e)
+#define to_$t(e) (($t)e)
 .endforeach
 
 /* constructors. */

@@ -123,13 +123,13 @@ struct str_$t_list {
 .foreach t $(need_ds)
 .if ${member $t ${tuplelist}}
 .foreach e ${fields $t}
-#define cast_$t(e) (e)
+#define to_$t(e) (e)
 .endforeach
 .endif
 .if ${member $t ${ctypelist}}
 .foreach c ${conslist $t}
 .foreach e ${fields $c}
-#define cast_$c(e) (&(e->u.ue_$c))
+#define to_$c(e) (&(e->u.ue_$c))
 .endforeach
 .endforeach
 .endif
