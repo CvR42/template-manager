@@ -1016,7 +1016,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 .. Add some space for '\0' and safety..
 .set maxlen $[$(maxlen)+4]
     char tm_word[$(maxlen)];	/* Longest constructor name should fit. */
-    int err;
+    int err = 0;
 
 .if ${not ${len ${nonvirtual $t ${subclasses $t}}}}
 #ifdef LOGNEW

@@ -11,6 +11,7 @@ TopNone             :    623 allocated,    618 freed.<-
 TopTuple            :    207 allocated,    205 freed.<-
 emptytuple          :      0 allocated,      0 freed.
 exprConst           :      2 allocated,      2 freed.
+exprFold            :      0 allocated,      0 freed.
 exprPlus            :      1 allocated,      1 freed.
 exprSubtract        :      0 allocated,      0 freed.
 label               :      1 allocated,      1 freed.
