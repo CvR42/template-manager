@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: misc.h
-   Description of exported objects of misc.c
+ * Description of exported objects of misc.c.
  */
 
 extern unsigned int find_type_ix( const ds_list dl, const char *t );

@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: tmstring.c
-   String manipulation routines.
+ * String manipulation routines.
  */
 
 #include "config.h"

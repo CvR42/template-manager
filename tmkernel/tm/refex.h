@@ -1,12 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* File: refex.h
- *
- * file regular expression handling.
+ * File regular expression handling.
  */
 
 extern const char *ref_comp( const char *pat );

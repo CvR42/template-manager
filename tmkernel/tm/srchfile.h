@@ -1,4 +1,4 @@
-/* File: srchfile.h */
+/* File: $Id$ */
 
 extern tmstring search_file(
     const tmstring_list path,

@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: tmtrans.h
- * translation routines.
+ * Translation routines.
  */
 
 extern tmstring alevalto( char **spi, const int sc );

@@ -1,12 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
+/* File: $Id$ */
 
-/* File: flags.h */
-
-/* structure to describe debugging flags */
+/* Structure to describe debugging flags. */
 typedef struct _cvr_db_flags {
     const char flagchar;	/* char to switch the flag on */
     int *flagadr;		/* pointer to the flag */

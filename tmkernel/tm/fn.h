@@ -1,11 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: fn.h
- * translation routines.
+ * Translation routines.
  */
 
 extern tmstring evalfn( const tmstring f );
