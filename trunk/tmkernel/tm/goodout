@@ -231,7 +231,7 @@ inherits:
 inheritors:  
 superclasses:  
 subclasses:  
-reach:  iserniet
+reach: [] [iserniet] [string int thing_list Thing thing sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top Toptuple TopNone toplevel]
 conslist:   
 fields:   
 allfields:   
