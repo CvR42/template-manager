@@ -8,8 +8,6 @@
    Description of exported objects of error.c
  */
 
-extern int errno;
-
 #define ERRARGLEN 80       /* max length of argument arrays below */
 extern char errpos[];      /* describes position of the error */
 extern char errarg[];      /* contains an argument to the error message */

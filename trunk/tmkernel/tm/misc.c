@@ -10,6 +10,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <tmc.h>
+#include <errno.h>
 #include "tmdefs.h"
 
 #include "tmcode.h"
@@ -19,9 +20,8 @@
 /* Same as fopen, but give error message if file can't be opened */
 FILE *ckfopen( const char *nm, const char *acc )
 {
-    FILE *hnd;
+    FILE *hnd = fopen( nm, acc );
 
-    hnd = fopen( nm, acc );
     if( NULL == hnd ){
 	(void) strcpy( errarg, nm );
 	sys_error( errno );
