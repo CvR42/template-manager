@@ -60,7 +60,8 @@
 .set misccode stat_$(basename) get_balance_$(basename) flush_$(basename)
 .append groups is
 ..
-.append valuetypes int long char uint ulong tmstring
+.append valuetypes int long char uint ulong
+.append legacytypes tmstring
 ..
 .. Reset all want_<groups> variables
 .foreach g $(groups)
