@@ -222,6 +222,7 @@ types: '${types}'
 .set listpre [
 .set listsuff ]
 types <all>: '${types ${typelist}}'
+subclasses <all>: '${subclasses ${typelist}}'
 conslist <all>: '${conslist ${typelist}}'
 
 .foreach mode "" inherited

@@ -216,6 +216,7 @@ conslist:
 fields:   
 types: ''
 types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int int expr expr tmstring'
+subclasses <all>: 'subtuple subclass expr notuple toplevel exprConst exprPlus exprOrig Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist Thing'
 conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thing'
 
 Mode `':
