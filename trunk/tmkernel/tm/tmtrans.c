@@ -215,7 +215,7 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 		}
 		if( e->tag == TAGCase ){
 		    state = SWS_CASE;
-		    val = e->Case.val;
+		    val = to_Case(e)->val;
 		}
 		else {
 		    state = SWS_DEFAULT;
@@ -632,8 +632,8 @@ static void doplain( const tplelm l, FILE *outfile )
     tmstring is;
     tmstring os;
 
-    tpllineno = l->Plain.lno;
-    is = l->Plain.plainline;
+    tpllineno = to_Plain(l)->lno;
+    is = to_Plain(l)->plainline;
     os = alevalto( &is, '\0' );
     if( outfile == NULL ){
 	line_error( "no output allowed in expression macro" );
@@ -655,8 +655,8 @@ static void doinsert( const tplelm tpl, FILE *outfile )
     tmstring is;
     tmstring os;
 
-    tpllineno = tpl->Insert.lno;
-    is = tpl->Insert.fname;
+    tpllineno = to_Insert(tpl)->lno;
+    is = to_Insert(tpl)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -688,8 +688,8 @@ static void doredirect( const tplelm e )
     char *is;
     char *os;
 
-    tpllineno = e->Redirect.lno;
-    is = e->Redirect.fname;
+    tpllineno = to_Redirect(e)->lno;
+    is = to_Redirect(e)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -698,7 +698,7 @@ static void doredirect( const tplelm e )
 	return;
     }
     outfile = ckfopen( fname, "w" );
-    dotrans( e->Redirect.body, outfile );
+    dotrans( to_Redirect(e)->body, outfile );
     fclose( outfile );
     fre_tmstring( fname );
 }
@@ -713,8 +713,8 @@ static void doinclude( const tplelm tpl, FILE *outfile )
     char *is;
     char *os;
 
-    tpllineno = tpl->Include.lno;
-    is = tpl->Include.fname;
+    tpllineno = to_Include(tpl)->lno;
+    is = to_Include(tpl)->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -747,8 +747,8 @@ static void doerror( const tplelm tpl )
     char *is;
     char *os;
 
-    tpllineno = tpl->Error.lno;
-    is = tpl->Error.errstr;
+    tpllineno = to_Error(tpl)->lno;
+    is = to_Error(tpl)->errstr;
     os = alevalto( &is, '\0' );
     fprintf( stderr, "%s\n", os );
     fre_tmstring( os );
@@ -760,8 +760,8 @@ static void doexit( const tplelm tpl )
     char *is;
     char *os;
 
-    tpllineno = tpl->Exit.lno;
-    is = tpl->Exit.str;
+    tpllineno = to_Exit(tpl)->lno;
+    is = to_Exit(tpl)->str;
     os = alevalto( &is, '\0' );
     exit( atoi( os ) );
     /* freeing is no use */
@@ -776,8 +776,8 @@ static void doglobalset( const tplelm tpl )
     tmstring_list sl;
     tmstring nm;
 
-    tpllineno = tpl->GlobalSet.lno;
-    is = tpl->GlobalSet.setline;
+    tpllineno = to_GlobalSet(tpl)->lno;
+    is = to_GlobalSet(tpl)->setline;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -804,8 +804,8 @@ static void doset( const tplelm tpl )
     tmstring_list sl;
     tmstring nm;
 
-    tpllineno = tpl->Set.lno;
-    is = tpl->Set.setline;
+    tpllineno = to_Set(tpl)->lno;
+    is = to_Set(tpl)->setline;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -831,8 +831,8 @@ static void doreturn( const tplelm tpl )
     tmstring val;
     tmstring_list sl;
 
-    tpllineno = tpl->Return.lno;
-    is = tpl->Return.retval;
+    tpllineno = to_Return(tpl)->lno;
+    is = to_Return(tpl)->retval;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -851,8 +851,8 @@ static void doappend( const tplelm tpl )
     tmstring nm;
     tmstring_list sl;
 
-    tpllineno = tpl->Append.lno;
-    is = tpl->Append.appline;
+    tpllineno = to_Append(tpl)->lno;
+    is = to_Append(tpl)->appline;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -883,8 +883,8 @@ static void doglobalappend( const tplelm tpl )
     tmstring nm;
     tmstring_list sl;
 
-    tpllineno = tpl->GlobalAppend.lno;
-    is = tpl->GlobalAppend.appline;
+    tpllineno = to_GlobalAppend(tpl)->lno;
+    is = to_GlobalAppend(tpl)->appline;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -913,16 +913,16 @@ static void doif( const tplelm tpl, FILE *outfile )
     char *os;
     bool cond;
 
-    tpllineno = tpl->If.lno;
-    is = tpl->If.ifcond;
+    tpllineno = to_If(tpl)->lno;
+    is = to_If(tpl)->ifcond;
     os = alevalto( &is, '\0' );
     cond = istruestr( os );
     fre_tmstring( os );
     if( cond ){
-	dotrans( tpl->If.ifthen, outfile );
+	dotrans( to_If(tpl)->ifthen, outfile );
     }
     else {
-	dotrans( tpl->If.ifelse, outfile );
+	dotrans( to_If(tpl)->ifelse, outfile );
     }
 }
 
@@ -936,8 +936,8 @@ static void doswitch( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     switchcase_list cases;
 
-    tpllineno = tpl->If.lno;
-    is = tpl->Switch.val;
+    tpllineno = to_If(tpl)->lno;
+    is = to_Switch(tpl)->val;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -946,7 +946,7 @@ static void doswitch( const tplelm tpl, FILE *outfile )
 	rfre_tmstring_list( sl );
 	return;
     }
-    cases = tpl->Switch.cases;
+    cases = to_Switch(tpl)->cases;
     for( ix=0; ix<cases->sz; ix++ ){
 	char *caseval = cases->arr[ix]->cases;
 	tmstring sentence;
@@ -963,7 +963,7 @@ static void doswitch( const tplelm tpl, FILE *outfile )
 	rfre_tmstring_list( words );
     }
     if( !visited ){
-	dotrans( tpl->Switch.deflt, outfile );
+	dotrans( to_Switch(tpl)->deflt, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -980,8 +980,8 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     tmstring_list sl;
 
-    tpllineno = tpl->Foreach.lno;
-    is = tpl->Foreach.felist;
+    tpllineno = to_Foreach(tpl)->lno;
+    is = to_Foreach(tpl)->felist;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -993,7 +993,7 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     nm = sl->arr[0];
     for( ix=1; ix<sl->sz; ix++ ){
 	setvar( nm, sl->arr[ix] );
-	dotrans( tpl->Foreach.felines, outfile );
+	dotrans( to_Foreach(tpl)->felines, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -1009,14 +1009,14 @@ static void dowhile( const tplelm tpl, FILE *outfile )
     char *is;
     char *os;
 
-    tpllineno = tpl->While.lno;
+    tpllineno = to_While(tpl)->lno;
     while( TRUE ){
-	is = tpl->While.whilecond;
+	is = to_While(tpl)->whilecond;
 	os = alevalto( &is, '\0' );
 	done = isfalsestr( os );
 	fre_tmstring( os );
 	if( done ) return;
-	dotrans( tpl->While.whilelines, outfile );
+	dotrans( to_While(tpl)->whilelines, outfile );
     }
 }
 
@@ -1031,8 +1031,8 @@ static void domacro( const tplelm tpl )
     char *os;
     tmstring_list sl;
 
-    tpllineno = tpl->Macro.lno;
-    is = tpl->Macro.formpar;
+    tpllineno = to_Macro(tpl)->lno;
+    is = to_Macro(tpl)->formpar;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1043,7 +1043,7 @@ static void domacro( const tplelm tpl )
     }
     nm = rdup_tmstring( sl->arr[0] );
     sl = delete_tmstring_list( sl, 0 );
-    setmacro( nm, tplfilename, sl, tpl->Macro.macbody );
+    setmacro( nm, tplfilename, sl, to_Macro(tpl)->macbody );
     rfre_tmstring( nm );
     rfre_tmstring_list( sl );
 }
@@ -1060,8 +1060,8 @@ static void docall( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     macro m;
 
-    tpllineno = tpl->Call.lno;
-    is = tpl->Call.callline;
+    tpllineno = to_Call(tpl)->lno;
+    is = to_Call(tpl)->callline;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
