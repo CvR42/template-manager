@@ -1,4 +1,5 @@
 testin: statements outside a case ignored
+testin: second .default block ignored
 testin: variable not found: iserniet
 testin: missing close bracket: ')'
 testin: no case matches, and there is no .default: value 'bla'
