@@ -10,6 +10,7 @@ DEPENDFILE = $(MAKEFILE).d
 CC = @CC@
 LINKER = @CC@
 LOCALLIB = @prefix@/lib
+LOCALINCLUDE = @prefix@/include
 LIBS = @LIBS@ $(LOCALLIB)/libtmc.a
 YACC=@YACC@
 LEX=@LEX@
