@@ -70,7 +70,7 @@ $(indent)$(var) = ($(nowtype)) subst_$(type)_walker( to_$(type)( $(var) ), lets 
 
 .call generate_walker_forwards "$(visit_types)"
 
-static tmbool find_command( tmconststring nm, command_list l, unsigned int *pos )
+static tmbool find_command( const_tmstring nm, command_list l, unsigned int *pos )
 {
     unsigned int ix;
 
