@@ -65,7 +65,7 @@ static void print_plist( FILE *f )
     size_t ix;
 
     for( ix=0l; ix<plistsz; ix++ ){
-	fprintf( f, "%s(%d)\n", plist[ix].file, plist[ix].line );
+	fprintf( f, "%s(%d) p=%p\n", plist[ix].file, plist[ix].line, plist[ix].ptr );
     }
 }
 
@@ -197,7 +197,7 @@ static void print_idlist( FILE *f )
     prcnt = 0l;
     for( ix=0l; ix<idsz; ix++ ){
 	if( idlist[ix].line>=0l ){
-	    fprintf( f, "%s(%d)\n", idlist[ix].u.filenm, idlist[ix].line );
+	    fprintf( f, "%s(%d) id=%lu\n", idlist[ix].u.filenm, idlist[ix].line, (unsigned long) ix );
 	    prcnt++;
 	}
     }
