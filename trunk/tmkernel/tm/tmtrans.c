@@ -477,7 +477,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 tmstring alevalto( char **spi, const char sc )
 {
     tmstring si;
-    tmstring cp;			/* pointer to constructed tmstring */
+    tmstring cp;		/* pointer to constructed tmstring */
     unsigned int croom;		/* room in constructed tmstring */
     unsigned int six;		/* index in constructed tmstring */
     char var1[2];		/* buffer for 1 char variable */
