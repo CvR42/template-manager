@@ -42,6 +42,8 @@ LIBSRCS	      = \
                 errmsg.c \
                 escstr.c \
                 allocflags.c \
+                allocid.c \
+                repalid.c \
                 fatal.c \
                 fneedc.c \
                 fprdbl.c \
