@@ -1,1 +1,1 @@
-char libpath[]="/home/gargamel/reeuwijk/i586/lib";
+char libpath[]="/home/gargamel/reeuwijk/rama/lib";

@@ -3,7 +3,7 @@ Welcome to the tm kernel distribution.
 General
 -------
 
-This directory contains four directories that form the kernel of the
+This directory contains three directories that form the kernel of the
 Template Manager ('Tm'). 
 
 This is copyrighted freeware. For details read the file LICENCE, and
@@ -112,18 +112,17 @@ Tm will be installed in /usr/blob/bin.
 Documentation
 -------------
 
-The package contains a manual in the directory 'tmusrdoc'. By default it
-is configured to format for US legal paper size. If you want to change
-the page layout, you can easily edit the file 'main.tex' to include a
-package such as 'a4' or 'a4wide'.
+This package no longer contains a manual; that is in a separate package
+'kerneldoc'.
 
 
 Compiling and installing on Atari ST
 ------------------------------------
 
-For compiling with the Pure C compiler on the Atari ST, you must
-compile and install the packages in the order 'libtmc', 'tm', 'tmc'.
-See the README files in each of the directories.
+For compiling with the Pure C compiler on the Atari ST, you must compile
+and install the packages in the order 'libtmc', 'tm', 'tmc'.  See the
+README files in each of the directories. Note that as of version 1.2,
+the Atari ST version is no longer supported (I have sold my ST).
 
 Compiling and installing on MS-Windows
 --------------------------------------
