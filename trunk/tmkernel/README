@@ -53,7 +53,7 @@ After than you can make all compilation targets with
 
 run some tests on the results with
 
-    make test
+    make check
 
 and install the software with
 
