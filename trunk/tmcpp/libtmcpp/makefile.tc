@@ -81,6 +81,12 @@ LIBSRCS	      = \
                 apptext.c \
                 lognew.c \
                 newstr.c \
+                lnt2s.c \
+                lnnewstr.c \
+                lnreastr.c \
+                lnfrestr.c \
+                lnfscstr.c \
+                lncrstr.c \
                 noroom.c \
                 prdbl.c \
                 print.c \
