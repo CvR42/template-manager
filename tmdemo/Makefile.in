@@ -140,13 +140,13 @@ tags: $(SRCS) $(HDRS)
 	ctags $(SRCS) $(HDRS)
 
 test.clc: calcparse test.calc
-	calcparse < test.calc > test.clc
+	./calcparse < test.calc > test.clc
 
-opt.clc: test.clc
-	calcopt < test.clc > opt.clc
+opt.clc: test.clc calcopt
+	./calcopt < test.clc > opt.clc
 
-subst.clc: test.clc
-	subst < test.clc | calcopt > subst.clc
+subst.clc: test.clc subst
+	./subst < test.clc | ./calcopt > subst.clc
 
 test: test.clc opt.clc subst.clc
 	diff test.clc oktest.clc
