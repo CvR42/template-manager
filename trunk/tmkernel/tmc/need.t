@@ -179,9 +179,9 @@
 .macro req_print l
 .call require ds "$l"
 .call require print "${delisttypes $l}"
-.call require print "${types ${singletypes $l} ${subclasses $l}}"
+.call require print "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
 .if ${eq $(template) tmc}
-.call require print "${subclasses $l}"
+.call require print "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
 ..
@@ -189,9 +189,9 @@
 .macro req_fprint l
 .call require ds "$l"
 .call require fprint "${delisttypes $l}"
-.call require fprint "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
+.call require fprint "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
 .if ${eq $(template) tmc}
-.call require fprint "${subclasses $l}"
+.call require fprint "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
 ..
@@ -201,7 +201,7 @@
 .call require cmp "${delisttypes $l}"
 .call require cmp "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) tmc}
-.call require cmp "${subclasses $l}"
+.call require cmp "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
 ..
