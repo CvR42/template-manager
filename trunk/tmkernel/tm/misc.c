@@ -120,31 +120,6 @@ bool member_tmstring_list( const tmstring s, const tmstring_list l )
     return FALSE;
 }
 
-/* Ensure that there are no double names in tuple with name 'nm'
- * and fields 'fields'.
- */
-void cktuple( tmstring nm, field_list fields )
-{
-    unsigned int ix;	/* index of currently checked field */
-    unsigned int iy;	/* index of searched subsequent fields */
-    field fx;		/* checked field */
-    field fy;		/* searched field */
-    tmstring fnm;	/* name of currently checked field */
-
-    for( ix=0; ix<fields->sz; ix++ ){
-	fx = fields->arr[ix];
-	fnm = fx->name;
-	for( iy=ix+1; iy<fields->sz; iy++ ){
-	    fy = fields->arr[iy];
-	    if( strcmp( fy->name, fnm ) == 0 ){
-		sprintf( errpos, "in type '%s'", nm );
-		sprintf( errarg, "'%s'", fnm );
-		error( "double use of field name" );
-	    }
-	}
-    }
-}
-
 /* Ensure that there are no double names in each of the constructors of
  * constructor type with name 'nm' and constructors 'cons'.
  */
