@@ -87,13 +87,13 @@ static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
 #endif
 
 /* Error strings. */
-.if ${strlen $(need_delete_list) $(need_extract_list) $(need_insert_list)}
+.if ${len $(need_delete_list) $(need_extract_list) $(need_insert_list)}
 static char tm_nilptr[] = "NIL pointer";
 .endif
-.if ${strlen ${comm $(need_fscan) "" ${ctypelist}}}
+.if ${len ${comm $(need_fscan) "" ${ctypelist} ${classlist}}}
 static char tm_badcons[] = "bad constructor for '%s': '%s'";
 .endif
-.if ${strlen $(need_fscan_list)}
+.if ${len $(need_fscan_list)}
 static char tm_badeof[] = "unexpected end of file";
 .endif
 .if ${strlen $(need_slice_list)}
