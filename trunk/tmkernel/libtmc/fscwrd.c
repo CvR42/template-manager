@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: fscwrd.c
+/* File: $Id$
  * 
  * Handle 'fscan_<type>' for type 'tmword'.
  * Version for use without lognew.

@@ -1,10 +1,5 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
- */
-
-/* file: lncrstr.c
  * Tmstring creation with size. Version for use with lognew.
  */
 

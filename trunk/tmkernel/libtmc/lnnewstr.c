@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* file: nlnewstr.c
+/* File: $Id$
    new_tmstring() version that is used when LOGNEW is activated.
  */
 

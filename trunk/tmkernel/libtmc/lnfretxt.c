@@ -1,3 +1,5 @@
+/* File: $Id$ */
+
 #include "tmc.h"
 
 /* Recursively free a tmtext 't'. */

@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: testprog.c
+/* File: $Id$
  *
  * Test of library programs.
  */

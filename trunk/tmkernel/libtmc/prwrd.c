@@ -1,17 +1,9 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: prwrd.c
- * C. van Reeuwijk
- */
+/* File: $Id$ */
 
 #include "config.h"
 #include "tmc.h"
 
-/* definition of 'print' for a 'tmword' */
+/* Implementation of 'print' for a 'tmword' */
 void print_tmword( TMPRINTSTATE *st, const const_tmword s )
 {
     if( s == 0 ){

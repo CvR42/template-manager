@@ -1,5 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
+ *
+ * Tm - an interface code generator.
  *
  * All rights reserved.
  */
