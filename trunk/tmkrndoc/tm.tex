@@ -172,6 +172,40 @@ will produce:
 \begin{verbatim}
 .if <expr>
 \end{verbatim}
+\begin{verbatim}
+.for <var> <start> <end> [<stride>]
+\end{verbatim}
+\begin{desc}
+\index{.for@\verb+.for+}
+Set variable \texttt{<var>} to the value \texttt{<start>},
+and as long as \texttt{<var>} is smaller than \texttt{<end>},
+repeatedly translate all
+following lines up to the next unbalanced
+\texttt{.endfor}.
+After each iteration, increment the value of
+\texttt{<var>} with the value 
+\texttt{<stride>}, or with 1 if no stride is specified.
+The new value of the variable is only visible in the current context.
+See section~\ref{s.assignment} for a discussion of contexts.
+\par
+The values 
+\texttt{<start>},
+\texttt{<end>},
+and \texttt{<stride>} (if specified), must be numerical.
+Stride must be 1 or greater.
+\par
+For example:
+\begin{showfile}
+\verbatiminput{for.xt}
+\end{showfile}
+will produce:
+\begin{showfile}
+\verbatiminput{for.out}
+\end{showfile}
+\end{desc}
+\begin{verbatim}
+.if <expr>
+\end{verbatim}
 \begin{desc}
 \index{.if@\verb+.if+}
 Evaluate \texttt{<expr>}.

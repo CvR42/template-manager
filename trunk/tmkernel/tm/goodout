@@ -50,6 +50,27 @@ e: default
 f: default
 ----
 
+for:
+---
+v = 0
+v = 1
+v = 2
+v = 3
+v = 4
+--
+v = 0
+v = 2
+v = 4
+--
+--
+--
+--
+--
+--
+--
+--
+---
+
 insert:
 ----
 var = `ladidah'
@@ -198,7 +219,7 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '246'
+tpllineno: '289'
 1 bla
 testsub
 ----
