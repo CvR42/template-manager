@@ -1,11 +1,12 @@
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /usr/blob/lib/calu.ht ---- */
+/* ---- start of /home/gargamel/reeuwijk/i586/lib/calu.ht ---- */
 /* Definition C datastructures (Version for array list).
 
-   template file:      /usr/blob/lib/calu.ht
+   template file:      /home/gargamel/reeuwijk/i586/lib/calu.ht
    datastructure file: tm.ds
-   tm version:         34
+   tm version:         35
+   tm kernel version:  1.2
  */
 
 /* forward reference typedefs for all types.
@@ -521,4 +522,4 @@ extern tplelm_list rdup_tplelm_list( const tplelm_list );
 #endif
 extern void flush_tm( void );
 extern void stat_tm( FILE * );
-/* ---- end of /usr/blob/lib/calu.ht ---- */
+/* ---- end of /home/gargamel/reeuwijk/i586/lib/calu.ht ---- */
