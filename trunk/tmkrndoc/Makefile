@@ -38,7 +38,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
 	    $(CALCDEMO) \
-            goodwords main.bib main.pdf pdstitle.sty plot.ds .cvsignore \
+            goodwords main.bib pdstitle.sty plot.ds .cvsignore \
 	    title.ct title.ds ch.sh cast.t alias.ds
 
 help:
