@@ -459,7 +459,7 @@ classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
     inheritors testclass: 'subclass exprOrig'
     superclasses testclass: ''
     subclasses testclass: 'subclass exprOrig'
-    isvirtual testclass: '0'
+    isvirtual testclass: '1'
     metatype testclass: 'class'
     fields testclass : 'a b'
 	ttypeclass testclass a: 'list'
@@ -515,7 +515,7 @@ classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
     inheritors expr: 'exprConst exprPlus exprOrig'
     superclasses expr: 'orig'
     subclasses expr: 'exprConst exprPlus exprOrig'
-    isvirtual expr: '0'
+    isvirtual expr: '1'
     metatype expr: 'class'
     fields expr : ''
 ----
@@ -525,6 +525,7 @@ Datastructure dependency
 Testing error handling:
 Type sorting:
 depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprOrig expr exprPlus ]
+inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig ]
 ----
 Mode `inherited':
 =-=-=-=
@@ -913,7 +914,7 @@ classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
     inheritors testclass: 'subclass exprOrig'
     superclasses testclass: ''
     subclasses testclass: 'subclass exprOrig'
-    isvirtual testclass: '0'
+    isvirtual testclass: '1'
     metatype testclass: 'class'
     fields testclass inherited: 'a b'
 	ttypeclass testclass a: 'list'
@@ -1001,7 +1002,7 @@ classlist: 'subclass testclass exprConst exprPlus exprOrig expr'
     inheritors expr: 'exprConst exprPlus exprOrig'
     superclasses expr: 'orig'
     subclasses expr: 'exprConst exprPlus exprOrig'
-    isvirtual expr: '0'
+    isvirtual expr: '1'
     metatype expr: 'class'
     fields expr inherited: 'file line'
 	ttypeclass expr file: 'single'
@@ -1019,6 +1020,7 @@ Datastructure dependency
 Testing error handling:
 Type sorting:
 depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprOrig expr exprPlus ]
+inheritsort: [int_list int orig subtuple notuple toplevel Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist thing Thing testclass subclass expr exprConst exprPlus exprOrig ]
 ----
 
 String manipulation functions:

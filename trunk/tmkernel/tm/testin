@@ -326,6 +326,7 @@ Testing error handling:
 ..'${deptype}'
 Type sorting:
 depsort: [${depsort int_list int ${typelist}} ]
+inheritsort: [${inheritsort int_list int ${typelist}} ]
 ----
 .endforeach
 
