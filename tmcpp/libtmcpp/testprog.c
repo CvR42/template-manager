@@ -504,6 +504,14 @@ static void test_tmtext( TmPrintState *st )
     if( cmp_string_tmtext( "blblaablatsitsbla", t ) != 0 ){
 	bad( "tmtext badly inserted" );
     }
+    t->append( nw );
+    if( cmp_string_tmtext( "blblaablatsitsblabla", t ) != 0 ){
+	bad( "tmtext badly appended" );
+    }
+    t->append( "reutel" );
+    if( cmp_string_tmtext( "blblaablatsitsblablareutel", t ) != 0 ){
+	bad( "tmtext badly appended" );
+    }
     nw->destroy();
     t->destroy();
     t = new tmtext( ", a, z, a, c, z, d, f, blabla" );

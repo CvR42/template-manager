@@ -209,6 +209,8 @@ public:
     void reserve( const long rm );
     virtual tmtext *clone() const { return new tmtext( *this ); }
     void insert( const long pos_parm, const tmtext *nw );
+    void append( const tmtext *nw );
+    void append( const char *s );
     void erase( const long from, const long to );
     inline void erase() { sz=0; curpos=0; }
     virtual void destroy() { delete this; }
