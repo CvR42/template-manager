@@ -14,7 +14,7 @@ in the following sections an informal overview of each type is given.
 \subsection{Fields}
 Each type contains a number of \defn{fields}. A field contains a type
 name surrounded by an arbitrary number of square bracket pairs (`{\tt
-[}' and `{\tt ]}').  A type without brackets denotes a single element of
+[}' and `\texttt{]}').  A type without brackets denotes a single element of
 that type; a type surrounded with one pair of brackets denotes a list of
 arbitrary length of elements of that type; a type surrounded with two
 pairs of brackets denotes a list of lists, and so on.  Each field must
@@ -57,7 +57,7 @@ For example:
 ifStatement = statement + { cond:expr, then:block, else:block };
 \end{verbatim}
 \end{showfile}
-means that the {\tt ifStatement} class inherits from the {\tt statement}
+means that the \texttt{ifStatement} class inherits from the \texttt{statement}
 class.
 \par
 A class can be defined to be \defn{virtual} by using the `\verb'~=''
@@ -148,8 +148,8 @@ expr ::=
     ;
 \end{verbatim}
 \end{showfile}
-Types {\tt constExpr} and {\tt plusExpr} are \defn{constructor} types;
-type {\tt expr} is a \defn{constructor base} type.
+Types \texttt{constExpr} and \texttt{plusExpr} are \defn{constructor} types;
+type \texttt{expr} is a \defn{constructor base} type.
 The `\verb'::='' operator indicates that the following is a group of
 constructor type.
 \par
@@ -176,7 +176,7 @@ plot ::= XYPlot xycolor:int points:[xypoint];
 plot ::= YPlot ycolor:int xstart:num xend:num points:[num];
 \end{verbatim}
 \end{showfile}
-is allowed, and defines a constructor base type {\tt plot} with two
+is allowed, and defines a constructor base type \texttt{plot} with two
 constructor types.
 \par
 Clearly, every constructor type can be converted to a similar class type.
@@ -197,7 +197,7 @@ a field with the same name as one of its own fields.
 Also, some templates (for example the standard C template) allow inheritance
 from only one type.
 \subsection{Comment}
-All text starting with the characters `{\tt ||}' up to the end of the line
+All text starting with the characters `\texttt{||}' up to the end of the line
 is comment that is ignored by {\Tm}.
 For example:
 \begin{showfile}
@@ -225,12 +225,12 @@ No check is done on recursive file inclusion.
 It is therefore a bad idea to define data structures that use specific
 features of a certain language.
 For example,
-in {\Miranda} strings are defined as lists of characters ({\tt [char]}).
+in {\Miranda} strings are defined as lists of characters (\texttt{[char]}).
 Since this is probably very inefficient in other languages
 (where a general list manipulation mechanism must be used)
-it is not a good idea to use {\tt [char]} in the data structure file.
-A better solution is to introduce a new type --- e.g. {\tt string} ---
-and to specify the exact representation of a {\tt string}
+it is not a good idea to use \texttt{[char]} in the data structure file.
+A better solution is to introduce a new type --- e.g. \texttt{string} ---
+and to specify the exact representation of a \texttt{string}
 for each language separately.
 \subsection{A larger example}
 The following file shows the use of all meta-types in a more-or-less
@@ -254,26 +254,26 @@ This standard text representation is as follows:
 Each constructor and class is represented by the constructor or class
 name followed
 by the representation of the fields of that constructor or class.
-The entire representation may be surrounded by any number of `{\tt (}'~`{\tt )}' pairs
+The entire representation may be surrounded by any number of `\texttt{(}'~`\texttt{)}' pairs
 to avoid ambiguity.
 \item
-Lists are surrounded by `{\tt [}' and `{\tt ]}',
+Lists are surrounded by `\texttt{[}' and `\texttt{]}',
 and the members of the list are separated by commas.
 \item
-Tuples are surrounded by exactly {\em one} \/pair of parentheses,
-and all fields of the tuple are separated by commas (`{\tt ,}').
+Tuples are surrounded by exactly \emph{one} pair of parentheses, and
+all fields of the tuple are separated by commas (`\texttt{,}').
 \item
-The representation of primitives cannot be prescribed here; it
-is entirely dependent on the primitive type involved.
+The representation of primitives cannot be prescribed here; it is entirely
+dependent on the primitive type involved.
 \item
 Between constructor, tuple and class fields, constructor and class
 names and punctuation any number of spaces, tabs, carriage returns,
 newlines or form-feeds may be inserted.  Also, any number of comment
-lines may be inserted.  Comment starts with the characters `{\tt ||}'
+lines may be inserted.  Comment starts with the characters `\texttt{||}'
 and ends at the end of the line.
 \end{itemize}
 \par
-For example, a valid text representation of an instance of type {\tt curve}
+For example, a valid text representation of an instance of type \texttt{curve}
 as defined in section \pageref{plotds} is:
 \begin{showfile}
 \begin{verbatim}
