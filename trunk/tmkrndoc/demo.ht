@@ -4,4 +4,4 @@
 typedef int num;
 
 .insert democonf.t
-.include calu.ht
+.include tmc.ht

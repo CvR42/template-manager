@@ -20,9 +20,9 @@ At places where a boolean expression is expected,
 the string `{\tt 0}' is {\it false},
 all other strings are {\it true}.
 \par
-A \dfn{number} is a string of digits with an optional sign before it.
+A \defn{number} is a string of digits with an optional sign before it.
 \par
-A word is either a string of non-blank characters, or a string of
+A \defn{word} is either a string of non-blank characters, or a string of
 arbitrary characters surrounded by double quotes. A quoted string
 must end before the end of the line, and it may not contain
 double quote characters.
@@ -145,9 +145,9 @@ or at the \verb'.endswitch' line.
 If the list of cases is exhausted, but no case has been executed,
 execute the statement in the \verb'.default' section, if it exists.
 
-A case statement may contain any number of words, including 0.
-There can be at most one \verb'.default' section. Note that more than
-one case can be executed.
+The list of words of a case statement may contain any number of words,
+including 0.  There can be at most one \verb'.default' section. Note
+that more than one case can be executed for a switch value.
 \par
 For example:
 \verbatiminput{switch.xt}
@@ -237,7 +237,7 @@ execution of the macro, the formal parameters of the macro are set to
 the values in the parameter list. The number of parameters must match the
 number of formal parameters, or else an error message is given. To pass
 a list of words to a formal parameter, surround it with double quotes.
-Before a macro is executed a new execution context is created. This
+Before a macro is executed, a new execution context is created. This
 context is destroyed upon completion of the macro.
 \par
 During execution of the macro, \verb+.return+ commands may be given to
@@ -622,7 +622,8 @@ This can be used as a `set difference' operation.
 &
 Return a copy of the given list that is lexicographically sorted,
 and where all duplicate elements are deleted.
-This function can be used as a `set union' operation.
+This function can be used as a `set union' operation, and to convert
+an arbitrary list to a set.
 \\
 \end{desctab}
 For example:
@@ -633,8 +634,7 @@ will produce:
 \label{s.regex}\nopagebreak
 \par
 The regular expressions in {\Tm} are based on the regular expressions
-as used in {\Unix} shells.
-A pattern must match the entire string.
+used in {\Unix} shells.  A pattern must match the entire string.
 The following meta-characters are recognized:
 \par
 \begin{desctab}
@@ -684,7 +684,8 @@ some meta-characters:
 \verb!&! & Is replaced by the entire matched pattern.  \\
 \verb!\d!
 &
-Is replaced by numbered pattern number `{\tt d}' as matched by
+Where \verb'd' is a digit,
+is replaced by numbered pattern number `{\tt d}' as matched by
 `{\tt (form)}'.
 If the numbered pattern was not assigned in the original string,
 it is empty. \verb!\0! is replaced by the entire matched pattern.
@@ -804,17 +805,15 @@ Return the list of {\em constructor} types defined in the data structure file.
 \\
 {\tt fields t [inherited]}\index{fields@{\tt fields}}
 &
-Given a type {\tt t},
-return the list of field names of that type.
-Only tuple, constructor and class types may have fields; for a
-constructor base type an empty list is returned.
+Given a type {\tt t}, return the list of field names of that type.
+Only tuple, constructor and class types may have fields; for a constructor
+base type an empty list is returned.
 \par
 If a second parameter is given, and this parameter is the string
 {\tt inherited}, the fields of the superclasses of this type are also
 listed. The fields are ordered `height first', so that the fields of
-superclasses are listed before the fields of the types that inherit these
-superclasses. Since a constructor base type may inherit from any type,
-it may also have fields now.
+superclasses are listed before the fields of their inheritors. Since
+a constructor base type may also inherit, it may have fields now.
 \\
 {\tt isvirtual t}\index{isvirtual@{\tt isvirtual}}
 &
@@ -828,8 +827,8 @@ is a class type defined as virtual (with the \verb'~=' operator).
 Given a type {\tt t}, return its metatype.  If {\tt t} is defined in the
 datastructure definition file, return one of the strings {\tt class},
 {\tt tuple}, {\tt constructor}, or {\tt constructorbase}.  If {\tt t}
-has the prefix {\tt listpre} and the suffix {\tt listsuff}, return {\tt
-list}; in all other cases return {\tt atom}.
+has the prefix {\tt listpre} and the suffix {\tt listsuff}, return the
+string {\tt list}; in all other cases return the string {\tt atom}.
 \\
 {\tt tuplelist}\index{tuplelist@{\tt tuplelist}}
 &
@@ -854,15 +853,6 @@ Given a list of types, return the proper type names of the fields of
 these types. The types of inherited fields are {\em not} returned.
 The proper type names are constructed as described for the function
 {\tt type}.
-\\
-{\tt typeclass t e}\index{typeclass@{\tt typeclass}}
-&
-Given a type {\tt t} and a field name {\tt e}, return the type class
-of that field.  Possible type classes are {\tt single} and {\tt list}
-for a single element and a list of elements respectively.
-\par
-Field {\tt e} may belong to the given type or one of the superclasses
-of the type.
 \\
 {\tt typelevel t e}\index{typelevel@{\tt typelevel}}
 &
@@ -913,13 +903,26 @@ Given a type {\tt t}, return the list of types this type inherits directly
 or indirectly.
 \\
 \end{desctab}
+For example:
+\verbatiminput{fnclass.xt}
+will produce (assuming the data structure definitions of page \pageref{plotds}):
+\verbatiminput{fnclass.out}
 \subsection{Obsolete data structure access functions}
 \par
 These functions have been used in previous version of {\Tm} to retrieve
-information about the data structure file that was passed to {\Tm}.
-They have been replaced by the functions in the previous section,
+information about the data structures.
+They have been replaced by the functions in the previous sections,
 and should not be used in new templates.
 \begin{desctab}
+{\tt ttypeclass t e}\index{ttypeclass@{\tt ttypeclass}}
+&
+Given a type {\tt t} and a field name {\tt e}, return the type class
+of that field.  Possible type classes are {\tt single} and {\tt list}
+for a single element and a list of elements respectively.
+\par
+Field {\tt e} may belong to the given type or one of the superclasses
+of the type.
+\\
 {\tt ttypelist}\index{ttypelist@{\tt ttypelist}}
 &
 Equivalent to {\tt tuplelist}.
@@ -1099,7 +1102,7 @@ will produce:
 \section{Arithmetic expressions}
 \label{s.intexpr}
 \index{arithmetic expressions|(}
-Integer expressions have the form
+Arithmetic expressions have the form
 \begin{verbatim}
 $[<expr>]
 \end{verbatim}
@@ -1133,8 +1136,8 @@ priority & symbol & function \\
 \end{quote}
 The integer `0' represents `false',
 all other integers represent `true'.
-Boolean functions always return `1' as `true'.
-The operators $+$, $-$, $\%$, $*$ and $/$ are right binding.
+Boolean operators always return `true' as `1'.
+Binary operators are right binding.
 That is,
 \[ a\ {\rm op}\ b\ {\rm op}\ c = a\ {\rm op}\ (b\ {\rm op}\ c) \]
 For example:
