@@ -52,18 +52,18 @@
 .set listsuff _list
 ..
 .. Define the list of definition classes
-.set groups      ds cmp new fre rfre rdup print fprint fscan
+.set groups      ds cmp destroy clone print fprint fscan
 .. These are only useful for lists.
-.set listgroups append concat slice setroom insert delete reverse extract
+.set listgroups append concat slice reserve insert erase reverse extract
 .append listgroups extractlist insertlist
 .append groups $(listgroups)
 .set misccode stat_$(basename) get_balance_$(basename) flush_$(basename)
 .append groups is
 ..
-.append valuetypes int long char uint ulong tmstring tmtext
+.append valuetypes int long char uint ulong tmstring
 ..
 .. Reset all want_<groups> variables
-.foreach g $(groups) stat
+.foreach g $(groups)
 .set want_$g
 .endforeach
 .set want_misc
@@ -102,6 +102,7 @@
 .. This fact is used below..
 .set want_ds_list ${filt (*)_list & $(wantdefs)}
 .set wantdefs ${excl $(wantdefs) "" $(want_ds_list)}
+.append want_ds $(want_ds_list)
 .if ${len $(wantdefs)}
 . error Can't handle definition: $(wantdefs)
 . exit 1
@@ -147,28 +148,20 @@
 ..
 .. ** slice **
 .macro req_slice l
-.call require rdup "$l"
-.call require new "$l"
-.call require setroom "$l"
+.call require clone "$l"
+.call require reserve "$l"
 .call require append "$l"
 .endmacro
 ..
-.. ** rdup **
-.macro req_rdup l
-.call require new "${nonvirtual $l}"
-.call require setroom "${listtypes $l}"
-.call require rdup "${delisttypes $l} ${types $l}"
-.if ${eq $(template) tmc}
-.call require rdup "${nonvirtual ${reach $l}}"
-.else
-.call require rdup "${types ${subclasses $l}}"
-.call require new "${nonvirtual ${subclasses $l}}"
-.endif
+.. ** clone **
+.macro req_clone l
+.call require reserve "${listtypes $l}"
+.call require clone "${delisttypes $l} ${types $l}"
+.call require clone "${nonvirtual ${reach $l}}"
 .endmacro
 ..
 .. ** fscan **
 .macro req_fscan l
-.call require new "${nonvirtual $l}"
 .call require append "${listtypes $l}"
 .call require fscan "${delisttypes $l} ${types ${singletypes $l}}"
 .call require fscan "${types ${subclasses $l}}"
@@ -179,9 +172,7 @@
 .call require ds "$l"
 .call require print "${delisttypes $l}"
 .call require print "${types ${singletypes $l} ${subclasses $l}}"
-.if ${eq $(template) tmc}
 .call require print "${nonvirtual ${subclasses $l}}"
-.endif
 .endmacro
 ..
 .. ** fprint **
@@ -189,9 +180,7 @@
 .call require ds "$l"
 .call require fprint "${delisttypes $l}"
 .call require fprint "${types ${singletypes $l} ${subclasses $l}}"
-.if ${eq $(template) tmc}
 .call require fprint "${nonvirtual ${subclasses $l}}"
-.endif
 .endmacro
 ..
 .. ** cmp **
@@ -199,20 +188,17 @@
 .call require ds "$l"
 .call require cmp "${delisttypes $l}"
 .call require cmp "${types ${singletypes $l} ${subclasses $l}}"
-.if ${eq $(template) tmc}
 .call require cmp "${nonvirtual ${subclasses $l}}"
-.endif
 .endmacro
 ..
 .. ** append **
 .macro req_append l
-.call require setroom "$l"
+.call require reserve "$l"
 .endmacro
 ..
 .. ** concat **
 .macro req_concat l
-.call require fre "$l"
-.call require setroom "$l"
+.call require reserve "$l"
 .endmacro
 ..
 .. ** reverse **
@@ -222,19 +208,17 @@
 ..
 .. ** insertlist **
 .macro req_insertlist l
-.call require setroom "$l"
-.call require fre "$l"
+.call require reserve "$l"
 .endmacro
 ..
 .. ** insert **
 .macro req_insert l
-.call require setroom "$l"
+.call require reserve "$l"
 .endmacro
 ..
 .. ** extractlist **
 .macro req_extractlist l
-.call require setroom "$l"
-.call require new "$l"
+.call require reserve "$l"
 .endmacro
 ..
 .. ** extract **
@@ -242,93 +226,43 @@
 .call require ds "$l"
 .endmacro
 ..
-.. ** delete **
-.macro req_delete l
-.call require rfre "${delisttypes $l}"
+.. ** erase **
+.macro req_erase l
+.call require destroy "${delisttypes $l}"
 .call require ds "$l"
 .endmacro
 ..
-.. ** setroom **
-.macro req_setroom l
+.. ** reserve **
+.macro req_reserve l
 .call require ds "$l"
 .endmacro
 ..
-.. ** rfre **
-.macro req_rfre l
-.call require fre "${nonvirtual $l}"
-.call require rfre "${delisttypes $l}"
-.call require rfre "${alltypes ${singletypes $l}}"
-.if ${eq $(template) tmc}
-.call require rfre "${nonvirtual ${subclasses $l}}"
-.call require fre "${nonvirtual $l}"
-.else
-.call require fre "$l"
-.call require rfre "${types ${subclasses $l}}"
-.endif
+.. ** destroy **
+.macro req_destroy l
+.call require destroy "${delisttypes $l}"
+.call require destroy "${alltypes ${singletypes $l}}"
+.call require destroy "${nonvirtual ${subclasses $l}}"
 .endmacro
-..
-.. ** null **
-.if ${eq $(template) ald}
-.macro req_null l
-.call require null "${delisttypes $l}"
-.call require null "${types ${singletypes $l} ${subclasses $l}}"
-.call require ds "$l"
-.endmacro
-.endif
 ..
 .. ** is **
-.if ${eq $(template) tmc}
 .macro req_is l
 .call require ds "$l"
-.endmacro
-.endif
-..
-.. ** fre **
-.macro req_fre l
-.call require ds "$l"
-.if ${eq $(template) tmc}
-.call require fre "${nonvirtual ${subclasses $l}}"
-.else
-.call require stat "${nonvirtual ${subclasses $l}}"
-.endif
-.call require stat "${nonvirtual $l}"
-.endmacro
-..
-.. ** new **
-.macro req_new l
-.call require ds "$l"
-.call require stat "${nonvirtual $l}"
-.if ${neq $(template) tmc}
-.call require new "${subclasses ${virtual $l}}"
-.endif
-.endmacro
-..
-.. ** stat **
-.macro req_stat l
-.if ${neq $(template) tmc}
-.call require stat "${nonvirtual ${subclasses $l}}"
-.endif
 .endmacro
 ..
 .. ** ds **
 .macro req_ds l
 .call require ds "${delisttypes $l}"
 .call require ds "${types ${singletypes $l} ${subclasses $l}}"
-.if ${eq $(template) tmc}
 .call require ds "${subclasses $l} ${superclasses $l}"
-.endif
 .endmacro
 ..
 .. From the request for new_<virtual class>, deduce the desire for
 .. its subclasses.
 .. Note that this modifies the *want_new* variable, *not* the need_new
 .. variable that is set in the deductions below.
-.if ${neq $(template) tmc}
-.append want_new "${subclasses ${virtual $(want_new)}}"
-.endif
 ..
 .. Reset all need_<group> variables.
-.foreach g $(groups) stat
+.foreach g $(groups)
 . set need_$g
 .endforeach
 .set need_misc
@@ -366,7 +300,10 @@
 ..
 .. ** derived definitions **
 .set statcode ${or ${member stat_$(basename) $(need_misc)} ${member isbalanced_$(basename) $(need_misc)}}
-.if ${not $(statcode)}
+.if $(statcode)
+. set need_stat $(need_ds)
+. set want_stat $(want_ds)
+.else
 . set need_stat
 . set want_stat
 .endif

@@ -28,7 +28,7 @@ LOCALLIB=d:\lib
 LOCALINC=d:\include
 CC = BCC32
 LINKER = $(CC)
-SYSCFLAGS = -P -wall -wstu -4 -O2 -DLOGNEW -DSTAT
+SYSCFLAGS = -v -P -wall -wstu -4 -O2 -DLOGNEW -DSTAT
 
 LDFLAGS	      = $(SYSCFLAGS)
 

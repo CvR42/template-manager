@@ -1,11 +1,16 @@
+[2,7,2,7]
+[2, 7, 2, 7]
+bracket level: 0
 [(TopNone)
 ,(Top [(SubNamed 122 12)
 ,(SubNamedlist 12 [(Thing 42)
 ,(Thing 122)
 ,(Thing (-1))
-,@ ]
+,(Thing 6)
+]
 )
-,(SubNamedlist (-3) @ )
+,(SubNamedlist (-3) []
+)
 ]
  [[(SubNamed 122 (-144))
 ,(SubNamedlist 122 [(Thing (-1))
@@ -14,7 +19,24 @@
 ]
 )
 ]
+,[(SubNamed 122 (-144))
+,(SubNamedlist 122 [(Thing (-1))
+,(Thing (-1))
+,(Thing (-1))
 ]
+)
+]
+]
+)
+,(TopEnum (EA)
+)
+,(TopEnum (EB)
+)
+,(TopEnum (EC)
+)
+,(TopEmptyTuple ()
+)
+,(TopClass (exprConst 3)
 )
 ,(TopTuple ([(Thing 5)
 ,(Thing 9)
@@ -30,9 +52,11 @@
 ,(SubNamedlist 12 [(Thing 42)
 ,(Thing 122)
 ,(Thing (-1))
-,@ ]
+,(Thing 6)
+]
 )
-,(SubNamedlist (-3) @ )
+,(SubNamedlist (-3) []
+)
 ]
  [[(SubNamed 122 (-144))
 ,(SubNamedlist 122 [(Thing (-1))
@@ -41,7 +65,24 @@
 ]
 )
 ]
+,[(SubNamed 122 (-144))
+,(SubNamedlist 122 [(Thing (-1))
+,(Thing (-1))
+,(Thing (-1))
 ]
+)
+]
+]
+)
+,(TopEnum (EA)
+)
+,(TopEnum (EB)
+)
+,(TopEnum (EC)
+)
+,(TopEmptyTuple ()
+)
+,(TopClass (exprConst 3)
 )
 ,(TopTuple ([(Thing 5)
 ,(Thing 9)
@@ -62,16 +103,29 @@
 	Top
 	[
 	    (SubNamed 122 12),
-	    (SubNamedlist 12 [(Thing 42), (Thing 122), (Thing (-1)), @]),
-	    (SubNamedlist (-3) @)
+	    (
+		SubNamedlist
+		12
+		[(Thing 42), (Thing 122), (Thing (-1)), (Thing 6)]
+	    ),
+	    (SubNamedlist (-3) [])
 	]
 	[
+	    [
+		(SubNamed 122 (-144)),
+		(SubNamedlist 122 [(Thing (-1)), (Thing (-1)), (Thing (-1))])
+	    ],
 	    [
 		(SubNamed 122 (-144)),
 		(SubNamedlist 122 [(Thing (-1)), (Thing (-1)), (Thing (-1))])
 	    ]
 	]
     ),
+    (TopEnum EA),
+    (TopEnum EB),
+    (TopEnum EC),
+    (TopEmptyTuple ()),
+    (TopClass (exprConst 3)),
     (TopTuple ([(Thing 5), (Thing 9)], 22)),
     TopNone,
     TopNone,
@@ -81,16 +135,29 @@
 	Top
 	[
 	    (SubNamed 122 12),
-	    (SubNamedlist 12 [(Thing 42), (Thing 122), (Thing (-1)), @]),
-	    (SubNamedlist (-3) @)
+	    (
+		SubNamedlist
+		12
+		[(Thing 42), (Thing 122), (Thing (-1)), (Thing 6)]
+	    ),
+	    (SubNamedlist (-3) [])
 	]
 	[
+	    [
+		(SubNamed 122 (-144)),
+		(SubNamedlist 122 [(Thing (-1)), (Thing (-1)), (Thing (-1))])
+	    ],
 	    [
 		(SubNamed 122 (-144)),
 		(SubNamedlist 122 [(Thing (-1)), (Thing (-1)), (Thing (-1))])
 	    ]
 	]
     ),
+    (TopEnum EA),
+    (TopEnum EB),
+    (TopEnum EC),
+    (TopEmptyTuple ()),
+    (TopClass (exprConst 3)),
     (TopTuple ([(Thing 5), (Thing 9)], 22))
 ]
 (label 42)
