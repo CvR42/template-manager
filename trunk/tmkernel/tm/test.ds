@@ -35,4 +35,3 @@ expr = orig +
 	exprPlus: {a:expr, b:expr} |
 	exprOrig: (testclass + { lbl:tmstring })
 	;
-
