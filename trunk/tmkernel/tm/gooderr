@@ -22,7 +22,6 @@ testin: 'inherits' requires exactly one parameter
 testin: unknown type: 'iserniet'
 testin: 'inheritors' requires exactly one parameter
 testin: 'superclasses' requires exactly one parameter
-testin: 'subclasses' requires exactly one parameter
 testin: 'fields' requires one or two parameters
 testin: 'fields' second parameter must be absent or `inherited'
 testin: unknown type: bla

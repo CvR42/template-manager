@@ -1363,13 +1363,12 @@ static tmstring fnsubclasses( const tmstring_list sl )
 {
     tmstring ans;
     tmstring_list subclasses;
+    unsigned int ix;
 
-    if( sl->sz != 1 ){
-	line_error( "'subclasses' requires exactly one parameter" );
-	return new_tmstring( "" );
-    }
     subclasses = new_tmstring_list();
-    collect_subclasses( &subclasses, allds, sl->arr[0] );
+    for( ix=0; ix<sl->sz; ix++ ){
+	collect_subclasses( &subclasses, allds, sl->arr[ix] );
+    }
     ans = flatstrings( subclasses );
     rfre_tmstring_list( subclasses );
     return ans;
