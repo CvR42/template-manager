@@ -3,9 +3,15 @@
 ..
 .. All rights reserved.
 ..
-.. File aluspec.t
+.. File tmcspec.t
+.set verbose
 .set basename ds
 .set wantdefs
+.append wantdefs ${prefix new_ ${subclasses expr thing}}
+.append wantdefs new_label
+.append wantdefs rfre_label
+.append wantdefs rfre_thing
+.append wantdefs rfre_expr
 .append wantdefs rdup_toplevel
 .append wantdefs new_toplevel
 .append wantdefs cmp_toplevel

@@ -6,6 +6,11 @@
 .. File aluspec.t
 .set basename ds
 .set wantdefs
+.set verbose
+.append wantdefs new_label
+.append wantdefs rfre_label
+.append wantdefs new_thing
+.append wantdefs rfre_thing
 .append wantdefs rdup_toplevel
 .append wantdefs new_toplevel
 .append wantdefs cmp_toplevel
