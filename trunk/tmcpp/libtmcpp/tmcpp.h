@@ -163,7 +163,7 @@ private:
 
 public:
     char *arr;
-    mutable long curpos;	// Current read or write pointer.
+    long curpos;	// Current read or write pointer.
     size_type sz;
 
 private:
