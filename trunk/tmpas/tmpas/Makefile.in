@@ -105,6 +105,9 @@ install:
 clean:
 	rm -f $(JUNK)
 
+distclean:
+	rm -f $(JUNK)
+
 empty:
 	rm -f $(JUNK)
 
