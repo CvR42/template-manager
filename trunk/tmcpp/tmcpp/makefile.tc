@@ -1,0 +1,181 @@
+# Tm - an interface code generator.
+# Author: C. van Reeuwijk.
+#
+# All rights reserved.
+#
+# This version is specific for Borland C++ for Windows.
+# It is tested on Borland C++ version 4.52; it *might* work with earlier
+# versions.
+#
+# A few variables can be defined below to change the configuration
+
+# You can customize this Makefile for your system by editing
+# the variables immediately below. The current values are not magical;
+# they just reflect what I use.
+#  LOCALBIN	The place to put binaries
+#  LOCALLIB	The place to get libraries and templates
+#  LOCALINC	The place to get local include (.h) files
+#  CC		The compiler to use: BCC32 if possible, else BCC. 
+#  SYSCFLAGS	Compilation flags to use. You may want to change them
+#		to choose target machine architecture, optimization level,
+#		memory model, etc.
+#  PROGBASE	The basename of the resulting program. If you want to generate
+#		both the 16 bits and the 32 bits version, you
+#		may want a name with '32' in it for one of them.
+# 
+LOCALBIN = c:\bin
+LOCALLIB=c:\lib
+LOCALINC=c:\include
+CC = BCC32
+LINKER = $(CC)
+SYSCFLAGS = -wall -wstu -4 -O2 -DLOGNEW -DSTAT
+
+LDFLAGS	      = $(SYSCFLAGS)
+
+# C compilation flags
+CFLAGS = $(SYSCFLAGS) -I$(LOCALINC)
+
+# Some names of programs
+TM  = tm.exe
+
+TMCLIB = $(LOCALLIB)\tmc32.lib
+
+LIBS = $(TMCLIB)
+
+MAKEFILE = Makefile
+
+DOC	= README
+
+DEMOFILES =
+
+TMCTESTSRCS = tmctest.c tmccode.c
+TMCTESTOBJS = $(TMCTESTSRCS:.c=.obj)
+
+LLUTESTSRCS = llutest.c llucode.c
+LLUTESTOBJS = $(LLUTESTSRCS:.c=.obj)
+
+ALUTESTSRCS   = alutest.c alucode.c
+ALUTESTOBJS = $(ALUTESTSRCS:.c=.obj)
+
+help :
+	@echo " Possible make targets:"
+	@echo "all		Create local running programs."
+	@echo "clean		Delete all intermediate files."
+	@echo "empty		Delete all files that can be re-generated."
+	@echo "install		Install relevant files."
+	@echo "test		Run tests."
+
+#
+all: llutest.exe alutest.exe tmctest.exe
+
+# Add rules for the programs themselves here.
+
+test : llutestrun alutestrun tmctestrun
+
+tmctest.exe: $(TMCTESTOBJS)
+	$(LINKER) -etmctest $(LDFLAGS) $(TMCTESTOBJS) $(LIBS)
+
+tmctestrun: tmctest.exe tmctesti
+	tmctest.exe
+	diff testout tmcokout
+	diff testerr tmcokerr
+
+tmcinstall: need.t tmc.ct tmc.ht
+	copy /a macros.t+tmcid.t+need.t+tmc.ct $(LOCALLIB)\tmc.ct
+	copy /a macros.t+tmcid.t+need.t+tmc.ht $(LOCALLIB)\tmc.ht
+
+alutest.exe: $(ALUTESTOBJS)
+	$(LINKER) -ealutest $(LDFLAGS) $(ALUTESTOBJS) $(LIBS)
+
+alutestrun: alutest.exe alutesti
+	alutest.exe
+	diff testout aluokout
+	diff testerr aluokerr
+
+aluinstall: need.t calu.ct calu.ht
+	copy /a macros.t+aluid.t+need.t+calu.ct $(LOCALLIB)\calu.ct
+	copy /a macros.t+aluid.t+need.t+calu.ht $(LOCALLIB)\calu.ht
+
+llutest.exe: $(LLUTESTOBJS)
+	$(LINKER) -ellutest $(LDFLAGS) $(LLUTESTOBJS) $(LIBS)
+
+llutestrun: llutest.exe llutesti
+	llutest.exe
+	diff testout lluokout
+	diff testerr lluokerr
+
+lluinstall : need.t cllu.ct cllu.ht
+	copy /a macros.t+lluid.t+need.t+cllu.ct $(LOCALLIB)\cllu.ct
+	copy /a macros.t+lluid.t+need.t+cllu.ht $(LOCALLIB)\cllu.ht
+
+install: lluinstall aluinstall tmcinstall
+
+clean:
+	del *.obj
+	del alucode.c
+	del alucode.h
+	del alutest.c
+	del alutest.exe
+	del llucode.c
+	del llucode.h
+	del llutest.c
+	del llutest.exe
+	del testerr
+	del testout
+	del tmccode.c
+	del tmccode.h
+	del tmctest.exe
+
+empty:
+	del *.obj
+	del alucode.c
+	del alucode.h
+	del alutest.c
+	del alutest.exe
+	del llucode.c
+	del llucode.h
+	del llutest.c
+	del llutest.exe
+	del testerr
+	del testout
+	del tmccode.c
+	del tmccode.h
+	del tmctest.exe
+
+tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds tmccode.ct > tmccode.c
+
+tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds tmccode.ht > tmccode.h
+
+alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t
+	$(TM) test.ds alucode.ct > alucode.c
+
+alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t
+	$(TM) test.ds alucode.ht > alucode.h
+
+llucode.c: llucode.ct cllu.ct lluspec.t test.ds need.t macros.t
+	$(TM) test.ds llucode.ct > llucode.c
+
+llucode.h: llucode.ht cllu.ht lluspec.t test.ds need.t macros.t
+	$(TM) test.ds llucode.ht > llucode.h
+
+tmctest.c: xxtest.c
+	sed -e s/XXX/tmc/ xxtest.c > tmctest.c
+
+alutest.c: xxtest.c
+	sed -e s/XXX/alu/ xxtest.c > alutest.c
+
+llutest.c: xxtest.c
+	sed -e s/XXX/llu/ xxtest.c > llutest.c
+
+.c.obj:
+	$(CC) -c $(CFLAGS) -o$* $<
+
+###
+tmccode.obj: tmccode.h config.h
+tmctest.obj: tmccode.h config.h
+alucode.obj: alucode.h config.h
+alutest.obj: alucode.h config.h
+llucode.obj: llucode.h config.h
+llutest.obj: llucode.h config.h
