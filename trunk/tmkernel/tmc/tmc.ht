@@ -91,7 +91,7 @@ public:
 #endif
     tags_${call rootclass $t} tag;
 .endif
-.foreach e ${fields $t inherited}
+.foreach e ${fields $t}
     ${type $t $e} $e;
 .endforeach
 };
