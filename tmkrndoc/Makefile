@@ -16,7 +16,6 @@ LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
 CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c oksubst.clc
-
 EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
   boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
   linemacro.xt setfn.xt switch.xt unalias.xt
@@ -31,13 +30,13 @@ AUXFILES = $(TEXFILES:.tex=.aux)
 SPELLFILES = $(TEXFILES:.tex=.spl)
 
 JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
-       demo.h demo.c macdemo.out $(TOPFILE).ind $(TOPFILE).idx \
+       demo.h demo.c $(TOPFILE).ind $(TOPFILE).idx \
        $(AUXFILES) $(TOPFILE).bbl $(TOPFILE).lot $(TOPFILE).lof \
        $(TOPFILE).toc dist.lst title.c
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
-	    demo.ct demo.ht democonf.t demospec.t \
-            goodwords macdemo.t main.bib main.ps plot.ds readin.m xrefdemo.t \
+	    $(CALCDEMO) \
+            goodwords main.bib main.ps plot.ds \
 	    title.ct title.ds ch.sh cast.t
 
 help:
@@ -80,9 +79,6 @@ sort: goodwords
 	mv tmp goodwords
 	touch sort
 
-macdemo.out: macdemo.t plot.ds
-	$(TM) plot.ds macdemo.t > macdemo.out
-
 spell: $(SPELLFILES)
 
 $(SPELLFILES): sort
@@ -105,7 +101,7 @@ empty:
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(MAKEFILE) $(TOPFILE).ps
+distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 demo.c : plot.ds demo.ct democonf.t
@@ -113,6 +109,9 @@ demo.c : plot.ds demo.ct democonf.t
 
 demo.h : plot.ds demo.ht democonf.t
 	tm plot.ds demo.ht | expand > demo.h
+
+subst.c : calc.ds subst.ct
+	tm calc.ds subst.ct | expand > subst.c
 
 calc.c : calc.ds calc.ct calcconf.t
 	tm calc.ds calc.ct | expand > calc.c
@@ -123,21 +122,9 @@ calc.h : calc.ds calc.ht calcconf.t
 title.c: title.ct title.ds
 	tm title.ds title.ct > title.c
 
-calcpars.c tokens.h: calcpars.y
-	$(YACC) $<
-	mv y.tab.c calcpars.c
-	mv y.tab.h tokens.h
+t: $(CALCDEMO) $(EXAMPLEOUTFILES)
+	echo $(CALCDEMO) $(EXAMPLEOUTFILES)
 
-calclex.c: calclex.l
-	$(LEX) $<
-	mv lex.yy.c $*.c
-
-t:
-	@echo $(CALCDEMO)
-
-calcpars.o: calc.h
-calclex.o: tokens.h
-main.dvi: macdemo.out demo.c demo.h
-main.dvi: readin.m
+main.dvi: $(CALCDEMO)
 main.dvi: title.c
 $(EXAMPLEOUTFILES): plot.ds
