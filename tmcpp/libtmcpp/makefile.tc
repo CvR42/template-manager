@@ -23,11 +23,11 @@
 #  LIBFILE	The name of the resulting library. If you want to generate
 #		both the 16 bits and the 32 bits version, you
 #		can use a name with '32' in it for one of them.
-LOCALLIB=c:\lib
-LOCALINC=c:\include
+LOCALLIB=d:\lib
+LOCALINC=d:\include
 CC = BCC32
 CFLAGS = -wall -wstu -4 -O2
-LIBFILE=tmc32.lib
+LIBFILE=tmcpp32.lib
 #LIBFILE=tmc.lib
 
 ARCHIVER = TLIB /E
@@ -151,7 +151,7 @@ test: testprog.exe testin
 
 install: $(LIBFILE)
 	copy $(LIBFILE) $(LOCALLIB)\$(LIBFILE)
-	copy tmc.h $(LOCALINC)\tmc.h
+	copy tmcpp.h $(LOCALINC)\tmcpp.h
 
 clean:
 	del *.obj 
@@ -169,44 +169,44 @@ empty:
 	$(CC) -c $(CFLAGS) -o$* $<
 
 ###
-badtag.obj: tmc.h config.h
-cmpdbl.obj: tmc.h config.h
-errmsg.obj: tmc.h config.h
-escstr.obj: tmc.h config.h
-fatal.obj: tmc.h config.h
-fneedc.obj: tmc.h config.h
-fprdbl.obj: tmc.h config.h
-fprint.obj: tmc.h config.h
-fprsshrt.obj: tmc.h config.h
-fprstr.obj: tmc.h config.h
-fprsym.obj: tmc.h config.h
-fprushrt.obj: tmc.h config.h
-fsccbrac.obj: tmc.h config.h
-fsccons.obj: tmc.h config.h
-fscdbl.obj: tmc.h config.h
-fscescc.obj: tmc.h config.h
-fscflt.obj: tmc.h config.h
-fscint.obj: tmc.h config.h
-fscobrac.obj: tmc.h config.h
-fscspace.obj: tmc.h config.h
-fscsshrt.obj: tmc.h config.h
-fscstr.obj: tmc.h config.h
-fscushrt.obj: tmc.h config.h
-lognew.obj: tmc.h config.h
-newstr.obj: tmc.h config.h
-nlfrestr.obj: tmc.h config.h
-nlfscstr.obj: tmc.h config.h
-nlnewstr.obj: tmc.h config.h
-noroom.obj: tmc.h config.h
-prdbl.obj: tmc.h config.h
-print.obj: tmc.h config.h
-propt.obj: tmc.h config.h
-prsshrt.obj: tmc.h config.h
-prstr.obj: tmc.h config.h
-prsym.obj: tmc.h config.h
-prushrt.obj: tmc.h config.h
-symbol.obj: tmc.h config.h
-testprog.obj: tmc.h config.h
-tmcalloc.obj: tmc.h config.h
-tmmalloc.obj: tmc.h config.h
-tmreallc.obj: tmc.h config.h
+badtag.obj: tmcpp.h config.h
+cmpdbl.obj: tmcpp.h config.h
+errmsg.obj: tmcpp.h config.h
+escstr.obj: tmcpp.h config.h
+fatal.obj: tmcpp.h config.h
+fneedc.obj: tmcpp.h config.h
+fprdbl.obj: tmcpp.h config.h
+fprint.obj: tmcpp.h config.h
+fprsshrt.obj: tmcpp.h config.h
+fprstr.obj: tmcpp.h config.h
+fprsym.obj: tmcpp.h config.h
+fprushrt.obj: tmcpp.h config.h
+fsccbrac.obj: tmcpp.h config.h
+fsccons.obj: tmcpp.h config.h
+fscdbl.obj: tmcpp.h config.h
+fscescc.obj: tmcpp.h config.h
+fscflt.obj: tmcpp.h config.h
+fscint.obj: tmcpp.h config.h
+fscobrac.obj: tmcpp.h config.h
+fscspace.obj: tmcpp.h config.h
+fscsshrt.obj: tmcpp.h config.h
+fscstr.obj: tmcpp.h config.h
+fscushrt.obj: tmcpp.h config.h
+lognew.obj: tmcpp.h config.h
+newstr.obj: tmcpp.h config.h
+nlfrestr.obj: tmcpp.h config.h
+nlfscstr.obj: tmcpp.h config.h
+nlnewstr.obj: tmcpp.h config.h
+noroom.obj: tmcpp.h config.h
+prdbl.obj: tmcpp.h config.h
+print.obj: tmcpp.h config.h
+propt.obj: tmcpp.h config.h
+prsshrt.obj: tmcpp.h config.h
+prstr.obj: tmcpp.h config.h
+prsym.obj: tmcpp.h config.h
+prushrt.obj: tmcpp.h config.h
+symbol.obj: tmcpp.h config.h
+testprog.obj: tmcpp.h config.h
+tmcalloc.obj: tmcpp.h config.h
+tmmalloc.obj: tmcpp.h config.h
+tmreallc.obj: tmcpp.h config.h

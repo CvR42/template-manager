@@ -281,7 +281,7 @@ extern $t_list *insert_$t_list( $t_list *, const unsigned int, $t * );
 ..
 .. insertlist_<type>_list() routines.
 .foreach t $(want_insertlist_list)
-extern $t_list *insertlist_$t_list( $t_list *, const unsigned int, $t_list * );
+extern $t_list *insertlist_$t_list( $t_list *, unsigned int, $t_list * );
 .endforeach
 ..
 .. delete_<type>_list() routines.
