@@ -174,15 +174,15 @@ distfiles: $(MAKEFILE)
 distlist: $(MAKEFILE)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
-gfiles: $(GENSRCS) $(GENHDRS)
+depend: $(DEPENDFILE)
 
-depend: gfiles createdepend
-
-createdepend: $(DEPENDFILE)
+# TODO: this only works if the compiler knows the -MM flag, which
+# is realistically only the GNU compiler. There is no nice solution:
+# some other compilers may have a different flag for this, or otherwise
+# it may be possible to use the GNU compiler just to compute the
+# dependencies.
+$(DEPENDFILE): $(DEPENDSRC)
 	$(CC) -MM $(DEPENDSRC) > $(DEPENDFILE)
-
-$(DEPENDFILE):
-	touch $(DEPENDFILE)
 
 stats: empty
 	wc -l *.c *.h

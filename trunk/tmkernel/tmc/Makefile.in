@@ -224,8 +224,9 @@ distfiles:
 distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
+# TODO: do something smarter here.
 depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS)
-	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
+	echo "Nothing is done"
 
 tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t $(TM)
 	$(TM) cltest.ds tmcwalktest.ct > tmcwalktest.c
