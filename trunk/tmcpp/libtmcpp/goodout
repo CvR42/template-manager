@@ -1,0 +1,95 @@
+[]
+(tuple1, 24)
+Cons1
+(Cons2 Cons3 (tuple))
+(Cons2 (Cons3 [42] [42, 42]) (tuple, [42], [42, 42]))
+(
+    Cons2
+    (Cons3 [42] [42, 42] [42, 42, 42] [42, 42, 42, 42] [42, 42, 42, 42, 42])
+    (
+	tuple,
+	[42],
+	[42, 42],
+	[42, 42, 42],
+	[42, 42, 42, 42],
+	[42, 42, 42, 42, 42]
+    )
+)
+(
+    Cons2
+    (
+	Cons3
+	[42]
+	[42, 42]
+	[42, 42, 42]
+	[42, 42, 42, 42]
+	[42, 42, 42, 42, 42]
+	[42, 42, 42, 42, 42, 42]
+	[42, 42, 42, 42, 42, 42, 42]
+	[42, 42, 42, 42, 42, 42, 42, 42]
+    )
+    (
+	tuple,
+	[42],
+	[42, 42],
+	[42, 42, 42],
+	[42, 42, 42, 42],
+	[42, 42, 42, 42, 42],
+	[42, 42, 42, 42, 42, 42],
+	[42, 42, 42, 42, 42, 42, 42],
+	[42, 42, 42, 42, 42, 42, 42, 42]
+    )
+)
+Top
+level
+tm_printword().
+(Bractest 42)
+(Bractest 42 (Bractest 42))
+(Bractest 42 (Bractest 42 (Bractest 42)))
+(Constest [bla, bla, test, sdfsdhlfhew, sdfshdfksd, StopFscanCons])
+(Schartest 'a' '\"' '\'' '\000' '\n' '\323' 'q')
+(Uchartest 'a' '\"' '\'' '\000' '\n' '\323' 'q')
+(Sshrttest 2 3 12 (-23) (-9) (-1))
+(Ushrttest 2 3 12 1223 2349 42)
+(Inttest 0 1 2 3 12 (-23) (-9) (-1))
+(Unsignedtest 2 3 12 1223 2349 42)
+(Longtest 2 3 -12 12222223 2349 42)
+(Ulongtest 2 3 12 12222223 2349 42)
+(Stringouttest "" "Test")
+(
+    Stringintest
+    "a"
+    "bcdef"
+    @
+    "blablablabigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigword"
+    "\""
+    "\n"
+    "\001"
+    "\n"
+    "\323"
+    "STOP"
+)
+(Wordouttest Test)
+(
+    Wordintest
+    a
+    bcdef
+    @
+    blablablabigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwords
+    -12.34e-123
+    STOP
+)
+(Textouttest "" "Test")
+(Textintest "a" "bcdef" @ "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
+(Tmboolouttest True False True True False)
+fprint_schar: ['a' ' ' '\376' '\201' '\000']
+fprint_uchar: ['a' ' ' '\201' '\000']
+fprint_sshrt: [12 0 (-42)]
+fprint_ushrt: [12 0 42]
+fprint_int: [12 0 (-42)]
+fprint_uint: [12 0 42]
+fprint_long: [12 0 -123442]
+fprint_ulong: [12 0 123442]
+fprint_tmstring: ["blabla" "" "reutel" @]
+fprint_tmword: [blabla reutel @]
+tm_lineno=30
