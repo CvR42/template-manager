@@ -151,18 +151,39 @@ void check_ds_list( const ds_list dl )
     bool *accepted;	/* The data structures that already passed the test. */
     unsigned int ix;
     unsigned int sz;
+    bool ok;
 
     for( ix=0; ix<dl->sz; ix++ ){
 	unsigned int iy;
 	const tmstring nmx = get_type_name( dl->arr[ix] );
+	char msg[200];
 
+	ok = TRUE;
 	for( iy=ix+1; iy<dl->sz; iy++ ){
 	    const tmstring nmy = get_type_name( dl->arr[iy] );
 
 	    if( strcmp( nmx, nmy ) == 0 ){
 		sprintf( errarg, "type '%s'", nmx );
 		error( "Double definition" );
+		ok = FALSE;
+		break;
 	    }
+	}
+	if( ok ){
+	    tmstring_list tl = new_tmstring_list();
+
+	    sprintf( msg, "Duplicate superclass in type '%s'", nmx );
+	    collect_superclasses( &tl, dl, nmx );
+	    ok = check_double_strings( msg, tl );
+	    rfre_tmstring_list( tl );
+	}
+	if( ok ){
+	    tmstring_list fields = new_tmstring_list();
+
+	    sprintf( msg, "Duplicate field in type '%s'", nmx );
+	    collect_all_fields( &fields, dl, nmx );
+	    (void) check_double_strings( msg, fields );
+	    rfre_tmstring_list( fields );
 	}
     }
     sz = dl->sz;
