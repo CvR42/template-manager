@@ -1563,6 +1563,83 @@ static tmstring fnmetatype( const tmstring_list sl )
     return ans;
 }
 
+/* Given a type, return the alias of the type, or the original if
+ * it doesn't have one. For list types the alias of their base type is taken
+ * into account.
+ */
+static tmstring calc_alias(
+ const char *pre,
+ const char *suff,
+ const tmstring type
+)
+{
+    unsigned int ix;
+
+    ix = find_type_ix( allds, type );
+    if( ix<allds->sz ){
+	ds d = allds->arr[ix];
+	if( d->tag != TAGDsAlias ){
+	    return rdup_tmstring( type );
+	}
+	return rdup_tmstring( to_DsAlias(d)->target );
+    }
+    if( strlen( pre ) != 0 || strlen( suff ) != 0 ){
+	/* Try to remove the list layers from the type. */
+	int level = 0;
+	tmstring old = rdup_tmstring( type );
+	tmstring new = get_element_type( pre, suff, old );
+
+	while( new != tmstringNIL ){
+	    rfre_tmstring( old );
+	    old = new;
+	    new = get_element_type( pre, suff, old );
+	    level++;
+	}
+	if( level>0 ){
+	    tmstring aliased_stem;
+
+	    /* It *is* a list type. Apply ourselves to the stem,
+	     * and put the list layers back.
+	     */
+	    aliased_stem = calc_alias( pre, suff, old );
+	    rfre_tmstring( old );
+	    old = mklistnm( pre, aliased_stem, suff, level );
+	    rfre_tmstring( aliased_stem );
+	}
+	return old;
+    }
+    return rdup_tmstring( type );
+}
+
+/* Given a type name, return the alias of this type.  */
+static tmstring fnalias( const tmstring_list sl )
+{
+    char *pre;
+    char *suff;
+    unsigned int ix;
+    tmstring_list res;
+    tmstring ans;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    res = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	res = append_tmstring_list(
+	    res,
+	    calc_alias( pre, suff, sl->arr[ix] )
+	);
+    }
+    ans = flatstrings( res );
+    rfre_tmstring_list( res );
+    return ans;
+}
+
 /* Given a type name, return the subclasses (transitive closure of inheritors)
  * of this type.
  */
@@ -2544,6 +2621,7 @@ static struct fnentry fntab[] = {
      { "==", fneq },
      { ">", fngreater },
      { ">=", fngreatereq },
+     { "alias", fnalias },
      { "aliases", fnaliases },
      { "allfields", fnallfields },
      { "alltypes", fnalltypes },
