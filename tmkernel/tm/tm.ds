@@ -6,22 +6,20 @@
 || Structure of the datastructure itself
 || The Class type is in its canonical form. Before canonization
 || it is represented as a classComponent list.
-ds ::=
-    DsConstructorBase name:tmstring inherits:[tmstring] constructors:[tmstring] |
-    DsTuple name:tmstring inherits:[tmstring] fields:[field] |
-    DsClass name:tmstring inherits:[tmstring] fields:[field] virtual:tmbool |
-    DsConstructor name:tmstring inherits:[tmstring] fields:[field];
+ds = { name:tmstring, inherits:[tmstring] } +
+    DsConstructorBase: { constructors:[tmstring] } |
+    DsTuple: { fields:[field] } |
+    DsClass: { fields:[field], virtual:tmbool } |
+    DsConstructor: { fields:[field] };
 
-classComponent ::=
-    CCSuper super:tmstring |
-    CCFields fields:[field] |
-    CCAlternatives alternatives:[alternative] |
-    CCSublist components:[classComponent]
+classComponent =
+    CCSuper: { super:tmstring } |
+    CCFields: { fields:[field] } |
+    CCAlternatives: { alternatives:[alternative] } |
+    CCSublist:  { components:[classComponent] }
     ;
 
 alternative == ( label:tmstring, component:classComponent );
-
-||constructor == ( name:tmstring, fields:[field] );
 
 field == ( level:int, name:tmstring, type:tmstring );
 
@@ -43,28 +41,30 @@ var == (
 
 switchcase == ( cases:tmstring, action:[tplelm] );
 
-tplelm ::=
-    Plain lno:int plainline:tmstring |
-    Foreach lno:int felist:tmstring felines:[tplelm] |
-    While lno:int whilecond:tmstring whilelines:[tplelm] |
-    If lno:int ifcond:tmstring ifthen:[tplelm] ifelse:[tplelm] |
-    Switch lno:int val:tmstring cases:[switchcase] deflt:[tplelm] |
-    Set lno:int setline:tmstring |
-    GlobalSet lno:int setline:tmstring |
-    Append lno:int appline:tmstring |
-    GlobalAppend lno:int appline:tmstring |
-    Error lno:int errstr:tmstring |
-    Exit lno:int str:tmstring |
-    Redirect lno:int fname:tmstring body:[tplelm] |
-    Appendfile lno:int fname:tmstring body:[tplelm] |
-    Include lno:int fname:tmstring |
-    Macro lno:int formpar:tmstring macbody:[tplelm] |
-    Call lno:int callline:tmstring |
-    Return lno:int retval:tmstring |
-    Insert lno:int fname:tmstring |
+tplelm = { lno:int } +
+    Plain: { line:tmstring } |
+    Foreach: { felist:tmstring, body:[tplelm] } |
+    While: { cond:tmstring, body:[tplelm] } |
+    If: { cond:tmstring, ifthen:[tplelm], ifelse:[tplelm] } |
+    Switch: { val:tmstring, cases:[switchcase], deflt:[tplelm] } |
+    Set: { line:tmstring } |
+    Rename: { line:tmstring } |
+    GlobalSet: { line:tmstring } |
+    Append: { line:tmstring } |
+    GlobalAppend: { line:tmstring } |
+    Error: { str:tmstring } |
+    Exit: { str:tmstring } |
+    Redirect: { fname:tmstring, body:[tplelm] } |
+    Appendfile: { fname:tmstring, body:[tplelm] } |
+    Macro: { formals:tmstring, body:[tplelm] } |
+    Call: { line:tmstring } |
+    Return: { retval:tmstring } |
+    Include: { fname:tmstring } |
+    Insert: { fname:tmstring } |
     || The two statements below are constructed only temporary.
     || They are removed once the complete switch statement has
     || been digested.
-    Case lno:int val:tmstring |
-    Default lno:int ;
+    Case: { val:tmstring } |
+    Default: {}
+    ;
 

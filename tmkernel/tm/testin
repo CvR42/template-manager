@@ -7,7 +7,9 @@
 ..
 .. test command file for tm.
 .. Attempts an exhausive test of all functions and commands.
-
+..
+.rename filename_string string
+..
 VARIABLES:
 ----
 .set a 12

@@ -318,7 +318,6 @@ int main( int argc, char **argv )
     rfre_tmstring_list( searchpath );
     rfre_tmstring( active_libpath );
     end_var();
-    flush_tm();
     errcheck();
     if( get_balance_tm() != 0 || get_balance_tmstring() != 0 ){
 	fprintf( statstream, "Object allocation not balanced.\n" );

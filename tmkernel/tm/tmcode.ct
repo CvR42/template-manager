@@ -23,4 +23,4 @@
 #include "misc.h"
 
 .insert tmspec.t
-.include calu.ct
+.include tmc.ct

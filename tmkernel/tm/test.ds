@@ -8,7 +8,7 @@
 ||
 || Datastructure file for exhaustive test of tm.
 
-orig == ( file:string, line:int );
+orig == ( file:filename_string, line:int );
 
 toplevel ::= subtuple +
     Top la:[sublevel] lb:[[sublevel]] |

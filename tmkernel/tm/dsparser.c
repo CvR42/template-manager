@@ -106,7 +106,7 @@ static ds merge_cons_types( const ds a, const ds b )
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return new_DsConstructorBase(
+    return (ds) new_DsConstructorBase(
 	rdup_tmstring( to_DsConstructorBase(a)->name ),
 	ila,
 	la
@@ -310,7 +310,7 @@ static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
 	rfre_tmstring( nm );
 	return FALSE;
     }
-    *cp = new_DsConstructor(
+    *cp = (ds) new_DsConstructor(
 	nm,
 	append_tmstring_list(
 	    new_tmstring_list(),
@@ -336,7 +336,7 @@ static bool parse_constructor_list( const tmstring super, tmstring nm, ds_list *
 	if( nm != tmstringNIL ){
 	    *clp = append_ds_list(
 		*clp,
-		new_DsConstructor(
+		(ds) new_DsConstructor(
 		    rdup_tmstring( nm ),
 		    append_tmstring_list(
 			new_tmstring_list(),
@@ -419,7 +419,10 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
 
 	members = append_tmstring_list( members, rdup_tmstring( mnm ) );
     }
-    *tp = append_ds_list( new_ds_list(), new_DsConstructorBase( nm, inherits, members ) );
+    *tp = append_ds_list(
+	new_ds_list(),
+	(ds) new_DsConstructorBase( nm, inherits, members )
+    );
     *tp = concat_ds_list( *tp, cl );
     return ok;
 }
@@ -511,7 +514,7 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
 	yyerror( "')' expected" );
     }
     cktuple( nm, body, inherits );
-    *tp = new_DsTuple( nm, inherits, body );
+    *tp = (ds) new_DsTuple( nm, inherits, body );
     return TRUE;
 }
 
@@ -534,7 +537,7 @@ static bool parse_class_component( classComponent *cp )
 	if( !ok ){
 	    return FALSE;
 	}
-	res = new_CCFields( fields );
+	res = (classComponent) new_CCFields( fields );
 	if( curr_token != RCBRAC ){
 	    /* '{' to balance bracket below */
 	    yyerror( "'}' expected" );
@@ -586,11 +589,11 @@ static bool parse_class_component( classComponent *cp )
 		    yyerror( "':' expected, because a '|' must be followed by a label" );
 		}
 	    }
-	    res = new_CCAlternatives( alts );
+	    res = (classComponent) new_CCAlternatives( alts );
 	}
 	else {
 	    /* Presumably was an inherit. Fine. */
-	    res = new_CCSuper( nm );
+	    res = (classComponent) new_CCSuper( nm );
 	}
 	*cp = res;
 	return TRUE;
@@ -604,7 +607,7 @@ static bool parse_class_component( classComponent *cp )
 	if( !ok ){
 	    return FALSE;
 	}
-	res = new_CCSublist( ccl );
+	res = (classComponent) new_CCSublist( ccl );
 	if( curr_token != RRBRAC ){
 	    /* '(' to balance bracket below */
 	    yyerror( "')' expected" );
@@ -663,7 +666,7 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
     update_class_info( nm, &inherits, &fields, &types, comp, &virtual );
     types = append_ds_list(
 	types,
-	new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
+	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
     );
     return types;
 
@@ -736,7 +739,7 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbo
     }
     types = append_ds_list(
 	types,
-	new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
+	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
     );
     return types;
 }

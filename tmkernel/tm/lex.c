@@ -87,7 +87,7 @@ static void rfre_sctnode( struct sctnode *n )
     fresctnodecnt++;
 }
 
-/* Add to the scan tree 'tree' a new token with tmstring 'str',
+/* Add to the scan tree 'tree' a new token with string 'str',
    YACC value 'val' and (debugging) name 'nm'.
    Return a pointer to the modified tree.
  */
@@ -124,14 +124,14 @@ static struct sctnode *addtok(
 
 /* A structure to describe tokens and reserved words */
 struct tok {
-    char *tokstr;   /* the tmstring to match. */
+    char *tokstr;   /* the string to match. */
     lextok tokval;  /* associated token value for yacc */
     char *toknm;    /* name for debugging */
 };
 
 #define TOKNIL (struct tok *) 0;
 
-/* A table of tokens. Is terminated by an entry with empty tmstring. */
+/* A table of tokens. Is terminated by an entry with empty string. */
 static struct tok toktab[] =
 {
     { "(", LRBRAC, "LRBRAC" },
@@ -154,7 +154,7 @@ static struct tok toktab[] =
 };
 
 /* A table of reserved words: symbols that have a special meaning.
-   Is terminated by an entry with NULL tmstring.
+   Is terminated by an entry with NULL string.
  */
 
 struct tok rwtab[] =
@@ -228,10 +228,10 @@ void show_parse_context( FILE *f )
     fputs( "^\n", f );
 }
 
-/* Try to read a tmstring. Return TRUE if this is successful, and set '*s'
-   to point to that tmstring, else return FALSE. A tmstring may contain escape
+/* Try to read a string. Return TRUE if this is successful, and set '*s'
+   to point to that string, else return FALSE. A string may contain escape
    sequences with a '\\', but no newlines. The '"' around
-   the tmstring are stripped.
+   the string are stripped.
  */
 static bool scanstring( char **s )
 {
@@ -257,7 +257,7 @@ static bool scanstring( char **s )
 	}
 	c = lexgetc();
 	if (c == '\n' ){
-	    line_error( "End of line in tmstring" );
+	    line_error( "End of line in string" );
 	    done = TRUE;
 	}
 	if( c == '"' ){
@@ -284,7 +284,7 @@ static bool scanstring( char **s )
 }
 
 /* Try to read characters from 'lexgetc()' to match one of the tokens from the
-   table 'toktab' in the tmstring 'buf'. The token characters to match are given 
+   table 'toktab' in the string 'buf'. The token characters to match are given 
    by the scan tree 'tree'.
    Fill '*tokval' with the token value, and '*toknm' with the name
    of the token. Return TRUE if this is successful, else return FALSE.
@@ -324,7 +324,7 @@ static bool scantoken(
     return FALSE;
 }
 
-/* Try to read a symbol in the tmstring 'buf' using lexgetc(). Return TRUE if
+/* Try to read a symbol in the string 'buf' using lexgetc(). Return TRUE if
    this is successful, else return FALSE.
    A symbol is of the form [a-zA-Z][a-zA-Z0-9_]*.
  */
