@@ -188,7 +188,7 @@ public:
     tmtext *replace( const size_type from, const size_type to, const tmtext *nw, const size_type nw_from, const size_type nw_to );
     static void stat( FILE *f );
     static int get_balance();
-    const char const *c_str() { reserve( sz+1 ); arr[sz] = 0; return arr; }
+    const char *c_str() { reserve( sz+1 ); arr[sz] = 0; return arr; }
 };
 
 extern int compare( const tmtext &, const tmtext & );
