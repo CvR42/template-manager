@@ -18,7 +18,7 @@ LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
 CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c oksubst.clc
-EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
+EXAMPLEFILES = append.xt foreach.xt for.xt if.xt macro.xt var.xt cmp.xt arith.xt \
   boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
   linemacro.xt setfn.xt switch.xt unalias.xt time.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)

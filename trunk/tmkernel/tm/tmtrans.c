@@ -35,7 +35,6 @@
 
 /* tags for command table */
 typedef enum en_tmcommands {
-    RENAME,
     APPEND,
     APPENDFILE,
     CALL,
@@ -44,6 +43,7 @@ typedef enum en_tmcommands {
     DELETETYPE,
     ELSE,
     ENDAPPENDFILE,
+    ENDFOR,
     ENDFOREACH,
     ENDIF,
     ENDMACRO,
@@ -53,6 +53,7 @@ typedef enum en_tmcommands {
     EOFLINE,		/* special line: end of file */
     ERROR,
     EXIT,
+    FOR,
     FOREACH,
     GLOBALAPPEND,
     GLOBALSET,
@@ -61,6 +62,7 @@ typedef enum en_tmcommands {
     INSERT,
     MACRO,
     REDIRECT,
+    RENAME,
     RETURN,
     SET,
     SWITCH,
@@ -89,6 +91,7 @@ static struct dotcom dotcomlist[] = {
     { "else", ELSE },
     { "endappendfile", ENDAPPENDFILE },
     { "endforeach", ENDFOREACH },
+    { "endfor", ENDFOR },
     { "endif", ENDIF },
     { "endmacro", ENDMACRO },
     { "endredirect", ENDREDIRECT },
@@ -96,6 +99,7 @@ static struct dotcom dotcomlist[] = {
     { "endwhile", ENDWHILE },
     { "error", ERROR },
     { "exit", EXIT },
+    { "for", FOR },
     { "foreach", FOREACH },
     { "globalappend", GLOBALAPPEND },
     { "globalset", GLOBALSET },
@@ -319,6 +323,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 		switch( cp->dotcomtag ){
 		    case ELSE:
 		    case ENDAPPENDFILE:
+		    case ENDFOR:
 		    case ENDFOREACH:
 		    case ENDIF:
 		    case ENDMACRO:
@@ -382,6 +387,16 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			    unbalance( firstlno, subendcom, ENDFOREACH );
 			}
 			te = (tplelm) new_Foreach( firstlno, new_tmstring( p ), e1 );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case FOR:
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
+			if( subendcom != ENDFOR ){
+			    unbalance( firstlno, subendcom, ENDFOR );
+			}
+			te = (tplelm) new_For( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -1227,6 +1242,59 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     rfre_tmstring_list( sl );
 }
 
+/* Handle 'for' command.
+   Given a list of template lines, starting with a foreach command line,
+   generate output lines. Handle local commands by recursion.
+ */
+static void dofor( const tplelm tpl, FILE *outfile )
+{
+    char *nm;
+    char *is;
+    char *os;
+    tmstring_list sl;
+    int start;
+    int end;
+    int stride = 1;
+    int v;
+
+    is = to_For(tpl)->parms;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+    if( sl->sz<3 ){
+	line_error( "too few parameter for `for' command" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    if( sl->sz>4 ){
+	line_error( "too many parameter for `for' command" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    cknumpar( sl->arr[1] );	/* start */
+    start = atoi( sl->arr[1] );
+    cknumpar( sl->arr[2] );	/* end */
+    end = atoi( sl->arr[2] );
+    if( sl->sz == 4 ){
+	cknumpar( sl->arr[3] );	/* stride */
+	stride = atoi( sl->arr[3] );
+	if( stride<1 ){
+	    line_error( "stride cannot be negative or zero" );
+	    rfre_tmstring_list( sl );
+	    return;
+	}
+    }
+    nm = sl->arr[0];
+    for( v=start; v<end; v += stride ){
+	char vstr[50];
+
+	sprintf( vstr, "%d", v );
+	setvar( nm, vstr );	/* Set the iteration variable. */
+	dotrans( to_Foreach(tpl)->body, outfile );
+    }
+    rfre_tmstring_list( sl );
+}
+
 /* Handle 'while' command.
    Given a list of template lines, starting with a while command line,
    generate output lines until condition is false. Handle local commands
@@ -1238,12 +1306,14 @@ static void dowhile( const tplelm tpl, FILE *outfile )
     char *is;
     char *os;
 
-    while( TRUE ){
+    for(;;){
 	is = to_While(tpl)->cond;
 	os = alevalto( &is, '\0' );
 	done = isfalsestr( os );
 	fre_tmstring( os );
-	if( done ) return;
+	if( done ){
+	    return;
+	}
 	dotrans( to_While(tpl)->body, outfile );
     }
 }
@@ -1352,6 +1422,10 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
 	    case TAGForeach:
 		doforeach( e, outfile );
+		break;
+
+	    case TAGFor:
+		dofor( e, outfile );
 		break;
 
 	    case TAGIf:
