@@ -1341,7 +1341,7 @@ static tmstring fntypename( const tmstring_list sl )
 	line_error( "'ttypename' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, sl->arr[0], sl->arr[1] );
     if( e == fieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
@@ -1363,7 +1363,7 @@ static tmstring fnttypeclass( const tmstring_list sl )
 	line_error( "'fieldtypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, sl->arr[0], sl->arr[1] );
     if( e == fieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
@@ -1383,7 +1383,7 @@ static tmstring fntypelevel( const tmstring_list sl )
 	line_error( "'typelevel' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, sl->arr[0], sl->arr[1] );
     if( e == fieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
@@ -1405,7 +1405,7 @@ static tmstring fntype( const tmstring_list sl )
 	line_error( "'type' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, sl->arr[0], sl->arr[1] );
     if( e == fieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );

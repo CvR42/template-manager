@@ -18,7 +18,7 @@ toplevel ::= subtuple +
 subtuple == orig + ( tl:[thing], tn:int );
 
 sublevel ::= toplevel + SubNamed n:int;
-sublevel ::= SubNamedlist thinglist:[thing];
+sublevel ::= subNamedlist thinglist:[thing];
 sublevel ::= SubNamedlistlist thinglistlist:[[thing]];
 
 notuple == subtuple + ();
