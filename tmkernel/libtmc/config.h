@@ -9,11 +9,11 @@
  *
  * Some configuration constants.
  */
-#define STRBUFSZ 1024    	/* Maximum size of a string */
 #define FIRSTLOGNEWSZ 100	/* First table size. */
 #define HASHBITS 6		/* Number of bits used in hashing. */
 #define HASHSHIFT 2		/* Number of bits to skip in hashing key. */
 #define TEXTGROWSTEP 40		/* The growth step of the text putc routine */
+#define INITIAL_STRINGSIZE 4	/* First size of a growing string buffer. */
 
 #define SYMHASHWIDTH 1024
 

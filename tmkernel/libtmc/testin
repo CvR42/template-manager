@@ -21,9 +21,9 @@ bla bla test sdfsdhlfhew sdfshdfksd StopFscanCons
 || testdouble
 || testfloat
 || testtmstring
-"a" "bcdef" @ "blablabla" "\"" "\n" "\1" "\12" "\323" "STOP"
+"a" "bcdef" @ "blablablabigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigword" "\"" "\n" "\1" "\12" "\323" "STOP"
 || testtmword
-a bcdef @ blablabla -12.34e-123 STOP
+a bcdef @ blablablabigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwords -12.34e-123 STOP
 || test_tmtext
 "a" "bcdef" @ "blablabla" "\"" "\n" "\1" "\12" "\323" "STOP"
 || testtmbool
