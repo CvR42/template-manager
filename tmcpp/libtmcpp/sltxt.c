@@ -10,10 +10,10 @@
 /* Given a start and end position 'from' and 'to',
  * return a new tmtext that contains the text between these positions.
  */
-tmtext *tmtext::slice( const long from_parm, const long to_parm ) const
+tmtext *tmtext::slice( const size_type from_parm, const size_type to_parm ) const
 {
-    long from = from_parm;
-    long to = to_parm;
+    size_type from = from_parm;
+    size_type to = to_parm;
 
     if( from<0 ){
 	from = 0;
@@ -21,12 +21,13 @@ tmtext *tmtext::slice( const long from_parm, const long to_parm ) const
     if( to>sz ){
 	to = sz;
     }
-    long sl_sz = to-from;
-    tmtext *nw = new tmtext( sl_sz );
-    if( sl_sz>0 ){
-	copyblock( nw->arr, arr+from, sl_sz );
-	nw->sz = sl_sz;
+    if( to<from ){
+	return new tmtext( 0 );
     }
+    size_type sl_sz = to-from;
+    tmtext *nw = new tmtext( sl_sz );
+    copyblock( nw->arr, arr+from, sl_sz );
+    nw->sz = sl_sz;
     return nw;
 }
 

@@ -12,10 +12,10 @@
  */
 tmtext *puts_tmtext( const char *str, tmtext *t )
 {
-    size_t len = strlen( str );
+    tmtext::size_type len = (tmtext::size_type) strlen( str );
     t->reserve( t->curpos+len );
 #if HAVE_MEMMOVE
-    memcpy( t->arr+t->curpos, str, len );
+    memcpy( t->arr+t->curpos, str, (unsigned int) len );
     t->curpos += len;
 #else
     {

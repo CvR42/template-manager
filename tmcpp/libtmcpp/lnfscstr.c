@@ -45,7 +45,7 @@ int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int lin
 	    sz += sz+1;
 	    buf = realloc_tmstring_lognew( buf, sz, file, line );
 	}
-	buf[ix++] = c;
+	buf[ix++] = (char) c;
     }
     buf[ix] = '\0';
     *s = buf;

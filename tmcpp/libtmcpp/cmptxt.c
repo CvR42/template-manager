@@ -12,7 +12,7 @@
 // Compare two texts.
 int compare( const tmtext &a, const tmtext &b )
 {
-    long sz = a.size();
+    tmtext::size_type sz = a.size();
     if( b.size()<sz ){
 	sz = b.size();
     }

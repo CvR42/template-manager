@@ -37,7 +37,7 @@ extern void tm_register_free_allocid( const unsigned long id );
 extern unsigned long int tm_allocid_next;
 extern void tm_list_pending_ids( FILE *f );
 
-typedef struct _tmc_sym *tmsymbol;
+typedef class _tmc_sym *tmsymbol;
 
 typedef char *tmstring;
 typedef char *tmword;
@@ -126,7 +126,7 @@ inline int compare( const int a, const int b ) { return ((a)-(b)); }
 #define intNIL (0)
 
 // 'uint' functions
-inline int compare( const uint a, const uint b ) { return ((a)-(b)); }
+inline int compare( const uint a, const uint b ) { return ((a)>(b)?1:((a)<(b)?(-1):0)); }
 #define uintNIL (0)
 
 // 'long' functions
@@ -160,15 +160,15 @@ private:
 
 public:
     char *arr;
-    long curpos;	// Current read or write pointer.
+    size_type curpos;	// Current read or write pointer.
     size_type sz;
 
 private:
     unsigned long __id;
 
 private:
-    static void copyblock( char *d, const char *s, const long sz );
-    void insblock( const long pos, const long sz );
+    static void copyblock( char *d, const char *s, const size_type sz );
+    void insblock( const size_type pos, const size_type sz );
     void settext( const tmtext &c );
     void setstring( const char *s );
 
@@ -187,17 +187,17 @@ public:
     inline size_type size() const { return sz; }
     inline size_type capacity() const { return room; }
 
-    tmtext( const long sz=32 ): room(0), arr(0), curpos(0), sz(0), __id(0) {
+    tmtext( const size_type sz=32 ): room(0), arr(0), curpos(0), sz(0), __id(0) {
 	reserve( sz );
 	allocid_admin();
 	newcount++;
     }
-    tmtext( const tmtext &c ): room(0), arr(0), curpos(0), sz(0) {
+    tmtext( const tmtext &c ): room(0), arr(0), curpos(0), sz(0), __id(0) {
 	settext(c);
 	allocid_admin();
 	newcount++;
     }
-    tmtext( const char *s ): room(0), arr(0), curpos(0), sz(0) {
+    tmtext( const char *s ): room(0), arr(0), curpos(0), sz(0), __id(0) {
 	append( s );
 	curpos = 0;
 	allocid_admin();
@@ -384,7 +384,7 @@ extern void tm_noroom();
 // Storage for a symbol string
 class _tmc_sym {
 public:
-    struct _tmc_sym *next;		// Next in list
+    class _tmc_sym *next;		// Next in list
     tmconststring name;			// Pointer to the string
     tm_neutralp data;			// Any info for it.
 };

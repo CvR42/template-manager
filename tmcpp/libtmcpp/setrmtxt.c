@@ -8,10 +8,10 @@
 #include "tmcpp.h"
 
 // Ensure that this tmtext has room for at least 'sz' characters.
-void tmtext::reserve( const long rm )
+void tmtext::reserve( const size_type rm )
 {
     if( rm>room ){
-	arr = (char *) tm_realloc( arr, rm );
+	arr = (char *) tm_realloc( arr, (unsigned int) rm );
 	room = rm;
     }
 }

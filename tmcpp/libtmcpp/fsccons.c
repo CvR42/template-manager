@@ -31,7 +31,7 @@ int tm_fscancons( FILE *f, char *buf, const int sz )
     c = getc( f );
     n = 0;
     while( isalnum( c ) && n<sz ){
-	*p++ = c;
+	*p++ = (char) c;
 	c = getc( f );
 	n++;
     }

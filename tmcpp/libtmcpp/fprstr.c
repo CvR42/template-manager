@@ -14,7 +14,7 @@
 /* definition of 'print' for a 'tmstring' */
 void fprint_tmstring( FILE *f, tmconststring s )
 {
-    int c;
+    unsigned int c;
 
     if( s == tmstringNIL ){
 	fputc( '@', f );
@@ -22,7 +22,7 @@ void fprint_tmstring( FILE *f, tmconststring s )
     }
     putc( '"', f );
     while( *s != '\0' ){
-	c = *s++;
+	c = (unsigned int) *s++;
 	fputs( tm_escapestring( c ), f );
     }
     putc( '"', f );

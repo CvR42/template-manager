@@ -12,16 +12,16 @@
 // replace the text in range 'from'..'to' in 't' with the
 // text in 'nw'.
 tmtext *tmtext::replace(
- const long from_parm,
- const long to_parm,
+ const size_type from_parm,
+ const size_type to_parm,
  const tmtext *nw
 )
 {
-    long from = from_parm;
-    long to = to_parm;
+    size_type from = from_parm;
+    size_type to = to_parm;
 
     if( to<from ){
-	long h = to;
+	size_type h = to;
 	to = from;
 	from = h;
     }
@@ -31,13 +31,12 @@ tmtext *tmtext::replace(
     if( to>sz ){
 	to = sz;
     }
-    long oldsz = to-from;
-    long inssz = nw->sz-oldsz;
-    if( inssz>0 ){
-	insblock( to, inssz );
+    size_type oldsz = to-from;
+    if( nw->sz>oldsz ){
+	insblock( to, nw->sz-oldsz );
     }
-    else if( inssz<0 ){
-	erase( to+inssz, to );
+    else if( nw->sz<oldsz ){
+	erase( to+nw->sz-oldsz, to );
     }
     copyblock( arr+from, nw->arr, nw->sz );
     return this;
@@ -47,20 +46,20 @@ tmtext *tmtext::replace(
 // 'nw_to', replace the text in range 'from'..'to' with the
 // range 'nw_from' to 'nw_to' of 'nw'.
 tmtext *tmtext::replace(
- const long from_parm,
- const long to_parm,
+ const size_type from_parm,
+ const size_type to_parm,
  const tmtext *nw,
- const long nw_from_parm,
- const long nw_to_parm
+ const size_type nw_from_parm,
+ const size_type nw_to_parm
 )
 {
-    long from = from_parm;
-    long to = to_parm;
-    long nw_from = nw_from_parm;
-    long nw_to = nw_to_parm;
+    size_type from = from_parm;
+    size_type to = to_parm;
+    size_type nw_from = nw_from_parm;
+    size_type nw_to = nw_to_parm;
 
     if( to<from ){
-	long h = to;
+	size_type h = to;
 	to = from;
 	from = h;
     }
@@ -79,9 +78,9 @@ tmtext *tmtext::replace(
     if( nw_from>nw_to ){
 	nw_from = nw_to;
     }
-    long oldsz = to-from;
-    long nw_sz = nw_to-nw_from;
-    long inssz = nw_sz-oldsz;
+    size_type oldsz = to-from;
+    size_type nw_sz = nw_to-nw_from;
+    size_type inssz = nw_sz-oldsz;
     if( inssz>0 ){
 	insblock( to, inssz );
     }
