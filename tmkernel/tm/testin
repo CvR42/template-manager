@@ -229,7 +229,7 @@ classlist: '${classlist}'
     isvirtual $t: '${isvirtual $t }'
 .foreach c ${conslist $t}
         celmlist: '${celmlist $t $c}'
-        fields $(mode): '${fields $c $(mode)}'
+        fields $c $(mode): '${fields $c $(mode)}'
 .foreach e ${celmlist $t $c}
             ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
 	    ctypellev $t $c $e: ${ctypellev $t $c $e}

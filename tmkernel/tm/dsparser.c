@@ -24,7 +24,7 @@
 #include "checkds.h"
 #include "srchfile.h"
 
-lextok curr_token;
+static lextok curr_token;
 
 /* Forward declarations. */
 static bool parse_class_components( classComponent_list *clp );
@@ -59,24 +59,23 @@ static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
     return l;
 }
 
-/* Given a constructor list 'l' and a constructor 'c', add c to the
+/* Given a (constructor) type list 'l' and a constructor type 'c', add c to the
  * list l and return the newly constructed list. Reject constructors
  * that are already defined.
  */
-static constructor_list add_constructor_list( constructor_list l, constructor c )
+static ds_list add_constructor_list( ds_list l, const ds c )
 {
     unsigned int ix;
-    char *nm;
+    const tmstring cnm = get_type_name( c );
 
-    nm = c->name;
-    ix = find_constructor_ix( l, nm );
-    if( ix<l->sz ){
-	(void) sprintf( errarg, "'%s'", nm );
-	yyerror( "double use of constructor name" );
+    for( ix=0; ix<l->sz; ix++ ){
+	if( strcmp( cnm, get_type_name( l->arr[ix] ) ) == 0 ){
+	    (void) sprintf( errarg, "'%s'", cnm );
+	    yyerror( "double use of constructor name" );
+	    return l;
+	}
     }
-    else {
-	l = append_constructor_list( l, rdup_constructor( c ) );
-    }
+    l = append_ds_list( l, rdup_ds( c ) );
     return l;
 }
 
@@ -84,19 +83,17 @@ static constructor_list add_constructor_list( constructor_list l, constructor c 
  * type that has the constructors of both.
  * It *must* be certain that 'a' and 'b' are both constructor types.
  */
-static ds merge_cons_types( ds a, ds b )
+static ds merge_cons_types( const ds a, const ds b )
 {
-    constructor_list la;
-    constructor_list lb;
+    tmstring_list la;
+    tmstring_list lb;
     tmstring_list ila;
     tmstring_list ilb;
     unsigned int ix;
 
-    la = rdup_constructor_list( a->DsCons.constructors );
-    lb = b->DsCons.constructors;
-    for( ix=0; ix<lb->sz; ix++ ){
-	la = add_constructor_list( la, lb->arr[ix] );
-    }
+    la = rdup_tmstring_list( a->DsCons.constructors );
+    lb = rdup_tmstring_list( b->DsCons.constructors );
+    la = concat_tmstring_list( la, lb );
     ila = rdup_tmstring_list( a->DsCons.inherits );
     ilb = b->DsCons.inherits;
     for( ix=0; ix<ilb->sz; ix++ ){
@@ -115,19 +112,16 @@ static ds merge_cons_types( ds a, ds b )
  */
 static void ckcname_type( const ds t, const tmstring cnm, const tmstring tnm )
 {
-    constructor_list cl;
-    unsigned int ix;
+    tmstring_list cl;
 
     if( t->tag != TAGDsCons ){
 	return;
     }
     cl = t->DsCons.constructors;
-    for( ix=0; ix<cl->sz; ix++ ){
-	if( strcmp( cl->arr[ix]->name, cnm) == 0 ){
-	    (void) sprintf( errpos, "type %s", tnm );
-	    (void) sprintf( errarg, "'%s' (in type %s)", cnm, get_type_name( t ) );
-	    error( "constructor already defined" );
-	}
+    if( member_tmstring_list( tnm, cl ) ){
+	(void) sprintf( errpos, "type %s", tnm );
+	(void) sprintf( errarg, "'%s' (in type %s)", cnm, get_type_name( t ) );
+	error( "constructor already defined" );
     }
 }
 
@@ -150,7 +144,7 @@ static void ckcname( const ds_list l, const tmstring cnm, const tmstring tnm )
  */
 static void ckcnames( ds_list l, ds t )
 {
-    constructor_list cl;
+    tmstring_list cl;
     unsigned int ix;
     tmstring tnm;
 
@@ -160,7 +154,7 @@ static void ckcnames( ds_list l, ds t )
     cl = t->DsCons.constructors;
     tnm = get_type_name( t );
     for( ix=0; ix<cl->sz; ix++ ){
-	ckcname( l, cl->arr[ix]->name, tnm );
+	ckcname( l, cl->arr[ix], tnm );
     }
 }
 
@@ -174,7 +168,7 @@ static void ckcnames( ds_list l, ds t )
  */
 static ds_list add_ds_list( ds_list l, ds t )
 {
-    tmstring nm;		/* Name of the nw type. */
+    tmstring nm;	/* Name of the new type. */
     unsigned int ix;	/* Index of any previous def'n of it. */
     ds old;		/* The old type definition. */
     ds nw;		/* The type constructed from two constr. def'ns. */
@@ -280,8 +274,11 @@ static bool parse_field_list( field_list *flp )
     return TRUE;
 }
 
-/* Trye to parse a constructor. Return TRUE if this succeeded. */
-static bool parse_constructor( tmstring p_nm, constructor *cp )
+/* Given the name of the constructor type these constructors are member
+ * of, the name of the construcotr (if it isn't empty), try to parse a
+ * constructor. Return TRUE if this succeeded.
+ */
+static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
 {
     bool ok;
     field_list fl;
@@ -303,26 +300,38 @@ static bool parse_constructor( tmstring p_nm, constructor *cp )
 	rfre_tmstring( nm );
 	return FALSE;
     }
-    *cp = new_constructor( nm, fl );
+    *cp = new_DsConstructor(
+	nm,
+	append_tmstring_list(
+	    new_tmstring_list(),
+	    rdup_tmstring( super )
+	),
+	fl
+    );
     return TRUE;
 }
 
-/* Given the name of the first constructor 'nm' (if it isn't empty),
+/* Given the name of the constructor type these constructors are member
+ * of, the name of the first constructor 'nm' (if it isn't empty),
  * try to parse a list of constructors up to (but not including)
  * the final ';'. Return TRUE if you have a valid constructor list.
  */
-static bool parse_constructor_list( tmstring nm, constructor_list *clp )
+static bool parse_constructor_list( const tmstring super, tmstring nm, ds_list *clp )
 {
     bool ok;
-    constructor nw;
+    ds nw;
 
-    *clp = new_constructor_list();
+    *clp = new_ds_list();
     if( curr_token==SEMI ){
 	if( nm != tmstringNIL ){
-	    *clp = add_constructor_list(
+	    *clp = append_ds_list(
 		*clp,
-		new_constructor(
+		new_DsConstructor(
 		    rdup_tmstring( nm ),
+		    append_tmstring_list(
+			new_tmstring_list(),
+			rdup_tmstring( super )
+		    ),
 		    new_field_list()
 		)
 	    );
@@ -330,11 +339,11 @@ static bool parse_constructor_list( tmstring nm, constructor_list *clp )
 	return TRUE;
     }
     for(;;){
-	ok = parse_constructor( nm, &nw );
+	ok = parse_constructor( super, nm, &nw );
 	nm = tmstringNIL;
 	if( ok ){
 	    *clp = add_constructor_list( *clp, nw );
-	    rfre_constructor( nw );
+	    rfre_ds( nw );
 	}
 	else {
 	    yyerror( "constructor expected" );
@@ -361,12 +370,14 @@ static bool parse_constructor_list( tmstring nm, constructor_list *clp )
  * of a constructor definition, up to (but not including) the final ';'.
  * Return TRUE if this succeeded, and set *tp to the parsed constructor.
  */
-static bool parse_constructor_type( tmstring nm, ds *tp )
+static bool parse_constructor_type( tmstring nm, ds_list *tp )
 {
     bool ok;
-    constructor_list cl;
+    ds_list cl;
     tmstring_list inherits;
     tmstring cnm = tmstringNIL;
+    unsigned int ix;
+    tmstring_list members;
 
     inherits = new_tmstring_list();
     /* First eat all names followed by a '+'. After that assume
@@ -383,12 +394,18 @@ static bool parse_constructor_type( tmstring nm, ds *tp )
 	cnm = tmstringNIL;
 	next_token();	/* Eat the PLUS */
     }
-    ok = parse_constructor_list( cnm, &cl );
+    ok = parse_constructor_list( nm, cnm, &cl );
     if( cnm != tmstringNIL ){
 	rfre_tmstring( cnm );
     }
-    ckconstructor( nm, cl );
-    *tp = new_DsCons( nm, inherits, cl );
+    members = new_tmstring_list();
+    for( ix=0; ix<cl->sz; ix++ ){
+	const tmstring mnm = get_type_name( cl->arr[ix] );
+
+	members = append_tmstring_list( members, rdup_tmstring( mnm ) );
+    }
+    *tp = append_ds_list( new_ds_list(), new_DsCons( nm, inherits, members ) );
+    *tp = concat_ds_list( *tp, cl );
     return ok;
 }
 
@@ -622,7 +639,7 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
     update_class_info( nm, &inherits, &fields, &types, comp );
     types = append_ds_list(
 	types,
-	new_DsClass( rdup_tmstring( nm ), FALSE, inherits, fields )
+	new_DsClass( rdup_tmstring( nm ), inherits, fields, FALSE )
     );
     return types;
 
@@ -687,7 +704,7 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, cons
     }
     types = append_ds_list(
 	types,
-	new_DsClass( rdup_tmstring( nm ), virtual, inherits, fields )
+	new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
     );
     return types;
 }
@@ -742,13 +759,12 @@ static bool parse_ds( ds_list *dl )
     switch( curr_token ){
 	case COLCOLEQ:
 	{
-	    ds nw;
+	    ds_list nw;
 
 	    next_token();
 	    ok = parse_constructor_type( nm, &nw );
 	    if( ok ){
-		*dl = new_ds_list();
-		*dl = append_ds_list( *dl, nw );
+		*dl = nw;
 	    }
 	    break;
 	}

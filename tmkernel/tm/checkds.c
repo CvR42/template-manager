@@ -112,6 +112,11 @@ static void check_ds_inheritance(
             myname = me->DsClass.name;
             break;
 
+	case TAGDsConstructor:
+	    supers = rdup_tmstring_list( me->DsConstructor.inherits );
+            myname = me->DsConstructor.name;
+            break;
+
     }
     if( accepted[theds] ){
         return;
@@ -134,7 +139,7 @@ static void check_ds_inheritance(
 	else {
 	    sprintf( errpos, "type '%s'", myname );
 	    sprintf( errarg, "'%s'", super );
-	    error( "Inheritance from unknown type" );
+	    error( "inheritance from unknown type" );
 	}
     }
     rfre_tmstring_list( supers );
