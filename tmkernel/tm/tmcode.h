@@ -68,7 +68,9 @@ typedef enum en_tags_classComponent {
 #define While u.ue_While
 #define If u.ue_If
 #define Set u.ue_Set
+#define GlobalSet u.ue_GlobalSet
 #define Append u.ue_Append
+#define GlobalAppend u.ue_GlobalAppend
 #define Error u.ue_Error
 #define Exit u.ue_Exit
 #define Redirect u.ue_Redirect
@@ -79,7 +81,7 @@ typedef enum en_tags_classComponent {
 #define Insert u.ue_Insert
 
 typedef enum en_tags_tplelm {
-    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSet, TAGAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert
+    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert
 } tags_tplelm;
 
 
@@ -229,11 +231,23 @@ typedef struct str_Set {
     tmstring setline;
 } C_Set;
 
+/* Structure for constructor GlobalSet */
+typedef struct str_GlobalSet {
+    int lno;
+    tmstring setline;
+} C_GlobalSet;
+
 /* Structure for constructor Append */
 typedef struct str_Append {
     int lno;
     tmstring appline;
 } C_Append;
+
+/* Structure for constructor GlobalAppend */
+typedef struct str_GlobalAppend {
+    int lno;
+    tmstring appline;
+} C_GlobalAppend;
 
 /* Structure for constructor Error */
 typedef struct str_Error {
@@ -293,7 +307,9 @@ struct str_tplelm {
 	C_While ue_While;
 	C_If ue_If;
 	C_Set ue_Set;
+	C_GlobalSet ue_GlobalSet;
 	C_Append ue_Append;
+	C_GlobalAppend ue_GlobalAppend;
 	C_Error ue_Error;
 	C_Exit ue_Exit;
 	C_Redirect ue_Redirect;
@@ -398,7 +414,9 @@ struct str_var_list {
 #define new_While(lno,whilecond,whilelines) real_new_While(lno,whilecond,whilelines,__FILE__,__LINE__)
 #define new_If(lno,ifcond,ifthen,ifelse) real_new_If(lno,ifcond,ifthen,ifelse,__FILE__,__LINE__)
 #define new_Set(lno,setline) real_new_Set(lno,setline,__FILE__,__LINE__)
+#define new_GlobalSet(lno,setline) real_new_GlobalSet(lno,setline,__FILE__,__LINE__)
 #define new_Append(lno,appline) real_new_Append(lno,appline,__FILE__,__LINE__)
+#define new_GlobalAppend(lno,appline) real_new_GlobalAppend(lno,appline,__FILE__,__LINE__)
 #define new_Error(lno,errstr) real_new_Error(lno,errstr,__FILE__,__LINE__)
 #define new_Exit(lno,str) real_new_Exit(lno,str,__FILE__,__LINE__)
 #define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,__FILE__,__LINE__)
@@ -503,9 +521,19 @@ extern tplelm real_new_Set( int, tmstring, const char *, const int );
 extern tplelm new_Set( int, tmstring );
 #endif
 #ifdef LOGNEW
+extern tplelm real_new_GlobalSet( int, tmstring, const char *, const int );
+#else
+extern tplelm new_GlobalSet( int, tmstring );
+#endif
+#ifdef LOGNEW
 extern tplelm real_new_Append( int, tmstring, const char *, const int );
 #else
 extern tplelm new_Append( int, tmstring );
+#endif
+#ifdef LOGNEW
+extern tplelm real_new_GlobalAppend( int, tmstring, const char *, const int );
+#else
+extern tplelm new_GlobalAppend( int, tmstring );
 #endif
 #ifdef LOGNEW
 extern tplelm real_new_Error( int, tmstring, const char *, const int );
@@ -577,6 +605,7 @@ extern ds_list append_ds_list( ds_list, ds );
 extern field_list append_field_list( field_list, field );
 extern tmstring_list append_tmstring_list( tmstring_list, tmstring );
 extern tplelm_list append_tplelm_list( tplelm_list, tplelm );
+extern var_list append_var_list( var_list, var );
 extern macro_list insert_macro_list( macro_list, const unsigned int, macro  );
 extern tmstring_list insert_tmstring_list( tmstring_list, const unsigned int, tmstring  );
 extern var_list insert_var_list( var_list, const unsigned int, var  );

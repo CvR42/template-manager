@@ -46,6 +46,8 @@ typedef enum en_tmcommands {
     ERROR,
     EXIT,
     FOREACH,
+    GLOBALAPPEND,
+    GLOBALSET,
     IF,
     INCLUDE,
     INSERT,
@@ -80,6 +82,8 @@ static struct dotcom dotcomlist[] = {
     { "error", ERROR },
     { "exit", EXIT },
     { "foreach", FOREACH },
+    { "globalappend", GLOBALAPPEND },
+    { "globalset", GLOBALSET },
     { "if", IF },
     { "include", INCLUDE },
     { "insert", INSERT },
@@ -296,6 +300,11 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			tel = append_tplelm_list( tel, te );
 			break;
 
+		    case GLOBALSET:
+			te = new_GlobalSet( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
 		    case RETURN:
 			te = new_Return( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
@@ -303,6 +312,11 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 
 		    case APPEND:
 			te = new_Append( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case GLOBALAPPEND:
+			te = new_GlobalAppend( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -634,6 +648,34 @@ static void doexit( const tplelm tpl )
     /* freeing is no use */
 }
 
+/* Handle 'globalset' command. */
+static void doglobalset( const tplelm tpl )
+{
+    char *is;
+    char *os;
+    tmstring val;
+    tmstring_list sl;
+    tmstring nm;
+
+    tpllineno = tpl->GlobalSet.lno;
+    is = tpl->GlobalSet.setline;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+    if( sl->sz<1 ){
+	line_error( "no name specified" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    nm = rdup_tmstring( sl->arr[0] );
+    sl = delete_tmstring_list( sl, 0 );
+    val = flatstrings( sl );
+    rfre_tmstring_list( sl );
+    globalsetvar( nm, val );
+    fre_tmstring( val );
+    fre_tmstring( nm );
+}
+
 /* Handle 'set' command. */
 static void doset( const tplelm tpl )
 {
@@ -709,6 +751,38 @@ static void doappend( const tplelm tpl )
     val = flatstrings( sl );
     rfre_tmstring_list( sl );
     setvar( nm, val );
+    fre_tmstring( val );
+    fre_tmstring( nm );
+}
+
+/* Handle 'globalappend' command. */
+static void doglobalappend( const tplelm tpl )
+{
+    char *is;
+    char *os;
+    tmstring val;
+    tmstring nm;
+    tmstring_list sl;
+
+    tpllineno = tpl->GlobalAppend.lno;
+    is = tpl->GlobalAppend.appline;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+    if( sl->sz<1 ){
+	line_error( "no name specified" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    nm = rdup_tmstring( sl->arr[0] );
+    sl = delete_tmstring_list( sl, 0 );
+    val = getvar( nm );
+    if( val != tmstringNIL ){
+	sl = insert_tmstring_list( sl, 0, rdup_tmstring( val ) );
+    }
+    val = flatstrings( sl );
+    rfre_tmstring_list( sl );
+    globalsetvar( nm, val );
     fre_tmstring( val );
     fre_tmstring( nm );
 }
@@ -904,8 +978,16 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 		doset( e );
 		break;
 
+	    case TAGGlobalSet:
+		doglobalset( e );
+		break;
+
 	    case TAGReturn:
 		doreturn( e );
+		break;
+
+	    case TAGGlobalAppend:
+		doglobalappend( e );
 		break;
 
 	    case TAGAppend:
@@ -940,9 +1022,6 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 		docall( e, outfile );
 		break;
 
-	    default:
-		(void) sprintf( errarg, "%d", e->tag );
-		crash( "bad tag" );
 	}
     }
 }

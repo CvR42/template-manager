@@ -221,6 +221,51 @@ void setvar( const tmstring nm, const tmstring v )
     variables[hv] = insert_var_list( variables[hv], 0, nwvar ); 
 }
 
+/* Given the hash value of a variable, and the name of the variable,
+ * remove this variable from all contexts.
+ */
+static void zapvar( const unsigned int hv, const tmstring nm )
+{
+    var_list vl;
+    unsigned int ix;
+
+    vl = variables[hv];
+    ix = 0;
+    while( ix<vl->sz ){
+	if( strcmp( vl->arr[ix]->name, nm ) == 0 ){
+	    vl = delete_var_list( vl, ix );
+	}
+	else {
+	    ix++;
+	}
+    }
+    variables[hv] = vl;
+}
+
+/* Add a variable 'nm' with value 'v' to the known variables.
+ * Zap old variables in all contexts, and put this one in the topmost
+ * context.
+ */
+void globalsetvar( const tmstring nm, const tmstring v )
+{
+    unsigned int hv;
+    var nwvar;
+
+    if( vartr ){
+	fprintf( tracestream, "global set: %s = '%s'\n", nm, v );
+    }
+    nwvar = findlocvar( nm );
+    if( nwvar != varNIL ){
+	fre_tmstring( nwvar->val );
+	nwvar->val = new_tmstring( v );
+	return;
+    }
+    hv = hashval( nm );
+    zapvar( hv, nm );
+    nwvar = new_var( 0, new_tmstring( nm ), new_tmstring( v ) );
+    variables[hv] = append_var_list( variables[hv], nwvar ); 
+}
+
 /* Start a new variable context. */
 void newvarctx( void )
 {
@@ -240,16 +285,24 @@ void flushvar( void )
 
     for( hv=0; hv<HASHWIDTH; hv++ ){
 	vl = variables[hv];
-	for( ix=0; ix<vl->sz; ix++ ){
+	ix = 0;
+	while( ix<vl->sz ){
 	    if( vl->arr[ix]->lvl>=ctxlvl ){
 		vl = delete_var_list( vl, ix );
+	    }
+	    else {
+		ix++;
 	    }
 	}
 	variables[hv] = vl;
 	ml = macros[hv];
-	for( ix=0; ix<ml->sz; ix++ ){
+	ix = 0;
+	while( ix<ml->sz ){
 	    if( ml->arr[ix]->lvl>=ctxlvl ){
 		ml = delete_macro_list( ml, ix );
+	    }
+	    else {
+		ix++;
 	    }
 	}
     }

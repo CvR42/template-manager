@@ -139,6 +139,7 @@ prefix:  'pfx_a pfx_b pfx_c pfx_d pfx_e pfx_f' 'pfx_a' ''
 suffix:  'a_sfx b_sfx c_sfx d_sfx e_sfx f_sfx' 'a_sfx' ''
 len:     '6' '1' '0'
 sort:    'a a b b c c d d e e f f' '-1 1 12 2' ''
+sizesort:'Top orig thing Thing TopNone notuple Toptuple subtuple SubNamed sublevel toplevel subclass testclass subNamedlist SubNamedlistlist' '1 2 12 -1' ''
 uniq:    'a b c d e f' '-1 1 12 2' ''
 rev:     'f e d c b a' ''
 ----
@@ -177,26 +178,46 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '190'
+tpllineno: '191'
 1 bla
 testsub
 ----
 Datastructure access functions:
 
+Pass 1
 mklist: test a test a test a  
 stemname: a b] [c [d] [e]] a[f] [[g]]
+listtypes: a b] [c [d] [e]] a[f] [[g]]
+delisttypes: a b] [c [d] [e]] a[f] [[g]]
+singletypes: 
+Pass 2
 mklist: test a [test [a [[[[[test [[[[[a  
 stemname: a b] c d] e]] a[f] g]]
+listtypes: [c [d] [e]] [[g]]
+delisttypes: c d] e]] [g]]
+singletypes: a b] a[f]
+Pass 3
 mklist: test a [test] [a] [[[[[test]]]]] [[[[[a]]]]]  
 stemname: a b] [c d e] a[f] g
+listtypes: [d] [e]] [[g]]
+delisttypes: d e] [g]
+singletypes: a b] [c a[f]
+Pass 4
 mklist: test a test] a] test]]]]] a]]]]]  
 stemname: a b [c [d [e a[f [[g
+listtypes: b] [d] [e]] a[f] [[g]]
+delisttypes: b [d [e] a[f [[g]
+singletypes: a [c
 inherits:  
 inheritors:  
 superclasses:  
 subclasses:  
 conslist:   
 fields:   
+types: ''
+types <all>: 'string int [sublevel] [[sublevel]] subtuple [thing] int int [thing] [[thing]] [[int]] int'
+conslist <all>: 'SubNamed subNamedlist SubNamedlistlist Top Toptuple TopNone Thing'
+
 Mode `':
 =-=-=-=
 typelist: 'orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass'
@@ -294,7 +315,7 @@ classlist: 'subclass testclass'
     superclasses sublevel: 'orig subtuple toplevel'
     subclasses sublevel: 'SubNamed subNamedlist SubNamedlistlist'
     isvirtual sublevel: '1'
-        celmlist: 'n'
+        celmlist : 'n'
         fields SubNamed : 'n'
             ctypeclass sublevel SubNamed n: 'single'
 	    ctypellev sublevel SubNamed n: 0
@@ -303,7 +324,7 @@ classlist: 'subclass testclass'
 	    typelevel SubNamed n: 0
 	    typename SubNamed n: 'int'
 	    type SubNamed n: 'int'
-        celmlist: 'thinglist'
+        celmlist : 'thinglist'
         fields subNamedlist : 'thinglist'
             ctypeclass sublevel subNamedlist thinglist: 'list'
 	    ctypellev sublevel subNamedlist thinglist: 1
@@ -312,7 +333,7 @@ classlist: 'subclass testclass'
 	    typelevel subNamedlist thinglist: 1
 	    typename subNamedlist thinglist: 'thing'
 	    type subNamedlist thinglist: 'thing_list'
-        celmlist: 'thinglistlist'
+        celmlist : 'thinglistlist'
         fields SubNamedlistlist : 'thinglistlist'
             ctypeclass sublevel SubNamedlistlist thinglistlist: 'list'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
@@ -346,7 +367,7 @@ classlist: 'subclass testclass'
     superclasses toplevel: 'orig subtuple'
     subclasses toplevel: 'Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
     isvirtual toplevel: '1'
-        celmlist: 'la lb'
+        celmlist : 'la lb'
         fields Top : 'la lb'
             ctypeclass toplevel Top la: 'list'
 	    ctypellev toplevel Top la: 1
@@ -362,7 +383,7 @@ classlist: 'subclass testclass'
 	    typelevel Top lb: 2
 	    typename Top lb: 'sublevel'
 	    type Top lb: 'sublevel_list_list'
-        celmlist: 'tup'
+        celmlist : 'tup'
         fields Toptuple : 'tup'
             ctypeclass toplevel Toptuple tup: 'single'
 	    ctypellev toplevel Toptuple tup: 0
@@ -371,7 +392,7 @@ classlist: 'subclass testclass'
 	    typelevel Toptuple tup: 0
 	    typename Toptuple tup: 'subtuple'
 	    type Toptuple tup: 'subtuple'
-        celmlist: ''
+        celmlist : ''
         fields TopNone : ''
     fields toplevel : ''
     conslist thing: 'Thing'
@@ -380,7 +401,7 @@ classlist: 'subclass testclass'
     superclasses thing: ''
     subclasses thing: 'Thing'
     isvirtual thing: '1'
-        celmlist: ''
+        celmlist : ''
         fields Thing : ''
     fields thing : ''
     conslist Thing: ''
@@ -416,40 +437,7 @@ classlist: 'subclass testclass'
 
 Datastructure dependency
 ----
-single types dependent on orig: 'orig'
-list types dependent on orig: ''
-single types dependent on Top: 'Top SubNamed subNamedlist sublevel SubNamedlistlist thing Thing'
-list types dependent on Top: 'sublevel sublevel_list thing thing_list'
-single types dependent on Toptuple: 'Toptuple subtuple thing Thing'
-list types dependent on Toptuple: 'thing'
-single types dependent on TopNone: 'TopNone'
-list types dependent on TopNone: ''
-single types dependent on subtuple: 'subtuple thing Thing'
-list types dependent on subtuple: 'thing'
-single types dependent on SubNamed: 'SubNamed'
-list types dependent on SubNamed: ''
-single types dependent on subNamedlist: 'subNamedlist thing Thing'
-list types dependent on subNamedlist: 'thing'
-single types dependent on sublevel: 'SubNamed subNamedlist sublevel SubNamedlistlist thing Thing'
-list types dependent on sublevel: 'thing thing_list'
-single types dependent on SubNamedlistlist: 'SubNamedlistlist thing Thing'
-list types dependent on SubNamedlistlist: 'thing thing_list'
-single types dependent on notuple: 'notuple'
-list types dependent on notuple: ''
-single types dependent on toplevel: 'Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist toplevel thing Thing'
-list types dependent on toplevel: 'sublevel sublevel_list thing thing_list'
-single types dependent on thing: 'thing Thing'
-list types dependent on thing: ''
-single types dependent on Thing: 'Thing'
-list types dependent on Thing: ''
-single types dependent on subclass: 'subclass'
-list types dependent on subclass: ''
-single types dependent on testclass: 'testclass'
-list types dependent on testclass: ''
 Testing error handling:
-''
-''
-''
 Type sorting:
 depsort: [int orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass]
 ----
@@ -638,7 +626,7 @@ classlist: 'subclass testclass'
     superclasses sublevel: 'orig subtuple toplevel'
     subclasses sublevel: 'SubNamed subNamedlist SubNamedlistlist'
     isvirtual sublevel: '1'
-        celmlist: 'n'
+        celmlist inherited: 'file line tl tn n'
         fields SubNamed inherited: 'file line tl tn n'
             ctypeclass sublevel SubNamed n: 'single'
 	    ctypellev sublevel SubNamed n: 0
@@ -647,7 +635,7 @@ classlist: 'subclass testclass'
 	    typelevel SubNamed n: 0
 	    typename SubNamed n: 'int'
 	    type SubNamed n: 'int'
-        celmlist: 'thinglist'
+        celmlist inherited: 'file line tl tn thinglist'
         fields subNamedlist inherited: 'file line tl tn thinglist'
             ctypeclass sublevel subNamedlist thinglist: 'list'
 	    ctypellev sublevel subNamedlist thinglist: 1
@@ -656,7 +644,7 @@ classlist: 'subclass testclass'
 	    typelevel subNamedlist thinglist: 1
 	    typename subNamedlist thinglist: 'thing'
 	    type subNamedlist thinglist: 'thing_list'
-        celmlist: 'thinglistlist'
+        celmlist inherited: 'file line tl tn thinglistlist'
         fields SubNamedlistlist inherited: 'file line tl tn thinglistlist'
             ctypeclass sublevel SubNamedlistlist thinglistlist: 'list'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
@@ -738,7 +726,7 @@ classlist: 'subclass testclass'
     superclasses toplevel: 'orig subtuple'
     subclasses toplevel: 'Top Toptuple TopNone sublevel SubNamed subNamedlist SubNamedlistlist'
     isvirtual toplevel: '1'
-        celmlist: 'la lb'
+        celmlist inherited: 'file line tl tn la lb'
         fields Top inherited: 'file line tl tn la lb'
             ctypeclass toplevel Top la: 'list'
 	    ctypellev toplevel Top la: 1
@@ -754,7 +742,7 @@ classlist: 'subclass testclass'
 	    typelevel Top lb: 2
 	    typename Top lb: 'sublevel'
 	    type Top lb: 'sublevel_list_list'
-        celmlist: 'tup'
+        celmlist inherited: 'file line tl tn tup'
         fields Toptuple inherited: 'file line tl tn tup'
             ctypeclass toplevel Toptuple tup: 'single'
 	    ctypellev toplevel Toptuple tup: 0
@@ -763,7 +751,7 @@ classlist: 'subclass testclass'
 	    typelevel Toptuple tup: 0
 	    typename Toptuple tup: 'subtuple'
 	    type Toptuple tup: 'subtuple'
-        celmlist: ''
+        celmlist inherited: 'file line tl tn'
         fields TopNone inherited: 'file line tl tn'
     fields toplevel inherited: 'file line tl tn'
 	ttypeclass toplevel file: 'single'
@@ -788,7 +776,7 @@ classlist: 'subclass testclass'
     superclasses thing: ''
     subclasses thing: 'Thing'
     isvirtual thing: '1'
-        celmlist: ''
+        celmlist inherited: ''
         fields Thing inherited: ''
     fields thing inherited: ''
     conslist Thing: ''
@@ -840,40 +828,7 @@ classlist: 'subclass testclass'
 
 Datastructure dependency
 ----
-single types dependent on orig: 'orig'
-list types dependent on orig: ''
-single types dependent on Top: 'Top SubNamed subNamedlist sublevel SubNamedlistlist thing Thing'
-list types dependent on Top: 'sublevel sublevel_list thing thing_list'
-single types dependent on Toptuple: 'Toptuple subtuple thing Thing'
-list types dependent on Toptuple: 'thing'
-single types dependent on TopNone: 'TopNone'
-list types dependent on TopNone: ''
-single types dependent on subtuple: 'subtuple thing Thing'
-list types dependent on subtuple: 'thing'
-single types dependent on SubNamed: 'SubNamed'
-list types dependent on SubNamed: ''
-single types dependent on subNamedlist: 'subNamedlist thing Thing'
-list types dependent on subNamedlist: 'thing'
-single types dependent on sublevel: 'SubNamed subNamedlist sublevel SubNamedlistlist thing Thing'
-list types dependent on sublevel: 'thing thing_list'
-single types dependent on SubNamedlistlist: 'SubNamedlistlist thing Thing'
-list types dependent on SubNamedlistlist: 'thing thing_list'
-single types dependent on notuple: 'notuple'
-list types dependent on notuple: ''
-single types dependent on toplevel: 'Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist toplevel thing Thing'
-list types dependent on toplevel: 'sublevel sublevel_list thing thing_list'
-single types dependent on thing: 'thing Thing'
-list types dependent on thing: ''
-single types dependent on Thing: 'Thing'
-list types dependent on Thing: ''
-single types dependent on subclass: 'subclass'
-list types dependent on subclass: ''
-single types dependent on testclass: 'testclass'
-list types dependent on testclass: ''
 Testing error handling:
-''
-''
-''
 Type sorting:
 depsort: [int orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass]
 ----
@@ -1046,6 +1001,8 @@ v:[toplevelv]
   
 []
 []
+gv: 1, ngv: 1 gl: [123], ngl: [123]
+gv: 2, ngv: 1 gl: [123 test], ngl: [123]
 ----
 
 Eval
