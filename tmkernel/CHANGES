@@ -1,6 +1,9 @@
 New in version 2.0.8
 
 - Added the missing function isequal_tmbool.
+- Added a new function deletelist_<type>_list that deletes an
+entire span of elements from a list.
+
 
 New in version 2.0.7
 

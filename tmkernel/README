@@ -27,7 +27,7 @@ Tm C templates has been compiled and tested on the following systems:
  - Atari ST with the Pure C compiler version 2.1
  - MS-Windows 3.1 and 95 with the Borland C++ compiler version 4.5
    and 5.0.
- - Debian Linux with GNU C compiler
+ - Debian Linux with the GNU C compiler
 
 Older versions have been compiled on lots of other UNIX systems, but
 this has not been tested with the new configure script.

@@ -44,7 +44,16 @@ empty:
 	rm -f $(JUNK)
 	rm -f config.status config.log config.cache
 
-#distlist: $(MAKEFILE) $(DIRLIST)
 distlist:
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 	for i in $(DIRLIST); do cd $$i; $(MAKE) distlist; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
