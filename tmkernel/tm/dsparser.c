@@ -532,8 +532,9 @@ static bool parse_alias_type( tmstring nm, ds *tp )
 	return FALSE;
     }
     inherits = new_tmstring_list();
-    *tp = (ds) new_DsAlias( nm, inherits, yylval.parstring );
+    inherits = append_tmstring_list( inherits, yylval.parstring );
     next_token();
+    *tp = (ds) new_DsAlias( nm, inherits );
     return TRUE;
 }
 

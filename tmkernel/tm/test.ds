@@ -35,4 +35,5 @@ expr = orig +
 	exprOrig: (testclass + { lbl:tmstring })
 	;
 
-aliastype -> expr;
+aliastype -> aliastype2;
+aliastype2 -> expr;
