@@ -4,15 +4,14 @@
  * All rights reserved.
  */
 
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 // tmtext copy constructor
-tmtext::tmtext( const tmtext &c ): room(0), arr(0), curpos(0), sz(0)
+void tmtext::settext( const tmtext &c )
 {
     reserve( c.sz );
     copyblock( arr, c.arr, c.sz );
     sz = c.sz;
     curpos = c.curpos;
-    newcount++;
 }

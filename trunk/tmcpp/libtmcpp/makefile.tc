@@ -41,6 +41,7 @@ LIBSRCS	      = \
                 delbtext.c \
                 errmsg.c \
                 escstr.c \
+                allocflags.c \
                 fatal.c \
                 fneedc.c \
                 fprdbl.c \
@@ -82,6 +83,7 @@ LIBSRCS	      = \
                 lognew.c \
                 newstr.c \
                 lnt2s.c \
+                lognew.c \
                 lnnewstr.c \
                 lnreastr.c \
                 lnfrestr.c \
@@ -107,7 +109,6 @@ LIBSRCS	      = \
                 rduptxt.c \
                 reastr.c \
                 repltext.c \
-                s2t.c \
                 setrmtxt.c \
                 sltxt.c \
                 symbol.c \
@@ -163,44 +164,4 @@ empty:
 	$(CC) -c $(CFLAGS) -o$* $<
 
 ###
-badtag.obj: tmcpp.h config.h
-cmpdbl.obj: tmcpp.h config.h
-errmsg.obj: tmcpp.h config.h
-escstr.obj: tmcpp.h config.h
-fatal.obj: tmcpp.h config.h
-fneedc.obj: tmcpp.h config.h
-fprdbl.obj: tmcpp.h config.h
-fprint.obj: tmcpp.h config.h
-fprsshrt.obj: tmcpp.h config.h
-fprstr.obj: tmcpp.h config.h
-fprsym.obj: tmcpp.h config.h
-fprushrt.obj: tmcpp.h config.h
-fsccbrac.obj: tmcpp.h config.h
-fsccons.obj: tmcpp.h config.h
-fscdbl.obj: tmcpp.h config.h
-fscescc.obj: tmcpp.h config.h
-fscflt.obj: tmcpp.h config.h
-fscint.obj: tmcpp.h config.h
-fscobrac.obj: tmcpp.h config.h
-fscspace.obj: tmcpp.h config.h
-fscsshrt.obj: tmcpp.h config.h
-fscstr.obj: tmcpp.h config.h
-fscushrt.obj: tmcpp.h config.h
-lognew.obj: tmcpp.h config.h
-newstr.obj: tmcpp.h config.h
-nlfrestr.obj: tmcpp.h config.h
-nlfscstr.obj: tmcpp.h config.h
-nlnewstr.obj: tmcpp.h config.h
-noroom.obj: tmcpp.h config.h
-prdbl.obj: tmcpp.h config.h
-print.obj: tmcpp.h config.h
-propt.obj: tmcpp.h config.h
-prsshrt.obj: tmcpp.h config.h
-prstr.obj: tmcpp.h config.h
-prsym.obj: tmcpp.h config.h
-prushrt.obj: tmcpp.h config.h
-symbol.obj: tmcpp.h config.h
-testprog.obj: tmcpp.h config.h
-tmcalloc.obj: tmcpp.h config.h
-tmmalloc.obj: tmcpp.h config.h
-tmreallc.obj: tmcpp.h config.h
+$(LIBOBJS): tmcpp.h config.h

@@ -1,13 +1,6 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* file: tmcpp.h
- *
- * declaration of routines in tm library.
- */
+// file: tmcpp.h
+//
+// declaration of routines in tm library.
 
 #ifndef _TM_TMCDEFS
 
@@ -34,6 +27,15 @@ typedef unsigned int uint;
 typedef unsigned long ulong;
 #define GOT_UINT
 #endif
+
+// allocid memory leak tracking tools
+// tm_report_allocid is a dummy function. Provide your own, and
+// put a breakpoint in it.
+extern void tm_report_allocid( const unsigned long id );
+extern void tm_register_new_allocid( const unsigned long id );
+extern void tm_register_free_allocid( const unsigned long id );
+extern unsigned long int tm_allocid_next;
+extern void tm_list_pending_ids( FILE *f );
 
 typedef struct _tmc_sym *tmsymbol;
 
@@ -155,6 +157,9 @@ private:
     static unsigned long newcount;
     static unsigned long freecount;
     size_type room;
+#ifdef LOGNEW
+    unsigned long __id;
+#endif
 
 public:
     char *arr;
@@ -164,14 +169,47 @@ public:
 private:
     static void copyblock( char *d, const char *s, const long sz );
     void insblock( const long pos, const long sz );
+    void settext( const tmtext &c );
+    void setstring( const char *s );
+
+#ifdef LOGNEW
+    inline void allocid_admin()
+    {
+	__id = tm_allocid_next++;
+	tm_register_new_allocid( __id );
+        tm_report_allocid( __id );
+    }
+#else
+    inline void allocid_admin() {}
+#endif
 
 public:
     inline size_type size() const { return sz; }
     inline size_type capacity() const { return room; }
-    tmtext( const size_type sz=32 );
-    tmtext( const tmtext &c );
-    tmtext( const char *s );
-    virtual ~tmtext();
+
+    tmtext( const long sz=32 ): room(0), arr(0), curpos(0), sz(0) {
+	reserve( sz );
+	allocid_admin();
+	newcount++;
+    }
+    tmtext( const tmtext &c ): room(0), arr(0), curpos(0), sz(0) {
+	settext(c);
+	allocid_admin();
+	newcount++;
+    }
+    tmtext( const char *s ): room(0), arr(0), curpos(0), sz(0) {
+	append( s );
+	curpos = 0;
+	allocid_admin();
+	newcount++;
+    }
+#ifdef LOGNEW
+    virtual ~tmtext() { tm_register_free_allocid( __id ); free( arr ); freecount++; }
+#else
+    virtual ~tmtext() { free( arr ); freecount++; }
+#endif
+    inline static void reportAllocId( FILE *f ) { (void) f; }
+
     void reserve( const size_type rm );
     virtual tmtext *clone() const { return new tmtext( *this ); }
     tmtext *insert( const size_type pos, const tmtext *nw );

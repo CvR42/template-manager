@@ -4,8 +4,8 @@
  * All rights reserved.
  */
 
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 // Given a tmtext 't' return a tmstring .
 // This function assumes the tmtext contains no '\0'.

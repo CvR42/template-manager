@@ -5,8 +5,8 @@
  */
 
 #include <string.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 // Given a text 'nw', append 'nw'.
 tmtext *tmtext::append( const tmtext *nw )

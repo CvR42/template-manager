@@ -5,8 +5,8 @@
  */
 
 #include <string.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 // Given a range 'from' to 'to' and a tmtext 'nw',
 // replace the text in range 'from'..'to' in 't' with the

@@ -1,9 +1,3 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
 /* File: testprog.c
  *
  * Test of library programs.
@@ -22,6 +16,18 @@ static void bad( const char *msg )
 {
    fprintf( stderr, "check error: %s\n", msg );
    exit( 1 );
+}
+
+// Test the allocid routines
+static void test_allocid()
+{
+    for( unsigned int n=2000; n<2100; n++ ){
+	tm_register_new_allocid( n );
+    }
+    for( unsigned int n=2002; n<2090; n++ ){
+	tm_register_free_allocid( n );
+    }
+    tm_list_pending_ids( stderr );
 }
 
 // test_printopt: test printopt routines
@@ -756,6 +762,7 @@ int main( void )
     test_float();
     test_tmstring( st );
     test_tmword( st );
+    test_allocid();
     test_tmtext( st );
     test_bool( st );
     ftest_schar( outfile );
@@ -770,6 +777,7 @@ int main( void )
     ftest_tmword( outfile );
     int lev = st->getLevel();
     st->destroy();
+    tm_list_pending_ids( stderr );
     fprintf( stderr, "bracket level: %d\n", lev );
     fprintf( stderr, "get_balance_tmstring(): %d\n", get_balance_tmstring() );
     fprintf( stderr, "tmtext::get_balance(): %d\n", tmtext::get_balance() );

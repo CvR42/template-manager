@@ -1,17 +1,11 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
 /* File: fscbool.c
  * 
  * Handle 'fscan_<type>' for type 'bool'.
  */
 
 #include <ctype.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 #define WORDBUFSZ 20
 

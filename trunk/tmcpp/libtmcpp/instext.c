@@ -5,8 +5,8 @@
  */
 
 #include <string.h>
-#include "tmcpp.h"
 #include "config.h"
+#include "tmcpp.h"
 
 /* Given a position 'pos' and a tmtext 'nw',
  * insert 'nw' at position 'pos'. If 'pos' falls beyond

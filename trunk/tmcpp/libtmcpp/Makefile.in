@@ -117,7 +117,6 @@ LIBSRCS	 = \
                 rduptxt.c \
                 reastr.c \
                 repltext.c \
-                s2t.c \
                 setrmtxt.c \
                 sltxt.c \
                 symbol.c \
