@@ -60,11 +60,7 @@ typedef struct str_$t *$t;
 .endforeach
 .set tl ${uniq $(tl)}
 .foreach t $(tl)
-.set l ${subclasses $t}
-.if ${isvirtual $t}
-.else
-.append l $t
-.endif
+.set l ${nonvirtual ${inheritsort $t ${subclasses $t}}}
 .if ${len $l}
 typedef enum en_tags_$t {
     ${seplist ", " ${prefix TAG $l}}

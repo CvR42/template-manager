@@ -38,7 +38,7 @@ int main( void )
 #endif
 
     lbl = new_label( 42 );
-    t = new_Thing( 22 );
+    t = (thing) new_Thing( 22 );
 #ifdef CODEtmc
     x = (expr) new_exprPlus(
 	(expr) new_exprConst( 42 ),
@@ -247,7 +247,9 @@ int main( void )
     fprintf( outfile, "get_balance_ds()=%d\n", get_balance_ds() );
     stat_ds( stderr );
     report_lognew( stderr );
+#ifndef CODEtmc
     flush_ds();
+#endif
     flush_lognew();
     fclose( infile );
     fclose( outfile );

@@ -16,6 +16,7 @@ label               :      1 allocated,      1 freed.
 subtuple            :    207 allocated,    205 freed.<-
 sublevel_list       :    414 allocated,    410 freed.<-
 sublevel_list_list  :    207 allocated,    205 freed.<-
+subtuple_list       :      0 allocated,      0 freed.
 thing_list          :    621 allocated,    615 freed.<-
 toplevel_list       :    106 allocated,    105 freed.<-
 lognew: pending blocks:

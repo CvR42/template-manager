@@ -7,7 +7,7 @@
 .. tm C support. Variant: array lists, union constructors.
 ..
 .. The following variables must be set in tm:
-.. basename:     the name of the module. used to generate init_.. and stat_..
+.. basename:     the name of the module. used to generate stat_..
 .. wantdefs:     the names of the wanted definitions.
 ..  OR
 .. alldefs:      All code.
@@ -15,12 +15,8 @@
 .. The following C pre-processor variables may be defined:
 .. FATAL(msg)    If you want to supply a fatal error handler to print 'msg'.
 ..               A default is provided.
-.. FIRSTROOM     The room in a list upon creation.
+.. FIRSTROOM     The initial room in lists. Default is 0.
 ..
-.. Possible declaration or #define'ing of statstream must be done
-.. outside this module.
-..
-.. Macros
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 .call no_multiple_inheritance "$(need_ds)"
@@ -42,11 +38,6 @@
 .exit 1
 .endif
 ..
-.if ${member stat_$(basename) $(need_misc)}
-.set statcode 1
-.else
-.set statcode 0
-.endif
 /* ---- start of ${tplfilename} ---- */
 
 /* Routines for '$(basename)'.
@@ -61,27 +52,19 @@
 #define FIRSTROOM 0
 #endif
 
-.if $(statcode)
+.if ${len $(need_stat_list) $(need_stat)}
+/* Counters for allocation and freeing. */
 .foreach t $(need_stat_list)
-static long newcnt_$t_list = 0;
-static long frecnt_$t_list = 0;
+static long newcnt_$t_list = 0, frecnt_$t_list = 0;
 .endforeach
-
 .foreach t $(need_stat)
-.if ${isvirtual $t}
-.else
-static long newcnt_$t = 0;
-static long frecnt_$t = 0;
-.endif
+static long newcnt_$t = 0, frecnt_$t = 0;
 .endforeach
 
 .endif
+
 static char tm_srcfile[] = __FILE__;
 
-.if $(statcode)
-static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
-
-.endif
 #ifndef FATAL
 #define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
 #endif
@@ -96,12 +79,12 @@ static char tm_badcons[] = "bad constructor for '%s': '%s'";
 .if ${len $(need_fscan_list)}
 static char tm_badeof[] = "unexpected end of file";
 .endif
-.if ${strlen $(need_slice_list)}
+.if ${len $(need_slice_list)}
 static char tm_badslice[] = "bad slice";
 .endif
 
 #ifndef FATALTAG
-#define FATALTAG(tag) tm_badtag(tm_srcfile,__LINE__,tag)
+#define FATALTAG(tag) tm_badtag(tm_srcfile,__LINE__,(int) tag)
 #endif
 
 .if ${len $(need_setroom_list)}
@@ -116,8 +99,8 @@ static char tm_badslice[] = "bad slice";
 .set stic_$t
 .endforeach
 .foreach t $(need_setroom_list)
-/* Announce that you will need setroom for 'rm' elements in
- * $t_list 'l'.
+/* Announce that you will need room for 'rm' elements in
+ *  $t_list 'l'.
  */
 $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 {
@@ -143,13 +126,10 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 
 #ifdef LOGNEW
 .foreach t $(need_new)
-.if ${isvirtual $t}
-.else
 .if ${member $t $(want_new)}
 #undef new_$t
 .endif
 #define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} _f _l})
-.endif
 .endforeach
 .foreach t $(need_new_list)
 .if ${member $t $(want_new_list)}
@@ -183,7 +163,7 @@ $(stic_$t)$t_list new_$t_list( void )
     nw->arr = TM_MALLOC( $t *, FIRSTROOM*sizeof($t) );
     nw->room = FIRSTROOM;
 #endif
-.if $(statcode)
+.if ${member $t $(need_stat_list)}
     newcnt_$t_list++;
 .endif
 #ifdef LOGNEW
@@ -199,9 +179,8 @@ $(stic_$t)$t_list new_$t_list( void )
 .foreach t $(want_new)
 .set stic_$t
 .endforeach
-.foreach t $(need_new)
-.if ${isvirtual $t}
-.else
+.foreach t ${nonvirtual $(need_new)}
+/* Allocate a new instance of ${metatype $t} '$t'. */
 #ifdef LOGNEW
 .set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
 $(stic_$t)$t real_new_$t( $(tl) )
@@ -218,7 +197,7 @@ $(stic_$t)$t new_$t( $(tl) )
 .foreach e ${fields $t inherited}
     nw->$e = p_$e;
 .endforeach
-.if $(statcode)
+.if ${member $t $(need_stat)}
     newcnt_$t++;
 .endif
 #ifdef LOGNEW
@@ -233,7 +212,7 @@ $(stic_$t)$t new_$t( $(tl) )
 .foreach e ${fields $t inherited}
     nw->$e = p_$e;
 .endforeach
-.if $(statcode)
+.if ${member $t $(need_stat)}
     newcnt_$t++;
 .endif
 #ifdef LOGNEW
@@ -243,7 +222,6 @@ $(stic_$t)$t new_$t( $(tl) )
 .endswitch
 }
 
-.endif
 .endforeach
 .endif
 .if ${len $(need_fre) $(need_fre_list)}
@@ -266,7 +244,7 @@ $(stic_$t)void fre_$t( $t e )
     }
 .switch ${metatype $t}
 .case tuple
-.if $(statcode)
+.if ${member $t $(need_stat)}
     frecnt_$t++;
 .endif
 #ifdef LOGNEW
@@ -274,7 +252,7 @@ $(stic_$t)void fre_$t( $t e )
 #endif
     TM_FREE( e );
 .case constructor constructorbase class
-.if ${len ${subclasses $t}}
+.if ${len ${nonvirtual $t ${subclasses $t}}}
     switch( e->tag ){
 .if ${isvirtual $t}
 .else
@@ -287,14 +265,14 @@ $(stic_$t)void fre_$t( $t e )
 	    break;
 
 .endif
-.foreach c ${subclasses $t}
+.foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
 	    fre_$c( ($c) e );
 	    break;
 
 .endforeach
 	default:
-	    FATALTAG( (int) e->tag );
+	    FATALTAG( e->tag );
     }
 .else
     frecnt_$t++;
@@ -323,7 +301,7 @@ $(stic_$t)void fre_$t_list( $t_list l )
 #ifdef LOGNEW
     tm_fre_logid( l->lognew_id );
 #endif
-.if $(statcode)
+.if ${member $t $(need_stat_list)}
     frecnt_$t_list++;
 .endif
     if( l->room!=0 ){
@@ -438,9 +416,9 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 .endforeach
 .endif
 .if ${len $(need_concat_list)}
-/**********************************************
- *    concatenate routines                    *
- **********************************************/
+/**************************************************
+ *    Concatenate routines                        *
+ **************************************************/
 
 .foreach t $(need_concat_list)
 .set stic_$t "static "
@@ -490,7 +468,7 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 .endforeach
 .foreach t ${depsort $(need_rfre)}
 /* Recursively free an element 'e' of ${metatype $t} type '$t'
-   and all elements in it.
+ * and all elements in it.
  */
 $(stic_$t)void rfre_$t( $t e )
 {
@@ -507,7 +485,7 @@ $(stic_$t)void rfre_$t( $t e )
     if( e == $tNIL ){
 	return;
     }
-.if ${len ${subclasses $t}}
+.if ${len ${nonvirtual $t ${subclasses $t}}}
     switch( e->tag ){
 .if ${isvirtual $t}
 .else
@@ -519,7 +497,7 @@ $(stic_$t)void rfre_$t( $t e )
 	    break;
 
 .endif
-.foreach c ${subclasses $t}
+.foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
 	    rfre_$c( ($c) e );
 	    break;
@@ -567,6 +545,7 @@ $(stic_$t)void rfre_$t_list( $t_list e )
  *    print_<type> and print_<type>_list routines *
  **************************************************/
 
+.. Forward declarations
 .call ansi_static print_list "void print_$$t_list( TMPRINTSTATE *st, const $$t_list )"
 .call ansi_static print "void print_$$t( TMPRINTSTATE *st, const $$t )"
 .foreach t ${depsort $(need_print)}
@@ -593,7 +572,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .endforeach
     tm_closetuple( st );
 .case constructor class constructorbase
-.if ${len ${subclasses $t}}
+.if ${len ${nonvirtual $t ${subclasses $t}}}
     switch( t->tag ){
 .if ${isvirtual $t}
 .else
@@ -607,14 +586,14 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 	    break;
 
 .endif
-.foreach c ${subclasses $t}
+.foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
 	    print_$c( st, ($c) t );
 	    break;
 
 .endforeach
 	default:
-	    FATALTAG( (int) t->tag );
+	    FATALTAG( t->tag );
     }
 .else
     tm_opencons( st );
@@ -679,6 +658,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
     }
 .switch ${metatype $t}
 .case tuple
+    putc( '(', f );
 .set first 1
 .foreach e ${fields $t inherited}
 .if $(first)
@@ -688,8 +668,9 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .endif
     fprint_${type $t $e}( f, t->$e );
 .endforeach
+    fputs( ")\n", f );
 .case constructor constructorbase class
-.if ${len ${subclasses $t}}
+.if ${len ${nonvirtual ${subclasses $t}}}
     switch( t->tag ){
 .if ${isvirtual $t}
 .else
@@ -703,14 +684,14 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 	    break;
 
 .endif
-.foreach c ${subclasses $t}
+.foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
 	    fprint_$c( f, ($c) t );
 	    break;
 
 .endforeach
 	default:
-	    FATALTAG( (int) t->tag );
+	    FATALTAG( t->tag );
     }
 .else
     fputs( "($t", f );
@@ -720,6 +701,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .endforeach
     fputs( ")\n", f );
 .endif
+.case constructor
 .endswitch
 }
 
@@ -770,8 +752,9 @@ $(stic_$t)void fprint_$t_list( FILE *f, const $t_list l )
 .endif
 #define rdup_$t_list(l) real_rdup_$t_list(l,_f,_l)
 .endforeach
-.call ansi_static rdup_list "$$t_list real_rdup_$$t_list( const $$t_list, const char *_f, const int _l )"
-.call ansi_static rdup "$$t real_rdup_$$t( const $$t, const char *_f, const int _l )"
+.. Forward declarations
+.call ansi_static rdup_list "$$t_list real_rdup_$$t_list( const $$t_list, const char *, const int )"
+.call ansi_static rdup "$$t real_rdup_$$t( const $$t, const char *, const int )"
 #else
 .call ansi_static rdup_list "$$t_list rdup_$$t_list( const $$t_list )"
 .call ansi_static rdup "$$t rdup_$$t( const $$t )"
@@ -832,7 +815,7 @@ $(stic_$t)$t rdup_$t( const $t e )
 
 .endforeach
 	default:
-	    FATALTAG( (int) e->tag );
+	    FATALTAG( e->tag );
     }
     return $tNIL;
 .else
@@ -921,17 +904,17 @@ $(stic_$t)$t_list rdup_$t_list( const $t_list l )
  */
 #ifdef LOGNEW
 $(stic_$t)$t_list real_slice_$t_list(
- $t_list l,
- const unsigned int b,
- const unsigned int parm_e,
- const char *_f,
- const int _l
+    const $t_list l,
+    const unsigned int b,
+    const unsigned int parm_e,
+    const char *_f,
+    const int _l
 )
 #else
 $(stic_$t)$t_list slice_$t_list(
- $t_list l,
- const unsigned int b,
- const unsigned int parm_e
+    const $t_list l,
+    const unsigned int b,
+    const unsigned int parm_e
 )
 #endif
 {
@@ -1015,7 +998,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
     if( b == $tNIL ){
 	return 1;
     }
-    res = ( (int)a->tag - (int)b->tag);
+    res = ((int) a->tag - (int) b->tag);
     if( res != 0 ){
 	return res;
     }
@@ -1046,7 +1029,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 
 .endforeach
 	    default:
-		FATALTAG( (int) a->tag );
+		FATALTAG( a->tag );
     }
 .else
 .if ${isvirtual $t}
@@ -1201,17 +1184,17 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .case constructorbase constructor class
     int n;
     int c;
-    int err;
 .. First, determine the length of the largest constructor name.
-.set maxlen ${strlen $t}
-.foreach c ${subclasses $t}
+.set maxlen 1
+.foreach c ${nonvirtual $t ${subclasses $t}}
 .set maxlen ${max $(maxlen) ${strlen $c}}
 .endforeach
 .. Add some space for '\0' and safety..
 .set maxlen $[$(maxlen)+4]
     char tm_word[$(maxlen)];	/* Largest constructor should fit in it.. */
+    int err = 0;
 
-.if ${not ${len ${subclasses $t}}}
+.if ${not ${len ${nonvirtual $t ${subclasses $t}}}}
 #ifdef LOGNEW
     (void) _f;
     (void) _l;
@@ -1243,7 +1226,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 
 .foreach e ${fields $t inherited}
 	l_$e = ${type $t $e}NIL;
-	if( !err){
+	if( !err ){
 	    err = fscan_${type $t $e}( f, &l_$e );
 	}
 .endforeach
@@ -1251,10 +1234,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     }
 .set els "else "
 .endif
-.foreach c ${subclasses $t}
-.if ${isvirtual $c}
-    /* Virtual class '$c' cannot happen. */
-.else
+.foreach c ${nonvirtual ${subclasses $t}}
     $(els)if( strcmp( tm_word, "$c" ) == 0 ){
 .foreach e ${fields $c inherited}
 	${type $c $e} l_$e;
@@ -1262,14 +1242,13 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 
 .foreach e ${fields $c inherited}
 	l_$e = ${type $c $e}NIL;
-	if( !err){
+	if( !err ){
 	    err = fscan_${type $c $e}( f, &l_$e );
 	}
 .endforeach
 	*p =  ($t) new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
     }
 .set els "else "
-.endif
 .endforeach
     else {
 	(void) sprintf( tm_errmsg, tm_badcons, "$t", tm_word );
@@ -1279,6 +1258,8 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	return 1;
     }
     return tm_fscanclosebrac( f, n );
+.case constructor
+.error Internal botch: fscan_$t requested
 .endswitch
 }
 
@@ -1436,20 +1417,14 @@ $(stic_$t)$t_list extract_$t_list(
 /**************************************************
  *    Miscellaneous routines                      *
  **************************************************/
-.if ${member flush_$(basename) $(need_misc)}
-/* Flush the allocation caches. */
-void flush_$(basename)()
-{
-}
-
-.endif
 .if ${member stat_$(basename) $(need_misc)}
 /* Print allocation and freeing statistics to file 'f'. */
 void stat_$(basename)( FILE *f )
 {
-.foreach t ${sort $(need_stat)}
-.if ${isvirtual $t}
-.else
+.if ${len ${nonvirtual $(need_stat)} $(need_stat_list)}
+    const char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
+
+.foreach t ${sort ${nonvirtual $(need_stat)}}
     fprintf(
 	f,
 	tm_allocfreed,
@@ -1458,9 +1433,8 @@ void stat_$(basename)( FILE *f )
 	frecnt_$t,
 	((newcnt_$t==frecnt_$t)? "": "<-")
     );
-.endif
 .endforeach
-.foreach t $(need_stat_list)
+.foreach t ${sort $(need_stat_list)}
     fprintf(
 	f,
 	tm_allocfreed, "$t_list",
@@ -1469,6 +1443,7 @@ void stat_$(basename)( FILE *f )
 	((newcnt_$t_list==frecnt_$t_list)? "": "<-")
     );
 .endforeach
+.endif
 }
 
 .endif
@@ -1479,38 +1454,29 @@ void stat_$(basename)( FILE *f )
  */
 int get_balance_$(basename)( void )
 {
-    int res;
-
-    res = 0;
     /* Check for too many fre()s. */
 .foreach t $(need_stat_list)
     if( newcnt_$t_list<frecnt_$t_list ){
-        return -1;
+	return -1;
     }
 .endforeach
-.foreach t $(need_stat)
-.if ${isvirtual $t}
-.else
+.foreach t ${nonvirtual $(need_stat)}
     if( newcnt_$t<frecnt_$t ){
-        return -1;
+	return -1;
     }
-.endif
 .endforeach
-    /* Check for too few fre()s. */
+    /* Check for too few free()s. */
 .foreach t $(need_stat_list)
     if( newcnt_$t_list>frecnt_$t_list ){
-        res = 1;
+	return 1;
     }
 .endforeach
-.foreach t $(need_stat)
-.if ${isvirtual $t}
-.else
+.foreach t ${nonvirtual $(need_stat)}
     if( newcnt_$t>frecnt_$t ){
-        res = 1;
+	return 1;
     }
-.endif
 .endforeach
-    return res;
+    return 0;
 }
 
 .endif
