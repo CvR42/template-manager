@@ -57,10 +57,10 @@ CONFIGUREFILES = configure config.hin Makefile.in configure.in
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
 
-TMMODULES     = calu.ct calu.ht aluneed.t \
-                cllu.ct cllu.ht lluneed.t \
-                cald.ct cald.ht aldneed.t \
-		macros.t
+TMMODULES     = calu.ct calu.ht \
+                cllu.ct cllu.ht \
+                cald.ct cald.ht need.t \
+		macros.t aluid.t aldid.t lluid.t
 
 LLUTMSRCS     = llucode.c 
 
@@ -116,11 +116,11 @@ alutestrun: alutest alutesti
 	diff testout aluokout
 	diff testerr aluokerr
 
-aluinstall: aluneed.t calu.ct calu.ht
+aluinstall: need.t calu.ct calu.ht aluid.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t aluneed.t calu.ct > tmp4242
+	cat macros.t aluid.t need.t calu.ct > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/calu.ct
-	cat macros.t aluneed.t calu.ht > tmp4242
+	cat macros.t aluid.t need.t calu.ht > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/calu.ht
 	rm -f tmp4242
 
@@ -132,11 +132,11 @@ aldtestrun: aldtest aldtesti
 	diff testout aldokout
 	diff testerr aldokerr
 
-aldinstall: aldneed.t cald.ct cald.ht
+aldinstall: need.t cald.ct cald.ht aldid.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t aldneed.t cald.ct > tmp4242
+	cat macros.t aldid.t need.t cald.ct > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cald.ct
-	cat macros.t aldneed.t cald.ht > tmp4242
+	cat macros.t aldid.t need.t cald.ht > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cald.ht
 	rm -f tmp4242
 
@@ -148,11 +148,11 @@ llutestrun: llutest llutesti
 	diff testout lluokout
 	diff testerr lluokerr
 
-lluinstall: lluneed.t cllu.ct cllu.ht
+lluinstall: need.t cllu.ct cllu.ht lluid.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t lluneed.t cllu.ct > tmp4242
+	cat macros.t lluid.t need.t cllu.ct > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cllu.ct
-	cat macros.t lluneed.t cllu.ht > tmp4242
+	cat macros.t lluid.t need.t cllu.ht > tmp4242
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cllu.ht
 	rm -f tmp4242
 
@@ -160,6 +160,9 @@ install: lluinstall aluinstall aldinstall
 
 clean:
 	rm -f $(JUNK) $(OBJS) $(TMOUT)
+
+distclean:
+	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
 
 empty:
 	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
@@ -173,22 +176,22 @@ distlist: $(DISTFILES)
 depend: $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS) $(ALDTMHDRS) $(ALDTMSRCS)
 	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
 
-alucode.c : alucode.ct calu.ct aluspec.t test.ds aluneed.t macros.t
+alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ct > alucode.c
 
-alucode.h : alucode.ht calu.ht aluspec.t test.ds aluneed.t macros.t
+alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ht > alucode.h
 
-aldcode.c : aldcode.ct cald.ct aldspec.t test.ds aldneed.t macros.t
+aldcode.c : aldcode.ct cald.ct aldspec.t test.ds need.t macros.t aldid.t
 	$(TM) test.ds aldcode.ct > aldcode.c
 
-aldcode.h : aldcode.ht cald.ht aldspec.t test.ds aldneed.t macros.t
+aldcode.h : aldcode.ht cald.ht aldspec.t test.ds need.t macros.t aldid.t
 	$(TM) test.ds aldcode.ht > aldcode.h
 
-llucode.c : llucode.ct cllu.ct lluspec.t test.ds lluneed.t macros.t
+llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ct > llucode.c
 
-llucode.h : llucode.ht cllu.ht lluspec.t test.ds lluneed.t macros.t
+llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ht > llucode.h
 
 alutest.c: xxtest.c

@@ -119,9 +119,9 @@ $(stic_$t)$t null_$t( void )
     nw.lognew_id = -1;
 #endif
 .if ${member $t ${ttypelist}}
-.if ${len ${telmlist $t}}
-.foreach e ${telmlist $t}
-    nw.$e = null_${mklist ${ttypellev $t $e} ${ttypename $t $e}}();
+.if ${len ${fields $t inherited}}
+.foreach e ${fields $t inherited}
+    nw.$e = null_${type $t $e}();
 .endforeach
 .else
     nw._dummy_field = 0;
@@ -132,12 +132,12 @@ $(stic_$t)$t null_$t( void )
 .. settle for the first constructor
 .set acons ${first ${conslist $t}}
 .foreach c ${conslist $t}
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
 .set acons $c
 .endif
 .endforeach
     nw.tag = TAG$(acons);
-.if ${len ${celmlist $t $(acons)}}
+.if ${len ${fields $(acons)}}
     nw.u.ue_$(acons) = NULL;
 .endif
 .else
@@ -205,7 +205,7 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 .if ${member $t $(want_new)}
 #undef new_$t
 .endif
-#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} _f _l})
+#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} _f _l})
 .else
 .if ${member $t $(want_new)}
 .foreach c ${conslist $t}
@@ -213,7 +213,7 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 .endforeach
 .endif
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} _f _l})
+#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} _f _l})
 .endforeach
 .endif
 .endforeach
@@ -270,16 +270,16 @@ $(stic_$t)$t_list new_$t_list( void )
 .if ${member $t ${ttypelist}}
 .. new_<tuple>
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew "${telmlist $t}" "ttypename $t" "ttypellev $t"}
+.set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
 $(stic_$t)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto "${telmlist $t}" "ttypename $t" "ttypellev $t"}
+.set tl ${call ansi_nproto $t "${fields $t inherited}"}
 $(stic_$t)$t new_$t( $(tl) )
 #endif
 {
     $t nw;
 
-.foreach e ${telmlist $t}
+.foreach e ${fields $t inherited}
     nw.$e = p_$e;
 .endforeach
 .if $(statcode)
@@ -297,21 +297,21 @@ $(stic_$t)$t new_$t( $(tl) )
 .. new_<cons>
 .foreach c ${conslist $t}
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew "${celmlist $t $c}" "ctypename $t $c" "ctypellev $t $c"}
+.set tl ${call ansi_nproto_lognew $c "${fields $c inherited}"}
 $(stic_$t)$t real_new_$c( $(tl) )
 #else
-.set tl ${call ansi_nproto "${celmlist $t $c}" "ctypename $t $c" "ctypellev $t $c"}
+.set tl ${call ansi_nproto $c "${fields $c inherited}"}
 $(stic_$t)$t new_$c( $(tl) )
 #endif
 {
     $t nw;
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
     C_$c newc;
 .endif 
 
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
     newc = TM_MALLOC( C_$c, sizeof(struct str_C_$c) );
-.foreach e ${celmlist $t $c}
+.foreach e ${fields $c inherited}
     newc->$e = p_$e;
 .endforeach
     nw.u.ue_$c = newc;
@@ -373,7 +373,7 @@ $(stic_$t)void fre_$t( $t e )
 	    frecnt_$c++;
 #endif
 .endif
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
 	    TM_FREE( e.u.ue_$c );
 .endif
 	    break;
@@ -569,8 +569,8 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 .if ${member $t ${ttypelist}}
 $(stic_$t)void rfre_$t( $t e )
 {
-.foreach e ${telmlist $t}
-    rfre_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( e.$e );
+.foreach e ${fields $t inherited}
+    rfre_${type $t $e}( e.$e );
 .endforeach
     fre_$t( e );
 }
@@ -582,8 +582,8 @@ $(stic_$t)void rfre_$t( $t e )
     switch( e.tag ){
 .foreach c ${conslist $t}
 	case TAG$c:
-.foreach e ${celmlist $t $c}
-	    rfre_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( $c(e).$e );
+.foreach e ${fields $c inherited}
+	    rfre_${type $c $e}( $c(e).$e );
 .endforeach
 	    break;
 
@@ -636,12 +636,12 @@ $(stic_$t)void rfre_$t_list( $t_list e )
 $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 {
 .if ${member $t ${ttypelist}}
-.if ${not ${len ${telmlist $t}}}
+.if ${not ${len ${fields $t inherited}}}
     (void) t;
 .endif
     tm_opentuple( st );
-.foreach e ${telmlist $t}
-    print_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( st, t.$e );
+.foreach e ${fields $t inherited}
+    print_${type $t $e}( st, t.$e );
 .endforeach
     tm_closetuple( st );
 .else
@@ -651,8 +651,8 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .foreach c ${conslist $t}
 	case TAG$c:
 	    tm_printword( st, "$c" );
-.foreach e ${celmlist $t $c}
-	    print_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( st, $c(t).$e );
+.foreach e ${fields $c inherited}
+	    print_${type $c $e}( st, $c(t).$e );
 .endforeach
 	    break;
 
@@ -709,17 +709,17 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 {
     putc( '(', f );
 .if ${member $t ${ttypelist}}
-.if ${not ${len ${telmlist $t}}}
+.if ${not ${len ${fields $t inherited}}}
     (void) t;
 .endif
 .set first 1
-.foreach e ${telmlist $t}
+.foreach e ${fields $t inherited}
 .if $(first)
 .set first 0
 .else
     fputs( ",\n", f );
 .endif
-    fprint_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( f, t.$e );
+    fprint_${type $t $e}( f, t.$e );
 .endforeach
 .else
 .if ${len ${conslist $t}}
@@ -727,9 +727,9 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .foreach c ${conslist $t}
 	case TAG$c:
 	    fputs( "$c", f );
-.foreach e ${celmlist $t $c}
+.foreach e ${fields $c inherited}
 	    putc( ' ', f );
-	    fprint_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( f, $c(t).$e );
+	    fprint_${type $c $e}( f, $c(t).$e );
 .endforeach
 	    break;
 
@@ -807,17 +807,17 @@ $(stic_$t)$t rdup_$t( const $t e )
 #endif
 {
 .if ${member $t ${ttypelist}}
-.if ${not ${len ${telmlist $t}}}
+.if ${not ${len ${fields $t inherited}}}
     (void) e;
 .endif
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} i_$e;
+.foreach e ${fields $t inherited}
+    ${type $t $e} i_$e;
 .endforeach
 
-.foreach e ${telmlist $t}
-    i_$e = rdup_${mklist ${ttypellev $t $e} ${ttypename $t $e}}( e.$e );
+.foreach e ${fields $t inherited}
+    i_$e = rdup_${type $t $e}( e.$e );
 .endforeach
-    return new_$t( ${seplist ", " ${prefix "i_" ${telmlist $t}}} );
+    return new_$t( ${seplist ", " ${prefix "i_" ${fields $t inherited}}} );
 .else
     $t nw;
 
@@ -827,14 +827,14 @@ $(stic_$t)$t rdup_$t( const $t e )
 .foreach c ${conslist $t}
 	case TAG$c:
 	{
-.foreach e ${celmlist $t $c}
-	    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} i_$e;
+.foreach e ${fields $c inherited}
+	    ${type $c $e} i_$e;
 .endforeach
 
-.foreach e ${celmlist $t $c}
-	    i_$e = rdup_${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}( $c(e).$e );
+.foreach e ${fields $c inherited}
+	    i_$e = rdup_${type $c $e}( $c(e).$e );
 .endforeach
-	    nw = new_$c( ${seplist ", " ${prefix "i_" ${celmlist $t $c}}} );
+	    nw = new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
 	    break;
 	}
 
@@ -872,14 +872,14 @@ $(stic_$t)$t_list rdup_$t_list( const $t_list l )
     unsigned int ix;
     $t_list nw;
     $t *ar;
-    $t *or;
+    $t *o_r;
 
     nw = setroom_$t_list( new_$t_list(), l.sz );
     ar = nw.arr;
-    or = l.arr;
+    o_r = l.arr;
     nw.sz = l.sz;
     for( ix=0; ix<l.sz; ix++ ){
-	*ar++ = rdup_$t( *or++ );
+	*ar++ = rdup_$t( *o_r++ );
     }
     return nw;
 }
@@ -965,8 +965,8 @@ $(stat)int cmp_$t( const $t a, const $t b )
     int res;
 
 .set first 1
-.foreach e ${telmlist $t}
-.set tn ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.foreach e ${fields $t inherited}
+.set tn ${type $t $e}
 .if $(first)
 .set first 0
 .else
@@ -1000,8 +1000,8 @@ $(stat)int cmp_$t( const $t a, const $t b )
 .foreach c ${conslist $t}
 	case TAG$c:
 .set first 1
-.foreach e ${celmlist $t $c}
-.set tn ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.set tn ${type $c $e}
 .if $(first)
 .set first 0
 .else
@@ -1087,7 +1087,7 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 .set stic_$t
 .endforeach
 .foreach t $(need_fscan)
-.if ${member $t ${ttypelist}}
+.if ${member $t ${ttypelist} ${classlist}}
 .. tuple type
 /* Read a tuple of type $t
    from file 'f' and allocate space for it.
@@ -1100,8 +1100,8 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 #endif
 {
     int err;
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} l_$e;
+.foreach e ${fields $t inherited}
+    ${type $t $e} l_$e;
 .endforeach
 
     *p = null_$t();
@@ -1113,8 +1113,8 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	return 1;
     }
 .set first 1
-.foreach e ${telmlist $t}
-.set tn ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.foreach e ${fields $t inherited}
+.set tn ${type $t $e}
 .if $(first)
 .set first 0
 .else
@@ -1122,7 +1122,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .endif
     if( !err ) err = fscan_$(tn)( f, &l_$e );
 .endforeach
-    *p = new_$t( ${seplist ", " ${prefix " l_" ${telmlist $t}}} );
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
     if( err ){
 	return 1;
     }
@@ -1174,15 +1174,15 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .set els
 .foreach c ${conslist $t}
     $(els)if( strcmp( tm_word, "$c" ) == 0 ){
-.foreach e ${celmlist $t $c}
-	${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} l_$e;
+.foreach e ${fields $c inherited}
+	${type $c $e} l_$e;
 .endforeach
 
-.foreach e ${celmlist $t $c}
-.set tn ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.set tn ${type $c $e}
 	if( !err) err = fscan_$(tn)( f, &l_$e );
 .endforeach
-	*p = new_$c( ${seplist ", " ${prefix " l_" ${celmlist $t $c}}} );
+	*p = new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
     }
 .set els "else "
 .endforeach

@@ -16,23 +16,33 @@
    tm kernel version:  $(kernel-version)
  */
 
-/* datastructures */
+/* data structures */
 
+/* forward reference typedefs for all types.
+ * C does not like the use of undefined types, but does not
+ * mind the use of pointers to (yet) undefined types.
+ */
 .foreach t $(need_ds_list)
 typedef struct str_${stemname $t} *$t_list;
 .endforeach
-.foreach t $(need_ds)
+.foreach t ${depsort $(need_ds)}
 typedef struct str_$t *$t;
 .endforeach
 
-.foreach t ${comm ${ctypelist} "" $(need_ds)}
+.foreach t $(need_ds)
+#define $tNIL ($t)0
+.endforeach
+.foreach t $(need_ds_list)
+#define $t_listNIL ($t_list)0
+.endforeach
+
+.foreach t ${comm $(need_ds) "" ${ctypelist}}
 .foreach c ${conslist $t}
 #define $c u.ue_$c
 .endforeach
 .endforeach
 
-.foreach t $(need_ds)
-.if ${member $t ${ctypelist}}
+.foreach t ${comm $(need_ds) "" ${ctypelist}}
 .if ${len ${conslist $t}}
 typedef enum en_tags_$t {
     ${seplist ", " ${prefix TAG ${conslist $t}}}
@@ -41,10 +51,11 @@ typedef enum en_tags_$t {
 typedef int tags_$t;
 .endif
 
-.endif
 .endforeach
 
-.foreach t $(need_ds)
+.foreach t ${depsort $(need_ds)}
+.. Structure definitions for all the constructors of the type
+.. That have elements (C does not like empty structures or unions).
 .if ${member $t ${ctypelist}}
 .. Constructor type
 .. Generate structure definitions for all constructors with
@@ -55,11 +66,12 @@ typedef int tags_$t;
 .set makeunion 0
 .foreach c ${conslist $t}
 .. Constructors with 0 elements do not have a structure..
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
 .set makeunion 1
+/* Structure for constructor $c */
 typedef struct str_$c {
-.foreach e ${celmlist $t $c}
-    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} $e;
+.foreach e ${fields $c inherited}
+    ${type $c $e} $e;
 .endforeach
 } C_$c;
 .else
@@ -74,7 +86,7 @@ struct str_$t {
     union uni_$t {
 .foreach c ${conslist $t}
 .. Constructors with 0 elements do not have a structure..
-.if ${len ${celmlist $t $c}}
+.if ${len ${fields $c inherited}}
 	C_$c ue_$c;
 .endif
 .endforeach
@@ -90,12 +102,13 @@ struct str_$t {
 #endif
 };
 
-.else
+.endif
+.if ${member $t ${ttypelist} ${classlist}}
 struct str_$t {
-.foreach e ${telmlist $t}
-    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} $e;
+.foreach e ${fields $t inherited}
+    ${type $t $e} $e;
 .endforeach
-.if ${not ${len ${telmlist $t}}}
+.if ${not ${len ${fields $t inherited}}}
     int _dummy_field;
 .endif
 .. Generate 'next' pointers for all necessary list levels
@@ -110,21 +123,17 @@ struct str_$t {
 
 .endif
 .endforeach
-
-.foreach t $(need_ds)
-#define $tNIL ($t)0
-.endforeach
 .foreach t $(need_ds_list)
 #define $t_listNIL ($t_list)0
 .endforeach
 
 #ifdef LOGNEW
 .foreach t $(want_new)
-.if ${len ${telmlist $t}}
-#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} __FILE__ __LINE__})
+.if ${member $t ${ttypelist} ${classlist}}
+#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
 .else
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} __FILE__ __LINE__})
+#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} __FILE__ __LINE__})
 .endforeach
 .endif
 .endforeach
@@ -153,10 +162,10 @@ struct str_$t {
 
 .. new_<cons> and new_<type> routines
 .foreach t $(want_new)
-.if ${len ${telmlist $t}}
+.if ${member $t ${ttypelist} ${classlist}}
 .set tl
-.foreach e ${telmlist $t}
-.append tl ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.foreach e ${fields $t inherited}
+.append tl ${type $t $e}
 .endforeach
 .if ${== ${len $(tl)} 0}
 .set tl void
@@ -169,8 +178,8 @@ extern $t new_$t( ${seplist ", " $(tl)} );
 .else
 .foreach c ${conslist $t}
 .set tl
-.foreach e ${celmlist $t $c}
-.append tl ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.foreach e ${fields $c inherited}
+.append tl ${type $c $e}
 .endforeach
 .if ${== ${len $(tl)} 0}
 .set tl void
@@ -221,22 +230,22 @@ extern $t_list concat_$t_list( $t_list, $t_list );
 ..
 .. reverse_<type>_list routines
 .foreach t $(want_reverse_list)
-$t_list reverse_$t_list( $t_list );
+extern $t_list reverse_$t_list( $t_list );
 .endforeach
 ..
-.. insert_<type>_list routines
+.. insert_<type>_list() routines.
 .foreach t $(want_insert_list)
-$t_list insert_$t_list( $t_list, const unsigned int, $t );
+extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
 .endforeach
 ..
-.. delete_<type>_list routines
+.. delete_<type>_list() routines.
 .foreach t $(want_delete_list)
-$t_list delete_$t_list( $t_list, const unsigned int );
+extern $t_list delete_$t_list( $t_list, const unsigned int );
 .endforeach
 ..
-.. extract_<type>_list routines
+.. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-$t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
+extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
 .endforeach
 ..
 .. slice_<type>_list routines
@@ -256,7 +265,7 @@ extern void print_$t( TMPRINTSTATE *, const $t );
 extern void print_$t_list( TMPRINTSTATE *, const $t_list );
 .endforeach
 ..
-.. fprint_<type> routines
+.. fprint_<type>() routines
 .foreach t $(want_fprint)
 extern void fprint_$t( FILE *, const $t );
 .endforeach
@@ -267,10 +276,10 @@ extern void fprint_$t_list( FILE *, const $t_list );
 .. rdup_<type> routines
 #ifdef LOGNEW
 .foreach t $(want_rdup)
-extern $t real_rdup_$t( const $t, const char *, const int );
+extern $t real_rdup_$t( const $t, const char *_f, const int _l );
 .endforeach
 .foreach t $(want_rdup_list)
-extern $t_list real_rdup_$t_list( const $t_list, const char *, const int );
+extern $t_list real_rdup_$t_list( const $t_list, const char *_f, const int _l );
 .endforeach
 #else
 .foreach t $(want_rdup)
@@ -281,7 +290,7 @@ extern $t_list rdup_$t_list( const $t_list );
 .endforeach
 #endif
 ..
-.. fscan_<type> routines
+.. fscan_<type>() routines
 #ifdef LOGNEW
 .foreach t $(want_fscan)
 extern int real_fscan_$t( FILE *, $t *, const char *, const int );
@@ -298,7 +307,7 @@ extern int fscan_$t_list( FILE *, $t_list * );
 .endforeach
 #endif
 ..
-.. cmp_<type> routines
+.. cmp_<type>() routines
 .foreach t $(want_cmp)
 extern int cmp_$t( const $t, const $t );
 .endforeach

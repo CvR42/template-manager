@@ -22,5 +22,6 @@
 
 .insert aldspec.t
 .insert macros.t
-.insert aldneed.t
+.insert aldid.t
+.insert need.t
 .include cald.ct

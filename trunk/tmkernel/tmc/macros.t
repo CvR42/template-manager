@@ -20,11 +20,11 @@ static ${eval "$(tpl)"};
 .. Given an element list 'el', a type inquiry function 'tf' and 
 .. a list level inquiry function 'llf', return a ANSI style function
 .. prototype.
-.macro ansi_nproto el tf llf
+.macro ansi_nproto t el
 . set tl
 . set sep
 . foreach e $(el)
-.  set tl "$(tl)$(sep)${mklist ${$(llf) $e} ${$(tf) $e}} p_$e"
+.  set tl "$(tl)$(sep)${type $t $e} p_$e"
 .  set sep ", "
 . endforeach
 . if ${== ${len $(tl)} 0}
@@ -33,14 +33,14 @@ static ${eval "$(tpl)"};
 . return "$(tl)"
 .endmacro
 ..
-.. Given an element list 'el', a type inquiry function 'tf' and 
-.. a list level inquiry function 'llf', return a ANSI style function
+.. Given a type 't' and an element list 'el', 
+.. a return a ANSI style function
 .. prototype, suitable for lognew purposes.
-.macro ansi_nproto_lognew el tf llf
+.macro ansi_nproto_lognew t el
 . set tl
 . set sep
 . foreach e $(el)
-.  set tl "$(tl)$(sep)${mklist ${$(llf) $e} ${$(tf) $e}} p_$e"
+.  set tl "$(tl)$(sep)${type $t $e} p_$e"
 .  set sep ", "
 . endforeach
 . set tl "$(tl)$(sep)const char *_f, const int _l"
@@ -51,11 +51,4 @@ static ${eval "$(tpl)"};
 .. link name for that list name
 .macro linkname nm
 .return ${subs ${stemname $(nm)}(*) next\1  $(nm)}
-.endmacro
-..
-.. Try to expand inherits. This is only possible in more recent
-.. versions of Tm. If there are no inherits, also accept older
-.. versions, but warn that one should upgrade.
-.macro expand_inherits
-. expandinherits ${typelist}
 .endmacro

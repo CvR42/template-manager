@@ -64,7 +64,7 @@ int main( void )
         exit( 1 );
     }
     if( fscan_toplevel_list( infile, &ds ) ){
-	fprintf( stderr, "Read error at line %d: %s\n", tm_lineno, tm_errmsg );
+	fprintf( stderr, "Read error at line XXXtesti(%d): %s\n", tm_lineno, tm_errmsg );
         exit( 1 );
     }
     dscopy = rdup_toplevel_list( ds );
