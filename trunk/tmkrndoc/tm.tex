@@ -1258,10 +1258,16 @@ Given a list of types {\tt t}, return all types that are virtual.
 &
 Given a list of types {\tt t}, return all types that are not virtual.
 \\
-{\tt reach t..t}\index{reach@{\tt reach}}
+{\tt reach t..t "" b..b}\index{reach@{\tt reach}}
 &
-Given a list of types {\tt t}, return all types that can be reached from
-these types. The \defn{direct reach} of a class, tuple, constructor
+Given a list of types {\tt t}, and a list of blocking types {\tt b},
+return all types that can be reached from
+the types {\tt t} without visiting any of the types {\tt b}.
+The list of starting types and the list of blocking types is separated
+by an empty string ({\tt ""}). If there is no empty string, there are
+no blocking types.
+\par
+The \defn{direct reach} of a class, tuple, constructor
 or constructor-base type are the types of its fields and inheritors;
 the direct reach of a list type is its element type, the direct reach
 of an alias type is the target type of the alias, and the direct reach
