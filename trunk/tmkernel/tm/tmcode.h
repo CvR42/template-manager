@@ -1,16 +1,12 @@
-/* Requirement analysis took 220 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /home/blob/users/reeuwijk/lab/lib/calu.ht ---- */
-/* External definitions (Version for array list).
+/* ---- start of /home/blob/users/reeuwijk/lib/calu.ht ---- */
+/* Definition C datastructures (Version for array list).
 
-   template file:      /home/blob/users/reeuwijk/lab/lib/calu.ht
+   template file:      /home/blob/users/reeuwijk/lib/calu.ht
    datastructure file: tm.ds
-   tm version:         36
-   tm kernel version:  *** development -- not for distribution ***
+   tm version:         35
  */
-
-/* data structures */
 
 /* forward reference typedefs for all types.
  * C does not like the use of undefined types, but does not
@@ -19,32 +15,34 @@
 typedef struct str_alternative_list *alternative_list;
 typedef struct str_classComponent_list *classComponent_list;
 typedef struct str_ds_list *ds_list;
+typedef struct str_extract_tmstring_list *extract_tmstring_list;
 typedef struct str_field_list *field_list;
 typedef struct str_macro_list *macro_list;
 typedef struct str_switchcase_list *switchcase_list;
 typedef struct str_tmstring_list *tmstring_list;
 typedef struct str_tplelm_list *tplelm_list;
 typedef struct str_var_list *var_list;
+typedef struct str_ds *ds;
 typedef struct str_classComponent *classComponent;
 typedef struct str_alternative *alternative;
-typedef struct str_ds *ds;
 typedef struct str_field *field;
 typedef struct str_macro *macro;
+typedef struct str_var *var;
 typedef struct str_switchcase *switchcase;
 typedef struct str_tplelm *tplelm;
-typedef struct str_var *var;
 
-#define alternativeNIL (alternative)0
-#define classComponentNIL (classComponent)0
 #define dsNIL (ds)0
+#define classComponentNIL (classComponent)0
+#define alternativeNIL (alternative)0
 #define fieldNIL (field)0
 #define macroNIL (macro)0
+#define varNIL (var)0
 #define switchcaseNIL (switchcase)0
 #define tplelmNIL (tplelm)0
-#define varNIL (var)0
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
 #define ds_listNIL (ds_list)0
+#define extract_tmstring_listNIL (extract_tmstring_list)0
 #define field_listNIL (field_list)0
 #define macro_listNIL (macro_list)0
 #define switchcase_listNIL (switchcase_list)0
@@ -52,60 +50,48 @@ typedef struct str_var *var;
 #define tplelm_listNIL (tplelm_list)0
 #define var_listNIL (var_list)0
 
-typedef enum en_tags_classComponent {
-    TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
-} tags_classComponent;
+#define DsConstructorBase u.ue_DsConstructorBase
+#define DsTuple u.ue_DsTuple
+#define DsClass u.ue_DsClass
+#define DsConstructor u.ue_DsConstructor
 
 typedef enum en_tags_ds {
     TAGDsConstructorBase, TAGDsTuple, TAGDsClass, TAGDsConstructor
 } tags_ds;
 
+#define CCSuper u.ue_CCSuper
+#define CCFields u.ue_CCFields
+#define CCAlternatives u.ue_CCAlternatives
+#define CCSublist u.ue_CCSublist
+
+typedef enum en_tags_classComponent {
+    TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
+} tags_classComponent;
+
+#define Plain u.ue_Plain
+#define Foreach u.ue_Foreach
+#define While u.ue_While
+#define If u.ue_If
+#define Switch u.ue_Switch
+#define Set u.ue_Set
+#define GlobalSet u.ue_GlobalSet
+#define Append u.ue_Append
+#define GlobalAppend u.ue_GlobalAppend
+#define Error u.ue_Error
+#define Exit u.ue_Exit
+#define Redirect u.ue_Redirect
+#define Include u.ue_Include
+#define Macro u.ue_Macro
+#define Call u.ue_Call
+#define Return u.ue_Return
+#define Insert u.ue_Insert
+#define Case u.ue_Case
+#define Default u.ue_Default
+
 typedef enum en_tags_tplelm {
     TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert, TAGCase, TAGDefault
 } tags_tplelm;
 
-
-/* Structure for constructor CCSuper */
-typedef struct str_CCSuper {
-    tmstring super;
-} C_CCSuper;
-
-/* Structure for constructor CCFields */
-typedef struct str_CCFields {
-    field_list fields;
-} C_CCFields;
-
-/* Structure for constructor CCAlternatives */
-typedef struct str_CCAlternatives {
-    alternative_list alternatives;
-} C_CCAlternatives;
-
-/* Structure for constructor CCSublist */
-typedef struct str_CCSublist {
-    classComponent_list components;
-} C_CCSublist;
-
-/* Constructor type classComponent */
-struct str_classComponent {
-    tags_classComponent tag;
-    union uni_classComponent {
-	C_CCSuper ue_CCSuper;
-	C_CCFields ue_CCFields;
-	C_CCAlternatives ue_CCAlternatives;
-	C_CCSublist ue_CCSublist;
-    } u;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_alternative {
-    tmstring label;
-    classComponent component;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
 
 /* Structure for constructor DsConstructorBase */
 typedef struct str_DsConstructorBase {
@@ -136,7 +122,6 @@ typedef struct str_DsConstructor {
     field_list fields;
 } C_DsConstructor;
 
-/* Constructor type ds */
 struct str_ds {
     tags_ds tag;
     union uni_ds {
@@ -145,6 +130,47 @@ struct str_ds {
 	C_DsClass ue_DsClass;
 	C_DsConstructor ue_DsConstructor;
     } u;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+/* Structure for constructor CCSuper */
+typedef struct str_CCSuper {
+    tmstring super;
+} C_CCSuper;
+
+/* Structure for constructor CCFields */
+typedef struct str_CCFields {
+    field_list fields;
+} C_CCFields;
+
+/* Structure for constructor CCAlternatives */
+typedef struct str_CCAlternatives {
+    alternative_list alternatives;
+} C_CCAlternatives;
+
+/* Structure for constructor CCSublist */
+typedef struct str_CCSublist {
+    classComponent_list components;
+} C_CCSublist;
+
+struct str_classComponent {
+    tags_classComponent tag;
+    union uni_classComponent {
+	C_CCSuper ue_CCSuper;
+	C_CCFields ue_CCFields;
+	C_CCAlternatives ue_CCAlternatives;
+	C_CCSublist ue_CCSublist;
+    } u;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_alternative {
+    tmstring label;
+    classComponent component;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -165,6 +191,15 @@ struct str_macro {
     tmstring orgfile;
     tmstring_list fpl;
     tplelm_list body;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_var {
+    uint lvl;
+    tmstring name;
+    tmstring val;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -299,7 +334,6 @@ typedef struct str_Default {
     int lno;
 } C_Default;
 
-/* Constructor type tplelm */
 struct str_tplelm {
     tags_tplelm tag;
     union uni_tplelm {
@@ -328,15 +362,6 @@ struct str_tplelm {
 #endif
 };
 
-struct str_var {
-    uint lvl;
-    tmstring name;
-    tmstring val;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
 struct str_alternative_list {
     unsigned int sz;
     unsigned int room;
@@ -359,6 +384,15 @@ struct str_ds_list {
     unsigned int sz;
     unsigned int room;
     ds *arr;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_extract_tmstring_list {
+    unsigned int sz;
+    unsigned int room;
+    extract_tmstring *arr;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -418,85 +452,6 @@ struct str_var_list {
 #endif
 };
 
-
-/* Type casting macros. */
-#define to_alternative(e) (e)
-#define to_alternative(e) (e)
-#define to_CCSuper(e) (&(e->u.ue_CCSuper))
-#define to_CCFields(e) (&(e->u.ue_CCFields))
-#define to_CCAlternatives(e) (&(e->u.ue_CCAlternatives))
-#define to_CCSublist(e) (&(e->u.ue_CCSublist))
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define to_DsTuple(e) (&(e->u.ue_DsTuple))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsClass(e) (&(e->u.ue_DsClass))
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
-#define to_field(e) (e)
-#define to_field(e) (e)
-#define to_field(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_macro(e) (e)
-#define to_switchcase(e) (e)
-#define to_switchcase(e) (e)
-#define to_Plain(e) (&(e->u.ue_Plain))
-#define to_Plain(e) (&(e->u.ue_Plain))
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define to_Foreach(e) (&(e->u.ue_Foreach))
-#define to_While(e) (&(e->u.ue_While))
-#define to_While(e) (&(e->u.ue_While))
-#define to_While(e) (&(e->u.ue_While))
-#define to_If(e) (&(e->u.ue_If))
-#define to_If(e) (&(e->u.ue_If))
-#define to_If(e) (&(e->u.ue_If))
-#define to_If(e) (&(e->u.ue_If))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Switch(e) (&(e->u.ue_Switch))
-#define to_Set(e) (&(e->u.ue_Set))
-#define to_Set(e) (&(e->u.ue_Set))
-#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
-#define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
-#define to_Append(e) (&(e->u.ue_Append))
-#define to_Append(e) (&(e->u.ue_Append))
-#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
-#define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
-#define to_Error(e) (&(e->u.ue_Error))
-#define to_Error(e) (&(e->u.ue_Error))
-#define to_Exit(e) (&(e->u.ue_Exit))
-#define to_Exit(e) (&(e->u.ue_Exit))
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define to_Redirect(e) (&(e->u.ue_Redirect))
-#define to_Include(e) (&(e->u.ue_Include))
-#define to_Include(e) (&(e->u.ue_Include))
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define to_Macro(e) (&(e->u.ue_Macro))
-#define to_Call(e) (&(e->u.ue_Call))
-#define to_Call(e) (&(e->u.ue_Call))
-#define to_Return(e) (&(e->u.ue_Return))
-#define to_Return(e) (&(e->u.ue_Return))
-#define to_Insert(e) (&(e->u.ue_Insert))
-#define to_Insert(e) (&(e->u.ue_Insert))
-#define to_Case(e) (&(e->u.ue_Case))
-#define to_Case(e) (&(e->u.ue_Case))
-#define to_Default(e) (&(e->u.ue_Default))
-#define to_var(e) (e)
-#define to_var(e) (e)
-#define to_var(e) (e)
 
 #ifdef LOGNEW
 #define new_alternative(label,component) real_new_alternative(label,component,__FILE__,__LINE__)
@@ -743,7 +698,6 @@ extern ds_list delete_ds_list( ds_list, const unsigned int );
 extern macro_list delete_macro_list( macro_list, const unsigned int );
 extern tmstring_list delete_tmstring_list( tmstring_list, const unsigned int );
 extern var_list delete_var_list( var_list, const unsigned int );
-extern tmstring_list extract_tmstring_list( tmstring_list, const unsigned int, tmstring *, int * );
 extern ds_list concat_ds_list( ds_list, ds_list );
 extern field_list concat_field_list( field_list, field_list );
 extern tmstring_list concat_tmstring_list( tmstring_list, tmstring_list );
@@ -759,8 +713,8 @@ extern void rfre_classComponent( classComponent );
 extern void rfre_ds( ds );
 extern void rfre_macro( macro );
 extern void rfre_tplelm( tplelm );
-extern void print_ds_list( TMPRINTSTATE *, const ds_list );
-extern void print_tmstring_list( TMPRINTSTATE *, const tmstring_list );
+extern void print_ds_list( TMPRINTSTATE *st, const ds_list );
+extern void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list );
 #ifdef LOGNEW
 #else
 #endif
@@ -783,5 +737,4 @@ extern tplelm_list rdup_tplelm_list( const tplelm_list );
 extern void flush_tm( void );
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
-/* ---- end of /home/blob/users/reeuwijk/lab/lib/calu.ht ---- */
-/* Code generation required 300 milliseconds. */
+/* ---- end of /home/blob/users/reeuwijk/lib/calu.ht ---- */
