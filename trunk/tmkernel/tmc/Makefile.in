@@ -44,7 +44,8 @@ DOC = README
 
 JUNK = tmp core makelog testerr testout alutest llutest config.log \
        gmon.out log alutest.c llutest.c dist.lst distlist tmctest.c \
-       alutest.c llutest.c tmctest tmcwalktest aldtest $(OBJS) $(TMOUT)
+       alutest.c llutest.c tmctest tmcwalktest tmcanalyzetest aldtest \
+       $(OBJS) $(TMOUT)
 PRECIOUSJUNK =
 
 TESTFILES = \
@@ -52,7 +53,7 @@ TESTFILES = \
     tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
     aluokerr aluokout alutesti aluspec.t alucode.ct alucode.ht \
     lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht \
-    tmcwalktest.ct tmcwalkin tmcwalkok
+    tmcwalktest.ct tmcanalyzetest.ct tmcwalkin tmcwalkok
 
 FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
@@ -66,7 +67,7 @@ DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 TMMODULES     = tmc.ct tmc.ht \
 		calu.ct calu.ht \
                 cllu.ct cllu.ht \
-                need.t tmcwalk.t \
+                need.t tmcanalyze.t tmcwalk.t \
 		macros.t tmcid.t aluid.t lluid.t
 
 LLUTMSRCS     = llucode.c 
@@ -92,16 +93,19 @@ TMCTESTOBJS   = tmctest.o tmccode.o
 TMCWALKTESTSRCS = tmcwalktest.c tmccode.c
 TMCWALKTESTOBJS = $(TMCWALKTESTSRCS:.c=.o)
 
+TMCANALYZETESTSRCS = tmcanalyzetest.c tmccode.c
+TMCANALYZETESTOBJS = $(TMCANALYZETESTSRCS:.c=.o)
+
 ALUTESTSRCS   = alutest.c alucode.c
 ALUTESTHDRS   = alucode.h
 ALUTESTOBJS   = alutest.o alucode.o
 
-OBJS = $(TMCWALKTESTOBJS) tmccode.o alutest.o alucode.o alutest.o llucode.o \
+OBJS = $(TMCWALKTESTOBJS) $(TMCANALIZETESTOBJS) tmccode.o alutest.o alucode.o alutest.o llucode.o \
  llutest.o tmctest.o
 
 # These sources are generated from tm templates.
 TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h \
- tmcwalktest.c
+ tmcwalktest.c tmcanalyzetest.c
 
 help :
 	@echo " Possible make targets:"
@@ -113,13 +117,13 @@ help :
 	@echo "check		Run tests."
 
 #
-all: tmctest llutest alutest tmcwalktest
+all: tmctest llutest alutest tmcwalktest tmcanalyzetest
 
 # Add rules for the programs themselves here.
 
-test: tmctestrun llutestrun alutestrun tmcwalktestrun
+test: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
 
-check: tmctestrun llutestrun alutestrun tmcwalktestrun
+check: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
 
 tmcwalktest: $(TMCWALKTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCWALKTESTOBJS) $(LIBS) -o tmcwalktest
@@ -127,6 +131,13 @@ tmcwalktest: $(TMCWALKTESTOBJS)
 tmcwalktestrun: tmcwalktest tmcwalkin tmcwalkok
 	./tmcwalktest
 	diff testout tmcwalkok
+
+tmcanalyzetest: $(TMCANALYZETESTOBJS)
+	$(LINKER) $(LDFLAGS) $(TMCANALYZETESTOBJS) $(LIBS) -o tmcanalyzetest
+
+tmcanalyzetestrun: tmcanalyzetest tmcanalyzein tmcanalyzeok
+	./tmcanalyzetest
+	diff testout tmcanalyzeok
 
 tmctest: $(TMCTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCTESTOBJS) $(LIBS) -o tmctest
@@ -136,7 +147,7 @@ tmctestrun: tmctest tmctesti tmcokout tmcokerr
 	diff testout tmcokout
 	diff testerr tmcokerr
 
-tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t
+tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t tmcanalyze.t
 	-$(INSTALL) -d $(LOCALLIB)
 	cat macros.t tmcid.t need.t tmc.ct > $(TMPFILE)
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/tmc.ct
@@ -144,6 +155,7 @@ tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/tmc.ht
 	rm -f $(TMPFILE)
 	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.t
+	$(INSTALL_DATA) tmcanalyze.t $(LOCALLIB)/tmcanalyze.t
 
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
@@ -200,6 +212,9 @@ depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTM
 tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t
 	$(TM) cltest.ds tmcwalktest.ct > tmcwalktest.c
 
+tmcanalyzetest.c: tmcanalyzetest.ct cltest.ds tmcanalyze.t
+	$(TM) cltest.ds tmcanalyzetest.ct > tmcanalyzetest.c
+
 tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
 	$(TM) cltest.ds tmccode.ct > tmccode.c
 
@@ -227,12 +242,15 @@ alutest.c: xxtest.c
 llutest.c: xxtest.c
 	sed -e 's/XXX/llu/' xxtest.c > llutest.c
 
-lint: tmcwalktest.lint tmctest.lint alutest.lint llutest.lint
+lint: tmcwalktest.lint tmcanalyzetest.lint tmctest.lint alutest.lint llutest.lint
 
 LINTRUN = lint -zero co-gnu fnprop suppress $(LINTFLAGS)
 
 tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h
 	$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
+
+tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h
+	$(LINTRUN) tmcanalyzetest.c tmccode.c > tmcanalyzetest.lint
 
 tmctest.lint: tmctest.c tmccode.c tmccode.h
 	$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
@@ -269,3 +287,4 @@ alutest.o: alucode.h config.h
 llucode.o: llucode.h config.h
 llutest.o: llucode.h config.h
 tmcwalktest.o: tmccode.h config.h
+tmcanalyzetest.o: tmccode.h config.h
