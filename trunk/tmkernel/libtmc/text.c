@@ -19,7 +19,7 @@ tmtext new_tmtext_nolognew( void )
 
     newcnt_tmtext++;
     t = TM_MALLOC( tmtext, sizeof( *t ) );
-    t->arr = TM_MALLOC( tmtextptr, sizeof( uchar )*STARTROOM );
+    t->arr = TM_MALLOC( tmtextptr, sizeof( unsigned char )*STARTROOM );
     t->room = STARTROOM;
     t->curpos = 0;
     t->sz = 0;
