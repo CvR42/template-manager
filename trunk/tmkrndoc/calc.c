@@ -1,7 +1,7 @@
 #include <tmc.h>
 #include "calc.h"
 
-/* Requirement analysis took 120 milliseconds. */
+/* Requirement analysis took 110 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/tmc.ct ---- */
@@ -53,13 +53,13 @@ static char tm_badeof[] = "unexpected end of file";
 static command_list setroom_command_list( command_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
-	return l;
+        return l;
     }
     if( l->room==0 ){
-	l->arr = TM_MALLOC( command *, rm * sizeof(*(l->arr)) );
+        l->arr = TM_MALLOC( command *, rm * sizeof(*(l->arr)) );
     }
     else {
-	l->arr = TM_REALLOC( command *, l->arr, rm * sizeof(*(l->arr)) );
+        l->arr = TM_REALLOC( command *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -242,19 +242,19 @@ static void fre_ExprTimes( ExprTimes );
 static void fre_command( command e )
 {
     if( e == commandNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGcommand:
-	    frecnt_command++;
+        case TAGcommand:
+            frecnt_command++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+            tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
+            TM_FREE( e );
+            break;
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
 }
 
@@ -262,19 +262,19 @@ static void fre_command( command e )
 static void fre_ExprConst( ExprConst e )
 {
     if( e == ExprConstNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprConst:
-	    frecnt_ExprConst++;
+        case TAGExprConst:
+            frecnt_ExprConst++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+            tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
+            TM_FREE( e );
+            break;
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
 }
 
@@ -282,19 +282,19 @@ static void fre_ExprConst( ExprConst e )
 static void fre_ExprNegate( ExprNegate e )
 {
     if( e == ExprNegateNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprNegate:
-	    frecnt_ExprNegate++;
+        case TAGExprNegate:
+            frecnt_ExprNegate++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+            tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
+            TM_FREE( e );
+            break;
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
 }
 
@@ -302,19 +302,19 @@ static void fre_ExprNegate( ExprNegate e )
 static void fre_ExprPlus( ExprPlus e )
 {
     if( e == ExprPlusNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprPlus:
-	    frecnt_ExprPlus++;
+        case TAGExprPlus:
+            frecnt_ExprPlus++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+            tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
+            TM_FREE( e );
+            break;
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
 }
 
@@ -322,19 +322,19 @@ static void fre_ExprPlus( ExprPlus e )
 static void fre_ExprSymbol( ExprSymbol e )
 {
     if( e == ExprSymbolNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprSymbol:
-	    frecnt_ExprSymbol++;
+        case TAGExprSymbol:
+            frecnt_ExprSymbol++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+            tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
+            TM_FREE( e );
+            break;
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
 }
 
@@ -342,19 +342,19 @@ static void fre_ExprSymbol( ExprSymbol e )
 static void fre_ExprTimes( ExprTimes e )
 {
     if( e == ExprTimesNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprTimes:
-	    frecnt_ExprTimes++;
+        case TAGExprTimes:
+            frecnt_ExprTimes++;
 #ifdef LOGNEW
-	    tm_fre_logid( e->lognew_id );
+            tm_fre_logid( e->lognew_id );
 #endif
-	    TM_FREE( e );
-	    break;
+            TM_FREE( e );
+            break;
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
 }
 
@@ -362,14 +362,14 @@ static void fre_ExprTimes( ExprTimes e )
 static void fre_command_list( command_list l )
 {
     if( l == command_listNIL ){
-	return;
+        return;
     }
 #ifdef LOGNEW
     tm_fre_logid( l->lognew_id );
 #endif
     frecnt_command_list++;
     if( l->room!=0 ){
-	TM_FREE( l->arr );
+        TM_FREE( l->arr );
     }
     TM_FREE( l );
 }
@@ -382,7 +382,7 @@ static void fre_command_list( command_list l )
 command_list append_command_list( command_list l, command e )
 {
     if( l->sz >= l->room ){
-	l = setroom_command_list( l, 1+(l->sz)+(l->sz) );
+        l = setroom_command_list( l, 1+(l->sz)+(l->sz) );
     }
     l->arr[l->sz] = e;
     l->sz++;
@@ -405,31 +405,31 @@ static void rfre_ExprTimes( ExprTimes );
 void rfre_expr( expr e )
 {
     if( e == exprNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprPlus:
-	    rfre_ExprPlus( (ExprPlus) e );
-	    break;
+        case TAGExprPlus:
+            rfre_ExprPlus( (ExprPlus) e );
+            break;
 
-	case TAGExprTimes:
-	    rfre_ExprTimes( (ExprTimes) e );
-	    break;
+        case TAGExprTimes:
+            rfre_ExprTimes( (ExprTimes) e );
+            break;
 
-	case TAGExprNegate:
-	    rfre_ExprNegate( (ExprNegate) e );
-	    break;
+        case TAGExprNegate:
+            rfre_ExprNegate( (ExprNegate) e );
+            break;
 
-	case TAGExprConst:
-	    rfre_ExprConst( (ExprConst) e );
-	    break;
+        case TAGExprConst:
+            rfre_ExprConst( (ExprConst) e );
+            break;
 
-	case TAGExprSymbol:
-	    rfre_ExprSymbol( (ExprSymbol) e );
-	    break;
+        case TAGExprSymbol:
+            rfre_ExprSymbol( (ExprSymbol) e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -439,17 +439,17 @@ void rfre_expr( expr e )
 static void rfre_command( command e )
 {
     if( e == commandNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGcommand:
-	    rfre_tmstring( e->lhs );
-	    rfre_expr( e->rhs );
-	    fre_command( e );
-	    break;
+        case TAGcommand:
+            rfre_tmstring( e->lhs );
+            rfre_expr( e->rhs );
+            fre_command( e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -459,16 +459,16 @@ static void rfre_command( command e )
 static void rfre_ExprConst( ExprConst e )
 {
     if( e == ExprConstNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprConst:
-	    rfre_int( e->n );
-	    fre_ExprConst( e );
-	    break;
+        case TAGExprConst:
+            rfre_int( e->n );
+            fre_ExprConst( e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -478,16 +478,16 @@ static void rfre_ExprConst( ExprConst e )
 static void rfre_ExprNegate( ExprNegate e )
 {
     if( e == ExprNegateNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprNegate:
-	    rfre_expr( e->x );
-	    fre_ExprNegate( e );
-	    break;
+        case TAGExprNegate:
+            rfre_expr( e->x );
+            fre_ExprNegate( e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -497,17 +497,17 @@ static void rfre_ExprNegate( ExprNegate e )
 static void rfre_ExprPlus( ExprPlus e )
 {
     if( e == ExprPlusNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprPlus:
-	    rfre_expr( e->a );
-	    rfre_expr( e->b );
-	    fre_ExprPlus( e );
-	    break;
+        case TAGExprPlus:
+            rfre_expr( e->a );
+            rfre_expr( e->b );
+            fre_ExprPlus( e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -517,16 +517,16 @@ static void rfre_ExprPlus( ExprPlus e )
 static void rfre_ExprSymbol( ExprSymbol e )
 {
     if( e == ExprSymbolNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprSymbol:
-	    rfre_tmstring( e->s );
-	    fre_ExprSymbol( e );
-	    break;
+        case TAGExprSymbol:
+            rfre_tmstring( e->s );
+            fre_ExprSymbol( e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -536,17 +536,17 @@ static void rfre_ExprSymbol( ExprSymbol e )
 static void rfre_ExprTimes( ExprTimes e )
 {
     if( e == ExprTimesNIL ){
-	return;
+        return;
     }
     switch( e->tag ){
-	case TAGExprTimes:
-	    rfre_expr( e->a );
-	    rfre_expr( e->b );
-	    fre_ExprTimes( e );
-	    break;
+        case TAGExprTimes:
+            rfre_expr( e->a );
+            rfre_expr( e->b );
+            fre_ExprTimes( e );
+            break;
 
-	default:
-	    FATALTAG( (int) e->tag );
+        default:
+            FATALTAG( (int) e->tag );
     }
 }
 
@@ -556,10 +556,10 @@ void rfre_command_list( command_list e )
     unsigned int ix;
 
     if( e == command_listNIL ){
-	return;
+        return;
     }
     for( ix=0; ix<e->sz; ix++ ){
-	rfre_command( e->arr[ix] );
+        rfre_command( e->arr[ix] );
     }
     fre_command_list( e );
 }
@@ -581,20 +581,20 @@ static void print_ExprTimes( TMPRINTSTATE *st, const ExprTimes );
 static void print_command( TMPRINTSTATE *st, const command t )
 {
     if( t == commandNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGcommand:
-	    tm_opencons( st );
-	    tm_printword( st, "command" );
-	    print_tmstring( st, t->lhs );
-	    print_expr( st, t->rhs );
-	    tm_closecons( st );
-	    break;
+        case TAGcommand:
+            tm_opencons( st );
+            tm_printword( st, "command" );
+            print_tmstring( st, t->lhs );
+            print_expr( st, t->rhs );
+            tm_closecons( st );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -604,32 +604,32 @@ static void print_command( TMPRINTSTATE *st, const command t )
 static void print_expr( TMPRINTSTATE *st, const expr t )
 {
     if( t == exprNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGExprPlus:
-	    print_ExprPlus( st, (ExprPlus) t );
-	    break;
+        case TAGExprPlus:
+            print_ExprPlus( st, (ExprPlus) t );
+            break;
 
-	case TAGExprTimes:
-	    print_ExprTimes( st, (ExprTimes) t );
-	    break;
+        case TAGExprTimes:
+            print_ExprTimes( st, (ExprTimes) t );
+            break;
 
-	case TAGExprNegate:
-	    print_ExprNegate( st, (ExprNegate) t );
-	    break;
+        case TAGExprNegate:
+            print_ExprNegate( st, (ExprNegate) t );
+            break;
 
-	case TAGExprConst:
-	    print_ExprConst( st, (ExprConst) t );
-	    break;
+        case TAGExprConst:
+            print_ExprConst( st, (ExprConst) t );
+            break;
 
-	case TAGExprSymbol:
-	    print_ExprSymbol( st, (ExprSymbol) t );
-	    break;
+        case TAGExprSymbol:
+            print_ExprSymbol( st, (ExprSymbol) t );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -639,19 +639,19 @@ static void print_expr( TMPRINTSTATE *st, const expr t )
 static void print_ExprConst( TMPRINTSTATE *st, const ExprConst t )
 {
     if( t == ExprConstNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGExprConst:
-	    tm_opencons( st );
-	    tm_printword( st, "ExprConst" );
-	    print_int( st, t->n );
-	    tm_closecons( st );
-	    break;
+        case TAGExprConst:
+            tm_opencons( st );
+            tm_printword( st, "ExprConst" );
+            print_int( st, t->n );
+            tm_closecons( st );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -661,19 +661,19 @@ static void print_ExprConst( TMPRINTSTATE *st, const ExprConst t )
 static void print_ExprNegate( TMPRINTSTATE *st, const ExprNegate t )
 {
     if( t == ExprNegateNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGExprNegate:
-	    tm_opencons( st );
-	    tm_printword( st, "ExprNegate" );
-	    print_expr( st, t->x );
-	    tm_closecons( st );
-	    break;
+        case TAGExprNegate:
+            tm_opencons( st );
+            tm_printword( st, "ExprNegate" );
+            print_expr( st, t->x );
+            tm_closecons( st );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -683,20 +683,20 @@ static void print_ExprNegate( TMPRINTSTATE *st, const ExprNegate t )
 static void print_ExprPlus( TMPRINTSTATE *st, const ExprPlus t )
 {
     if( t == ExprPlusNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGExprPlus:
-	    tm_opencons( st );
-	    tm_printword( st, "ExprPlus" );
-	    print_expr( st, t->a );
-	    print_expr( st, t->b );
-	    tm_closecons( st );
-	    break;
+        case TAGExprPlus:
+            tm_opencons( st );
+            tm_printword( st, "ExprPlus" );
+            print_expr( st, t->a );
+            print_expr( st, t->b );
+            tm_closecons( st );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -706,19 +706,19 @@ static void print_ExprPlus( TMPRINTSTATE *st, const ExprPlus t )
 static void print_ExprSymbol( TMPRINTSTATE *st, const ExprSymbol t )
 {
     if( t == ExprSymbolNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGExprSymbol:
-	    tm_opencons( st );
-	    tm_printword( st, "ExprSymbol" );
-	    print_tmstring( st, t->s );
-	    tm_closecons( st );
-	    break;
+        case TAGExprSymbol:
+            tm_opencons( st );
+            tm_printword( st, "ExprSymbol" );
+            print_tmstring( st, t->s );
+            tm_closecons( st );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -728,20 +728,20 @@ static void print_ExprSymbol( TMPRINTSTATE *st, const ExprSymbol t )
 static void print_ExprTimes( TMPRINTSTATE *st, const ExprTimes t )
 {
     if( t == ExprTimesNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     switch( t->tag ){
-	case TAGExprTimes:
-	    tm_opencons( st );
-	    tm_printword( st, "ExprTimes" );
-	    print_expr( st, t->a );
-	    print_expr( st, t->b );
-	    tm_closecons( st );
-	    break;
+        case TAGExprTimes:
+            tm_opencons( st );
+            tm_printword( st, "ExprTimes" );
+            print_expr( st, t->a );
+            print_expr( st, t->b );
+            tm_closecons( st );
+            break;
 
-	default:
-	    FATALTAG( t->tag );
+        default:
+            FATALTAG( t->tag );
     }
 }
 
@@ -753,12 +753,12 @@ void print_command_list( TMPRINTSTATE *st, const command_list l )
     unsigned int ix;
 
     if( l == command_listNIL ){
-	tm_printword( st, "@" );
-	return;
+        tm_printword( st, "@" );
+        return;
     }
     tm_openlist( st );
     for( ix=0; ix<l->sz; ix++ ){
-	print_command( st, l->arr[ix] );
+        print_command( st, l->arr[ix] );
     }
     tm_closelist( st );
 }
@@ -800,7 +800,7 @@ command rdup_command( const command e )
     expr i_rhs;
 
     if( e == commandNIL ){
-	return commandNIL;
+        return commandNIL;
     }
     i_lhs = rdup_tmstring( e->lhs );
     i_rhs = rdup_expr( e->rhs );
@@ -815,26 +815,26 @@ expr rdup_expr( const expr e )
 #endif
 {
     if( e == exprNIL ){
-	return exprNIL;
+        return exprNIL;
     }
     switch( e->tag ){
-	case TAGExprPlus:
-	    return (expr) rdup_ExprPlus( (ExprPlus) e );
+        case TAGExprPlus:
+            return (expr) rdup_ExprPlus( (ExprPlus) e );
 
-	case TAGExprTimes:
-	    return (expr) rdup_ExprTimes( (ExprTimes) e );
+        case TAGExprTimes:
+            return (expr) rdup_ExprTimes( (ExprTimes) e );
 
-	case TAGExprNegate:
-	    return (expr) rdup_ExprNegate( (ExprNegate) e );
+        case TAGExprNegate:
+            return (expr) rdup_ExprNegate( (ExprNegate) e );
 
-	case TAGExprConst:
-	    return (expr) rdup_ExprConst( (ExprConst) e );
+        case TAGExprConst:
+            return (expr) rdup_ExprConst( (ExprConst) e );
 
-	case TAGExprSymbol:
-	    return (expr) rdup_ExprSymbol( (ExprSymbol) e );
+        case TAGExprSymbol:
+            return (expr) rdup_ExprSymbol( (ExprSymbol) e );
 
-	default:
-	    FATALTAG( e->tag );
+        default:
+            FATALTAG( e->tag );
     }
     return exprNIL;
 }
@@ -849,7 +849,7 @@ static ExprConst rdup_ExprConst( const ExprConst e )
     int i_n;
 
     if( e == ExprConstNIL ){
-	return ExprConstNIL;
+        return ExprConstNIL;
     }
     i_n = rdup_int( e->n );
     return new_ExprConst( i_n );
@@ -865,7 +865,7 @@ static ExprNegate rdup_ExprNegate( const ExprNegate e )
     expr i_x;
 
     if( e == ExprNegateNIL ){
-	return ExprNegateNIL;
+        return ExprNegateNIL;
     }
     i_x = rdup_expr( e->x );
     return new_ExprNegate( i_x );
@@ -882,7 +882,7 @@ static ExprPlus rdup_ExprPlus( const ExprPlus e )
     expr i_b;
 
     if( e == ExprPlusNIL ){
-	return ExprPlusNIL;
+        return ExprPlusNIL;
     }
     i_a = rdup_expr( e->a );
     i_b = rdup_expr( e->b );
@@ -899,7 +899,7 @@ static ExprSymbol rdup_ExprSymbol( const ExprSymbol e )
     tmstring i_s;
 
     if( e == ExprSymbolNIL ){
-	return ExprSymbolNIL;
+        return ExprSymbolNIL;
     }
     i_s = rdup_tmstring( e->s );
     return new_ExprSymbol( i_s );
@@ -916,7 +916,7 @@ static ExprTimes rdup_ExprTimes( const ExprTimes e )
     expr i_b;
 
     if( e == ExprTimesNIL ){
-	return ExprTimesNIL;
+        return ExprTimesNIL;
     }
     i_a = rdup_expr( e->a );
     i_b = rdup_expr( e->b );
@@ -951,43 +951,43 @@ static int fscan_command( FILE *f, command *p )
 {
     int n;
     int c;
-    char tm_word[11];	/* Largest constructor should fit in it.. */
+    char tm_word[11];   /* Largest constructor should fit in it.. */
     int err;
 
     *p = commandNIL;
     n = tm_fscanopenbrac( f );
     err = tm_fscanspace( f );
     if( err ){
-	return 1;
+        return 1;
     }
     c = getc( f );
     if( c == '@' ){
-	return tm_fscanclosebrac( f, n );
+        return tm_fscanclosebrac( f, n );
     }
     ungetc( c, f );
     if( tm_fscancons( f, tm_word, 11 ) ){
-	return 1;
+        return 1;
     }
     if( strcmp( tm_word, "command" ) == 0 ){
-	tmstring l_lhs;
-	expr l_rhs;
+        tmstring l_lhs;
+        expr l_rhs;
 
-	l_lhs = tmstringNIL;
-	if( !err ){
-	    err = fscan_tmstring( f, &l_lhs );
-	}
-	l_rhs = exprNIL;
-	if( !err ){
-	    err = fscan_expr( f, &l_rhs );
-	}
-	*p = new_command( l_lhs, l_rhs );
+        l_lhs = tmstringNIL;
+        if( !err ){
+            err = fscan_tmstring( f, &l_lhs );
+        }
+        l_rhs = exprNIL;
+        if( !err ){
+            err = fscan_expr( f, &l_rhs );
+        }
+        *p = new_command( l_lhs, l_rhs );
     }
     else {
-	(void) sprintf( tm_errmsg, tm_badcons, "command", tm_word );
-	return 1;
+        (void) sprintf( tm_errmsg, tm_badcons, "command", tm_word );
+        return 1;
     }
     if( err ){
-	return 1;
+        return 1;
     }
     return tm_fscanclosebrac( f, n );
 }
@@ -1004,84 +1004,84 @@ static int fscan_expr( FILE *f, expr *p )
 {
     int n;
     int c;
-    char tm_word[14];	/* Largest constructor should fit in it.. */
+    char tm_word[14];   /* Largest constructor should fit in it.. */
     int err;
 
     *p = exprNIL;
     n = tm_fscanopenbrac( f );
     err = tm_fscanspace( f );
     if( err ){
-	return 1;
+        return 1;
     }
     c = getc( f );
     if( c == '@' ){
-	return tm_fscanclosebrac( f, n );
+        return tm_fscanclosebrac( f, n );
     }
     ungetc( c, f );
     if( tm_fscancons( f, tm_word, 14 ) ){
-	return 1;
+        return 1;
     }
     if( strcmp( tm_word, "ExprPlus" ) == 0 ){
-	expr l_a;
-	expr l_b;
+        expr l_a;
+        expr l_b;
 
-	l_a = exprNIL;
-	if( !err ){
-	    err = fscan_expr( f, &l_a );
-	}
-	l_b = exprNIL;
-	if( !err ){
-	    err = fscan_expr( f, &l_b );
-	}
-	*p =  (expr) new_ExprPlus( l_a, l_b );
+        l_a = exprNIL;
+        if( !err ){
+            err = fscan_expr( f, &l_a );
+        }
+        l_b = exprNIL;
+        if( !err ){
+            err = fscan_expr( f, &l_b );
+        }
+        *p =  (expr) new_ExprPlus( l_a, l_b );
     }
     else if( strcmp( tm_word, "ExprTimes" ) == 0 ){
-	expr l_a;
-	expr l_b;
+        expr l_a;
+        expr l_b;
 
-	l_a = exprNIL;
-	if( !err ){
-	    err = fscan_expr( f, &l_a );
-	}
-	l_b = exprNIL;
-	if( !err ){
-	    err = fscan_expr( f, &l_b );
-	}
-	*p =  (expr) new_ExprTimes( l_a, l_b );
+        l_a = exprNIL;
+        if( !err ){
+            err = fscan_expr( f, &l_a );
+        }
+        l_b = exprNIL;
+        if( !err ){
+            err = fscan_expr( f, &l_b );
+        }
+        *p =  (expr) new_ExprTimes( l_a, l_b );
     }
     else if( strcmp( tm_word, "ExprNegate" ) == 0 ){
-	expr l_x;
+        expr l_x;
 
-	l_x = exprNIL;
-	if( !err ){
-	    err = fscan_expr( f, &l_x );
-	}
-	*p =  (expr) new_ExprNegate( l_x );
+        l_x = exprNIL;
+        if( !err ){
+            err = fscan_expr( f, &l_x );
+        }
+        *p =  (expr) new_ExprNegate( l_x );
     }
     else if( strcmp( tm_word, "ExprConst" ) == 0 ){
-	int l_n;
+        int l_n;
 
-	l_n = intNIL;
-	if( !err ){
-	    err = fscan_int( f, &l_n );
-	}
-	*p =  (expr) new_ExprConst( l_n );
+        l_n = intNIL;
+        if( !err ){
+            err = fscan_int( f, &l_n );
+        }
+        *p =  (expr) new_ExprConst( l_n );
     }
     else if( strcmp( tm_word, "ExprSymbol" ) == 0 ){
-	tmstring l_s;
+        tmstring l_s;
 
-	l_s = tmstringNIL;
-	if( !err ){
-	    err = fscan_tmstring( f, &l_s );
-	}
-	*p =  (expr) new_ExprSymbol( l_s );
+        l_s = tmstringNIL;
+        if( !err ){
+            err = fscan_tmstring( f, &l_s );
+        }
+        *p =  (expr) new_ExprSymbol( l_s );
     }
     else {
-	(void) sprintf( tm_errmsg, tm_badcons, "expr", tm_word );
-	return 1;
+        (void) sprintf( tm_errmsg, tm_badcons, "expr", tm_word );
+        return 1;
     }
     if( err ){
-	return 1;
+        return 1;
     }
     return tm_fscanclosebrac( f, n );
 }
@@ -1104,49 +1104,49 @@ int fscan_command_list( FILE *f, command_list *p )
     *p = command_listNIL;
     n = tm_fscanopenbrac( f );
     if( tm_fscanspace( f ) ){
-	return 1;
+        return 1;
     }
     c = getc( f );
     if( c == '@' ){
-	return tm_fscanclosebrac( f, n );
+        return tm_fscanclosebrac( f, n );
     }
     ungetc( c, f );
     if( tm_fneedc( f, '[' ) ){
-	return 1;
+        return 1;
     }
     *p = new_command_list();
     if( tm_fscanspace( f ) ){
-	return 1;
+        return 1;
     }
     c = getc( f );
     if( c == ']' ){
-	return 0;
+        return 0;
     }
     if( c == EOF ){
-	(void) strcpy( tm_errmsg, tm_badeof );
-	return 1;
+        (void) strcpy( tm_errmsg, tm_badeof );
+        return 1;
     }
     ungetc( c, f );
     for(;;){
-	if( !err ){
-	    err = fscan_command( f, &nw );
-	}
-	*p = append_command_list( *p, nw );
-	if( err || tm_fscanspace( f ) ){
-	    return 1;
-	}
-	c = getc( f );
-	if( c == EOF ){
-	    (void) strcpy( tm_errmsg, tm_badeof );
-	    return 1;
-	}
-	if( c != ',' ){
-	    ungetc( c, f );
-	    break;
-	}
+        if( !err ){
+            err = fscan_command( f, &nw );
+        }
+        *p = append_command_list( *p, nw );
+        if( err || tm_fscanspace( f ) ){
+            return 1;
+        }
+        c = getc( f );
+        if( c == EOF ){
+            (void) strcpy( tm_errmsg, tm_badeof );
+            return 1;
+        }
+        if( c != ',' ){
+            ungetc( c, f );
+            break;
+        }
     }
     if( tm_fneedc( f, ']' ) ){
-	return 1;
+        return 1;
     }
     return tm_fscanclosebrac( f, n );
 }
@@ -1161,15 +1161,15 @@ command_list delete_command_list( command_list l, const unsigned int pos )
     unsigned int ix;
 
     if( l == command_listNIL ){
-	FATAL( tm_nilptr );
+        FATAL( tm_nilptr );
     }
     if( pos >= l->sz ){
-	return l;
+        return l;
     }
     rfre_command( l->arr[pos] );
     l->sz--;
     for( ix=pos; ix<l->sz; ix++ ){
-	l->arr[ix] = l->arr[ix+1];
+        l->arr[ix] = l->arr[ix+1];
     }
     return l;
 }
@@ -1183,59 +1183,59 @@ void stat_calc( FILE *f )
     const char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
 
     fprintf(
-	f,
-	tm_allocfreed,
-	"ExprConst",
-	newcnt_ExprConst,
-	frecnt_ExprConst,
-	((newcnt_ExprConst==frecnt_ExprConst)? "": "<-")
+        f,
+        tm_allocfreed,
+        "ExprConst",
+        newcnt_ExprConst,
+        frecnt_ExprConst,
+        ((newcnt_ExprConst==frecnt_ExprConst)? "": "<-")
     );
     fprintf(
-	f,
-	tm_allocfreed,
-	"ExprNegate",
-	newcnt_ExprNegate,
-	frecnt_ExprNegate,
-	((newcnt_ExprNegate==frecnt_ExprNegate)? "": "<-")
+        f,
+        tm_allocfreed,
+        "ExprNegate",
+        newcnt_ExprNegate,
+        frecnt_ExprNegate,
+        ((newcnt_ExprNegate==frecnt_ExprNegate)? "": "<-")
     );
     fprintf(
-	f,
-	tm_allocfreed,
-	"ExprPlus",
-	newcnt_ExprPlus,
-	frecnt_ExprPlus,
-	((newcnt_ExprPlus==frecnt_ExprPlus)? "": "<-")
+        f,
+        tm_allocfreed,
+        "ExprPlus",
+        newcnt_ExprPlus,
+        frecnt_ExprPlus,
+        ((newcnt_ExprPlus==frecnt_ExprPlus)? "": "<-")
     );
     fprintf(
-	f,
-	tm_allocfreed,
-	"ExprSymbol",
-	newcnt_ExprSymbol,
-	frecnt_ExprSymbol,
-	((newcnt_ExprSymbol==frecnt_ExprSymbol)? "": "<-")
+        f,
+        tm_allocfreed,
+        "ExprSymbol",
+        newcnt_ExprSymbol,
+        frecnt_ExprSymbol,
+        ((newcnt_ExprSymbol==frecnt_ExprSymbol)? "": "<-")
     );
     fprintf(
-	f,
-	tm_allocfreed,
-	"ExprTimes",
-	newcnt_ExprTimes,
-	frecnt_ExprTimes,
-	((newcnt_ExprTimes==frecnt_ExprTimes)? "": "<-")
+        f,
+        tm_allocfreed,
+        "ExprTimes",
+        newcnt_ExprTimes,
+        frecnt_ExprTimes,
+        ((newcnt_ExprTimes==frecnt_ExprTimes)? "": "<-")
     );
     fprintf(
-	f,
-	tm_allocfreed,
-	"command",
-	newcnt_command,
-	frecnt_command,
-	((newcnt_command==frecnt_command)? "": "<-")
+        f,
+        tm_allocfreed,
+        "command",
+        newcnt_command,
+        frecnt_command,
+        ((newcnt_command==frecnt_command)? "": "<-")
     );
     fprintf(
-	f,
-	tm_allocfreed, "command_list",
-	newcnt_command_list,
-	frecnt_command_list,
-	((newcnt_command_list==frecnt_command_list)? "": "<-")
+        f,
+        tm_allocfreed, "command_list",
+        newcnt_command_list,
+        frecnt_command_list,
+        ((newcnt_command_list==frecnt_command_list)? "": "<-")
     );
 }
 
@@ -1247,47 +1247,47 @@ int get_balance_calc( void )
 {
     /* Check for too many fre()s. */
     if( newcnt_command_list<frecnt_command_list ){
-	return -1;
+        return -1;
     }
     if( newcnt_ExprConst<frecnt_ExprConst ){
-	return -1;
+        return -1;
     }
     if( newcnt_ExprNegate<frecnt_ExprNegate ){
-	return -1;
+        return -1;
     }
     if( newcnt_ExprPlus<frecnt_ExprPlus ){
-	return -1;
+        return -1;
     }
     if( newcnt_ExprSymbol<frecnt_ExprSymbol ){
-	return -1;
+        return -1;
     }
     if( newcnt_ExprTimes<frecnt_ExprTimes ){
-	return -1;
+        return -1;
     }
     if( newcnt_command<frecnt_command ){
-	return -1;
+        return -1;
     }
     /* Check for too few free()s. */
     if( newcnt_command_list>frecnt_command_list ){
-	return 1;
+        return 1;
     }
     if( newcnt_ExprConst>frecnt_ExprConst ){
-	return 1;
+        return 1;
     }
     if( newcnt_ExprNegate>frecnt_ExprNegate ){
-	return 1;
+        return 1;
     }
     if( newcnt_ExprPlus>frecnt_ExprPlus ){
-	return 1;
+        return 1;
     }
     if( newcnt_ExprSymbol>frecnt_ExprSymbol ){
-	return 1;
+        return 1;
     }
     if( newcnt_ExprTimes>frecnt_ExprTimes ){
-	return 1;
+        return 1;
     }
     if( newcnt_command>frecnt_command ){
-	return 1;
+        return 1;
     }
     return 0;
 }
