@@ -21,7 +21,15 @@ YACC = @YACC@
 
 # -I flags for  .h files
 IPATH = -I$(LOCALINCLUDE)
-PROG = calcparse
+PROGS = calcparse calcopt
+
+# Files that are listed in the demonstration appendix of the reference
+# manual.
+REFMANFILES = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l \
+    calcopt.c calcparse.y okopt.clc oktest.clc test.calc
+
+# Where should REFMANFILES be copied to.
+REFMANDIR = ../tmkrndoc
 
 CFLAGS        = @CFLAGS@ $(IPATH) -DCACHESZ=0 -DVERSION=$(VERSION) -DSTAT
 LDFLAGS	      = $(CFLAGS)
@@ -79,7 +87,7 @@ DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) calcopt.c \
     $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES) $(PARSESRC)
 
 
-help :
+help:
 	@echo " Possible make targets:"
 	@echo "all		Create local running programs."
 	@echo "test		Run tests."
@@ -87,8 +95,11 @@ help :
 	@echo "clean		Free disk space."
 	@echo "distfiles	List distribution files."
 	@echo "depend		Update dependencies in $(MAKEFILE)."
-	@echo "doc		Format documentation."
-	@echo "man		Format manual pages."
+	@echo "refman		Copy files to the reference manual directory."
+
+refman: $(REFMANFILES)
+	cp $(REFMANFILES) $(REFMANDIR)
+	touch refman
 
 all: calcparse calcopt
 
@@ -102,12 +113,12 @@ install:
 	@echo "Nothing to install"
 
 distclean:
-	rm -f $(OBJS) $(JUNK) $(PROG)
+	rm -f $(OBJS) $(JUNK) $(PROGS)
 	rm -f config.status config.cache config.h
 
 empty:
-	rm -f $(OBJS) $(JUNK) $(PROG)
-	rm -f config.status config.cache config.h calcparse calcopt
+	rm -f $(OBJS) $(JUNK) $(PROGS)
+	rm -f config.status config.cache config.h
 
 clean:
 	rm -f $(OBJS) $(GENFILES) $(JUNK)
