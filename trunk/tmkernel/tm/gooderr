@@ -22,77 +22,22 @@ testin: unknown type: 'iserniet'
 testin: 'inheritors' requires exactly one parameter
 testin: 'superclasses' requires exactly one parameter
 testin: 'subclasses' requires exactly one parameter
-testin: 'conslist' requires a type name
-testin: 'conslist' requires a type name
-testin: unknown type: notatype
 testin: 'fields' requires one or two parameters
 testin: 'fields' second parameter must be absent or `inherited'
 testin: unknown type: bla
 testin: unknown type: notatype
-testin: not a constructor type: 'orig'
-testin: not a constructor type: 'orig'
-testin: not a constructor type: 'Top'
-testin: not a constructor type: 'Top'
-testin: not a constructor type: 'Toptuple'
-testin: not a constructor type: 'Toptuple'
-testin: not a constructor type: 'TopNone'
-testin: not a constructor type: 'TopNone'
-testin: not a constructor type: 'subtuple'
-testin: not a constructor type: 'subtuple'
-testin: not a constructor type: 'SubNamed'
-testin: not a constructor type: 'SubNamed'
-testin: not a constructor type: 'subNamedlist'
-testin: not a constructor type: 'subNamedlist'
 testin: 'fields' does not work on a constructor type: type `sublevel'
 testin: 'fields' does not work on a constructor type: type `sublevel'
-testin: not a constructor type: 'SubNamedlistlist'
-testin: not a constructor type: 'SubNamedlistlist'
-testin: not a constructor type: 'notuple'
-testin: not a constructor type: 'notuple'
 testin: 'fields' does not work on a constructor type: type `toplevel'
 testin: 'fields' does not work on a constructor type: type `toplevel'
 testin: 'fields' does not work on a constructor type: type `thing'
 testin: 'fields' does not work on a constructor type: type `thing'
-testin: not a constructor type: 'Thing'
-testin: not a constructor type: 'Thing'
-testin: not a constructor type: 'subclass'
-testin: not a constructor type: 'subclass'
-testin: not a constructor type: 'testclass'
-testin: not a constructor type: 'testclass'
-testin: bad parameter: reutel
-testin: 'ctypellev' requires at least one parameter
-testin: not a constructor type: 'orig'
-testin: not a constructor type: 'orig'
-testin: not a constructor type: 'Top'
-testin: not a constructor type: 'Top'
-testin: not a constructor type: 'Toptuple'
-testin: not a constructor type: 'Toptuple'
-testin: not a constructor type: 'TopNone'
-testin: not a constructor type: 'TopNone'
-testin: not a constructor type: 'subtuple'
-testin: not a constructor type: 'subtuple'
-testin: not a constructor type: 'SubNamed'
-testin: not a constructor type: 'SubNamed'
-testin: not a constructor type: 'subNamedlist'
-testin: not a constructor type: 'subNamedlist'
 testin: 'fields' does not work on a constructor type: type `sublevel'
 testin: 'fields' does not work on a constructor type: type `sublevel'
-testin: not a constructor type: 'SubNamedlistlist'
-testin: not a constructor type: 'SubNamedlistlist'
-testin: not a constructor type: 'notuple'
-testin: not a constructor type: 'notuple'
 testin: 'fields' does not work on a constructor type: type `toplevel'
 testin: 'fields' does not work on a constructor type: type `toplevel'
 testin: 'fields' does not work on a constructor type: type `thing'
 testin: 'fields' does not work on a constructor type: type `thing'
-testin: not a constructor type: 'Thing'
-testin: not a constructor type: 'Thing'
-testin: not a constructor type: 'subclass'
-testin: not a constructor type: 'subclass'
-testin: not a constructor type: 'testclass'
-testin: not a constructor type: 'testclass'
-testin: bad parameter: reutel
-testin: 'ctypellev' requires at least one parameter
 testin: empty padding string
 testin: 'isinenv' requires exactly one parameter
 testin: no separator

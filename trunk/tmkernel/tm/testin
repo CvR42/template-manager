@@ -160,6 +160,7 @@ prefix:  '${prefix pfx_ $(lst)}' '${prefix pfx_ a}' '${prefix pfx_}'
 suffix:  '${suffix _sfx $(lst)}' '${suffix _sfx a}' '${suffix _sfx}'
 len:     '${len $(lst)}' '${len a}' '${len}'
 sort:    '${sort $(lst) $(lst)}' '${sort 1 2 12 -1}' '${sort }'
+sizesort:'${sizesort ${typelist}}' '${sizesort 1 2 12 -1}' '${sizesort }'
 uniq:    '${uniq $(lst) $(lst)}' '${uniq 1 2 12 -1}' '${uniq }'
 rev:     '${rev $(lst)}' '${rev}'
 ----
@@ -194,23 +195,35 @@ ${searchfile testsub}
 ----
 Datastructure access functions:
 
-mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
-stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+.foreach pass 1 2 3 4
+Pass $(pass)
+.if ${eq $(pass) 2}
 .set listpre [
-mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
-stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+.endif
+.if ${eq $(pass) 3}
 .set listsuff ]
-mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
-stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+.endif
+.if ${eq $(pass) 4}
 .set listpre
+.endif
 mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
 stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+listtypes: ${listtypes a b] [c [d] [e]] a[f] [[g]]}
+delisttypes: ${delisttypes a b] [c [d] [e]] a[f] [[g]]}
+singletypes: ${singletypes a b] [c [d] [e]] a[f] [[g]]}
+.endforeach
 inherits: ${inherits} ${inherits iserniet}
 inheritors: ${inheritors} ${inheritors iserniet}
 superclasses: ${superclasses} ${superclasses iserniet}
 subclasses: ${subclasses} ${subclasses iserniet}
 conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
 fields: ${fields} ${fields bla bla} ${fields notatype}
+types: '${types}'
+.set listpre [
+.set listsuff ]
+types <all>: '${types ${typelist}}'
+conslist <all>: '${conslist ${typelist}}'
+
 .foreach mode "" inherited
 Mode `$(mode)':
 =-=-=-=
@@ -228,7 +241,7 @@ classlist: '${classlist}'
     subclasses $t: '${subclasses $t }'
     isvirtual $t: '${isvirtual $t }'
 .foreach c ${conslist $t}
-        celmlist: '${celmlist $t $c}'
+        celmlist $(mode): '${celmlist $t $c $(mode)}'
         fields $c $(mode): '${fields $c $(mode)}'
 .foreach e ${celmlist $t $c}
             ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
@@ -255,13 +268,13 @@ Datastructure dependency
 .set listpre
 .set listsuff _list
 .foreach t ${typelist}
-single types dependent on $t: '${deptype single $t}'
-list types dependent on $t: '${deptype list $t}'
+..single types dependent on $t: '${deptype single $t}'
+..list types dependent on $t: '${deptype list $t}'
 .endforeach
 Testing error handling:
-'${deptype list}'
-'${deptype reutel ${first ${typelist}}}'
-'${deptype}'
+..'${deptype list}'
+..'${deptype reutel ${first ${typelist}}}'
+..'${deptype}'
 Type sorting:
 depsort: [${depsort int ${typelist}}]
 ----
@@ -391,6 +404,19 @@ v:[$v]
 ${call tv 1 2} ${call} ${call tv}
 [${call test a b}]
 [${call tv ""}]
+.macro testglobal
+.globalset gv 2
+.set ngv 2
+.globalappend gl test
+.append ngl test
+.endmacro
+.set gv 1
+.set ngv 1
+.set gl 123
+.set ngl 123
+gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
+.call testglobal
+gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
 ----
 
 Eval

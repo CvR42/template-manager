@@ -11,6 +11,7 @@
 extern void setmacro( const tmstring nm, const tmstring fnm, const tmstring_list pl, const tplelm_list body );
 extern macro findmacro( const tmstring nm );
 extern void setvar( const tmstring nm, const tmstring v );
+extern void globalsetvar( const tmstring nm, const tmstring v );
 extern void newvarctx( void );
 extern void flushvar( void );
 extern tmstring getvar( const tmstring nm );

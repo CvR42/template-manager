@@ -48,7 +48,9 @@ tplelm ::=
     While lno:int whilecond:tmstring whilelines:[tplelm] |
     If lno:int ifcond:tmstring ifthen:[tplelm] ifelse:[tplelm] |
     Set lno:int setline:tmstring |
+    GlobalSet lno:int setline:tmstring |
     Append lno:int appline:tmstring |
+    GlobalAppend lno:int appline:tmstring |
     Error lno:int errstr:tmstring |
     Exit lno:int str:tmstring |
     Redirect lno:int fname:tmstring body:[tplelm] |
