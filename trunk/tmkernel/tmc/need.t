@@ -157,9 +157,9 @@
 .call require setroom "${listtypes $l}"
 .call require rdup "${delisttypes $l} ${types ${singletypes $l}}"
 .if ${eq $(template) tmc}
-.call require rdup "${subclasses $l}"
+.call require rdup "${nonvirtual ${subclasses $l}}"
 .else
-.call require rdup "${types ${subclasses $l}}"
+.call require rdup "${types ${nonvirtual ${subclasses $l}}}"
 .call require new "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
@@ -199,7 +199,7 @@
 .macro req_cmp l
 .call require ds "$l"
 .call require cmp "${delisttypes $l}"
-.call require cmp "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
+.call require cmp "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
 .if ${eq $(template) tmc}
 .call require cmp "${nonvirtual ${subclasses $l}}"
 .endif
@@ -260,7 +260,7 @@
 .if ${eq $(template) ald}
 .macro req_null l
 .call require null "${delisttypes $l}"
-.call require null "${types ${singletypes $l} ${subclasses $l}}"
+.call require null "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
 .call require ds "$l"
 .endmacro
 .endif
@@ -292,7 +292,7 @@
 .. ** ds **
 .macro req_ds l
 .call require ds "${delisttypes $l}"
-.call require ds "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
+.call require ds "${types ${singletypes $l} ${subclasses $l}}"
 .if ${eq $(template) tmc}
 .call require ds "${subclasses $l} ${superclasses $l}"
 .endif
