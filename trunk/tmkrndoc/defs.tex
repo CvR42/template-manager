@@ -22,7 +22,19 @@
 
 \newenvironment{grammar}{\begin{quote}\begin{tabular}{lcl}}{\end{tabular}\end{quote}}
 
-\newenvironment{listing}{\small\begin{flushleft}}{\end{flushleft}}
+\newenvironment{showfile}
+{
+        \list{}{\itemsep 0pt
+%                \itemindent   -1.5em%
+                 \itemindent   -0.0em%
+                \listparindent\itemindent
+                \rightmargin  \leftmargin
+                \advance\leftmargin 0em}%
+        \item\relax\scriptsize%
+}
+{\endlist\par}
+
+%\newenvironment{showfile}{\small\begin{flushleft}}{\end{flushleft}}
 
 \newenvironment{example}{\par}{}
 
