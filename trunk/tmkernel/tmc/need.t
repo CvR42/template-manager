@@ -61,7 +61,7 @@
 .endif
 ..
 .. Reset all want_<groups> variables
-.foreach g $(groups)
+.foreach g $(groups) stat
 .set want_$g
 .endforeach
 .set want_misc
@@ -153,13 +153,14 @@
 ..
 .. ** rdup **
 .macro req_rdup l
-.call require new "$l"
+.call require new "${nonvirtual $l}"
 .call require setroom "${listtypes $l}"
 .call require rdup "${delisttypes $l} ${types ${singletypes $l}}"
 .if ${eq $(template) tmc}
 .call require rdup "${subclasses $l}"
 .else
-.call require rdup "${types ${subclasses ${singletypes $l}}}"
+.call require rdup "${types ${subclasses $l}}"
+.call require new "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
 ..
@@ -168,7 +169,7 @@
 .call require new "$l"
 .call require append "${listtypes $l}"
 .call require fscan "${delisttypes $l} ${types ${singletypes $l}}"
-.call require fscan "${types ${subclasses ${singletypes $l}}}"
+.call require fscan "${types ${subclasses $l}}"
 .if ${eq $(template) ald}
 .call require null "$l"
 .endif
@@ -178,7 +179,7 @@
 .macro req_print l
 .call require ds "$l"
 .call require print "${delisttypes $l}"
-.call require print "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
+.call require print "${types ${singletypes $l} ${subclasses $l}}"
 .if ${eq $(template) tmc}
 .call require print "${subclasses $l}"
 .endif
@@ -243,18 +244,15 @@
 ..
 .. ** rfre **
 .macro req_rfre l
+.call require fre "${nonvirtual $l}"
 .call require rfre "${delisttypes $l}"
-.call require rfre "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
+.call require rfre "${types ${nonvirtual ${singletypes $l}}}"
 .if ${eq $(template) tmc}
-.call require rfre "${subclasses $l}"
-.foreach t $l
-.if ${isvirtual $t}
-.else
-.call require fre $t
-.endif
-.endforeach
+.call require rfre "${nonvirtual ${subclasses $l}}"
+.call require fre "${nonvirtual $l}"
 .else
 .call require fre "$l"
+.call require rfre "${types ${subclasses $l}}"
 .endif
 .endmacro
 ..
@@ -262,7 +260,7 @@
 .if ${eq $(template) ald}
 .macro req_null l
 .call require null "${delisttypes $l}"
-.call require null "${types ${singletypes $l} ${subclasses ${singletypes $l}}}"
+.call require null "${types ${singletypes $l} ${subclasses $l}}"
 .call require ds "$l"
 .endmacro
 .endif
@@ -271,13 +269,24 @@
 .macro req_fre l
 .call require ds "$l"
 .if ${eq $(template) tmc}
-.call require fre "${subclasses $l}"
+.call require fre "${nonvirtual ${subclasses $l}}"
+.else
+.call require stat "${nonvirtual ${subclasses $l}}"
 .endif
+.call require stat "${nonvirtual $l}"
 .endmacro
 ..
 .. ** new **
 .macro req_new l
 .call require ds "$l"
+.call require stat "${nonvirtual $l}"
+.endmacro
+..
+.. ** stat **
+.macro req_stat l
+.if ${neq $(template) tmc}
+.call require stat "${nonvirtual ${subclasses $l}}"
+.endif
 .endmacro
 ..
 .. ** ds **
@@ -289,8 +298,14 @@
 .endif
 .endmacro
 ..
+.. For the old templates, infer the desire for constructor new_ functions
+.. from the desire for the constructor base.
+.if ${neq $(template) tmc}
+.append want_new ${subclasses ${comm $(want_new) "" ${ctypelist}}}
+.endif
+..
 .. Reset all need_<group> variables.
-.foreach g $(groups)
+.foreach g $(groups) stat
 . set need_$g
 .endforeach
 .set need_misc
@@ -327,16 +342,11 @@
 .endif
 ..
 .. ** derived definitions **
-.if ${or ${member stat_$(basename) $(need_misc)} ${member isbalanced_$(basename) $(need_misc)}}
-.set need_stat ${uniq $(need_new) $(need_fre)}
-.set want_stat ${uniq $(want_new) $(want_fre)}
-.else
-.set need_stat
-.set want_stat
+.set statcode ${or ${member stat_$(basename) $(need_misc)} ${member isbalanced_$(basename) $(need_misc)}}
+.if ${not $(statcode)}
+. set need_stat
+. set want_stat
 .endif
-...foreach g $(groups) stat
-../* ${prefix $g_ $(need_$g)} */
-...endforeach
 ..
 .. Derive the contents of the want_*_list and need_*_list variables
 .. from the want_ and need_ variables
@@ -344,8 +354,6 @@
 .foreach g $(groups) stat
 . set want_$g_list ${delisttypes $(want_$g)}
 . set want_$g ${singletypes $(want_$g)}
-.endforeach
-.foreach g $(groups) stat
 . set need_$g_list ${delisttypes $(need_$g)}
 . set need_$g ${comm ${singletypes $(need_$g)} "" ${typelist}}
 .endforeach
@@ -357,5 +365,6 @@
 /* want_$g_list: $(want_$g_list) */
 /* need_$g_list: $(need_$g_list) */
 .endforeach
+/* statcode: $(statcode) */
 .endif
 /* Requirement analysis took ${processortime} milliseconds. */

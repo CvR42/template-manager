@@ -13,8 +13,6 @@
 .. alldefs:      All code.
 ..
 .. The following C pre-processor variables may be defined:
-.. STAT          If you want code for statistics.
-..               Statistics are written to 'FILE *statstream'.
 .. FATAL(msg)    If you want to supply a fatal error handler to print 'msg'.
 ..               A default is provided.
 .. FIRSTROOM     Initial room in lists. Default is 0.
@@ -42,37 +40,18 @@
 #define FIRSTROOM 0
 #endif
 
-.if $(statcode)
-#ifdef STAT
+.if ${len $(need_stat) $(need_stat_list)}
+/* Counters for the number of allocations and frees. */
 .foreach t $(need_stat_list)
-static long newcnt_$t_list = 0;
-static long frecnt_$t_list = 0;
+static long newcnt_$t_list = 0, frecnt_$t_list = 0;
 .endforeach
-
 .foreach t $(need_stat)
-.if ${member $t ${tuplelist} ${classlist}}
-static long newcnt_$t = 0;
-static long frecnt_$t = 0;
-.endif
-.if ${member $t ${ctypelist}}
-.foreach c ${conslist $t}
-static long newcnt_$c = 0;
-static long frecnt_$c = 0;
+static long newcnt_$t = 0, frecnt_$t = 0;
 .endforeach
-.endif
-.endforeach
-#endif
 
 .endif
-
 static char tm_srcfile[] = __FILE__;
 
-.if $(statcode)
-#ifdef STAT
-static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
-#endif
-
-.endif
 #ifndef FATAL
 #define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
 #endif
@@ -244,10 +223,8 @@ $(stic_$t)$t_list new_$t_list( void )
     nw.arr = TM_MALLOC( $t *, FIRSTROOM*sizeof($t) );
     nw.room = FIRSTROOM;
 #endif
-.if $(statcode)
-#ifdef STAT
+.if ${member $t $(need_stat_list)}
     newcnt_$t_list++;
-#endif
 .endif
 #ifdef LOGNEW
     nw.lognew_id = tm_new_logid( _f, _l );
@@ -279,9 +256,7 @@ $(stic_$t)$t new_$t( $(tl) )
     to_$t(nw)->$e = p_$e;
 .endforeach
 .if $(statcode)
-#ifdef STAT
     newcnt_$t++;
-#endif
 .endif
 #ifdef LOGNEW
     nw.lognew_id = tm_new_logid( _f, _l );
@@ -314,9 +289,7 @@ $(stic_$t)$t new_$c( $(tl) )
     nw.u.ue_$c = newc;
 .endif 
 .if $(statcode)
-#ifdef STAT
     newcnt_$c++;
-#endif
 .endif
 #ifdef LOGNEW
     nw.lognew_id = tm_new_logid( _f, _l );
@@ -345,9 +318,7 @@ $(stic_$t)$t new_$c( $(tl) )
 $(stic_$t)void fre_$t( $t e )
 {
 .if $(statcode)
-#ifdef STAT
     frecnt_$t++;
-#endif
 .endif
 #ifdef LOGNEW
     tm_fre_logid( e.lognew_id );
@@ -367,9 +338,7 @@ $(stic_$t)void fre_$t( $t e )
 .foreach c ${conslist $t}
 	case TAG$c:
 .if $(statcode)
-#ifdef STAT
 	    frecnt_$c++;
-#endif
 .endif
 .if ${len ${fields $c inherited}}
 	    TM_FREE( e.u.ue_$c );
@@ -401,9 +370,7 @@ $(stic_$t)void fre_$t( $t e )
 $(stic_$t)void fre_$t_list( $t_list l )
 {
 .if $(statcode)
-#ifdef STAT
     frecnt_$t_list++;
-#endif
 .endif
     if( l.room != 0 ){
 	TM_FREE( l.arr );
@@ -1396,9 +1363,11 @@ $(stic_$t)$t_list extract_$t_list(
 /* Print allocation and freeing statistics to file 'f'. */
 void stat_$(basename)( FILE *f )
 {
-#ifdef STAT
-.foreach t $(need_stat)
-.if ${member $t ${tuplelist} ${classlist}}
+.if ${len $(need_stat) $(need_stat_list)}
+    char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
+
+.endif
+.foreach t ${sort $(need_stat)}
     fprintf(
 	f,
 	tm_allocfreed,
@@ -1407,19 +1376,10 @@ void stat_$(basename)( FILE *f )
 	frecnt_$t,
 	((newcnt_$t==frecnt_$t)? "": "<-")
     );
-.endif
-.if ${member $t ${ctypelist}}
-.foreach c ${conslist $t}
-    fprintf(f,tm_allocfreed,"$c",newcnt_$c,frecnt_$c,((newcnt_$c==frecnt_$c)? "": "<-") );
 .endforeach
-.endif
-.endforeach
-.foreach t $(need_stat_list)
+.foreach t ${sort $(need_stat_list)}
     fprintf( f, tm_allocfreed, "$t_list", newcnt_$t_list, frecnt_$t_list, ((newcnt_$t_list==frecnt_$t_list)? "": "<-") );
 .endforeach
-#else
-    (void) f; /* to prevent 'f unused' from compiler and lint */
-#endif
 }
 
 .endif
@@ -1434,25 +1394,15 @@ int get_balance_$(basename)( void )
 
     res = 0;
     /* Now check for too many fre()s. */
-#ifdef STAT
 .foreach t $(need_stat_list)
     if( newcnt_$t_list<frecnt_$t_list ){
         return -1;
     }
 .endforeach
 .foreach t $(need_stat)
-.if ${member $t ${tuplelist} ${classlist}}
     if( newcnt_$t<frecnt_$t ){
         return -1;
     }
-.endif
-.if ${member $t ${ctypelist}}
-.foreach c ${conslist $t}
-    if( newcnt_$c<frecnt_$c ){
-        return -1;
-    }
-.endforeach
-.endif
 .endforeach
     /* Now check for too few fre()s. */
 .foreach t $(need_stat_list)
@@ -1461,20 +1411,10 @@ int get_balance_$(basename)( void )
     }
 .endforeach
 .foreach t $(need_stat)
-.if ${member $t ${tuplelist} ${classlist}}
     if( newcnt_$t>frecnt_$t ){
         res = 1;
     }
-.endif
-.if ${member $t ${ctypelist}}
-.foreach c ${conslist $t}
-    if( newcnt_$c>frecnt_$c ){
-        res = 1;
-    }
 .endforeach
-.endif
-.endforeach
-#endif
     return res;
 }
 
