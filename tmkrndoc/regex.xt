@@ -1,0 +1,4 @@
+.set l bla blup burp zwoing
+filt: [${filt b(*)p &(\1) $l}]
+rmlist: [${rmlist b*p $l}]
+subs: [${subs b(*)p &(\1) $l}], [${subs b(*)p \&(\1) $l}]

@@ -1,0 +1,4 @@
+.set l 1 2
+$l
+.append l 3 4
+$l
