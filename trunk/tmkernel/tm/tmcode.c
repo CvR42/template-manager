@@ -16,15 +16,17 @@
 #include "global.h"
 #include "misc.h"
 
+/* Requirement analysis took 240 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /home/blob/users/reeuwijk/lib/calu.ct ---- */
+/* ---- start of /home/blob/users/reeuwijk/lab/lib/calu.ct ---- */
 
 /* Routines for 'tm'.
 
-   template file:      /home/blob/users/reeuwijk/lib/calu.ct
+   template file:      /home/blob/users/reeuwijk/lab/lib/calu.ct
    datastructure file: tm.ds
-   tm version:         35
+   tm version:         36
+   tm kernel version:  *** development -- not for distribution ***
  */
 
 #ifndef FIRSTROOM
@@ -161,20 +163,20 @@ static short int cacheix_var_list = 0;
 static var_list cache_var_list[CACHESZ]; 
 static short int cacheix_alternative = 0;
 static alternative cache_alternative[CACHESZ];
-static short int cacheix_classComponent = 0;
-static classComponent cache_classComponent[CACHESZ];
-static short int cacheix_ds = 0;
-static ds cache_ds[CACHESZ];
 static short int cacheix_field = 0;
 static field cache_field[CACHESZ];
 static short int cacheix_macro = 0;
 static macro cache_macro[CACHESZ];
-static short int cacheix_switchcase = 0;
-static switchcase cache_switchcase[CACHESZ];
-static short int cacheix_tplelm = 0;
-static tplelm cache_tplelm[CACHESZ];
 static short int cacheix_var = 0;
 static var cache_var[CACHESZ];
+static short int cacheix_switchcase = 0;
+static switchcase cache_switchcase[CACHESZ];
+static short int cacheix_ds = 0;
+static ds cache_ds[CACHESZ];
+static short int cacheix_classComponent = 0;
+static classComponent cache_classComponent[CACHESZ];
+static short int cacheix_tplelm = 0;
+static tplelm cache_tplelm[CACHESZ];
 #endif
 
 static char tm_srcfile[] = __FILE__;
@@ -187,73 +189,19 @@ static char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
 #define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
 #endif
 
-/* Error strings. */
+/* Possible error strings. */
 static char tm_nilptr[] = "NIL pointer";
 
 #ifndef FATALTAG
-#define FATALTAG(tag) tm_badtag(tm_srcfile,__LINE__,tag)
+#define FATALTAG(tag) tm_badtag(tm_srcfile,__LINE__,(int) tag)
 #endif
 
 /**************************************************
  *    set array room routines                     *
  **************************************************/
 
-/* Announce that you will need setroom for 'rm' elements in
- * alternative_list 'l'.
- */
-static alternative_list setroom_alternative_list( alternative_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( alternative *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( alternative *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * classComponent_list 'l'.
- */
-static classComponent_list setroom_classComponent_list( classComponent_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( classComponent *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( classComponent *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * ds_list 'l'.
- */
-static ds_list setroom_ds_list( ds_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( ds *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( ds *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * field_list 'l'.
+/* Announce that you will need room for 'rm' elements in
+    field_list 'l'.
  */
 static field_list setroom_field_list( field_list l, const unsigned int rm )
 {
@@ -270,44 +218,8 @@ static field_list setroom_field_list( field_list l, const unsigned int rm )
     return l;
 }
 
-/* Announce that you will need setroom for 'rm' elements in
- * macro_list 'l'.
- */
-static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( macro *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( macro *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * switchcase_list 'l'.
- */
-static switchcase_list setroom_switchcase_list( switchcase_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( switchcase *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( switchcase *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * tmstring_list 'l'.
+/* Announce that you will need room for 'rm' elements in
+    tmstring_list 'l'.
  */
 static tmstring_list setroom_tmstring_list( tmstring_list l, const unsigned int rm )
 {
@@ -324,8 +236,8 @@ static tmstring_list setroom_tmstring_list( tmstring_list l, const unsigned int 
     return l;
 }
 
-/* Announce that you will need setroom for 'rm' elements in
- * tplelm_list 'l'.
+/* Announce that you will need room for 'rm' elements in
+    tplelm_list 'l'.
  */
 static tplelm_list setroom_tplelm_list( tplelm_list l, const unsigned int rm )
 {
@@ -342,8 +254,80 @@ static tplelm_list setroom_tplelm_list( tplelm_list l, const unsigned int rm )
     return l;
 }
 
-/* Announce that you will need setroom for 'rm' elements in
- * var_list 'l'.
+/* Announce that you will need room for 'rm' elements in
+    switchcase_list 'l'.
+ */
+static switchcase_list setroom_switchcase_list( switchcase_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( switchcase *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( switchcase *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need room for 'rm' elements in
+    alternative_list 'l'.
+ */
+static alternative_list setroom_alternative_list( alternative_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( alternative *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( alternative *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need room for 'rm' elements in
+    classComponent_list 'l'.
+ */
+static classComponent_list setroom_classComponent_list( classComponent_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( classComponent *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( classComponent *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need room for 'rm' elements in
+    ds_list 'l'.
+ */
+static ds_list setroom_ds_list( ds_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( ds *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( ds *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need room for 'rm' elements in
+    var_list 'l'.
  */
 static var_list setroom_var_list( var_list l, const unsigned int rm )
 {
@@ -355,6 +339,24 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
     }
     else {
 	l->arr = TM_REALLOC( var *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need room for 'rm' elements in
+    macro_list 'l'.
+ */
+static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( macro *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( macro *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -812,7 +814,7 @@ classComponent new_CCSuper( tmstring p_super )
     }
 #endif
     nw->tag = TAGCCSuper;
-    nw->CCSuper.super = p_super;
+    to_CCSuper(nw)->super = p_super;
 #ifdef STAT
     newcnt_CCSuper++;
 #endif
@@ -841,7 +843,7 @@ classComponent new_CCFields( field_list p_fields )
     }
 #endif
     nw->tag = TAGCCFields;
-    nw->CCFields.fields = p_fields;
+    to_CCFields(nw)->fields = p_fields;
 #ifdef STAT
     newcnt_CCFields++;
 #endif
@@ -870,7 +872,7 @@ classComponent new_CCAlternatives( alternative_list p_alternatives )
     }
 #endif
     nw->tag = TAGCCAlternatives;
-    nw->CCAlternatives.alternatives = p_alternatives;
+    to_CCAlternatives(nw)->alternatives = p_alternatives;
 #ifdef STAT
     newcnt_CCAlternatives++;
 #endif
@@ -899,7 +901,7 @@ classComponent new_CCSublist( classComponent_list p_components )
     }
 #endif
     nw->tag = TAGCCSublist;
-    nw->CCSublist.components = p_components;
+    to_CCSublist(nw)->components = p_components;
 #ifdef STAT
     newcnt_CCSublist++;
 #endif
@@ -928,9 +930,9 @@ ds new_DsConstructorBase( tmstring p_name, tmstring_list p_inherits, tmstring_li
     }
 #endif
     nw->tag = TAGDsConstructorBase;
-    nw->DsConstructorBase.name = p_name;
-    nw->DsConstructorBase.inherits = p_inherits;
-    nw->DsConstructorBase.constructors = p_constructors;
+    to_DsConstructorBase(nw)->name = p_name;
+    to_DsConstructorBase(nw)->inherits = p_inherits;
+    to_DsConstructorBase(nw)->constructors = p_constructors;
 #ifdef STAT
     newcnt_DsConstructorBase++;
 #endif
@@ -959,9 +961,9 @@ ds new_DsTuple( tmstring p_name, tmstring_list p_inherits, field_list p_fields )
     }
 #endif
     nw->tag = TAGDsTuple;
-    nw->DsTuple.name = p_name;
-    nw->DsTuple.inherits = p_inherits;
-    nw->DsTuple.fields = p_fields;
+    to_DsTuple(nw)->name = p_name;
+    to_DsTuple(nw)->inherits = p_inherits;
+    to_DsTuple(nw)->fields = p_fields;
 #ifdef STAT
     newcnt_DsTuple++;
 #endif
@@ -990,10 +992,10 @@ ds new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, 
     }
 #endif
     nw->tag = TAGDsClass;
-    nw->DsClass.name = p_name;
-    nw->DsClass.inherits = p_inherits;
-    nw->DsClass.fields = p_fields;
-    nw->DsClass.virtual = p_virtual;
+    to_DsClass(nw)->name = p_name;
+    to_DsClass(nw)->inherits = p_inherits;
+    to_DsClass(nw)->fields = p_fields;
+    to_DsClass(nw)->virtual = p_virtual;
 #ifdef STAT
     newcnt_DsClass++;
 #endif
@@ -1022,9 +1024,9 @@ ds new_DsConstructor( tmstring p_name, tmstring_list p_inherits, field_list p_fi
     }
 #endif
     nw->tag = TAGDsConstructor;
-    nw->DsConstructor.name = p_name;
-    nw->DsConstructor.inherits = p_inherits;
-    nw->DsConstructor.fields = p_fields;
+    to_DsConstructor(nw)->name = p_name;
+    to_DsConstructor(nw)->inherits = p_inherits;
+    to_DsConstructor(nw)->fields = p_fields;
 #ifdef STAT
     newcnt_DsConstructor++;
 #endif
@@ -1144,8 +1146,8 @@ tplelm new_Plain( int p_lno, tmstring p_plainline )
     }
 #endif
     nw->tag = TAGPlain;
-    nw->Plain.lno = p_lno;
-    nw->Plain.plainline = p_plainline;
+    to_Plain(nw)->lno = p_lno;
+    to_Plain(nw)->plainline = p_plainline;
 #ifdef STAT
     newcnt_Plain++;
 #endif
@@ -1174,9 +1176,9 @@ tplelm new_Foreach( int p_lno, tmstring p_felist, tplelm_list p_felines )
     }
 #endif
     nw->tag = TAGForeach;
-    nw->Foreach.lno = p_lno;
-    nw->Foreach.felist = p_felist;
-    nw->Foreach.felines = p_felines;
+    to_Foreach(nw)->lno = p_lno;
+    to_Foreach(nw)->felist = p_felist;
+    to_Foreach(nw)->felines = p_felines;
 #ifdef STAT
     newcnt_Foreach++;
 #endif
@@ -1205,9 +1207,9 @@ tplelm new_While( int p_lno, tmstring p_whilecond, tplelm_list p_whilelines )
     }
 #endif
     nw->tag = TAGWhile;
-    nw->While.lno = p_lno;
-    nw->While.whilecond = p_whilecond;
-    nw->While.whilelines = p_whilelines;
+    to_While(nw)->lno = p_lno;
+    to_While(nw)->whilecond = p_whilecond;
+    to_While(nw)->whilelines = p_whilelines;
 #ifdef STAT
     newcnt_While++;
 #endif
@@ -1236,10 +1238,10 @@ tplelm new_If( int p_lno, tmstring p_ifcond, tplelm_list p_ifthen, tplelm_list p
     }
 #endif
     nw->tag = TAGIf;
-    nw->If.lno = p_lno;
-    nw->If.ifcond = p_ifcond;
-    nw->If.ifthen = p_ifthen;
-    nw->If.ifelse = p_ifelse;
+    to_If(nw)->lno = p_lno;
+    to_If(nw)->ifcond = p_ifcond;
+    to_If(nw)->ifthen = p_ifthen;
+    to_If(nw)->ifelse = p_ifelse;
 #ifdef STAT
     newcnt_If++;
 #endif
@@ -1268,10 +1270,10 @@ tplelm new_Switch( int p_lno, tmstring p_val, switchcase_list p_cases, tplelm_li
     }
 #endif
     nw->tag = TAGSwitch;
-    nw->Switch.lno = p_lno;
-    nw->Switch.val = p_val;
-    nw->Switch.cases = p_cases;
-    nw->Switch.deflt = p_deflt;
+    to_Switch(nw)->lno = p_lno;
+    to_Switch(nw)->val = p_val;
+    to_Switch(nw)->cases = p_cases;
+    to_Switch(nw)->deflt = p_deflt;
 #ifdef STAT
     newcnt_Switch++;
 #endif
@@ -1300,8 +1302,8 @@ tplelm new_Set( int p_lno, tmstring p_setline )
     }
 #endif
     nw->tag = TAGSet;
-    nw->Set.lno = p_lno;
-    nw->Set.setline = p_setline;
+    to_Set(nw)->lno = p_lno;
+    to_Set(nw)->setline = p_setline;
 #ifdef STAT
     newcnt_Set++;
 #endif
@@ -1330,8 +1332,8 @@ tplelm new_GlobalSet( int p_lno, tmstring p_setline )
     }
 #endif
     nw->tag = TAGGlobalSet;
-    nw->GlobalSet.lno = p_lno;
-    nw->GlobalSet.setline = p_setline;
+    to_GlobalSet(nw)->lno = p_lno;
+    to_GlobalSet(nw)->setline = p_setline;
 #ifdef STAT
     newcnt_GlobalSet++;
 #endif
@@ -1360,8 +1362,8 @@ tplelm new_Append( int p_lno, tmstring p_appline )
     }
 #endif
     nw->tag = TAGAppend;
-    nw->Append.lno = p_lno;
-    nw->Append.appline = p_appline;
+    to_Append(nw)->lno = p_lno;
+    to_Append(nw)->appline = p_appline;
 #ifdef STAT
     newcnt_Append++;
 #endif
@@ -1390,8 +1392,8 @@ tplelm new_GlobalAppend( int p_lno, tmstring p_appline )
     }
 #endif
     nw->tag = TAGGlobalAppend;
-    nw->GlobalAppend.lno = p_lno;
-    nw->GlobalAppend.appline = p_appline;
+    to_GlobalAppend(nw)->lno = p_lno;
+    to_GlobalAppend(nw)->appline = p_appline;
 #ifdef STAT
     newcnt_GlobalAppend++;
 #endif
@@ -1420,8 +1422,8 @@ tplelm new_Error( int p_lno, tmstring p_errstr )
     }
 #endif
     nw->tag = TAGError;
-    nw->Error.lno = p_lno;
-    nw->Error.errstr = p_errstr;
+    to_Error(nw)->lno = p_lno;
+    to_Error(nw)->errstr = p_errstr;
 #ifdef STAT
     newcnt_Error++;
 #endif
@@ -1450,8 +1452,8 @@ tplelm new_Exit( int p_lno, tmstring p_str )
     }
 #endif
     nw->tag = TAGExit;
-    nw->Exit.lno = p_lno;
-    nw->Exit.str = p_str;
+    to_Exit(nw)->lno = p_lno;
+    to_Exit(nw)->str = p_str;
 #ifdef STAT
     newcnt_Exit++;
 #endif
@@ -1480,9 +1482,9 @@ tplelm new_Redirect( int p_lno, tmstring p_fname, tplelm_list p_body )
     }
 #endif
     nw->tag = TAGRedirect;
-    nw->Redirect.lno = p_lno;
-    nw->Redirect.fname = p_fname;
-    nw->Redirect.body = p_body;
+    to_Redirect(nw)->lno = p_lno;
+    to_Redirect(nw)->fname = p_fname;
+    to_Redirect(nw)->body = p_body;
 #ifdef STAT
     newcnt_Redirect++;
 #endif
@@ -1511,8 +1513,8 @@ tplelm new_Include( int p_lno, tmstring p_fname )
     }
 #endif
     nw->tag = TAGInclude;
-    nw->Include.lno = p_lno;
-    nw->Include.fname = p_fname;
+    to_Include(nw)->lno = p_lno;
+    to_Include(nw)->fname = p_fname;
 #ifdef STAT
     newcnt_Include++;
 #endif
@@ -1541,9 +1543,9 @@ tplelm new_Macro( int p_lno, tmstring p_formpar, tplelm_list p_macbody )
     }
 #endif
     nw->tag = TAGMacro;
-    nw->Macro.lno = p_lno;
-    nw->Macro.formpar = p_formpar;
-    nw->Macro.macbody = p_macbody;
+    to_Macro(nw)->lno = p_lno;
+    to_Macro(nw)->formpar = p_formpar;
+    to_Macro(nw)->macbody = p_macbody;
 #ifdef STAT
     newcnt_Macro++;
 #endif
@@ -1572,8 +1574,8 @@ tplelm new_Call( int p_lno, tmstring p_callline )
     }
 #endif
     nw->tag = TAGCall;
-    nw->Call.lno = p_lno;
-    nw->Call.callline = p_callline;
+    to_Call(nw)->lno = p_lno;
+    to_Call(nw)->callline = p_callline;
 #ifdef STAT
     newcnt_Call++;
 #endif
@@ -1602,8 +1604,8 @@ tplelm new_Return( int p_lno, tmstring p_retval )
     }
 #endif
     nw->tag = TAGReturn;
-    nw->Return.lno = p_lno;
-    nw->Return.retval = p_retval;
+    to_Return(nw)->lno = p_lno;
+    to_Return(nw)->retval = p_retval;
 #ifdef STAT
     newcnt_Return++;
 #endif
@@ -1632,8 +1634,8 @@ tplelm new_Insert( int p_lno, tmstring p_fname )
     }
 #endif
     nw->tag = TAGInsert;
-    nw->Insert.lno = p_lno;
-    nw->Insert.fname = p_fname;
+    to_Insert(nw)->lno = p_lno;
+    to_Insert(nw)->fname = p_fname;
 #ifdef STAT
     newcnt_Insert++;
 #endif
@@ -1662,8 +1664,8 @@ tplelm new_Case( int p_lno, tmstring p_val )
     }
 #endif
     nw->tag = TAGCase;
-    nw->Case.lno = p_lno;
-    nw->Case.val = p_val;
+    to_Case(nw)->lno = p_lno;
+    to_Case(nw)->val = p_val;
 #ifdef STAT
     newcnt_Case++;
 #endif
@@ -1692,7 +1694,7 @@ tplelm new_Default( int p_lno )
     }
 #endif
     nw->tag = TAGDefault;
-    nw->Default.lno = p_lno;
+    to_Default(nw)->lno = p_lno;
 #ifdef STAT
     newcnt_Default++;
 #endif
@@ -1751,6 +1753,69 @@ static void fre_alternative( alternative e )
 #ifdef USECACHE
     if( cacheix_alternative<CACHESZ ){
 	cache_alternative[cacheix_alternative++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
+/* Free an element 'e' of type 'field'. */
+static void fre_field( field e )
+{
+    if( e == fieldNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_field++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_field<CACHESZ ){
+	cache_field[cacheix_field++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
+/* Free an element 'e' of type 'var'. */
+static void fre_var( var e )
+{
+    if( e == varNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_var++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_var<CACHESZ ){
+	cache_var[cacheix_var++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
+/* Free an element 'e' of type 'switchcase'. */
+static void fre_switchcase( switchcase e )
+{
+    if( e == switchcaseNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_switchcase++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_switchcase<CACHESZ ){
+	cache_switchcase[cacheix_switchcase++] = e;
 	return;
     }
 #endif
@@ -1837,27 +1902,6 @@ static void fre_ds( ds e )
     TM_FREE( e );
 }
 
-/* Free an element 'e' of type 'field'. */
-static void fre_field( field e )
-{
-    if( e == fieldNIL ){
-	return;
-    }
-#ifdef STAT
-    frecnt_field++;
-#endif
-#ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
-#endif
-#ifdef USECACHE
-    if( cacheix_field<CACHESZ ){
-	cache_field[cacheix_field++] = e;
-	return;
-    }
-#endif
-    TM_FREE( e );
-}
-
 /* Free an element 'e' of type 'macro'. */
 static void fre_macro( macro e )
 {
@@ -1873,27 +1917,6 @@ static void fre_macro( macro e )
 #ifdef USECACHE
     if( cacheix_macro<CACHESZ ){
 	cache_macro[cacheix_macro++] = e;
-	return;
-    }
-#endif
-    TM_FREE( e );
-}
-
-/* Free an element 'e' of type 'switchcase'. */
-static void fre_switchcase( switchcase e )
-{
-    if( e == switchcaseNIL ){
-	return;
-    }
-#ifdef STAT
-    frecnt_switchcase++;
-#endif
-#ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
-#endif
-#ifdef USECACHE
-    if( cacheix_switchcase<CACHESZ ){
-	cache_switchcase[cacheix_switchcase++] = e;
 	return;
     }
 #endif
@@ -2000,25 +2023,28 @@ static void fre_tplelm( tplelm e )
     TM_FREE( e );
 }
 
-/* Free an element 'e' of type 'var'. */
-static void fre_var( var e )
+/* Free a list of switchcase elements 'l'. */
+static void fre_switchcase_list( switchcase_list l )
 {
-    if( e == varNIL ){
+    if( l == switchcase_listNIL ){
 	return;
     }
-#ifdef STAT
-    frecnt_var++;
-#endif
 #ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
+    tm_fre_logid( l->lognew_id );
 #endif
+#ifdef STAT
+    frecnt_switchcase_list++;
+#endif
+    if( l->room!=0 ){
+	TM_FREE( l->arr );
+    }
 #ifdef USECACHE
-    if( cacheix_var<CACHESZ ){
-	cache_var[cacheix_var++] = e;
+    if( cacheix_switchcase_list<CACHESZ ){
+	cache_switchcase_list[cacheix_switchcase_list++] = l;
 	return;
     }
 #endif
-    TM_FREE( e );
+    TM_FREE( l );
 }
 
 /* Free a list of alternative elements 'l'. */
@@ -2141,30 +2167,6 @@ static void fre_macro_list( macro_list l )
     TM_FREE( l );
 }
 
-/* Free a list of switchcase elements 'l'. */
-static void fre_switchcase_list( switchcase_list l )
-{
-    if( l == switchcase_listNIL ){
-	return;
-    }
-#ifdef LOGNEW
-    tm_fre_logid( l->lognew_id );
-#endif
-#ifdef STAT
-    frecnt_switchcase_list++;
-#endif
-    if( l->room!=0 ){
-	TM_FREE( l->arr );
-    }
-#ifdef USECACHE
-    if( cacheix_switchcase_list<CACHESZ ){
-	cache_switchcase_list[cacheix_switchcase_list++] = l;
-	return;
-    }
-#endif
-    TM_FREE( l );
-}
-
 /* Free a list of tmstring elements 'l'. */
 static void fre_tmstring_list( tmstring_list l )
 {
@@ -2238,7 +2240,7 @@ static void fre_var_list( var_list l )
 }
 
 /**************************************************
- *    Real append routines                        *
+ *    Append routines                             *
  **************************************************/
 
 
@@ -2338,7 +2340,7 @@ var_list append_var_list( var_list l, var e )
 macro_list insert_macro_list( macro_list l, const unsigned int pos, macro e )
 {
     unsigned int ix;
-    macro *arr;
+    macro *p;
     unsigned int the_pos = pos;
 
     if( l == macro_listNIL ){
@@ -2350,12 +2352,12 @@ macro_list insert_macro_list( macro_list l, const unsigned int pos, macro e )
     if( the_pos>l->sz ){
 	the_pos = l->sz;
     }
-    arr = l->arr;
+    p = l->arr;
     for( ix=l->sz; ix>the_pos; ix-- ){
-	arr[ix] = arr[ix-1];
+	p[ix] = p[ix-1];
     }
     l->sz++;
-    arr[the_pos] = e;
+    p[the_pos] = e;
     return l;
 }
 
@@ -2363,7 +2365,7 @@ macro_list insert_macro_list( macro_list l, const unsigned int pos, macro e )
 tmstring_list insert_tmstring_list( tmstring_list l, const unsigned int pos, tmstring e )
 {
     unsigned int ix;
-    tmstring *arr;
+    tmstring *p;
     unsigned int the_pos = pos;
 
     if( l == tmstring_listNIL ){
@@ -2375,12 +2377,12 @@ tmstring_list insert_tmstring_list( tmstring_list l, const unsigned int pos, tms
     if( the_pos>l->sz ){
 	the_pos = l->sz;
     }
-    arr = l->arr;
+    p = l->arr;
     for( ix=l->sz; ix>the_pos; ix-- ){
-	arr[ix] = arr[ix-1];
+	p[ix] = p[ix-1];
     }
     l->sz++;
-    arr[the_pos] = e;
+    p[the_pos] = e;
     return l;
 }
 
@@ -2388,7 +2390,7 @@ tmstring_list insert_tmstring_list( tmstring_list l, const unsigned int pos, tms
 var_list insert_var_list( var_list l, const unsigned int pos, var e )
 {
     unsigned int ix;
-    var *arr;
+    var *p;
     unsigned int the_pos = pos;
 
     if( l == var_listNIL ){
@@ -2400,18 +2402,18 @@ var_list insert_var_list( var_list l, const unsigned int pos, var e )
     if( the_pos>l->sz ){
 	the_pos = l->sz;
     }
-    arr = l->arr;
+    p = l->arr;
     for( ix=l->sz; ix>the_pos; ix-- ){
-	arr[ix] = arr[ix-1];
+	p[ix] = p[ix-1];
     }
     l->sz++;
-    arr[the_pos] = e;
+    p[the_pos] = e;
     return l;
 }
 
-/**********************************************
- *    concatenate routines                    *
- **********************************************/
+/**************************************************
+ *    Concatenate routines                        *
+ **************************************************/
 
 /* Concatenate ds list 'lb' after ds list 'la'.
    The list descriptor of list 'lb' is freed,
@@ -2493,46 +2495,6 @@ static void rfre_field( field );
 static void rfre_var( var );
 static void rfre_switchcase( switchcase );
 
-/* Recursively free an element 'e' of type 'ds'
-   and all elements in it.
- */
-void rfre_ds( ds e )
-{
-    if( e == dsNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGDsConstructorBase:
-	    rfre_tmstring( e->DsConstructorBase.name );
-	    rfre_tmstring_list( e->DsConstructorBase.inherits );
-	    rfre_tmstring_list( e->DsConstructorBase.constructors );
-	    break;
-
-	case TAGDsTuple:
-	    rfre_tmstring( e->DsTuple.name );
-	    rfre_tmstring_list( e->DsTuple.inherits );
-	    rfre_field_list( e->DsTuple.fields );
-	    break;
-
-	case TAGDsClass:
-	    rfre_tmstring( e->DsClass.name );
-	    rfre_tmstring_list( e->DsClass.inherits );
-	    rfre_field_list( e->DsClass.fields );
-	    rfre_tmbool( e->DsClass.virtual );
-	    break;
-
-	case TAGDsConstructor:
-	    rfre_tmstring( e->DsConstructor.name );
-	    rfre_tmstring_list( e->DsConstructor.inherits );
-	    rfre_field_list( e->DsConstructor.fields );
-	    break;
-
-	default:
-	    FATALTAG( (int) e->tag );
-    }
-    fre_ds( e );
-}
-
 /* Recursively free an element 'e' of type 'classComponent'
    and all elements in it.
  */
@@ -2543,25 +2505,198 @@ void rfre_classComponent( classComponent e )
     }
     switch( e->tag ){
 	case TAGCCSuper:
-	    rfre_tmstring( e->CCSuper.super );
+	    rfre_tmstring( to_CCSuper(e)->super );
 	    break;
 
 	case TAGCCFields:
-	    rfre_field_list( e->CCFields.fields );
+	    rfre_field_list( to_CCFields(e)->fields );
 	    break;
 
 	case TAGCCAlternatives:
-	    rfre_alternative_list( e->CCAlternatives.alternatives );
+	    rfre_alternative_list( to_CCAlternatives(e)->alternatives );
 	    break;
 
 	case TAGCCSublist:
-	    rfre_classComponent_list( e->CCSublist.components );
+	    rfre_classComponent_list( to_CCSublist(e)->components );
 	    break;
 
 	default:
 	    FATALTAG( (int) e->tag );
     }
     fre_classComponent( e );
+}
+
+/* Recursively free an element 'e' of type 'ds'
+   and all elements in it.
+ */
+void rfre_ds( ds e )
+{
+    if( e == dsNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGDsConstructorBase:
+	    rfre_tmstring( to_DsConstructorBase(e)->name );
+	    rfre_tmstring_list( to_DsConstructorBase(e)->inherits );
+	    rfre_tmstring_list( to_DsConstructorBase(e)->constructors );
+	    break;
+
+	case TAGDsTuple:
+	    rfre_tmstring( to_DsTuple(e)->name );
+	    rfre_tmstring_list( to_DsTuple(e)->inherits );
+	    rfre_field_list( to_DsTuple(e)->fields );
+	    break;
+
+	case TAGDsClass:
+	    rfre_tmstring( to_DsClass(e)->name );
+	    rfre_tmstring_list( to_DsClass(e)->inherits );
+	    rfre_field_list( to_DsClass(e)->fields );
+	    rfre_tmbool( to_DsClass(e)->virtual );
+	    break;
+
+	case TAGDsConstructor:
+	    rfre_tmstring( to_DsConstructor(e)->name );
+	    rfre_tmstring_list( to_DsConstructor(e)->inherits );
+	    rfre_field_list( to_DsConstructor(e)->fields );
+	    break;
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+    fre_ds( e );
+}
+
+/* Recursively free an element 'e' of type 'macro'
+   and all elements in it.
+ */
+void rfre_macro( macro e )
+{
+    if( e == macroNIL ){
+	return;
+    }
+    rfre_uint( e->lvl );
+    rfre_tmstring( e->name );
+    rfre_tmstring( e->orgfile );
+    rfre_tmstring_list( e->fpl );
+    rfre_tplelm_list( e->body );
+    fre_macro( e );
+}
+
+/* Recursively free an element 'e' of type 'tplelm'
+   and all elements in it.
+ */
+void rfre_tplelm( tplelm e )
+{
+    if( e == tplelmNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGPlain:
+	    rfre_int( to_Plain(e)->lno );
+	    rfre_tmstring( to_Plain(e)->plainline );
+	    break;
+
+	case TAGForeach:
+	    rfre_int( to_Foreach(e)->lno );
+	    rfre_tmstring( to_Foreach(e)->felist );
+	    rfre_tplelm_list( to_Foreach(e)->felines );
+	    break;
+
+	case TAGWhile:
+	    rfre_int( to_While(e)->lno );
+	    rfre_tmstring( to_While(e)->whilecond );
+	    rfre_tplelm_list( to_While(e)->whilelines );
+	    break;
+
+	case TAGIf:
+	    rfre_int( to_If(e)->lno );
+	    rfre_tmstring( to_If(e)->ifcond );
+	    rfre_tplelm_list( to_If(e)->ifthen );
+	    rfre_tplelm_list( to_If(e)->ifelse );
+	    break;
+
+	case TAGSwitch:
+	    rfre_int( to_Switch(e)->lno );
+	    rfre_tmstring( to_Switch(e)->val );
+	    rfre_switchcase_list( to_Switch(e)->cases );
+	    rfre_tplelm_list( to_Switch(e)->deflt );
+	    break;
+
+	case TAGSet:
+	    rfre_int( to_Set(e)->lno );
+	    rfre_tmstring( to_Set(e)->setline );
+	    break;
+
+	case TAGGlobalSet:
+	    rfre_int( to_GlobalSet(e)->lno );
+	    rfre_tmstring( to_GlobalSet(e)->setline );
+	    break;
+
+	case TAGAppend:
+	    rfre_int( to_Append(e)->lno );
+	    rfre_tmstring( to_Append(e)->appline );
+	    break;
+
+	case TAGGlobalAppend:
+	    rfre_int( to_GlobalAppend(e)->lno );
+	    rfre_tmstring( to_GlobalAppend(e)->appline );
+	    break;
+
+	case TAGError:
+	    rfre_int( to_Error(e)->lno );
+	    rfre_tmstring( to_Error(e)->errstr );
+	    break;
+
+	case TAGExit:
+	    rfre_int( to_Exit(e)->lno );
+	    rfre_tmstring( to_Exit(e)->str );
+	    break;
+
+	case TAGRedirect:
+	    rfre_int( to_Redirect(e)->lno );
+	    rfre_tmstring( to_Redirect(e)->fname );
+	    rfre_tplelm_list( to_Redirect(e)->body );
+	    break;
+
+	case TAGInclude:
+	    rfre_int( to_Include(e)->lno );
+	    rfre_tmstring( to_Include(e)->fname );
+	    break;
+
+	case TAGMacro:
+	    rfre_int( to_Macro(e)->lno );
+	    rfre_tmstring( to_Macro(e)->formpar );
+	    rfre_tplelm_list( to_Macro(e)->macbody );
+	    break;
+
+	case TAGCall:
+	    rfre_int( to_Call(e)->lno );
+	    rfre_tmstring( to_Call(e)->callline );
+	    break;
+
+	case TAGReturn:
+	    rfre_int( to_Return(e)->lno );
+	    rfre_tmstring( to_Return(e)->retval );
+	    break;
+
+	case TAGInsert:
+	    rfre_int( to_Insert(e)->lno );
+	    rfre_tmstring( to_Insert(e)->fname );
+	    break;
+
+	case TAGCase:
+	    rfre_int( to_Case(e)->lno );
+	    rfre_tmstring( to_Case(e)->val );
+	    break;
+
+	case TAGDefault:
+	    rfre_int( to_Default(e)->lno );
+	    break;
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+    fre_tplelm( e );
 }
 
 /* Recursively free an element 'e' of type 'alternative'
@@ -2591,22 +2726,6 @@ static void rfre_field( field e )
     fre_field( e );
 }
 
-/* Recursively free an element 'e' of type 'macro'
-   and all elements in it.
- */
-void rfre_macro( macro e )
-{
-    if( e == macroNIL ){
-	return;
-    }
-    rfre_uint( e->lvl );
-    rfre_tmstring( e->name );
-    rfre_tmstring( e->orgfile );
-    rfre_tmstring_list( e->fpl );
-    rfre_tplelm_list( e->body );
-    fre_macro( e );
-}
-
 /* Recursively free an element 'e' of type 'var'
    and all elements in it.
  */
@@ -2632,123 +2751,6 @@ static void rfre_switchcase( switchcase e )
     rfre_tmstring( e->cases );
     rfre_tplelm_list( e->action );
     fre_switchcase( e );
-}
-
-/* Recursively free an element 'e' of type 'tplelm'
-   and all elements in it.
- */
-void rfre_tplelm( tplelm e )
-{
-    if( e == tplelmNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGPlain:
-	    rfre_int( e->Plain.lno );
-	    rfre_tmstring( e->Plain.plainline );
-	    break;
-
-	case TAGForeach:
-	    rfre_int( e->Foreach.lno );
-	    rfre_tmstring( e->Foreach.felist );
-	    rfre_tplelm_list( e->Foreach.felines );
-	    break;
-
-	case TAGWhile:
-	    rfre_int( e->While.lno );
-	    rfre_tmstring( e->While.whilecond );
-	    rfre_tplelm_list( e->While.whilelines );
-	    break;
-
-	case TAGIf:
-	    rfre_int( e->If.lno );
-	    rfre_tmstring( e->If.ifcond );
-	    rfre_tplelm_list( e->If.ifthen );
-	    rfre_tplelm_list( e->If.ifelse );
-	    break;
-
-	case TAGSwitch:
-	    rfre_int( e->Switch.lno );
-	    rfre_tmstring( e->Switch.val );
-	    rfre_switchcase_list( e->Switch.cases );
-	    rfre_tplelm_list( e->Switch.deflt );
-	    break;
-
-	case TAGSet:
-	    rfre_int( e->Set.lno );
-	    rfre_tmstring( e->Set.setline );
-	    break;
-
-	case TAGGlobalSet:
-	    rfre_int( e->GlobalSet.lno );
-	    rfre_tmstring( e->GlobalSet.setline );
-	    break;
-
-	case TAGAppend:
-	    rfre_int( e->Append.lno );
-	    rfre_tmstring( e->Append.appline );
-	    break;
-
-	case TAGGlobalAppend:
-	    rfre_int( e->GlobalAppend.lno );
-	    rfre_tmstring( e->GlobalAppend.appline );
-	    break;
-
-	case TAGError:
-	    rfre_int( e->Error.lno );
-	    rfre_tmstring( e->Error.errstr );
-	    break;
-
-	case TAGExit:
-	    rfre_int( e->Exit.lno );
-	    rfre_tmstring( e->Exit.str );
-	    break;
-
-	case TAGRedirect:
-	    rfre_int( e->Redirect.lno );
-	    rfre_tmstring( e->Redirect.fname );
-	    rfre_tplelm_list( e->Redirect.body );
-	    break;
-
-	case TAGInclude:
-	    rfre_int( e->Include.lno );
-	    rfre_tmstring( e->Include.fname );
-	    break;
-
-	case TAGMacro:
-	    rfre_int( e->Macro.lno );
-	    rfre_tmstring( e->Macro.formpar );
-	    rfre_tplelm_list( e->Macro.macbody );
-	    break;
-
-	case TAGCall:
-	    rfre_int( e->Call.lno );
-	    rfre_tmstring( e->Call.callline );
-	    break;
-
-	case TAGReturn:
-	    rfre_int( e->Return.lno );
-	    rfre_tmstring( e->Return.retval );
-	    break;
-
-	case TAGInsert:
-	    rfre_int( e->Insert.lno );
-	    rfre_tmstring( e->Insert.fname );
-	    break;
-
-	case TAGCase:
-	    rfre_int( e->Case.lno );
-	    rfre_tmstring( e->Case.val );
-	    break;
-
-	case TAGDefault:
-	    rfre_int( e->Default.lno );
-	    break;
-
-	default:
-	    FATALTAG( (int) e->tag );
-    }
-    fre_tplelm( e );
 }
 
 /* Recursively free a list of elements 'e' of type alternative. */
@@ -2821,20 +2823,6 @@ void rfre_macro_list( macro_list e )
     fre_macro_list( e );
 }
 
-/* Recursively free a list of elements 'e' of type switchcase. */
-static void rfre_switchcase_list( switchcase_list e )
-{
-    unsigned int ix;
-
-    if( e == switchcase_listNIL ){
-	return;
-    }
-    for( ix=0; ix<e->sz; ix++ ){
-	rfre_switchcase( e->arr[ix] );
-    }
-    fre_switchcase_list( e );
-}
-
 /* Recursively free a list of elements 'e' of type tmstring. */
 void rfre_tmstring_list( tmstring_list e )
 {
@@ -2877,6 +2865,20 @@ void rfre_var_list( var_list e )
     fre_var_list( e );
 }
 
+/* Recursively free a list of elements 'e' of type switchcase. */
+static void rfre_switchcase_list( switchcase_list e )
+{
+    unsigned int ix;
+
+    if( e == switchcase_listNIL ){
+	return;
+    }
+    for( ix=0; ix<e->sz; ix++ ){
+	rfre_switchcase( e->arr[ix] );
+    }
+    fre_switchcase_list( e );
+}
+
 /**************************************************
  *    print_<type> and print_<type>_list routines *
  **************************************************/
@@ -2899,31 +2901,31 @@ static void print_ds( TMPRINTSTATE *st, const ds t )
     switch( t->tag ){
 	case TAGDsConstructorBase:
 	    tm_printword( st, "DsConstructorBase" );
-	    print_tmstring( st, t->DsConstructorBase.name );
-	    print_tmstring_list( st, t->DsConstructorBase.inherits );
-	    print_tmstring_list( st, t->DsConstructorBase.constructors );
+	    print_tmstring( st, to_DsConstructorBase(t)->name );
+	    print_tmstring_list( st, to_DsConstructorBase(t)->inherits );
+	    print_tmstring_list( st, to_DsConstructorBase(t)->constructors );
 	    break;
 
 	case TAGDsTuple:
 	    tm_printword( st, "DsTuple" );
-	    print_tmstring( st, t->DsTuple.name );
-	    print_tmstring_list( st, t->DsTuple.inherits );
-	    print_field_list( st, t->DsTuple.fields );
+	    print_tmstring( st, to_DsTuple(t)->name );
+	    print_tmstring_list( st, to_DsTuple(t)->inherits );
+	    print_field_list( st, to_DsTuple(t)->fields );
 	    break;
 
 	case TAGDsClass:
 	    tm_printword( st, "DsClass" );
-	    print_tmstring( st, t->DsClass.name );
-	    print_tmstring_list( st, t->DsClass.inherits );
-	    print_field_list( st, t->DsClass.fields );
-	    print_tmbool( st, t->DsClass.virtual );
+	    print_tmstring( st, to_DsClass(t)->name );
+	    print_tmstring_list( st, to_DsClass(t)->inherits );
+	    print_field_list( st, to_DsClass(t)->fields );
+	    print_tmbool( st, to_DsClass(t)->virtual );
 	    break;
 
 	case TAGDsConstructor:
 	    tm_printword( st, "DsConstructor" );
-	    print_tmstring( st, t->DsConstructor.name );
-	    print_tmstring_list( st, t->DsConstructor.inherits );
-	    print_field_list( st, t->DsConstructor.fields );
+	    print_tmstring( st, to_DsConstructor(t)->name );
+	    print_tmstring_list( st, to_DsConstructor(t)->inherits );
+	    print_field_list( st, to_DsConstructor(t)->fields );
 	    break;
 
 	default:
@@ -2966,24 +2968,6 @@ void print_ds_list( TMPRINTSTATE *st, const ds_list l )
     tm_closelist( st );
 }
 
-/* Print a list of elements 'l' of type 'field'
-   using print optimizer.
- */
-static void print_field_list( TMPRINTSTATE *st, const field_list l )
-{
-    unsigned int ix;
-
-    if( l == field_listNIL ){
-	tm_printword( st, "@" );
-	return;
-    }
-    tm_openlist( st );
-    for( ix=0; ix<l->sz; ix++ ){
-	print_field( st, l->arr[ix] );
-    }
-    tm_closelist( st );
-}
-
 /* Print a list of elements 'l' of type 'tmstring'
    using print optimizer.
  */
@@ -3002,6 +2986,24 @@ void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list l )
     tm_closelist( st );
 }
 
+/* Print a list of elements 'l' of type 'field'
+   using print optimizer.
+ */
+static void print_field_list( TMPRINTSTATE *st, const field_list l )
+{
+    unsigned int ix;
+
+    if( l == field_listNIL ){
+	tm_printword( st, "@" );
+	return;
+    }
+    tm_openlist( st );
+    for( ix=0; ix<l->sz; ix++ ){
+	print_field( st, l->arr[ix] );
+    }
+    tm_closelist( st );
+}
+
 /**************************************************
  *    Duplication routines                        *
  **************************************************/
@@ -3009,27 +3011,27 @@ void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list l )
 #ifdef LOGNEW
 #undef rdup_ds
 #define rdup_ds(e) real_rdup_ds(e,_f,_l)
-#define rdup_field(e) real_rdup_field(e,_f,_l)
-#define rdup_switchcase(e) real_rdup_switchcase(e,_f,_l)
 #undef rdup_tplelm
 #define rdup_tplelm(e) real_rdup_tplelm(e,_f,_l)
+#define rdup_field(e) real_rdup_field(e,_f,_l)
+#define rdup_switchcase(e) real_rdup_switchcase(e,_f,_l)
 #undef rdup_field_list
 #define rdup_field_list(l) real_rdup_field_list(l,_f,_l)
-#define rdup_switchcase_list(l) real_rdup_switchcase_list(l,_f,_l)
 #undef rdup_tmstring_list
 #define rdup_tmstring_list(l) real_rdup_tmstring_list(l,_f,_l)
 #undef rdup_tplelm_list
 #define rdup_tplelm_list(l) real_rdup_tplelm_list(l,_f,_l)
-static switchcase_list real_rdup_switchcase_list( const switchcase_list, const char *_f, const int _l );
+#define rdup_switchcase_list(l) real_rdup_switchcase_list(l,_f,_l)
+static switchcase_list real_rdup_switchcase_list( const switchcase_list l, const char *_f, const int _l );
 
-static field real_rdup_field( const field, const char *_f, const int _l );
-static switchcase real_rdup_switchcase( const switchcase, const char *_f, const int _l );
+static field real_rdup_field( const field e, const char *_f, const int _l );
+static switchcase real_rdup_switchcase( const switchcase e, const char *_f, const int _l );
 
 #else
-static switchcase_list rdup_switchcase_list( const switchcase_list );
+static switchcase_list rdup_switchcase_list( const switchcase_list l );
 
-static field rdup_field( const field );
-static switchcase rdup_switchcase( const switchcase );
+static field rdup_field( const field e );
+static switchcase rdup_switchcase( const switchcase e );
 
 #endif
 /* Recursively duplicate a ds element 'e'. */
@@ -3049,9 +3051,9 @@ ds rdup_ds( const ds e )
 	    tmstring_list i_inherits;
 	    tmstring_list i_constructors;
 
-	    i_name = rdup_tmstring( e->DsConstructorBase.name );
-	    i_inherits = rdup_tmstring_list( e->DsConstructorBase.inherits );
-	    i_constructors = rdup_tmstring_list( e->DsConstructorBase.constructors );
+	    i_name = rdup_tmstring( to_DsConstructorBase(e)->name );
+	    i_inherits = rdup_tmstring_list( to_DsConstructorBase(e)->inherits );
+	    i_constructors = rdup_tmstring_list( to_DsConstructorBase(e)->constructors );
 	    return new_DsConstructorBase( i_name, i_inherits, i_constructors );
 	}
 
@@ -3061,9 +3063,9 @@ ds rdup_ds( const ds e )
 	    tmstring_list i_inherits;
 	    field_list i_fields;
 
-	    i_name = rdup_tmstring( e->DsTuple.name );
-	    i_inherits = rdup_tmstring_list( e->DsTuple.inherits );
-	    i_fields = rdup_field_list( e->DsTuple.fields );
+	    i_name = rdup_tmstring( to_DsTuple(e)->name );
+	    i_inherits = rdup_tmstring_list( to_DsTuple(e)->inherits );
+	    i_fields = rdup_field_list( to_DsTuple(e)->fields );
 	    return new_DsTuple( i_name, i_inherits, i_fields );
 	}
 
@@ -3074,10 +3076,10 @@ ds rdup_ds( const ds e )
 	    field_list i_fields;
 	    tmbool i_virtual;
 
-	    i_name = rdup_tmstring( e->DsClass.name );
-	    i_inherits = rdup_tmstring_list( e->DsClass.inherits );
-	    i_fields = rdup_field_list( e->DsClass.fields );
-	    i_virtual = rdup_tmbool( e->DsClass.virtual );
+	    i_name = rdup_tmstring( to_DsClass(e)->name );
+	    i_inherits = rdup_tmstring_list( to_DsClass(e)->inherits );
+	    i_fields = rdup_field_list( to_DsClass(e)->fields );
+	    i_virtual = rdup_tmbool( to_DsClass(e)->virtual );
 	    return new_DsClass( i_name, i_inherits, i_fields, i_virtual );
 	}
 
@@ -3087,9 +3089,9 @@ ds rdup_ds( const ds e )
 	    tmstring_list i_inherits;
 	    field_list i_fields;
 
-	    i_name = rdup_tmstring( e->DsConstructor.name );
-	    i_inherits = rdup_tmstring_list( e->DsConstructor.inherits );
-	    i_fields = rdup_field_list( e->DsConstructor.fields );
+	    i_name = rdup_tmstring( to_DsConstructor(e)->name );
+	    i_inherits = rdup_tmstring_list( to_DsConstructor(e)->inherits );
+	    i_fields = rdup_field_list( to_DsConstructor(e)->fields );
 	    return new_DsConstructor( i_name, i_inherits, i_fields );
 	}
 
@@ -3097,6 +3099,227 @@ ds rdup_ds( const ds e )
 	    FATALTAG( (int) e->tag );
     }
     return dsNIL;
+}
+
+/* Recursively duplicate a tplelm element 'e'. */
+#ifdef LOGNEW
+tplelm real_rdup_tplelm( const tplelm e, const char *_f, const int _l )
+#else
+tplelm rdup_tplelm( const tplelm e )
+#endif
+{
+    if( e == tplelmNIL ){
+	return tplelmNIL;
+    }
+    switch( e->tag ){
+	case TAGPlain:
+	{
+	    int i_lno;
+	    tmstring i_plainline;
+
+	    i_lno = rdup_int( to_Plain(e)->lno );
+	    i_plainline = rdup_tmstring( to_Plain(e)->plainline );
+	    return new_Plain( i_lno, i_plainline );
+	}
+
+	case TAGForeach:
+	{
+	    int i_lno;
+	    tmstring i_felist;
+	    tplelm_list i_felines;
+
+	    i_lno = rdup_int( to_Foreach(e)->lno );
+	    i_felist = rdup_tmstring( to_Foreach(e)->felist );
+	    i_felines = rdup_tplelm_list( to_Foreach(e)->felines );
+	    return new_Foreach( i_lno, i_felist, i_felines );
+	}
+
+	case TAGWhile:
+	{
+	    int i_lno;
+	    tmstring i_whilecond;
+	    tplelm_list i_whilelines;
+
+	    i_lno = rdup_int( to_While(e)->lno );
+	    i_whilecond = rdup_tmstring( to_While(e)->whilecond );
+	    i_whilelines = rdup_tplelm_list( to_While(e)->whilelines );
+	    return new_While( i_lno, i_whilecond, i_whilelines );
+	}
+
+	case TAGIf:
+	{
+	    int i_lno;
+	    tmstring i_ifcond;
+	    tplelm_list i_ifthen;
+	    tplelm_list i_ifelse;
+
+	    i_lno = rdup_int( to_If(e)->lno );
+	    i_ifcond = rdup_tmstring( to_If(e)->ifcond );
+	    i_ifthen = rdup_tplelm_list( to_If(e)->ifthen );
+	    i_ifelse = rdup_tplelm_list( to_If(e)->ifelse );
+	    return new_If( i_lno, i_ifcond, i_ifthen, i_ifelse );
+	}
+
+	case TAGSwitch:
+	{
+	    int i_lno;
+	    tmstring i_val;
+	    switchcase_list i_cases;
+	    tplelm_list i_deflt;
+
+	    i_lno = rdup_int( to_Switch(e)->lno );
+	    i_val = rdup_tmstring( to_Switch(e)->val );
+	    i_cases = rdup_switchcase_list( to_Switch(e)->cases );
+	    i_deflt = rdup_tplelm_list( to_Switch(e)->deflt );
+	    return new_Switch( i_lno, i_val, i_cases, i_deflt );
+	}
+
+	case TAGSet:
+	{
+	    int i_lno;
+	    tmstring i_setline;
+
+	    i_lno = rdup_int( to_Set(e)->lno );
+	    i_setline = rdup_tmstring( to_Set(e)->setline );
+	    return new_Set( i_lno, i_setline );
+	}
+
+	case TAGGlobalSet:
+	{
+	    int i_lno;
+	    tmstring i_setline;
+
+	    i_lno = rdup_int( to_GlobalSet(e)->lno );
+	    i_setline = rdup_tmstring( to_GlobalSet(e)->setline );
+	    return new_GlobalSet( i_lno, i_setline );
+	}
+
+	case TAGAppend:
+	{
+	    int i_lno;
+	    tmstring i_appline;
+
+	    i_lno = rdup_int( to_Append(e)->lno );
+	    i_appline = rdup_tmstring( to_Append(e)->appline );
+	    return new_Append( i_lno, i_appline );
+	}
+
+	case TAGGlobalAppend:
+	{
+	    int i_lno;
+	    tmstring i_appline;
+
+	    i_lno = rdup_int( to_GlobalAppend(e)->lno );
+	    i_appline = rdup_tmstring( to_GlobalAppend(e)->appline );
+	    return new_GlobalAppend( i_lno, i_appline );
+	}
+
+	case TAGError:
+	{
+	    int i_lno;
+	    tmstring i_errstr;
+
+	    i_lno = rdup_int( to_Error(e)->lno );
+	    i_errstr = rdup_tmstring( to_Error(e)->errstr );
+	    return new_Error( i_lno, i_errstr );
+	}
+
+	case TAGExit:
+	{
+	    int i_lno;
+	    tmstring i_str;
+
+	    i_lno = rdup_int( to_Exit(e)->lno );
+	    i_str = rdup_tmstring( to_Exit(e)->str );
+	    return new_Exit( i_lno, i_str );
+	}
+
+	case TAGRedirect:
+	{
+	    int i_lno;
+	    tmstring i_fname;
+	    tplelm_list i_body;
+
+	    i_lno = rdup_int( to_Redirect(e)->lno );
+	    i_fname = rdup_tmstring( to_Redirect(e)->fname );
+	    i_body = rdup_tplelm_list( to_Redirect(e)->body );
+	    return new_Redirect( i_lno, i_fname, i_body );
+	}
+
+	case TAGInclude:
+	{
+	    int i_lno;
+	    tmstring i_fname;
+
+	    i_lno = rdup_int( to_Include(e)->lno );
+	    i_fname = rdup_tmstring( to_Include(e)->fname );
+	    return new_Include( i_lno, i_fname );
+	}
+
+	case TAGMacro:
+	{
+	    int i_lno;
+	    tmstring i_formpar;
+	    tplelm_list i_macbody;
+
+	    i_lno = rdup_int( to_Macro(e)->lno );
+	    i_formpar = rdup_tmstring( to_Macro(e)->formpar );
+	    i_macbody = rdup_tplelm_list( to_Macro(e)->macbody );
+	    return new_Macro( i_lno, i_formpar, i_macbody );
+	}
+
+	case TAGCall:
+	{
+	    int i_lno;
+	    tmstring i_callline;
+
+	    i_lno = rdup_int( to_Call(e)->lno );
+	    i_callline = rdup_tmstring( to_Call(e)->callline );
+	    return new_Call( i_lno, i_callline );
+	}
+
+	case TAGReturn:
+	{
+	    int i_lno;
+	    tmstring i_retval;
+
+	    i_lno = rdup_int( to_Return(e)->lno );
+	    i_retval = rdup_tmstring( to_Return(e)->retval );
+	    return new_Return( i_lno, i_retval );
+	}
+
+	case TAGInsert:
+	{
+	    int i_lno;
+	    tmstring i_fname;
+
+	    i_lno = rdup_int( to_Insert(e)->lno );
+	    i_fname = rdup_tmstring( to_Insert(e)->fname );
+	    return new_Insert( i_lno, i_fname );
+	}
+
+	case TAGCase:
+	{
+	    int i_lno;
+	    tmstring i_val;
+
+	    i_lno = rdup_int( to_Case(e)->lno );
+	    i_val = rdup_tmstring( to_Case(e)->val );
+	    return new_Case( i_lno, i_val );
+	}
+
+	case TAGDefault:
+	{
+	    int i_lno;
+
+	    i_lno = rdup_int( to_Default(e)->lno );
+	    return new_Default( i_lno );
+	}
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+    return tplelmNIL;
 }
 
 /* Recursively duplicate a field element 'e'. */
@@ -3137,227 +3360,6 @@ static switchcase rdup_switchcase( const switchcase e )
     return new_switchcase( i_cases, i_action );
 }
 
-/* Recursively duplicate a tplelm element 'e'. */
-#ifdef LOGNEW
-tplelm real_rdup_tplelm( const tplelm e, const char *_f, const int _l )
-#else
-tplelm rdup_tplelm( const tplelm e )
-#endif
-{
-    if( e == tplelmNIL ){
-	return tplelmNIL;
-    }
-    switch( e->tag ){
-	case TAGPlain:
-	{
-	    int i_lno;
-	    tmstring i_plainline;
-
-	    i_lno = rdup_int( e->Plain.lno );
-	    i_plainline = rdup_tmstring( e->Plain.plainline );
-	    return new_Plain( i_lno, i_plainline );
-	}
-
-	case TAGForeach:
-	{
-	    int i_lno;
-	    tmstring i_felist;
-	    tplelm_list i_felines;
-
-	    i_lno = rdup_int( e->Foreach.lno );
-	    i_felist = rdup_tmstring( e->Foreach.felist );
-	    i_felines = rdup_tplelm_list( e->Foreach.felines );
-	    return new_Foreach( i_lno, i_felist, i_felines );
-	}
-
-	case TAGWhile:
-	{
-	    int i_lno;
-	    tmstring i_whilecond;
-	    tplelm_list i_whilelines;
-
-	    i_lno = rdup_int( e->While.lno );
-	    i_whilecond = rdup_tmstring( e->While.whilecond );
-	    i_whilelines = rdup_tplelm_list( e->While.whilelines );
-	    return new_While( i_lno, i_whilecond, i_whilelines );
-	}
-
-	case TAGIf:
-	{
-	    int i_lno;
-	    tmstring i_ifcond;
-	    tplelm_list i_ifthen;
-	    tplelm_list i_ifelse;
-
-	    i_lno = rdup_int( e->If.lno );
-	    i_ifcond = rdup_tmstring( e->If.ifcond );
-	    i_ifthen = rdup_tplelm_list( e->If.ifthen );
-	    i_ifelse = rdup_tplelm_list( e->If.ifelse );
-	    return new_If( i_lno, i_ifcond, i_ifthen, i_ifelse );
-	}
-
-	case TAGSwitch:
-	{
-	    int i_lno;
-	    tmstring i_val;
-	    switchcase_list i_cases;
-	    tplelm_list i_deflt;
-
-	    i_lno = rdup_int( e->Switch.lno );
-	    i_val = rdup_tmstring( e->Switch.val );
-	    i_cases = rdup_switchcase_list( e->Switch.cases );
-	    i_deflt = rdup_tplelm_list( e->Switch.deflt );
-	    return new_Switch( i_lno, i_val, i_cases, i_deflt );
-	}
-
-	case TAGSet:
-	{
-	    int i_lno;
-	    tmstring i_setline;
-
-	    i_lno = rdup_int( e->Set.lno );
-	    i_setline = rdup_tmstring( e->Set.setline );
-	    return new_Set( i_lno, i_setline );
-	}
-
-	case TAGGlobalSet:
-	{
-	    int i_lno;
-	    tmstring i_setline;
-
-	    i_lno = rdup_int( e->GlobalSet.lno );
-	    i_setline = rdup_tmstring( e->GlobalSet.setline );
-	    return new_GlobalSet( i_lno, i_setline );
-	}
-
-	case TAGAppend:
-	{
-	    int i_lno;
-	    tmstring i_appline;
-
-	    i_lno = rdup_int( e->Append.lno );
-	    i_appline = rdup_tmstring( e->Append.appline );
-	    return new_Append( i_lno, i_appline );
-	}
-
-	case TAGGlobalAppend:
-	{
-	    int i_lno;
-	    tmstring i_appline;
-
-	    i_lno = rdup_int( e->GlobalAppend.lno );
-	    i_appline = rdup_tmstring( e->GlobalAppend.appline );
-	    return new_GlobalAppend( i_lno, i_appline );
-	}
-
-	case TAGError:
-	{
-	    int i_lno;
-	    tmstring i_errstr;
-
-	    i_lno = rdup_int( e->Error.lno );
-	    i_errstr = rdup_tmstring( e->Error.errstr );
-	    return new_Error( i_lno, i_errstr );
-	}
-
-	case TAGExit:
-	{
-	    int i_lno;
-	    tmstring i_str;
-
-	    i_lno = rdup_int( e->Exit.lno );
-	    i_str = rdup_tmstring( e->Exit.str );
-	    return new_Exit( i_lno, i_str );
-	}
-
-	case TAGRedirect:
-	{
-	    int i_lno;
-	    tmstring i_fname;
-	    tplelm_list i_body;
-
-	    i_lno = rdup_int( e->Redirect.lno );
-	    i_fname = rdup_tmstring( e->Redirect.fname );
-	    i_body = rdup_tplelm_list( e->Redirect.body );
-	    return new_Redirect( i_lno, i_fname, i_body );
-	}
-
-	case TAGInclude:
-	{
-	    int i_lno;
-	    tmstring i_fname;
-
-	    i_lno = rdup_int( e->Include.lno );
-	    i_fname = rdup_tmstring( e->Include.fname );
-	    return new_Include( i_lno, i_fname );
-	}
-
-	case TAGMacro:
-	{
-	    int i_lno;
-	    tmstring i_formpar;
-	    tplelm_list i_macbody;
-
-	    i_lno = rdup_int( e->Macro.lno );
-	    i_formpar = rdup_tmstring( e->Macro.formpar );
-	    i_macbody = rdup_tplelm_list( e->Macro.macbody );
-	    return new_Macro( i_lno, i_formpar, i_macbody );
-	}
-
-	case TAGCall:
-	{
-	    int i_lno;
-	    tmstring i_callline;
-
-	    i_lno = rdup_int( e->Call.lno );
-	    i_callline = rdup_tmstring( e->Call.callline );
-	    return new_Call( i_lno, i_callline );
-	}
-
-	case TAGReturn:
-	{
-	    int i_lno;
-	    tmstring i_retval;
-
-	    i_lno = rdup_int( e->Return.lno );
-	    i_retval = rdup_tmstring( e->Return.retval );
-	    return new_Return( i_lno, i_retval );
-	}
-
-	case TAGInsert:
-	{
-	    int i_lno;
-	    tmstring i_fname;
-
-	    i_lno = rdup_int( e->Insert.lno );
-	    i_fname = rdup_tmstring( e->Insert.fname );
-	    return new_Insert( i_lno, i_fname );
-	}
-
-	case TAGCase:
-	{
-	    int i_lno;
-	    tmstring i_val;
-
-	    i_lno = rdup_int( e->Case.lno );
-	    i_val = rdup_tmstring( e->Case.val );
-	    return new_Case( i_lno, i_val );
-	}
-
-	case TAGDefault:
-	{
-	    int i_lno;
-
-	    i_lno = rdup_int( e->Default.lno );
-	    return new_Default( i_lno );
-	}
-
-	default:
-	    FATALTAG( (int) e->tag );
-    }
-    return tplelmNIL;
-}
-
 /* Recursively duplicate field list 'l'. */
 #ifdef LOGNEW
 field_list real_rdup_field_list( const field_list l, const char *_f, const int _l )
@@ -3368,41 +3370,16 @@ field_list rdup_field_list( const field_list l )
     unsigned int ix;
     field_list nw;
     field *ar;
-    field *or;
+    field *o_r;
 
     if( l == field_listNIL ){
 	return field_listNIL;
     }
     nw = setroom_field_list( new_field_list(), l->sz );
     ar = nw->arr;
-    or = l->arr;
+    o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_field( *or++ );
-    }
-    nw->sz = l->sz;
-    return nw;
-}
-
-/* Recursively duplicate switchcase list 'l'. */
-#ifdef LOGNEW
-static switchcase_list real_rdup_switchcase_list( const switchcase_list l, const char *_f, const int _l )
-#else
-static switchcase_list rdup_switchcase_list( const switchcase_list l )
-#endif
-{
-    unsigned int ix;
-    switchcase_list nw;
-    switchcase *ar;
-    switchcase *or;
-
-    if( l == switchcase_listNIL ){
-	return switchcase_listNIL;
-    }
-    nw = setroom_switchcase_list( new_switchcase_list(), l->sz );
-    ar = nw->arr;
-    or = l->arr;
-    for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_switchcase( *or++ );
+	*ar++ = rdup_field( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3418,16 +3395,16 @@ tmstring_list rdup_tmstring_list( const tmstring_list l )
     unsigned int ix;
     tmstring_list nw;
     tmstring *ar;
-    tmstring *or;
+    tmstring *o_r;
 
     if( l == tmstring_listNIL ){
 	return tmstring_listNIL;
     }
     nw = setroom_tmstring_list( new_tmstring_list(), l->sz );
     ar = nw->arr;
-    or = l->arr;
+    o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_tmstring( *or++ );
+	*ar++ = rdup_tmstring( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3443,16 +3420,41 @@ tplelm_list rdup_tplelm_list( const tplelm_list l )
     unsigned int ix;
     tplelm_list nw;
     tplelm *ar;
-    tplelm *or;
+    tplelm *o_r;
 
     if( l == tplelm_listNIL ){
 	return tplelm_listNIL;
     }
     nw = setroom_tplelm_list( new_tplelm_list(), l->sz );
     ar = nw->arr;
-    or = l->arr;
+    o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_tplelm( *or++ );
+	*ar++ = rdup_tplelm( *o_r++ );
+    }
+    nw->sz = l->sz;
+    return nw;
+}
+
+/* Recursively duplicate switchcase list 'l'. */
+#ifdef LOGNEW
+static switchcase_list real_rdup_switchcase_list( const switchcase_list l, const char *_f, const int _l )
+#else
+static switchcase_list rdup_switchcase_list( const switchcase_list l )
+#endif
+{
+    unsigned int ix;
+    switchcase_list nw;
+    switchcase *ar;
+    switchcase *o_r;
+
+    if( l == switchcase_listNIL ){
+	return switchcase_listNIL;
+    }
+    nw = setroom_switchcase_list( new_switchcase_list(), l->sz );
+    ar = nw->arr;
+    o_r = l->arr;
+    for( ix=0; ix<l->sz; ix++ ){
+	*ar++ = rdup_switchcase( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3532,6 +3534,37 @@ var_list delete_var_list( var_list l, const unsigned int pos )
 	return l;
     }
     rfre_var( l->arr[pos] );
+    l->sz--;
+    for( ix=pos; ix<l->sz; ix++ ){
+	l->arr[ix] = l->arr[ix+1];
+    }
+    return l;
+}
+
+/**************************************************
+ *    extract_<type>_list routines                 *
+ **************************************************/
+
+
+/* Extract 'tmstring' element at position 'pos' in list 'l'. */
+tmstring_list extract_tmstring_list(
+    tmstring_list l,
+    const unsigned int pos,
+    tmstring *e,
+    int *valid
+)
+{
+    unsigned int ix;
+
+    if( l == tmstring_listNIL ){
+	FATAL( tm_nilptr );
+    }
+    if( pos >= l->sz ){
+	*valid = 0;
+	return l;
+    }
+    *valid = 1;
+    *e = l->arr[pos];
     l->sz--;
     for( ix=pos; ix<l->sz; ix++ ){
 	l->arr[ix] = l->arr[ix+1];
@@ -3957,248 +3990,250 @@ int get_balance_tm( void )
 
     res = 0;
 #ifdef STAT
+    /* Check for too many free()s. */
     if( newcnt_alternative_list<frecnt_alternative_list ){
         return -1;
-    }
-    if( newcnt_alternative_list>frecnt_alternative_list ){
-        res = 1;
     }
     if( newcnt_classComponent_list<frecnt_classComponent_list ){
         return -1;
     }
-    if( newcnt_classComponent_list>frecnt_classComponent_list ){
-        res = 1;
-    }
     if( newcnt_ds_list<frecnt_ds_list ){
         return -1;
-    }
-    if( newcnt_ds_list>frecnt_ds_list ){
-        res = 1;
     }
     if( newcnt_field_list<frecnt_field_list ){
         return -1;
     }
-    if( newcnt_field_list>frecnt_field_list ){
-        res = 1;
-    }
     if( newcnt_macro_list<frecnt_macro_list ){
         return -1;
-    }
-    if( newcnt_macro_list>frecnt_macro_list ){
-        res = 1;
     }
     if( newcnt_switchcase_list<frecnt_switchcase_list ){
         return -1;
     }
-    if( newcnt_switchcase_list>frecnt_switchcase_list ){
-        res = 1;
-    }
     if( newcnt_tmstring_list<frecnt_tmstring_list ){
         return -1;
-    }
-    if( newcnt_tmstring_list>frecnt_tmstring_list ){
-        res = 1;
     }
     if( newcnt_tplelm_list<frecnt_tplelm_list ){
         return -1;
     }
-    if( newcnt_tplelm_list>frecnt_tplelm_list ){
-        res = 1;
-    }
     if( newcnt_var_list<frecnt_var_list ){
         return -1;
-    }
-    if( newcnt_var_list>frecnt_var_list ){
-        res = 1;
     }
     if( newcnt_alternative<frecnt_alternative ){
         return -1;
     }
-    if( newcnt_alternative>frecnt_alternative ){
-        res = 1;
-    }
     if( newcnt_CCSuper<frecnt_CCSuper ){
         return -1;
-    }
-    if( newcnt_CCSuper>frecnt_CCSuper ){
-        res = 1;
     }
     if( newcnt_CCFields<frecnt_CCFields ){
         return -1;
     }
-    if( newcnt_CCFields>frecnt_CCFields ){
-        res = 1;
-    }
     if( newcnt_CCAlternatives<frecnt_CCAlternatives ){
         return -1;
-    }
-    if( newcnt_CCAlternatives>frecnt_CCAlternatives ){
-        res = 1;
     }
     if( newcnt_CCSublist<frecnt_CCSublist ){
         return -1;
     }
-    if( newcnt_CCSublist>frecnt_CCSublist ){
-        res = 1;
-    }
     if( newcnt_DsConstructorBase<frecnt_DsConstructorBase ){
         return -1;
-    }
-    if( newcnt_DsConstructorBase>frecnt_DsConstructorBase ){
-        res = 1;
     }
     if( newcnt_DsTuple<frecnt_DsTuple ){
         return -1;
     }
-    if( newcnt_DsTuple>frecnt_DsTuple ){
-        res = 1;
-    }
     if( newcnt_DsClass<frecnt_DsClass ){
         return -1;
-    }
-    if( newcnt_DsClass>frecnt_DsClass ){
-        res = 1;
     }
     if( newcnt_DsConstructor<frecnt_DsConstructor ){
         return -1;
     }
-    if( newcnt_DsConstructor>frecnt_DsConstructor ){
-        res = 1;
-    }
     if( newcnt_field<frecnt_field ){
         return -1;
-    }
-    if( newcnt_field>frecnt_field ){
-        res = 1;
     }
     if( newcnt_macro<frecnt_macro ){
         return -1;
     }
-    if( newcnt_macro>frecnt_macro ){
-        res = 1;
-    }
     if( newcnt_switchcase<frecnt_switchcase ){
         return -1;
-    }
-    if( newcnt_switchcase>frecnt_switchcase ){
-        res = 1;
     }
     if( newcnt_Plain<frecnt_Plain ){
         return -1;
     }
-    if( newcnt_Plain>frecnt_Plain ){
-        res = 1;
-    }
     if( newcnt_Foreach<frecnt_Foreach ){
         return -1;
-    }
-    if( newcnt_Foreach>frecnt_Foreach ){
-        res = 1;
     }
     if( newcnt_While<frecnt_While ){
         return -1;
     }
-    if( newcnt_While>frecnt_While ){
-        res = 1;
-    }
     if( newcnt_If<frecnt_If ){
         return -1;
-    }
-    if( newcnt_If>frecnt_If ){
-        res = 1;
     }
     if( newcnt_Switch<frecnt_Switch ){
         return -1;
     }
-    if( newcnt_Switch>frecnt_Switch ){
-        res = 1;
-    }
     if( newcnt_Set<frecnt_Set ){
         return -1;
-    }
-    if( newcnt_Set>frecnt_Set ){
-        res = 1;
     }
     if( newcnt_GlobalSet<frecnt_GlobalSet ){
         return -1;
     }
-    if( newcnt_GlobalSet>frecnt_GlobalSet ){
-        res = 1;
-    }
     if( newcnt_Append<frecnt_Append ){
         return -1;
-    }
-    if( newcnt_Append>frecnt_Append ){
-        res = 1;
     }
     if( newcnt_GlobalAppend<frecnt_GlobalAppend ){
         return -1;
     }
-    if( newcnt_GlobalAppend>frecnt_GlobalAppend ){
-        res = 1;
-    }
     if( newcnt_Error<frecnt_Error ){
         return -1;
-    }
-    if( newcnt_Error>frecnt_Error ){
-        res = 1;
     }
     if( newcnt_Exit<frecnt_Exit ){
         return -1;
     }
-    if( newcnt_Exit>frecnt_Exit ){
-        res = 1;
-    }
     if( newcnt_Redirect<frecnt_Redirect ){
         return -1;
-    }
-    if( newcnt_Redirect>frecnt_Redirect ){
-        res = 1;
     }
     if( newcnt_Include<frecnt_Include ){
         return -1;
     }
-    if( newcnt_Include>frecnt_Include ){
-        res = 1;
-    }
     if( newcnt_Macro<frecnt_Macro ){
         return -1;
-    }
-    if( newcnt_Macro>frecnt_Macro ){
-        res = 1;
     }
     if( newcnt_Call<frecnt_Call ){
         return -1;
     }
-    if( newcnt_Call>frecnt_Call ){
-        res = 1;
-    }
     if( newcnt_Return<frecnt_Return ){
         return -1;
-    }
-    if( newcnt_Return>frecnt_Return ){
-        res = 1;
     }
     if( newcnt_Insert<frecnt_Insert ){
         return -1;
     }
-    if( newcnt_Insert>frecnt_Insert ){
-        res = 1;
-    }
     if( newcnt_Case<frecnt_Case ){
         return -1;
-    }
-    if( newcnt_Case>frecnt_Case ){
-        res = 1;
     }
     if( newcnt_Default<frecnt_Default ){
         return -1;
     }
-    if( newcnt_Default>frecnt_Default ){
-        res = 1;
-    }
     if( newcnt_var<frecnt_var ){
         return -1;
+    }
+    /* Check for too few free()s. */
+    if( newcnt_alternative_list>frecnt_alternative_list ){
+        res = 1;
+    }
+    if( newcnt_classComponent_list>frecnt_classComponent_list ){
+        res = 1;
+    }
+    if( newcnt_ds_list>frecnt_ds_list ){
+        res = 1;
+    }
+    if( newcnt_field_list>frecnt_field_list ){
+        res = 1;
+    }
+    if( newcnt_macro_list>frecnt_macro_list ){
+        res = 1;
+    }
+    if( newcnt_switchcase_list>frecnt_switchcase_list ){
+        res = 1;
+    }
+    if( newcnt_tmstring_list>frecnt_tmstring_list ){
+        res = 1;
+    }
+    if( newcnt_tplelm_list>frecnt_tplelm_list ){
+        res = 1;
+    }
+    if( newcnt_var_list>frecnt_var_list ){
+        res = 1;
+    }
+    if( newcnt_alternative>frecnt_alternative ){
+        res = 1;
+    }
+    if( newcnt_CCSuper>frecnt_CCSuper ){
+        res = 1;
+    }
+    if( newcnt_CCFields>frecnt_CCFields ){
+        res = 1;
+    }
+    if( newcnt_CCAlternatives>frecnt_CCAlternatives ){
+        res = 1;
+    }
+    if( newcnt_CCSublist>frecnt_CCSublist ){
+        res = 1;
+    }
+    if( newcnt_DsConstructorBase>frecnt_DsConstructorBase ){
+        res = 1;
+    }
+    if( newcnt_DsTuple>frecnt_DsTuple ){
+        res = 1;
+    }
+    if( newcnt_DsClass>frecnt_DsClass ){
+        res = 1;
+    }
+    if( newcnt_DsConstructor>frecnt_DsConstructor ){
+        res = 1;
+    }
+    if( newcnt_field>frecnt_field ){
+        res = 1;
+    }
+    if( newcnt_macro>frecnt_macro ){
+        res = 1;
+    }
+    if( newcnt_switchcase>frecnt_switchcase ){
+        res = 1;
+    }
+    if( newcnt_Plain>frecnt_Plain ){
+        res = 1;
+    }
+    if( newcnt_Foreach>frecnt_Foreach ){
+        res = 1;
+    }
+    if( newcnt_While>frecnt_While ){
+        res = 1;
+    }
+    if( newcnt_If>frecnt_If ){
+        res = 1;
+    }
+    if( newcnt_Switch>frecnt_Switch ){
+        res = 1;
+    }
+    if( newcnt_Set>frecnt_Set ){
+        res = 1;
+    }
+    if( newcnt_GlobalSet>frecnt_GlobalSet ){
+        res = 1;
+    }
+    if( newcnt_Append>frecnt_Append ){
+        res = 1;
+    }
+    if( newcnt_GlobalAppend>frecnt_GlobalAppend ){
+        res = 1;
+    }
+    if( newcnt_Error>frecnt_Error ){
+        res = 1;
+    }
+    if( newcnt_Exit>frecnt_Exit ){
+        res = 1;
+    }
+    if( newcnt_Redirect>frecnt_Redirect ){
+        res = 1;
+    }
+    if( newcnt_Include>frecnt_Include ){
+        res = 1;
+    }
+    if( newcnt_Macro>frecnt_Macro ){
+        res = 1;
+    }
+    if( newcnt_Call>frecnt_Call ){
+        res = 1;
+    }
+    if( newcnt_Return>frecnt_Return ){
+        res = 1;
+    }
+    if( newcnt_Insert>frecnt_Insert ){
+        res = 1;
+    }
+    if( newcnt_Case>frecnt_Case ){
+        res = 1;
+    }
+    if( newcnt_Default>frecnt_Default ){
+        res = 1;
     }
     if( newcnt_var>frecnt_var ){
         res = 1;
@@ -4207,4 +4242,5 @@ int get_balance_tm( void )
     return res;
 }
 
-/* ---- end of /home/blob/users/reeuwijk/lib/calu.ct ---- */
+/* ---- end of /home/blob/users/reeuwijk/lab/lib/calu.ct ---- */
+/* Code generation required 430 milliseconds. */
