@@ -153,6 +153,10 @@ test: test.clc opt.clc subst.clc
 	diff opt.clc okopt.clc
 	diff subst.clc oksubst.clc
 
+tests: test
+
+check: test
+
 calcparse.c tokens.h: calcparse.y
 	$(YACC) -d $<
 	mv y.tab.c calcparse.c
@@ -181,6 +185,22 @@ $(DEPENDFILE):
 	touch $(DEPENDFILE)
 
 -include $(DEPENDFILE)
+
+
+
+# Configure-related rules.
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
+JUNK += config.log config.cache
+PRECIOUSJUNK += config.status configure
 
 ## Dependencies I know for sure
 calc.o: calc.c calc.h
