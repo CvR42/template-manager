@@ -18,13 +18,14 @@
 
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /usr/blob/lib/calu.ct ---- */
+/* ---- start of /home/gargamel/reeuwijk/i586/lib/calu.ct ---- */
 
 /* Routines for 'tm'.
 
-   template file:      /usr/blob/lib/calu.ct
+   template file:      /home/gargamel/reeuwijk/i586/lib/calu.ct
    datastructure file: tm.ds
-   tm version:         34
+   tm version:         35
+   tm kernel version:  1.2
  */
 
 #ifndef FIRSTROOM
@@ -2965,4 +2966,4 @@ void stat_tm( FILE *f )
 #endif
 }
 
-/* ---- end of /usr/blob/lib/calu.ct ---- */
+/* ---- end of /home/gargamel/reeuwijk/i586/lib/calu.ct ---- */
