@@ -31,10 +31,10 @@ const char *tm_escapestring( const unsigned int code )
 
     if( code1 == BACKSLASH || code1 == '"' || code1 == '\'' ){
 	*p++ = BACKSLASH;
-	*p++ = code1;
+	*p++ = (char) code1;
     }
     else if( code1>=' ' && code1<='~' ){
-	*p++ = code1;
+	*p++ = (char) code1;
     }
     else {
 	switch( code1 ){

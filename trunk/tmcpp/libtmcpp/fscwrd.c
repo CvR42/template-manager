@@ -44,7 +44,7 @@ int fscan_tmword( FILE *f, tmword *s )
 		sz += sz+1;
 		buf = realloc_tmstring_nolognew( buf, sz );
 	    }
-	    buf[ix++] = c;
+	    buf[ix++] = (char) c;
 	    c = fgetc( f );
 	}
 	buf[ix] = '\0';

@@ -12,13 +12,13 @@
  * copy 'sz' characters from 's' to 'd'. The blocks should not overlap,
  * there are special functions to insert or delete blocks in a text.
  */
-void tmtext::copyblock( char *d, const char *s, const long sz )
+void tmtext::copyblock( char *d, const char *s, const size_type sz )
 {
     const char *p = s;
-    long cnt = sz;
+    size_type cnt = sz;
 
 #if HAVE_MEMMOVE
-    memcpy( d, p, cnt );
+    memcpy( d, p, (unsigned int) cnt );
 #else
     while( cnt>0 ){
 	*d++ = *p++;

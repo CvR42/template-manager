@@ -24,7 +24,7 @@ static int plistofl = 0;	/* Overflow in the pointer list? */
 // Return the position in the list if found, else return -1.
 static long search_plist( const tm_neutralp p )
 {
-    for( size_t ix=0; ix<plistsz; ix++ ){
+    for( long ix=0; ix<plistsz; ix++ ){
         if( plist[ix].ptr == p ){
             return ix;
         }
