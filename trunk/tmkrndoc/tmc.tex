@@ -1191,6 +1191,34 @@ Usually \verb'tw' should be 8.
 \par
 The {\tt flags} can be used to modify the style of the output. At the
 moment no style options are implemented, and the parameter should be 0.
+\par
+The print state descriptor returned by {\tt tm\_setprint()} stores the
+formatting state. It must be passed to all functions that are used to
+print the data structures. After all formatting and printing has been
+done, the print state must be destroyed with the function {\tt tm\_endprint()}
+described below.
+\par
+Typically the function is used as follows:
+\begin{verbatim}
+TMPRINTSTATE *st = tm_setprint( f, 1, LINEWIDTH, TABSIZE, INDENT );
+print_Block( st, blk );
+int level = tm_endprint( st );
+if( level>0 ){
+    fprintf( stderr, "Internal botch: bracket level is %d\n", level );
+}
+\end{verbatim}
+\end{desc}
+\begin{verbatim}
+int tm_endprint( TMPRINTSTATE *st );
+\end{verbatim}
+\begin{desc}
+\index{tm_endprint@\verb+tm_endprint()+}
+Destroy the given print state, and return the listing level of
+the print state. The listing level is the number of calls to {\tt
+tm\_openlist()}, {\tt tm\_opencons()}, and {\tt tm\_opentuple()} that
+have not been balanced with the corresponding {\tt tm\_closelist()},
+{\tt tm\_closecons()}, resp.  {\tt tm\_closetuple()}. Normally the
+listing level returned by {\tt tm\_endprint()} should be zero.
 \end{desc}
 \begin{verbatim}
 void tm_openlist( TMPRINTSTATE *st );
