@@ -775,6 +775,7 @@ int main( void )
     fprintf( stderr, "tmtext::get_balance(): %d\n", tmtext::get_balance() );
     stat_tmstring( stderr );
     tmtext::stat( stderr );
+    report_lognew( stderr );
     fprintf( outfile, "tm_lineno=%d\n", tm_lineno );
     str = new_tmstring( "bla" );
     fre_tmstring( str );
