@@ -176,7 +176,7 @@ static tmstring fnmin( const tmstring_list sl )
 	return newintstr( 0 );
     }
     min = atoi( sl->arr[0] );
-    for( ix=0; ix<sl->sz; ix++ ){
+    for( ix=1; ix<sl->sz; ix++ ){
 	cknumpar( sl->arr[ix] );
 	n = atoi( sl->arr[ix] );
 	if( n<min )
@@ -188,10 +188,9 @@ static tmstring fnmin( const tmstring_list sl )
 /* addition */
 static tmstring fnplus( const tmstring_list sl )
 {
-    int sum;
+    int sum = 0;
     unsigned int ix;
 
-    sum = 0;
     for( ix=0; ix<sl->sz; ix++ ){
 	cknumpar( sl->arr[ix] );
 	sum += atoi( sl->arr[ix] );
@@ -217,10 +216,9 @@ static tmstring fnsubtract( const tmstring_list sl )
 /* multiplication */
 static tmstring fntimes( const tmstring_list sl )
 {
-    int prod;
+    int prod = 1;
     unsigned int ix;
 
-    prod = 1;
     for( ix=0; ix<sl->sz; ix++ ){
 	cknumpar( sl->arr[ix] );
 	prod *= atoi( sl->arr[ix] );
@@ -2777,6 +2775,48 @@ static tmstring fnprocessortime( const tmstring_list sl )
     return new_tmstring( buf );
 }
 
+/* Return the current clock time.  */
+static tmstring fnnow( const tmstring_list sl )
+{
+    char buf[30];
+
+    if( sl->sz != 0 ){
+	line_error( "'now' does not need any parameters" );
+	return new_tmstring( "0" );
+    }
+    sprintf( buf, "%ld", time( NULL )  );
+    return new_tmstring( buf );
+}
+
+/* Given a time and a format string, generate a time string in the
+ * given format.
+ */
+static tmstring fnformattime( const tmstring_list sl )
+{
+    char buf[STRBUFSIZE+1];
+    time_t t;
+    const char *fmt;
+
+    if( sl->sz < 1 ){
+	line_error( "'formattime' requires at least a time" );
+	return new_tmstring( "" );
+    }
+    if( sl->sz < 2 ){
+	fmt = "%a %b %d %Y %H:%M:%S";
+    }
+    else {
+	fmt = sl->arr[1];
+    }
+    if( sl->sz>2 ){
+	line_error( "'formattime' requires one or two" );
+	return new_tmstring( "" );
+    }
+    cknumpar( sl->arr[0] );
+    t = (time_t) atol( sl->arr[0] );
+    (void) strftime( buf, STRBUFSIZE, fmt, gmtime( &t ) );
+    return new_tmstring( buf );
+}
+
 /***************************************************************
  *                                                             *
  *   function table                                            *
@@ -2832,6 +2872,7 @@ static struct fnentry fntab[] = {
      { "fields", fnfields },
      { "filt", fnfilt },
      { "first", fnfirst },
+     { "formattime", fnformattime },
      { "getenv", fngetenv },
      { "if", fnif },
      { "index", fnindex },
@@ -2845,6 +2886,7 @@ static struct fnentry fntab[] = {
      { "matchmacro", fnmatchmacro },
      { "matchvar", fnmatchvar },
      { "max", fnmax },
+     { "now", fnnow },
      { "member", fnmember },
      { "metatype", fnmetatype },
      { "min", fnmin },
