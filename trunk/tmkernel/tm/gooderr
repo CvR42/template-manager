@@ -20,13 +20,10 @@ testin: 'stemname' cannot function if both 'listpre' and 'listsuff' are empty
 testin: 'mklist' requires at least one parameter
 testin: 'mklist' requires at least one parameter
 testin: 'mklist' requires at least one parameter
-testin: 'fields' requires one or two parameters
-testin: 'fields' second parameter must be absent or `inherited'
-testin: unknown type: bla
-testin: unknown type: notatype
-testin: 'metatype' requires exactly one parameter
-testin: 'metatype' requires exactly one parameter
 testin: empty padding string
+testin: 'tr': no new characters given
+testin: 'tr': no old characters given
+testin: 'tr': the strings of old an new characters must have the same length
 testin: 'isinenv' requires exactly one parameter
 testin: no separator
 testin: no separator
@@ -51,4 +48,5 @@ testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: 'matchmacro' requires exactly one parameter
 testin: bad regular expression: Unmatched '('
+testin: 'matchvar' requires exactly one parameter
 errors detected, program aborted

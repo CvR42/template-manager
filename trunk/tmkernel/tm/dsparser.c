@@ -101,16 +101,12 @@ static ds merge_cons_types( const ds a, const ds b )
     la = rdup_tmstring_list( to_DsConstructorBase(a)->constructors );
     lb = rdup_tmstring_list( to_DsConstructorBase(b)->constructors );
     la = concat_tmstring_list( la, lb );
-    ila = rdup_tmstring_list( to_DsConstructorBase(a)->inherits );
-    ilb = to_DsConstructorBase(b)->inherits;
+    ila = rdup_tmstring_list( a->inherits );
+    ilb = b->inherits;
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return (ds) new_DsConstructorBase(
-	rdup_tmstring( to_DsConstructorBase(a)->name ),
-	ila,
-	la
-    );
+    return (ds) new_DsConstructorBase( rdup_tmstring( a->name ), ila, la );
 }
 
 /* Given a type 't', a constructor name 'cnm' and a type name
