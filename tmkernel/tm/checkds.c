@@ -63,30 +63,8 @@ static bool check_ds_inheritance(
     if( accepted[theds] ){
         return ok;
     }
-    myname = tmstringNIL;
-    supers = tmstring_listNIL;
-    switch( me->tag ){
-        case TAGDsConstructorBase:
-            supers = rdup_tmstring_list( to_DsConstructorBase(me)->inherits );
-            myname = to_DsConstructorBase(me)->name;
-            break;
-
-	case TAGDsTuple:
-            supers = rdup_tmstring_list( to_DsTuple(me)->inherits );
-            myname = to_DsTuple(me)->name;
-            break;
-
-	case TAGDsClass:
-	    supers = rdup_tmstring_list( to_DsClass(me)->inherits );
-            myname = to_DsClass(me)->name;
-            break;
-
-	case TAGDsConstructor:
-	    supers = rdup_tmstring_list( to_DsConstructor(me)->inherits );
-            myname = to_DsConstructor(me)->name;
-            break;
-
-    }
+    supers = rdup_tmstring_list( me->inherits );
+    myname = me->name;
     if( visited[theds] ){
 	sprintf( errpos, "type '%s'", myname );
 	error( "circular inheritance" );

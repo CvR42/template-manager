@@ -119,19 +119,44 @@ macro findmacro( const tmstring nm )
 
 char *match_macros( const tmstring pat, tmstring_list *matches )
 {
-    tmstring errm;
+    tmstring errm = ref_comp( pat );
     unsigned int hv;
 
-    errm = ref_comp( pat );
     if( errm != NULL ){
 	return errm;
     }
     for( hv=0; hv<HASHWIDTH; hv++ ){
 	unsigned int ix;
-	macro_list l = macros[hv];
+	const macro_list l = macros[hv];
 
 	for( ix=0; ix<l->sz; ix++ ){
-	    macro m = l->arr[ix];
+	    const macro m = l->arr[ix];
+
+	    if( ref_exec( m->name ) ){
+		*matches = append_tmstring_list(
+		    *matches,
+		    rdup_tmstring( m->name )
+		);
+	    }
+	}
+    }
+    return NULL;
+}
+
+char *match_vars( const tmstring pat, tmstring_list *matches )
+{
+    tmstring errm = ref_comp( pat );
+    unsigned int hv;
+
+    if( errm != NULL ){
+	return errm;
+    }
+    for( hv=0; hv<HASHWIDTH; hv++ ){
+	unsigned int ix;
+	var_list l = variables[hv];
+
+	for( ix=0; ix<l->sz; ix++ ){
+	    var m = l->arr[ix];
 
 	    if( ref_exec( m->name ) ){
 		*matches = append_tmstring_list(

@@ -14,6 +14,7 @@
 /* Standard UNIX libraries and functions */
 #include <stdio.h>
 #include <ctype.h>
+#include <assert.h>
 
 /* tm library */
 #include <tmc.h>
@@ -419,7 +420,67 @@ static tmstring fntolower( const tmstring_list sl )
     return ans;
 }
 
-/* strindex <c> <word> */
+/* Given a string 's', a list of old characters 'oldchars' and a list of
+ * new characters 'newchars', replace all occurences of characters in
+ * 'oldchars' with the corresponding character in 'newchars'.
+ *
+ * The same string is returned, with the replacements implemented.
+ */
+static tmstring tr_tmstring( tmstring s, const tmstring oldchars, const tmstring newchars )
+{
+    unsigned int ix = 0;
+
+    while( s[ix] != '\0' ){
+	char *pos = strchr( oldchars, s[ix] );
+
+	if( pos != (char *) NULL ){
+	    s[ix] = newchars[pos-oldchars];
+	}
+	ix++;
+    }
+    return s;
+}
+
+/* tr <oldchars> <newchars> s..s */
+static tmstring fntr( const tmstring_list sl )
+{
+    tmstring oldchars;
+    tmstring newchars;
+    int ok;
+    tmstring_list nl;
+    unsigned int ix;
+    tmstring ans;
+
+    nl = rdup_tmstring_list( sl );
+    nl = extract_tmstring_list( nl, 0, &oldchars, &ok );
+    if( !ok ){
+	line_error( "'tr': no old characters given" );
+	rfre_tmstring_list( nl );
+	return new_tmstring( "" );
+    }
+    nl = extract_tmstring_list( nl, 0, &newchars, &ok );
+    if( !ok ){
+	line_error( "'tr': no new characters given" );
+	rfre_tmstring_list( nl );
+	rfre_tmstring( oldchars );
+	return new_tmstring( "" );
+    }
+    if( strlen( oldchars ) != strlen( newchars ) ){
+	line_error( "'tr': the strings of old an new characters must have the same length" );
+    }
+    else {
+	for( ix=0; ix<nl->sz; ix++ ){
+	    nl->arr[ix] = tr_tmstring( nl->arr[ix], oldchars, newchars );
+	}
+    }
+    rfre_tmstring( oldchars );
+    rfre_tmstring( newchars );
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
+/* fnindex <c> <word> */
 static tmstring fnstrindex( const tmstring_list sl )
 {
     int n;
@@ -1197,7 +1258,7 @@ static tmstring fnconstructorlist( const tmstring_list sl )
 		break;
 
 	    case TAGDsConstructor:
-		nl = append_tmstring_list( nl, new_tmstring( to_DsConstructor(d)->name ) );
+		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
 		break;
 	}
     }
@@ -1221,10 +1282,7 @@ static tmstring fnctypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
-		nl = append_tmstring_list(
-		    nl,
-		    new_tmstring( to_DsConstructor(d)->name )
-		);
+		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
 		break;
 
 	    case TAGDsTuple:
@@ -1261,7 +1319,7 @@ static tmstring fntuplelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		nl = append_tmstring_list( nl, new_tmstring( to_DsClass(d)->name ) );
+		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
 		break;
 
 	    case TAGDsConstructorBase:
@@ -1280,8 +1338,6 @@ static tmstring fntuplelist( const tmstring_list sl )
 /* Construct a list of class types. */
 static tmstring fnclasslist( const tmstring_list sl )
 {
-    ds d;
-    tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1291,7 +1347,8 @@ static tmstring fnclasslist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	d = allds->arr[ix];
+	const ds d = allds->arr[ix];
+
 	switch( d->tag ){
 	    case TAGDsTuple:
 	    case TAGDsConstructorBase:
@@ -1300,8 +1357,39 @@ static tmstring fnclasslist( const tmstring_list sl )
 		break;
 
 	    case TAGDsClass:
-		vp = to_DsClass(d)->name;
-		nl = append_tmstring_list( nl, new_tmstring( vp ) );
+		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+		break;
+
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
+/* Construct a list of aliases. */
+static tmstring fnaliases( const tmstring_list sl )
+{
+    tmstring ans;
+    unsigned int ix;
+    tmstring_list nl;
+
+    if( sl->sz!=0 ){
+	line_error( "'aliases' does not need any parameters" );
+    }
+    nl = new_tmstring_list();
+    for( ix = 0; ix< allds->sz; ix++ ){
+	const ds d = allds->arr[ix];
+
+	switch( d->tag ){
+	    case TAGDsTuple:
+	    case TAGDsConstructorBase:
+	    case TAGDsConstructor:
+	    case TAGDsClass:
+		break;
+
+	    case TAGDsAlias:
+		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
 		break;
 
 	}
@@ -1405,28 +1493,18 @@ static tmstring fnnonvirtual( const tmstring_list sl )
     return ans;
 }
 
-/* Given a type name, return the metatype of this type.  */
-static tmstring fnmetatype( const tmstring_list sl )
+static tmstring calc_metaname(
+ const char *pre,
+ const char *suff,
+ const tmstring type
+)
 {
     unsigned int ix;
-    char *pre;
-    char *suff;
 
-    pre = getvar( LISTPRE );
-    if( pre == CHARNIL ){
-	pre = "";
-    }
-    suff = getvar( LISTSUFF );
-    if( suff == CHARNIL ){
-	suff = "";
-    }
-    if( sl->sz != 1 ){
-	line_error( "'metatype' requires exactly one parameter" );
-	return new_tmstring( "" );
-    }
-    ix = find_type_ix( allds, sl->arr[0] );
+    ix = find_type_ix( allds, type );
     if( ix<allds->sz ){
-	ds d = allds->arr[ix];
+	const ds d = allds->arr[ix];
+
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
 		return new_tmstring( "constructorbase" );
@@ -1446,7 +1524,7 @@ static tmstring fnmetatype( const tmstring_list sl )
 	}
     }
     {
-	tmstring et = get_element_type( pre, suff, sl->arr[0] );
+	tmstring et = get_element_type( pre, suff, type );
 
 	if( et != tmstringNIL ){
 	    rfre_tmstring( et );
@@ -1454,6 +1532,35 @@ static tmstring fnmetatype( const tmstring_list sl )
 	}
     }
     return new_tmstring( "atom" );
+}
+
+/* Given a type name, return the metatype of this type.  */
+static tmstring fnmetatype( const tmstring_list sl )
+{
+    char *pre;
+    char *suff;
+    unsigned int ix;
+    tmstring_list res;
+    tmstring ans;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    res = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	res = append_tmstring_list(
+	    res,
+	    calc_metaname( pre, suff, sl->arr[ix] )
+	);
+    }
+    ans = flatstrings( res );
+    rfre_tmstring_list( res );
+    return ans;
 }
 
 /* Given a type name, return the subclasses (transitive closure of inheritors)
@@ -1530,38 +1637,32 @@ static tmstring fninheritors( const tmstring_list sl )
     return ans;
 }
 
+/* Construct a list of fields (including inherited ones) for the given type.  */
+static tmstring fnallfields( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list nl;
+    unsigned int ix;
+
+    nl = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	collect_all_fields( &nl, allds, sl->arr[ix] );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
 /* Construct a list of fields for the given type.  */
 static tmstring fnfields( const tmstring_list sl )
 {
-    ds d;
     tmstring ans;
     tmstring_list nl;
-    bool inherited;
+    unsigned int ix;
 
-    inherited = FALSE;
-    if( sl->sz != 1 && sl->sz != 2 ){
-	line_error( "'fields' requires one or two parameters" );
-	return new_tmstring( "" );
-    }
-    if( sl->sz == 2 ){
-	if( strcmp( sl->arr[1], "inherited" ) == 0 ){
-	    inherited = TRUE;
-	}
-	else {
-	    line_error( "'fields' second parameter must be absent or `inherited'" );
-	}
-    }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
-	/* findtype already complained about this. */
-	return new_tmstring( "" );
-    }
     nl = new_tmstring_list();
-    if( inherited ){
-	collect_all_fields( &nl, allds, sl->arr[0] );
-    }
-    else {
-	collect_fields( &nl, allds, sl->arr[0] );
+    for( ix=0; ix<sl->sz; ix++ ){
+	collect_fields( &nl, allds, sl->arr[ix] );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -1628,6 +1729,53 @@ static tmstring fntypelevel( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     return newintstr( e->level );
+}
+
+/* Given a list of types, return the types of the fields of these types,
+ * and the list of types they inherit from.
+ * Unknown alltypes are ignored.
+ * List alltypes for the fields are constructed with LISTPRE and LISTSIFF.
+ */
+static tmstring fnalltypes( const tmstring_list tl )
+{
+    char *pre;
+    char *suff;
+    unsigned int tix;
+    tmstring_list nl;
+    tmstring ans;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    nl = new_tmstring_list();
+    for( tix=0; tix<tl->sz; tix++ ){
+	tmstring_list fields = new_tmstring_list();
+	const tmstring tnm = tl->arr[tix];
+	unsigned int fix;
+
+	collect_all_fields( &fields, allds, tnm );
+	for( fix=0; fix<fields->sz; fix++ ){
+	    const field e = find_field( allds, tnm, fields->arr[fix] );
+
+	    /* Since we only enumerate the fields we know exist for this
+	     * type, this should never fail.
+	     */
+	    assert( e != fieldNIL );
+	    nl = append_tmstring_list(
+		nl,
+		mklistnm( pre, e->type, suff, e->level )
+	    );
+	}
+	rfre_tmstring_list( fields );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
 }
 
 /* Given a list of types, return the types of the fields of these types.
@@ -1762,20 +1910,10 @@ static tmstring fncelmlist( const tmstring_list sl )
     tmstring_list cl;
     tmstring ans;
     tmstring_list nl;
-    bool inherited;
 
-    inherited = FALSE;
-    if( sl->sz != 2 && sl->sz != 3 ){
-	line_error( "'celmlist' requires two or three parameters" );
+    if( sl->sz != 2 ){
+	line_error( "'celmlist' requires two parameters" );
 	return new_tmstring( "" );
-    }
-    if( sl->sz == 3 ){
-	if( strcmp( sl->arr[2], "inherited" ) == 0 ){
-	    inherited = TRUE;
-	}
-	else {
-	    line_error( "'celmlist' third parameter must be absent or `inherited'" );
-	}
     }
     d = findtype( allds, sl->arr[0] );
     if( d == dsNIL || d->tag != TAGDsConstructorBase ){
@@ -1790,12 +1928,7 @@ static tmstring fncelmlist( const tmstring_list sl )
 	line_error( "not a member of this constructor type" );
     }
     nl = new_tmstring_list();
-    if( inherited ){
-	collect_all_fields( &nl, allds, sl->arr[1] );
-    }
-    else {
-	collect_fields( &nl, allds, sl->arr[1] );
-    }
+    collect_fields( &nl, allds, sl->arr[1] );
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
     return ans;
@@ -2193,6 +2326,32 @@ static tmstring fnmatchmacro( const tmstring_list sl )
     return ans;
 }
 
+/* matchvar pat
+ * Return a list of all vars whose name matches pattern 'pat'.
+ */
+static tmstring fnmatchvar( const tmstring_list sl )
+{
+    tmstring ans;
+    char *errm;
+    tmstring_list nl;
+
+    if( sl->sz != 1 ){
+	line_error( "'matchvar' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    nl = new_tmstring_list();
+    errm = match_vars( sl->arr[0], &nl );
+    if( errm != NULL ){
+	(void) strcpy( errarg, errm );
+	line_error( "bad regular expression" );
+	rfre_tmstring_list( nl );
+	return new_tmstring( "" );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
 /* -- nested evaluation: 'call' and 'eval' -- */
 
 /* Evaluate the given parameters again. */
@@ -2385,6 +2544,9 @@ static struct fnentry fntab[] = {
      { "==", fneq },
      { ">", fngreater },
      { ">=", fngreatereq },
+     { "aliases", fnaliases },
+     { "allfields", fnallfields },
+     { "alltypes", fnalltypes },
      { "and", fnand },
      { "call", fncall },
      { "capitalize", fncapitalize },
@@ -2418,6 +2580,7 @@ static struct fnentry fntab[] = {
      { "len", fnlen },
      { "listtypes", fnlisttypes },
      { "matchmacro", fnmatchmacro },
+     { "matchvar", fnmatchvar },
      { "max", fnmax },
      { "member", fnmember },
      { "metatype", fnmetatype },
@@ -2452,6 +2615,7 @@ static struct fnentry fntab[] = {
      { "toupper", fntoupper },
      { "tplfilename", fntplfilename },
      { "tpllineno", fntpllineno },
+     { "tr", fntr },
      { "ttypeclass", fnttypeclass },
      { "ttypelist", fntuplelist },
      { "ttypellev", fntypelevel },
@@ -2479,7 +2643,7 @@ tmstring evalfn( const tmstring f )
     char *ans;
     tmstring_list sl;
 
-    if( fntr ){
+    if( fntracing ){
 	fprintf( tracestream, "evaluating function ${%s}\n", f );
     }
     par = scanword( f, &fnname );
@@ -2503,7 +2667,7 @@ tmstring evalfn( const tmstring f )
 	ans = new_tmstring( "" );
     }
     fre_tmstring( fnname );
-    if( fntr ){
+    if( fntracing ){
 	fprintf( tracestream, "function value: '%s'\n", ans );
     }
     return ans;

@@ -255,7 +255,7 @@ char *evalexpr( const tmstring x )
     const char *s;
     long v;
 
-    if( fntr ){
+    if( fntracing ){
 	fprintf( tracestream, "evaluating expression $[%s]\n", x );
     }
     s =  evalbool( x, &v );
@@ -265,7 +265,7 @@ char *evalexpr( const tmstring x )
 	line_error( "bad expression" );
     }
     (void) sprintf( buf, "%ld", v );
-    if( fntr ){
+    if( fntracing ){
 	fprintf( tracestream, "expression value: '%s'\n", buf );
     }
     return new_tmstring( buf );
