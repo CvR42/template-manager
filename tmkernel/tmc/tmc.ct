@@ -1165,6 +1165,126 @@ $(stat)int cmp_$t_list( const const_$t_list a, const const_$t_list b )
 
 .endforeach
 .endif
+.if ${len $(need_isequal) $(need_isequal_list)}
+/**************************************************
+ *    Equality test routines.                     *
+ **************************************************/
+
+.. Forward declarations
+.call ansi_static isequal_list "tmbool isequal_$$t_list( const const_$$t_list, const const_$$t_list )"
+.call ansi_static isequal "tmbool isequal_$$t( const const_$$t, const const_$$t )"
+.foreach t $(need_isequal)
+.if ${member $t $(want_isequal)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Compare two $t ${metatype $t},
+ * and return TMTRUE iff they are equal.
+ */
+$(stat)tmbool isequal_$t( const const_$t a, const const_$t b )
+{
+.switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
+.case tuple
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return TMTRUE;
+    }
+    if( a == $tNIL || b == $tNIL ){
+	return TMFALSE;
+    }
+.foreach e ${allfields $t}
+    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
+	return TMFALSE;
+    }
+.endforeach
+    return TMTRUE;
+.case constructor constructorbase class
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return TMTRUE;
+    }
+    if( a == $tNIL || b == $tNIL ){
+	return TMFALSE;
+    }
+    if( a->tag != b->tag ){
+	return TMFALSE;
+    }
+.if ${len ${nonvirtual ${subclasses $t}}}
+    switch( a->tag )
+    {
+.if ${not ${isvirtual $t}}
+	case TAG$t:
+.foreach e ${allfields $t}
+	    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
+		return TMFALSE;
+	    }
+.endforeach
+	    break;
+
+.endif
+.foreach c ${nonvirtual ${subclasses $t}}
+	case TAG$c:
+	    if( !isequal_$c( to_const_$c(a), to_const_$c(b) ) ){
+		return TMFALSE;
+	    }
+	    break;
+
+.endforeach
+	default:
+	    FATALTAG( a->tag );
+	    break;
+    }
+.else
+.if ${isvirtual $t}
+.else
+.foreach e ${allfields $t}
+    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
+	return TMFALSE;
+    }
+.endforeach
+.endif
+.endif
+    return TMTRUE;
+.endswitch
+}
+
+.endforeach
+.foreach t $(need_isequal_list)
+.if ${member $t $(want_isequal_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Compare two $t lists,
+ * and return TMTRUE iff they are equal.
+ */
+$(stat)tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b )
+{
+    unsigned int ix;
+
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return TMTRUE;
+    }
+    if( a == $t_listNIL || b == $t_listNIL ){
+	return TMFALSE;
+    }
+    if( a->sz != b->sz ){
+	return TMFALSE;
+    }
+    for( ix=0; ix<a->sz; ix++ ){
+	if( !isequal_$t( a->arr[ix], b->arr[ix] ) ){
+	    return TMFALSE;
+	}
+    }
+    return TMTRUE;
+}
+
+.endforeach
+.endif
 .if ${len $(need_fscan) $(need_fscan_list)}
 /**************************************************
  *    Scan routines.                              *

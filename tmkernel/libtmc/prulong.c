@@ -7,9 +7,9 @@
 #include "tmc.h"
 #include "config.h"
 
-void print_ulong( TMPRINTSTATE *st, const ulong u )
+void print_tmulong( TMPRINTSTATE *st, const tmulong u )
 {
-    char buf[sizeof(ulong)*8];
+    char buf[sizeof(tmulong)*8];
 
     sprintf( buf, "%lu", u );
     tm_printword( st, buf );

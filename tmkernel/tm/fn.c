@@ -73,7 +73,7 @@ static tmstring get_element_type( const char *pre, const char *suff, const tmstr
 static Type split_type( const char *pre, const char *suff, const tmstring t )
 {
     tmstring old;
-    uint level = 0;
+    tmuint level = 0;
     tmstring nw;
 
     nw = rdup_tmstring( t );

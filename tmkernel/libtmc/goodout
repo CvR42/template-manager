@@ -47,14 +47,14 @@ tm_printword().
 (Bractest 42 (Bractest 42))
 (Bractest 42 (Bractest 42 (Bractest 42)))
 (Constest [bla, bla, test, sdfsdhlfhew, sdfshdfksd, StopFscanCons])
-(Schartest 'a' '\"' '\'' '\000' '\n' '\323' 'q')
-(Uchartest 'a' '\"' '\'' '\000' '\n' '\323' 'q')
-(Sshrttest 2 3 12 (-23) (-9) (-1))
-(Ushrttest 2 3 12 1223 2349 42)
+(tmschartest 'a' '\"' '\'' '\000' '\n' '\323' 'q')
+(tmuchartest 'a' '\"' '\'' '\000' '\n' '\323' 'q')
+(tmshorttest 2 3 12 (-23) (-9) (-1))
+(tmushorttest 2 3 12 1223 2349 42)
 (Inttest 0 1 2 3 12 (-23) (-9) (-1))
 (Unsignedtest 2 3 12 1223 2349 42)
 (Longtest 2 3 -12 12222223 2349 42)
-(Ulongtest 2 3 12 12222223 2349 42)
+(tmulongtest 2 3 12 12222223 2349 42)
 (Stringouttest "" "Test")
 (
     Stringintest
@@ -82,14 +82,14 @@ tm_printword().
 (Textouttest "" "Test")
 (Textintest "a" "bcdef" @ "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
 (Tmboolouttest True False True True False)
-fprint_schar: ['a' ' ' '\376' '\201' '\000']
-fprint_uchar: ['a' ' ' '\201' '\000']
-fprint_sshrt: [12 0 (-42)]
-fprint_ushrt: [12 0 42]
+fprint_tmschar: ['a' ' ' '\376' '\201' '\000']
+fprint_tmuchar: ['a' ' ' '\201' '\000']
+fprint_tmshort: [12 0 (-42)]
+fprint_tmushort: [12 0 42]
 fprint_int: [12 0 (-42)]
-fprint_uint: [12 0 42]
+fprint_tmuint: [12 0 42]
 fprint_long: [12 0 -123442]
-fprint_ulong: [12 0 123442]
+fprint_tmulong: [12 0 123442]
 fprint_tmstring: ["blabla" "" "reutel" @]
 fprint_tmword: [blabla reutel @]
 tm_lineno=30

@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmc.h"
 
-void fprint_ushrt( FILE *f, const ushrt i )
+void fprint_tmushort( FILE *f, const tmushort i )
 {
     fprintf( f, "%hu", i );
 }

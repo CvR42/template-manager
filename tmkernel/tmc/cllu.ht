@@ -341,6 +341,14 @@ extern int cmp_$t( const $t, const $t );
 extern int cmp_$t_list( const $t_list, const $t_list );
 .endforeach
 ..
+.. isequal_<type>() routines
+.foreach t $(want_isequal)
+extern tmbool isequal_$t( const $t, const $t );
+.endforeach
+.foreach t $(want_isequal_list)
+extern tmbool isequal_$t_list( const $t_list, const $t_list );
+.endforeach
+..
 .. Misc. functions.
 .if ${member stat_$(basename) $(want_misc)}
 extern void stat_$(basename)( FILE * );

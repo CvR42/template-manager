@@ -20,6 +20,7 @@
 .append wantdefs setroom_toplevel_list
 .append wantdefs append_toplevel_list_list_list
 .append wantdefs cmp_toplevel_list
+.append wantdefs isequal_toplevel_list
 .append wantdefs concat_toplevel_list
 .append wantdefs delete_toplevel_list
 .append wantdefs extract_toplevel_list

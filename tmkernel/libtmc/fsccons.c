@@ -20,16 +20,14 @@
 int tm_fscancons( FILE *f, char *buf, const int sz )
 {
     int c;
-    char *p;
     char charstr[15];
-    int n;		/* Number of characters read. */
+    int n = 0;		/* Number of characters read. */
 
-    p = buf;
+    char *p = buf;
     if( tm_fscanspace( f ) ){
 	return 1;
     }
     c = getc( f );
-    n = 0;
     while( isalnum( c ) && n<sz ){
 	*p++ = c;
 	c = getc( f );
