@@ -54,6 +54,8 @@ distlist:
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 	for i in $(DIRLIST); do cd $$i; $(MAKE) distlist; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
 
+# ----- Configuration
+
 configure: configure.in
 	autoconf
 
