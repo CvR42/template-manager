@@ -47,13 +47,6 @@ int main( void )
 #endif
     ds = new_toplevel_list();
     ds = setroom_toplevel_list( ds, 42 );
-#ifdef CODEald
-    if( ds.room<42 ){
-        fprintf( stderr, "setroom_toplevel_list() fails\n" );
-        fprintf( stderr, "actual size is %u\n", ds.sz );
-        exit( 1 );
-    }
-#endif
 #ifdef CODEalu
     if( ds->room<42 ){
         fprintf( stderr, "setroom_toplevel_list() fails\n" );
@@ -111,9 +104,6 @@ int main( void )
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
 #endif
-#ifdef CODEald
-    ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds.arr[0] ) );
-#endif
 #ifdef CODEllu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds ) );
 #endif
@@ -127,9 +117,6 @@ int main( void )
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
 #endif
-#ifdef CODEald
-    ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds.arr[0] ) );
-#endif
 #ifdef CODEllu
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds ) );
 #endif
@@ -139,9 +126,6 @@ int main( void )
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds->arr[0] ) );
 #endif
-#ifdef CODEald
-    ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds.arr[0] ) );
-#endif
 #ifdef CODEllu
     ds = insert_toplevel_list( ds, (unsigned int) 1, rdup_toplevel( ds ) );
 #endif
@@ -150,9 +134,6 @@ int main( void )
 #endif
 #ifdef CODEalu
     ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds->arr[0] ) );
-#endif
-#ifdef CODEald
-    ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds.arr[0] ) );
 #endif
 #ifdef CODEllu
     ds = insert_toplevel_list( ds, (unsigned int) 2, rdup_toplevel( ds ) );
@@ -195,9 +176,6 @@ int main( void )
 #ifdef CODEalu
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
 #endif
-#ifdef CODEald
-    ds = append_toplevel_list( ds, rdup_toplevel( ds.arr[0] ) );
-#endif
 #ifdef CODEllu
     ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
@@ -210,9 +188,6 @@ int main( void )
 #endif
 #ifdef CODEalu
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
-#endif
-#ifdef CODEald
-    ds = append_toplevel_list( ds, rdup_toplevel( ds.arr[0] ) );
 #endif
 #ifdef CODEllu
     ds = append_toplevel_list( ds, rdup_toplevel( ds ) );

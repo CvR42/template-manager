@@ -50,7 +50,10 @@ typedef int tags_$t;
 .foreach t ${depsort $(need_ds)}
 .. Structure definitions for all the constructors of the type
 .. That have elements (C does not like empty structures or unions).
-.if ${member $t ${ctypelist}}
+.switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
+.case constructorbase
 .. Constructor type
 .. Generate structure definitions for all constructors with
 .. fields.
@@ -90,9 +93,7 @@ struct str_$t {
     long int lognew_id;
 #endif
 };
-
-.endif
-.if ${member $t ${tuplelist} ${classlist}}
+.case tuple class
 struct str_$t {
 .foreach e ${allfields $t}
     ${type $t $e} $e;
@@ -104,8 +105,9 @@ struct str_$t {
     long int lognew_id;
 #endif
 };
+.case constructor
+.endswitch
 
-.endif
 .endforeach
 .foreach t $(need_ds_list)
 struct str_$t_list {
@@ -121,30 +123,36 @@ struct str_$t_list {
 
 /* Type casting macros. */
 .foreach t $(need_ds)
-.if ${member $t ${tuplelist}}
+.switch ${metatype $t}
+.case constructor
+.case alias
+.error Internal error: alias $t still present.
+.case tuple class
 .foreach e ${fields $t}
 #define to_$t(e) (e)
 .endforeach
-.endif
-.if ${member $t ${ctypelist}}
+.case constructorbase
 .foreach c ${conslist $t}
 .foreach e ${fields $c}
 #define to_$c(e) (&(e->u.ue_$c))
 #define $c u.ue_$c
 .endforeach
 .endforeach
-.endif
+.endswitch
 .endforeach
 
 #ifdef LOGNEW
-.foreach t $(want_new)
-.if ${member $t ${tuplelist} ${classlist}}
+.foreach t ${nonvirtual $(want_new)}
+.switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
+.case tuple class constructor
 #define new_$t(${seplist , ${allfields $t}}) real_new_$t(${seplist , ${allfields $t} __FILE__ __LINE__})
-.else
+.case constructorbase
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${allfields $c}}) real_new_$c(${seplist , ${allfields $c} __FILE__ __LINE__})
+..#define new_$c(${seplist , ${allfields $c}}) real_new_$c(${seplist , ${allfields $c} __FILE__ __LINE__})
 .endforeach
-.endif
+.endswitch
 .endforeach
 .foreach t $(want_new_list)
 #define new_$t_list() real_new_$t_list(__FILE__,__LINE__)
@@ -174,45 +182,50 @@ struct str_$t_list {
 
 .. new_<cons> and new_<type> routines
 .foreach t $(want_new)
-.if ${member $t ${tuplelist} ${classlist}}
+.switch ${metatype $t}
+.case constructor
+.. Nothing: is done by constructorbase
+.case alias
+.error Internal error: alias $t still present.
+.case tuple class
 .set tl
 .foreach e ${allfields $t}
 .append tl ${type $t $e}
 .endforeach
 #ifdef LOGNEW
-.if ${== ${len $(tl)} 0}
-extern $t real_new_$t( const char *_f, const int _l );
-.else
+.if ${len $(tl)}
 extern $t real_new_$t( ${seplist ", " $(tl)}, const char *_f, const int _l );
+.else
+extern $t real_new_$t( const char *_f, const int _l );
 .endif
 #else
-.if ${== ${len $(tl)} 0}
-extern $t new_$t( void );
-.else
+.if ${len $(tl)}
 extern $t new_$t( ${seplist ", " $(tl)} );
+.else
+extern $t new_$t( void );
 .endif
 #endif
-.else
+.case constructorbase
 .foreach c ${conslist $t}
 .set tl
 .foreach e ${allfields $c}
 .append tl ${type $c $e}
 .endforeach
 #ifdef LOGNEW
-.if ${== ${len $(tl)} 0}
-extern $t real_new_$c( const char *, const int );
-.else
+.if ${len $(tl)}
 extern $t real_new_$c( ${seplist ", " $(tl)}, const char *, const int );
+.else
+extern $t real_new_$c( const char *, const int );
 .endif
 #else
-.if ${== ${len $(tl)} 0}
-extern $t new_$c( void );
-.else
+.if ${len $(tl)}
 extern $t new_$c( ${seplist ", " $(tl)} );
+.else
+extern $t new_$c( void );
 .endif
 #endif
 .endforeach
-.endif
+.endswitch
 .endforeach
 #ifdef LOGNEW
 .foreach t $(want_new_list)

@@ -40,16 +40,15 @@ MAKEFILE = Makefile
 DOC = README
 
 JUNK = tmp core makelog testerr testout alutest llutest config.log \
-       aldtest gmon.out log alutest.c aldtest.c llutest.c dist.lst distlist
+       gmon.out log alutest.c llutest.c dist.lst distlist
 
 TESTFILES = \
     cltest.ds test.ds xxtest.c \
-    aldokerr aldokout aldtesti aldspec.t aldcode.ct aldcode.ht \
     tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
     aluokerr aluokout alutesti aluspec.t alucode.ct alucode.ht \
     lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht
 
-FOREIGNFILES = aldtos.prj alutos.prj llutos.prj makefile.tc config.htc \
+FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
 
 # Files for configuration
@@ -61,8 +60,8 @@ DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 TMMODULES     = tmc.ct tmc.ht \
 		calu.ct calu.ht \
                 cllu.ct cllu.ht \
-                cald.ct cald.ht need.t \
-		macros.t tmcid.t aluid.t aldid.t lluid.t
+                need.t \
+		macros.t tmcid.t aluid.t lluid.t
 
 LLUTMSRCS     = llucode.c 
 
@@ -76,11 +75,6 @@ ALUTMHDRS      = alucode.h
 
 ALUTMSRCS      = alucode.c
 
-ALDTMHDRS      = aldcode.h
-
-ALDTMSRCS      = aldcode.c
-
-
 LLUTESTSRCS   = llutest.c llucode.c
 LLUTESTHDRS   = llucode.h
 LLUTESTOBJS   = llutest.o llucode.o
@@ -93,14 +87,10 @@ ALUTESTSRCS   = alutest.c alucode.c
 ALUTESTHDRS   = alucode.h
 ALUTESTOBJS   = alutest.o alucode.o
 
-ALDTESTSRCS   = aldtest.c aldcode.c
-ALDTESTHDRS   = aldcode.h
-ALDTESTOBJS   = aldtest.o aldcode.o
-
-OBJS = tmccode.o alutest.o alucode.o alutest.o llucode.o llutest.o aldcode.o aldtest.o
+OBJS = tmccode.o alutest.o alucode.o alutest.o llucode.o llutest.o
 
 # These sources are generated from tm templates.
-TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h aldcode.c aldcode.h
+TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h
 
 help :
 	@echo " Possible make targets:"
@@ -112,11 +102,11 @@ help :
 	@echo "test		Run tests."
 
 #
-all: tmctest llutest alutest aldtest
+all: tmctest llutest alutest
 
 # Add rules for the programs themselves here.
 
-test: tmctestrun llutestrun alutestrun aldtestrun
+test: tmctestrun llutestrun alutestrun
 
 tmctest: $(TMCTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCTESTOBJS) $(LIBS) -o tmctest
@@ -150,22 +140,6 @@ aluinstall: need.t calu.ct calu.ht aluid.t
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/calu.ht
 	rm -f tmp4242
 
-aldtest: $(ALDTESTOBJS)
-	$(LINKER) $(LDFLAGS) $(ALDTESTOBJS) $(LIBS) -o aldtest
-
-aldtestrun: aldtest aldtesti aldokout aldokerr
-	aldtest
-	diff testout aldokout
-	diff testerr aldokerr
-
-aldinstall: need.t cald.ct cald.ht aldid.t
-	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t aldid.t need.t cald.ct > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cald.ct
-	cat macros.t aldid.t need.t cald.ht > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cald.ht
-	rm -f tmp4242
-
 llutest:     $(LLUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(LLUTESTOBJS) $(LIBS) -o llutest
 
@@ -182,7 +156,7 @@ lluinstall: need.t cllu.ct cllu.ht lluid.t
 	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cllu.ht
 	rm -f tmp4242
 
-install: tmcinstall lluinstall aluinstall aldinstall
+install: tmcinstall lluinstall aluinstall
 
 clean:
 	rm -f $(JUNK) $(OBJS) $(TMOUT)
@@ -199,7 +173,7 @@ distfiles:
 distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
-depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS) $(ALDTMHDRS) $(ALDTMSRCS)
+depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS)
 	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
 
 tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
@@ -214,12 +188,6 @@ alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t
 alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ht > alucode.h
 
-aldcode.c : aldcode.ct cald.ct aldspec.t test.ds need.t macros.t aldid.t
-	$(TM) test.ds aldcode.ct > aldcode.c
-
-aldcode.h : aldcode.ht cald.ht aldspec.t test.ds need.t macros.t aldid.t
-	$(TM) test.ds aldcode.ht > aldcode.h
-
 llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ct > llucode.c
 
@@ -232,9 +200,6 @@ tmctest.c: xxtest.c
 alutest.c: xxtest.c
 	sed -e 's/XXX/alu/' xxtest.c > alutest.c
 
-aldtest.c: xxtest.c
-	sed -e 's/XXX/ald/' xxtest.c > aldtest.c
-
 llutest.c: xxtest.c
 	sed -e 's/XXX/llu/' xxtest.c > llutest.c
 
@@ -243,7 +208,5 @@ tmccode.o: tmccode.h config.h
 tmctest.o: tmccode.h config.h
 alucode.o: alucode.h config.h
 alutest.o: alucode.h config.h
-aldcode.o: aldcode.h config.h
-aldtest.o: aldcode.h config.h
 llucode.o: llucode.h config.h
 llutest.o: llucode.h config.h
