@@ -416,6 +416,14 @@ extern int cmp_$t( const const_$t a, const const_$t b );
 extern int cmp_$t_list( const const_$t_list a, const const_$t_list b );
 .endforeach
 ..
+.. isequal_<type>() routines
+.foreach t $(want_isequal)
+extern tmbool isequal_$t( const const_$t a, const const_$t b );
+.endforeach
+.foreach t $(want_isequal_list)
+extern tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b );
+.endforeach
+..
 .. Misc. functions.
 .if ${member flush_$(basename) $(want_misc)}
 extern void flush_$(basename)( void );

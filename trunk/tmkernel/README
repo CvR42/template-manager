@@ -11,7 +11,7 @@ don't forget to send me that postcard.
 
 Before you install the program you should read at least this file, and
 the LICENCE file. If you want to know what has changed in the most
-recent deistribution, see the CHANGES file.
+recent distribution, see the CHANGES file.
 
 ** Please read this file before installing the program. **
 
@@ -27,6 +27,7 @@ Tm C templates has been compiled and tested on the following systems:
  - Atari ST with the Pure C compiler version 2.1
  - MS-Windows 3.1 and 95 with the Borland C++ compiler version 4.5
    and 5.0.
+ - Debian Linux with GNU C compiler
 
 Older versions have been compiled on lots of other UNIX systems, but
 this has not been tested with the new configure script.
@@ -41,13 +42,15 @@ Compiling and installing
 Before you can compile Tm, you must configure the Makefile and the
 configuration header file.  You do this by simply typing
 
-    configure
+    ./configure
 
-at the command prompt. This will set reasonable defaults for the compilation.
-See below if you want the change the installation directory or the
-command to invoke the C compiler.
+at the command prompt. This will set reasonable defaults for the
+compilation.  See the section "Changing compilation options" below if
+you want the change the installation directory or the command to invoke
+the C compiler.
 
-After than you can make all compilation targets with
+After you have run the configuration script, you can make all compilation
+targets with
 
     make all
 
@@ -83,6 +86,7 @@ There are other targets in the Makefile. Do
 
 to get an overview of them.
 
+
 Changing compilation options
 ----------------------------
 
@@ -95,19 +99,21 @@ variable `CC' by setting it in the environment.  For example (assuming
 you use the csh(1)):
 
     setenv CC cc -Aa
-    configure
+    ./configure
 
-The environment variable needs only be visible at the moment you run
-configure.
+If 'setenv' does not work, see the section "Setting environment variables"
+below. The environment variable needs only be visible at the moment
+you run configure.
 
 The program will be installed in <prefix>/bin. By default <prefix> is
 determined by the place the GNU compiler is found, or if that cannot
 be found it is '/usr/local'.  To change the prefix, you can give
 configure the option '--prefix=<path>'. For example, with
 
-    configure --prefix=/usr/blob
+    ./configure --prefix=/usr/blob
 
 Tm will be installed in /usr/blob/bin.
+
 
 Documentation
 -------------
@@ -124,6 +130,7 @@ and install the packages in the order 'libtmc', 'tm', 'tmc'.  See the
 README files in each of the directories. Note that as of version 1.2,
 the Atari ST version is no longer supported (I have sold my ST).
 
+
 Compiling and installing on MS-Windows
 --------------------------------------
 
@@ -133,3 +140,18 @@ See the README files in each of the directories.
 
 A file 'config.bat' is provided, that copies the MS-Windows specific
 makefiles and config.h files to the generally used ones.
+
+
+Setting environment variables
+-----------------------------
+
+In these installation instructions, environment variables are set with
+the command `setenv'. For example:
+
+  setenv CC cc -Aa
+
+This only works in the `csh' shell and variants (for example `tcsh').
+For Bourne-like shells setting environment variables is done like this:
+
+  export CC="cc -Aa"
+

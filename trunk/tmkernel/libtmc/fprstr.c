@@ -12,7 +12,7 @@
 #include "tmc.h"
 
 /* definition of 'print' for a 'tmstring' */
-void fprint_tmstring( FILE *f, tmconststring s )
+void fprint_tmstring( FILE *f, const_tmstring s )
 {
     int c;
 

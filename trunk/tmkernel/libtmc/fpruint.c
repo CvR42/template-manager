@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmc.h"
 
-void fprint_uint( FILE *f, const uint u )
+void fprint_tmuint( FILE *f, const tmuint u )
 {
-    fprintf( f, "%u", u );
+    fprintf( f, "%u", (unsigned int) u );
 }

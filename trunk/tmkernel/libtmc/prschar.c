@@ -7,7 +7,7 @@
 #include "tmc.h"
 #include "config.h"
 
-void print_schar( TMPRINTSTATE *st, const schar c )
+void print_tmschar( TMPRINTSTATE *st, const tmschar c )
 {
     char buf[10];
 

@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmc.h"
 
-void fprint_sshrt( FILE *f, const sshrt i )
+void fprint_tmshort( FILE *f, const tmshort i )
 {
     if( i<0 ){
 	fprintf( f, "(%hd)", i );

@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmc.h"
 
-int fscan_uchar( FILE *f, uchar *p )
+int fscan_tmuchar( FILE *f, tmuchar *p )
 {
     int brac;
     int code;
@@ -20,7 +20,7 @@ int fscan_uchar( FILE *f, uchar *p )
     if( tm_fscanescapedchar( f, &code ) ){
 	return 1;
     }
-    *p = (uchar) code;
+    *p = (tmuchar) code;
     if( tm_fneedc( f, '\'' ) ){
 	return 1;
     }

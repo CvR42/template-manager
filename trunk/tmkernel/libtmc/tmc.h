@@ -14,24 +14,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
-#if defined( _AIX ) && defined( _ALL_SOURCE )
-#include <sys/types.h>
-#define GOT_UINT
-#endif
-#if defined( __linux__ )
-#include <linux/types.h>
-#ifdef __KERNEL_STRICT_NAMES
-typedef unsigned int uint;
-typedef unsigned long ulong;
-#endif
-#define GOT_UINT
-#endif
-
-#ifndef GOT_UINT
-typedef unsigned int uint;
-typedef unsigned long ulong;
-#define GOT_UINT
-#endif
+typedef unsigned int tmuint;
+typedef unsigned long tmulong;
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,8 +26,8 @@ typedef const struct _tmc_sym *const_tmsymbol;
 
 typedef char *tmstring;
 typedef char *tmword;
-typedef const char *tmconststring;
-typedef const char *tmconstword;
+typedef const char *const_tmstring;
+typedef const char *const_tmword;
 
 struct str_Sstack {
     struct str_Sstack *next;
@@ -69,21 +53,23 @@ struct str_tmprintstate {
 
 typedef struct str_tmprintstate TMPRINTSTATE;
 
-/* 'schar' functions */
-#define scharNIL ('\0')
-#define null_schar() scharNIL
-#define rfre_schar(c)
-#define fre_schar(c)
-#define rdup_schar(c) (c)
-#define cmp_schar(a,b) (a==b?0:(a<b?-1:1))
+/* 'tmschar' functions */
+#define tmscharNIL ('\0')
+#define null_tmschar() tmscharNIL
+#define rfre_tmschar(c)
+#define fre_tmschar(c)
+#define rdup_tmschar(c) (c)
+#define cmp_tmschar(a,b) (a==b?0:(a<b?-1:1))
+#define isequal_tmschar(a,b) (a==b)
 
-/* 'uchar' functions */
-#define ucharNIL ('\0')
-#define null_uchar() ucharNIL
-#define rfre_uchar(c)
-#define fre_uchar(c)
-#define rdup_uchar(c) (c)
-#define cmp_uchar(a,b) (a==b?0:(a<b?-1:1))
+/* 'tmuchar' functions */
+#define tmucharNIL ('\0')
+#define null_tmuchar() tmucharNIL
+#define rfre_tmuchar(c)
+#define fre_tmuchar(c)
+#define rdup_tmuchar(c) (c)
+#define cmp_tmuchar(a,b) (a==b?0:(a<b?-1:1))
+#define isequal_tmuchar(a,b) (a==b))
 
 /* 'tmsymbol' functions */
 #define tmsymbolNIL (tmsymbol)0
@@ -94,12 +80,14 @@ inline tmsymbol rdup_tmsymbol( tmsymbol s ) { return s; }
 inline void rfre_tmsymbol( tmsymbol ) {}
 inline void fre_tmsymbol( tmsymbol ) { }
 inline int cmp_tmsymbol(tmsymbol a, tmsymbol b) { return (a==b?0:(a<b?-1:1)); }
+inline int isequal_tmsymbol(tmsymbol a, tmsymbol b) { return a==b; }
 inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #else
 #define rdup_tmsymbol(s) (s)
 #define rfre_tmsymbol(s)
 #define fre_tmsymbol(s)
 #define cmp_tmsymbol(a,b) (a==b?0:(a<b?-1:1))
+#define isequal_tmsymbol(a,b) (a==b)
 #define null_tmsymbol() tmsymbolNIL
 #endif
 
@@ -117,59 +105,67 @@ inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #define print_float(st,d) print_double(st,(double)d)
 #define fprint_float(f,d) fprint_double(f,(double)d)
 #define cmp_float(a,b) cmp_double((double) a,(double) b)
+#define isequal_float(a,b) (a==b)
 #define floatNIL (0.0)
 #define null_float() floatNIL
 
-/* 'sshrt' functions */
-#define rdup_sshrt(i) (i)
-#define fre_sshrt(i)
-#define rfre_sshrt(i)
-#define cmp_sshrt(a,b) ((a)-(b))
-#define sshrtNIL (0)
-#define null_sshrt() sshrtNIL
+/* 'tmshort' functions */
+#define rdup_tmshort(i) (i)
+#define fre_tmshort(i)
+#define rfre_tmshort(i)
+#define cmp_tmshort(a,b) ((a)-(b))
+#define isequal_tmshort(a,b) ((a)==(b))
+#define tmshortNIL (0)
+#define null_tmshort() tmshortNIL
 
-/* 'ushrt' functions */
-#define rdup_ushrt(i) (i)
-#define fre_ushrt(i)
-#define rfre_ushrt(i)
-#define cmp_ushrt(a,b) ((a)-(b))
-#define ushrtNIL (0)
-#define null_ushrt() ushrtNIL
+/* 'tmushort' functions */
+#define rdup_tmushort(i) (i)
+#define fre_tmushort(i)
+#define rfre_tmushort(i)
+#define cmp_tmushort(a,b) ((a)-(b))
+#define isequal_tmushort(a,b) ((a)==(b))
+#define tmushortNIL (0)
+#define null_tmushort() tmushortNIL
 
 /* 'int' functions */
 #define rdup_int(i) (i)
 #define fre_int(i)
 #define rfre_int(i)
 #define cmp_int(a,b) ((a)-(b))
+#define isequal_int(a,b) ((a)==(b))
 #define intNIL (0)
 #define null_int() intNIL
 
-/* 'uint' functions */
-#define rdup_uint(i) (i)
-#define fre_uint(i)
-#define rfre_uint(i)
-#define cmp_uint(a,b) ((a)-(b))
-#define uintNIL (0)
-#define null_uint() uintNIL
+/* 'tmuint' functions */
+#define rdup_tmuint(i) (i)
+#define fre_tmuint(i)
+#define rfre_tmuint(i)
+#define cmp_tmuint(a,b) ((a)-(b))
+#define isequal_tmuint(a,b) ((a)==(b))
+#define tmuintNIL (0)
+#define null_tmuint() tmuintNIL
 
 /* 'long' functions */
 #define rdup_long(i) (i)
 #define fre_long(i)
 #define rfre_long(i)
 #define cmp_long(a,b) ((a)>(b)?1:((a)<(b)?(-1):0))
+#define isequal_long(a,b) ((a)==(b))
 #define longNIL (0)
 #define null_long() longNIL
 
-/* 'ulong' functions */
+/* 'tmulong' functions */
 #define rdup_ulong(i) (i)
 #define fre_ulong(i)
 #define rfre_ulong(i)
 #define cmp_ulong(a,b) ((a)>(b)?1:((a)<(b)?(-1):0))
+#define isequal_ulong(a,b) ((a)==(b))
 #define ulongNIL (0)
 #define null_ulong() ulongNIL
 
 /* 'tmword' functions */
 #define cmp_tmword(a,b) strcmp(a,b)
+#define isequal_tmword(a,b) (strcmp(a,b)==0)
 #define tmwordNIL tmstringNIL
 #define null_tmword() tmstringNIL
 #define new_tmword new_tmstring
@@ -184,6 +180,7 @@ inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 
 /* 'tmstring' functions */
 #define cmp_tmstring(a,b) strcmp(a,b)
+#define isequal_tmstring(a,b) (strcmp(a,b)==0)
 #define tmstringNIL ((tmstring)0)
 #define null_tmstring() tmstringNIL
 #ifndef __TM_LIBTMC_INTERN__
@@ -237,7 +234,9 @@ typedef struct str_tmtext {
     long int lognew_id;
 } *tmtext;
 
-extern int cmp_tmtext( const tmtext ta, const tmtext tb );
+typedef const struct str_tmtext *const_tmtext;
+
+extern int cmp_tmtext( const const_tmtext ta, const const_tmtext tb );
 #define tmtextNIL ((tmtext)0)
 #define null_tmtext() tmtextNIL
 extern tmtext rdup_tmtext_lognew( const tmtext t, const char *file, const int line );
@@ -333,31 +332,29 @@ extern void tm_opentuple( TMPRINTSTATE *st );
 extern void tm_closetuple( TMPRINTSTATE *st );
 extern void tm_printword( TMPRINTSTATE *st, const char *w );
 
-/* 'schar' functions. */
-typedef signed char schar;
-extern int fscan_schar( FILE *f, schar *c );
-extern void print_schar( TMPRINTSTATE *st, const schar c );
-extern void fprint_schar( FILE *f, const schar c );
+/* 'tmschar' functions. */
+typedef signed char tmschar;
+extern int fscan_tmschar( FILE *f, tmschar *c );
+extern void print_tmschar( TMPRINTSTATE *st, const tmschar c );
+extern void fprint_tmschar( FILE *f, const tmschar c );
 
-/* 'uchar' functions. */
-#if !defined( _AIX ) || !defined( _ALL_SOURCE )
-typedef unsigned char uchar;
-#endif
-extern int fscan_uchar( FILE *f, uchar *c );
-extern void print_uchar( TMPRINTSTATE *st, const uchar c );
-extern void fprint_uchar( FILE *f, const uchar c );
+/* 'tmuchar' functions. */
+typedef unsigned char tmuchar;
+extern int fscan_tmuchar( FILE *f, tmuchar *c );
+extern void print_tmuchar( TMPRINTSTATE *st, const tmuchar c );
+extern void fprint_tmuchar( FILE *f, const tmuchar c );
 
-/* 'sshrt' functions. */
-typedef short int sshrt;
-extern int fscan_sshrt( FILE *f, sshrt *c );
-extern void print_sshrt( TMPRINTSTATE *st, const sshrt c );
-extern void fprint_sshrt( FILE *f, const sshrt c );
+/* 'tmshort' functions. */
+typedef short int tmshort;
+extern int fscan_tmshort( FILE *f, tmshort *c );
+extern void print_tmshort( TMPRINTSTATE *st, const tmshort c );
+extern void fprint_tmshort( FILE *f, const tmshort c );
 
-/* 'ushrt' functions. */
-typedef unsigned short int ushrt;
-extern int fscan_ushrt( FILE *f, ushrt *c );
-extern void print_ushrt( TMPRINTSTATE *st, const ushrt c );
-extern void fprint_ushrt( FILE *f, const ushrt c );
+/* 'tmushort' functions. */
+typedef unsigned short int tmushort;
+extern int fscan_tmushort( FILE *f, tmushort *c );
+extern void print_tmushort( TMPRINTSTATE *st, const tmushort c );
+extern void fprint_tmushort( FILE *f, const tmushort c );
 
 /* 'double' functions */
 extern int fscan_double( FILE *f, double *d );
@@ -373,26 +370,26 @@ extern int fscan_int( FILE *f, int *i );
 extern void print_int( TMPRINTSTATE *st, const int i );
 extern void fprint_int( FILE *f, const int i );
 
-/* 'uint' functions */
-extern int fscan_uint( FILE *f, uint *p );
-extern void print_uint( TMPRINTSTATE *st, const uint u );
-extern void fprint_uint( FILE *f, const uint u );
+/* 'tmuint' functions */
+extern int fscan_tmuint( FILE *f, tmuint *p );
+extern void print_tmuint( TMPRINTSTATE *st, const tmuint u );
+extern void fprint_tmuint( FILE *f, const tmuint u );
 
 /* 'long' functions */
 extern int fscan_long( FILE *f, long *i );
 extern void print_long( TMPRINTSTATE *st, const long i );
 extern void fprint_long( FILE *f, const long i );
 
-/* 'ulong' functions */
-extern int fscan_ulong( FILE *f, ulong *p );
-extern void print_ulong( TMPRINTSTATE *st, const ulong u );
-extern void fprint_ulong( FILE *f, const ulong u );
+/* 'tmulong' functions */
+extern int fscan_tmulong( FILE *f, tmulong *p );
+extern void print_tmulong( TMPRINTSTATE *st, const tmulong u );
+extern void fprint_tmulong( FILE *f, const tmulong u );
 
 /* 'tmword' functions */
 extern int fscan_tmword_nolognew( FILE *f, tmword *s );
 extern int fscan_tmword_lognew( FILE *f, tmword *p, const char *file, const int line );
-extern void print_tmword( TMPRINTSTATE *st, const tmconstword s );
-extern void fprint_tmword( FILE *f, const tmconstword s );
+extern void print_tmword( TMPRINTSTATE *st, const const_tmword s );
+extern void fprint_tmword( FILE *f, const const_tmword s );
 
 /* 'tmstring' functions */
 extern tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz );
@@ -405,10 +402,13 @@ extern int fscan_tmstring_lognew( FILE *f, tmstring *p, const char *file, const 
 extern tmstring new_tmstring_nolognew( const char *s );
 extern void fre_tmstring_nolognew( tmstring s );
 extern int fscan_tmstring_nolognew( FILE *f, tmstring *p );
-extern void print_tmstring( TMPRINTSTATE *st, tmconststring s );
-extern void fprint_tmstring( FILE *f, tmconststring s );
+extern void print_tmstring( TMPRINTSTATE *st, const_tmstring s );
+extern void fprint_tmstring( FILE *f, const_tmstring s );
 extern void stat_tmstring( FILE *f );
 extern int get_balance_tmstring( void );
+
+/* 'tmtext' functions */
+extern tmbool isequal_tmtext( const const_tmtext ta, const const_tmtext tb );
 
 /* 'tmbool' functions */
 extern int fscan_tmbool( FILE *f, tmbool *bp );
@@ -429,7 +429,7 @@ extern void tm_noroom( void );
 /* Storage for a tmsymbol string */
 struct _tmc_sym {
     struct _tmc_sym *next;		/* next in list */
-    tmconststring name;			/* pointer to the string */
+    const_tmstring name;		/* pointer to the string */
 #ifdef __cplusplus
     mutable tm_neutralp data;		/* any info for it. */
 #else

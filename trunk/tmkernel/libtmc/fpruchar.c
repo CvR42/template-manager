@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmc.h"
 
-void fprint_uchar( FILE *f, const uchar c )
+void fprint_tmuchar( FILE *f, const tmuchar c )
 {
     fprintf( f, "'%s'", tm_escapestring( (unsigned int) c ) );
 }

@@ -7,14 +7,13 @@
 #include "config.h"
 #include "tmc.h"
 
-int fscan_ulong( FILE *f, ulong *p )
+int fscan_tmulong( FILE *f, tmulong *p )
 {
-    int brac;
+    int brac = tm_fscanopenbrac( f );
 
     *p = 0;
-    brac = tm_fscanopenbrac( f );
     if( fscanf( f, "%lu", p ) != 1 ){
-	(void) strcpy( tm_errmsg, "unsigned long expected" );
+	(void) strcpy( tm_errmsg, "tmulong expected" );
 	return 1;
     }
     return tm_fscanclosebrac( f, brac );

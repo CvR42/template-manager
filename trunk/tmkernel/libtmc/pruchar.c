@@ -7,7 +7,7 @@
 #include "tmc.h"
 #include "config.h"
 
-void print_uchar( TMPRINTSTATE *st, const uchar c )
+void print_tmuchar( TMPRINTSTATE *st, const tmuchar c )
 {
     char buf[10];
 

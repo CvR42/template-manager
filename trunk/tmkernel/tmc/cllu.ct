@@ -1019,6 +1019,105 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 
 .endforeach
 /*********************************************************
+ *    isequal_<type> and isequal_<type>_list routines            *
+ *********************************************************/
+
+.call ansi_static isequal_list "tmbool isequal_$$t_list( const $$t_list, const $$t_list )"
+.call ansi_static isequal "tmbool isequal_$$t( const $$t, const $$t )"
+
+.foreach t $(need_isequal)
+.if ${member $t $(want_isequal)}
+.set stat
+.else
+.set stat "static "
+.endif
+.if ${member $t ${tuplelist}}
+.. isequal tuple
+/* Compare two $t tuples. */
+$(stat)tmbool isequal_$t( const $t a, const $t b )
+{
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return TMTRUE;
+    }
+    if( a == $tNIL || b == $tNIL ){
+	return TMFALSE;
+    }
+.foreach e ${allfields $t}
+    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
+	return TMFALSE;
+    }
+.endforeach
+    return TMTRUE;
+}
+
+.else
+.. isequal constructor
+/* Compare two $t constructors */
+$(stat)tmbool isequal_$t( const $t a, const $t b )
+{
+.. A small optimization, but also takes care of NIL.
+    if( a == b ){
+	return TMTRUE;
+    }
+    if( a == $tNIL || b == $tNIL ){
+	return TMFALSE;
+    }
+.if ${len ${subclasses $t}}
+    if( a->tag != b->tag ){
+	return TMFALSE;
+    }
+    switch( a->tag )
+    {
+.foreach c ${subclasses $t}
+	case TAG$c:
+.foreach e ${allfields $c}
+	    if( !isequal_${type $c $e}( to_$c(a)->$e, to_$c(b)->$e ) ){
+		return TMFALSE;
+	    }
+.endforeach
+	    break;
+
+.endforeach
+	    default:
+		FATALTAG( a->tag );
+    }
+.endif
+    return TMTRUE;
+}
+
+.endif
+.endforeach
+.foreach t $(need_isequal_list)
+.if ${member $t $(want_isequal_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Compare two $t lists. */
+$(stat)tmbool isequal_$t_list( const $t_list a, const $t_list b )
+{
+    $t_list ap = a;
+    $t_list bp = b;
+
+    for(;;){
+	if( ap == bp ){
+	    return TMTRUE;
+	}
+	if( ap==$tNIL || bp==$tNIL ){
+	    return TMFALSE;
+	}
+	if( !isequal_$t( ap, bp ) ){
+	    return TMFALSE;
+	}
+	ap = ap->${call linkname $t};
+	bp = bp->${call linkname $t};
+    }
+    return TMTRUE;
+}
+
+.endforeach
+/*********************************************************
  *    fscan_<type> and fscan_<type>_list routines        *
  *********************************************************/
 

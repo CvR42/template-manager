@@ -42,7 +42,8 @@ DOC = README
 
 JUNK = tmp core makelog testerr testout alutest llutest config.log \
        gmon.out log alutest.c llutest.c dist.lst distlist tmctest.c \
-       alutest.c llutest.c tmctest tmcwalktest aldtest
+       alutest.c llutest.c tmctest tmcwalktest aldtest $(OBJS) $(TMOUT)
+PRECIOUSJUNK =
 
 TESTFILES = \
     cltest.ds test.ds xxtest.c \
@@ -177,13 +178,13 @@ lluinstall: need.t cllu.ct cllu.ht lluid.t
 install: tmcinstall lluinstall aluinstall
 
 clean:
-	rm -f $(JUNK) $(OBJS) $(TMOUT)
+	rm -f $(JUNK)
 
 distclean:
-	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
+	rm -f $(JUNK) $(PRECIOUSJUNK) config.h
 
 empty:
-	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
+	rm -f $(JUNK) $(PRECIOUSJUNK) config.h
 
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -226,6 +227,21 @@ llutest.c: xxtest.c
 
 stats:
 	wc -l $(TMMODULES)
+
+
+# Configure-related rules.
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
+JUNK += config.log config.cache
+PRECIOUSJUNK += config.status configure
 
 ###
 tmccode.o: tmccode.h config.h

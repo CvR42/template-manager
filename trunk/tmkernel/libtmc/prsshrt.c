@@ -7,7 +7,7 @@
 #include "tmc.h"
 #include "config.h"
 
-void print_sshrt( TMPRINTSTATE *st, const sshrt i )
+void print_tmshort( TMPRINTSTATE *st, const tmshort i )
 {
     char buf[sizeof(int)*8];
 

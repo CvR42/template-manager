@@ -80,8 +80,6 @@ GENSRCS = tmcode.c tmpath.c
 
 DEPENDSRC = $(NORMALSRCS) $(GENSRCS)
 
-# The more obvious 'OBJS = $(SRCS:.c=.o)' causes a core dump
-# in make (!) on HPUX 9.0. It's a jungle out there.
 NORMALOBJS = $(NORMALSRCS:.c=.o)
 GENOBJS = $(GENSRCS:.c=.o)
 OBJS = $(GENOBJS) $(NORMALOBJS)
@@ -93,9 +91,10 @@ TMOUTPUT = tmcode.c tmcode.h
 GENFILES = $(TMOUTPUT) tmpath.c
 
 
-JUNK          = sedlint y.output lint testerr testout index.sed \
+JUNK          = y.output lint testerr testout index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
 		config.log version.h distlist
+PRECIOUSJUNK = sedlint
 
 FOREIGNFILES = tmtos.prj makefile.tc config.htc makefile.tos config.hts
 
@@ -135,7 +134,8 @@ distclean:
 
 empty:
 	rm -f $(OBJS) $(JUNK) $(PROG)
-	rm -f config.status config.cache config.h
+	rm -f config.h
+	rm -f $(PRECIOUSJUNK)
 
 clean:
 	rm -f $(OBJS) $(GENFILES) $(JUNK)
@@ -186,7 +186,25 @@ stats: empty
 genstats: $(GENSRCS) $(GENHDRS)
 	wc -l $(GENSRCS) $(GENHDRS)
 
+ 
+# Configure-related rules.
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
+JUNK += config.log config.cache
+PRECIOUSJUNK += config.status configure
+
 -include $(DEPENDFILE)
+
+###
+
 checkds.o: checkds.c config.h tmdefs.h error.h tmcode.h misc.h \
  checkds.h
 refex.o: refex.c config.h tmdefs.h refex.h
