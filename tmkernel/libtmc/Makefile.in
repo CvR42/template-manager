@@ -230,8 +230,9 @@ distlist: $(DISTFILES)
 .c.o:
 	$(CC) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
 
+# TODO: do something better here
 depend:
-	mkmf -f $(MAKEFILE)
+	echo "Nothing is done"
 
 
 # Configure-related rules.
