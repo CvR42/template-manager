@@ -8,7 +8,7 @@
 %%EndComments
 %DVIPSCommandLine: dvips main
 %DVIPSParameters: dpi=600, comments removed
-%DVIPSSource:  TeX output 1997.08.15:1801
+%DVIPSSource:  TeX output 1997.08.15:1825
 %%BeginProcSet: tex.pro
 /TeXDict 250 dict def TeXDict begin /N{def}def /B{bind def}N /S{exch}N
 /X{S N}B /TR{translate}N /isls false N /vsize 11 72 mul N /hsize 8.5 72
@@ -11129,7 +11129,7 @@ b Fn(71)434 315 y Fd(/*)31 b(External)f(definitions)f(\(Version)h(for)h
 (array)f(list\).)527 448 y(template)g(file:)184 b
 (/usr/local/lib/tmc.ht)527 514 y(datastructure)29 b(file:)h(calc.ds)527
 581 y(tm)h(version:)276 b(36)527 647 y(tm)31 b(kernel)f(version:)60
-b(2.0-beta3)465 713 y(*/)434 846 y(/*)31 b(data)f(structures)g(*/)434
+b(2.0-beta4)465 713 y(*/)434 846 y(/*)31 b(data)f(structures)g(*/)434
 979 y(/*)h(forward)f(reference)g(typedefs)g(for)g(all)h(types.)465
 1046 y(*)g(C)g(does)f(not)h(like)f(the)g(use)h(of)g(undefined)e(types,)
 h(but)h(does)f(not)465 1112 y(*)h(mind)f(the)h(use)f(of)h(pointers)f
@@ -11196,7 +11196,7 @@ y(tags_expr)f(tag;)322 913 y(expr)h(a;)322 979 y(expr)g(b;)198
 2839 y(#define)h(to_ExprTimes\(e\))f(\(\(ExprTimes\)e\))198
 2905 y(#define)h(to_statement\(e\))f(\(\(statement\)e\))198
 2972 y(#define)h(to_expr\(e\))g(\(\(expr\)e\))198 3104
-y(/*)h(constructors.)e(*/)198 3171 y(#ifdef)h(LOGNEW)198
+y(/*)h(new_<type>)e(routines)h(*/)198 3171 y(#ifdef)g(LOGNEW)198
 3237 y(#define)g(new_ExprConst\(n\))f
 (real_new_ExprConst\(n,__FILE__,__LINE__\))198 3304 y(#define)h
 (new_ExprNegate\(x\))f(real_new_ExprNegate\(x,__FILE__,__LINE__\))198
@@ -11214,658 +11214,651 @@ y(#define)i(fscan_statement_list\(f,l\))e
 (real_fscan_statement_list\(f,l,__FILE__,__LINE__\))198
 3769 y(#endif)198 3901 y(#ifdef)i(LOGNEW)198 3968 y(extern)g(ExprConst)
 g(real_new_ExprConst\()e(int,)j(const)f(char)g(*,)h(const)f(int)h(\);)
-198 4034 y(#else)198 4101 y(extern)f(ExprConst)g(new_ExprConst\()f(int)
-i(\);)198 4167 y(#endif)198 4234 y(#ifdef)f(LOGNEW)198
-4300 y(extern)g(ExprNegate)g(real_new_ExprNegate\()e(expr,)i(const)h
-(char)f(*,)h(const)f(int)g(\);)198 4366 y(#else)198 4433
-y(extern)g(ExprNegate)g(new_ExprNegate\()f(expr)h(\);)198
-4499 y(#endif)198 4566 y(#ifdef)g(LOGNEW)198 4632 y(extern)g(ExprPlus)g
+198 4034 y(extern)f(ExprNegate)g(real_new_ExprNegate\()e(expr,)i(const)
+h(char)f(*,)h(const)f(int)g(\);)198 4101 y(extern)g(ExprPlus)g
 (real_new_ExprPlus\()f(expr,)h(expr,)g(const)g(char)h(*,)f(const)h(int)
-f(\);)198 4698 y(#else)198 4765 y(extern)g(ExprPlus)g(new_ExprPlus\()f
-(expr,)i(expr)f(\);)198 4831 y(#endif)198 4898 y(#ifdef)g(LOGNEW)198
-4964 y(extern)g(ExprSymbol)g(real_new_ExprSymbol\()e(tmstring,)i(const)
-g(char)h(*,)f(const)g(int)h(\);)198 5031 y(#else)198
-5097 y(extern)f(ExprSymbol)g(new_ExprSymbol\()f(tmstring)h(\);)198
-5163 y(#endif)198 5230 y(#ifdef)g(LOGNEW)198 5296 y(extern)g(ExprTimes)
-g(real_new_ExprTimes\()e(expr,)j(expr,)f(const)g(char)h(*,)f(const)g
-(int)h(\);)198 5363 y(#else)198 5429 y(extern)f(ExprTimes)g
-(new_ExprTimes\()f(expr,)h(expr)h(\);)198 5496 y(#endif)198
-5562 y(#ifdef)f(LOGNEW)198 5628 y(extern)g(statement)g
+f(\);)198 4167 y(extern)g(ExprSymbol)g(real_new_ExprSymbol\()e
+(tmstring,)i(const)g(char)h(*,)f(const)g(int)h(\);)198
+4234 y(extern)f(ExprTimes)g(real_new_ExprTimes\()e(expr,)j(expr,)f
+(const)g(char)h(*,)f(const)g(int)h(\);)198 4300 y(extern)f(statement)g
 (real_new_statement\()e(tmstring,)i(expr,)g(const)h(char)f(*,)h(const)f
-(int)g(\);)198 5695 y(#else)198 5761 y(extern)g(statement)g
-(new_statement\()f(tmstring,)h(expr)g(\);)p eop
+(int)g(\);)198 4366 y(extern)g(statement_list)f
+(real_new_statement_list\()f(const)i(char)h(*file,)f(const)g(int)h
+(line)f(\);)198 4433 y(#else)198 4499 y(extern)g(ExprConst)g
+(new_ExprConst\()f(int)i(\);)198 4566 y(extern)f(ExprNegate)g
+(new_ExprNegate\()f(expr)h(\);)198 4632 y(extern)g(ExprPlus)g
+(new_ExprPlus\()f(expr,)i(expr)f(\);)198 4698 y(extern)g(ExprSymbol)g
+(new_ExprSymbol\()f(tmstring)h(\);)198 4765 y(extern)g(ExprTimes)g
+(new_ExprTimes\()f(expr,)h(expr)h(\);)198 4831 y(extern)f(statement)g
+(new_statement\()f(tmstring,)h(expr)g(\);)198 4898 y(extern)g
+(statement_list)f(new_statement_list\()g(void)h(\);)198
+4964 y(#endif)198 5031 y(extern)g(statement_list)f
+(append_statement_list\()f(statement_list,)h(statement)h(\);)198
+5097 y(extern)g(void)h(rfre_statement_list\()d(statement_list)h(\);)198
+5163 y(extern)h(void)h(rfre_expr\()e(expr)i(\);)198 5230
+y(extern)f(void)h(print_statement_list\()d(TMPRINTSTATE)h(*,)i(const)f
+(statement_list)f(\);)198 5296 y(#ifdef)h(LOGNEW)198
+5363 y(extern)g(int)h(real_fscan_statement_list\()c(FILE)k(*,)f
+(statement_list)f(*,)i(const)f(char)h(*,)f(const)h(int)f(\);)198
+5429 y(#else)198 5496 y(extern)g(int)h(fscan_statement_list\()d(FILE)i
+(*,)h(statement_list)e(*)i(\);)198 5562 y(#endif)198
+5628 y(extern)f(void)h(stat_calc\()e(FILE)i(*)f(\);)198
+5695 y(extern)g(int)h(get_balance_calc\()d(void)j(\);)198
+5761 y(/*)g(----)f(end)h(of)f(/usr/local/lib/tmc.ht)e(----)j(*/)p
+eop
 %%Page: 73 73
 73 72 bop 227 -28 a Fm(B.3.)55 b(GENERA)-7 b(TION)27
 b(OF)g(THE)h(TM)f(TEMPLA)-7 b(TE)27 b(FUNCTIONS)1144
-b Fn(73)434 315 y Fd(#endif)434 381 y(#ifdef)30 b(LOGNEW)434
-448 y(extern)g(statement_list)g(real_new_statement_list\()d(const)k
-(char)f(*file,)g(const)g(int)h(line)f(\);)434 514 y(#else)434
-581 y(extern)g(statement_list)g(new_statement_list\()e(void)i(\);)434
-647 y(#endif)434 713 y(extern)g(statement_list)g
-(append_statement_list\()e(statement_list,)h(statement)g(\);)434
-780 y(extern)h(void)h(rfre_statement_list\()d(statement_list)h(\);)434
-846 y(extern)h(void)h(rfre_expr\()e(expr)i(\);)434 913
-y(extern)f(void)h(print_statement_list\()d(TMPRINTSTATE)h(*,)i(const)f
-(statement_list)f(\);)434 979 y(#ifdef)h(LOGNEW)434 1046
-y(#else)434 1112 y(#endif)434 1178 y(#ifdef)g(LOGNEW)434
-1245 y(#else)434 1311 y(#endif)434 1378 y(#ifdef)g(LOGNEW)434
-1444 y(extern)g(int)h(real_fscan_statement_list\()d(FILE)i(*,)h
-(statement_list)e(*,)h(const)h(char)f(*,)h(const)f(int)g(\);)434
-1510 y(#else)434 1577 y(extern)g(int)h(fscan_statement_list\()d(FILE)j
-(*,)f(statement_list)f(*)i(\);)434 1643 y(#endif)434
-1710 y(extern)f(void)h(stat_calc\()e(FILE)i(*)g(\);)434
-1776 y(extern)f(int)h(get_balance_calc\()e(void)h(\);)434
-1843 y(/*)h(----)f(end)h(of)f(/usr/local/lib/tmc.ht)f(----)h(*/)434
-1909 y(/*)h(Code)f(generation)g(required)g(110)g(milliseconds.)g(*/)227
-2115 y Fn(and)d(a)g(C)h(source)e(\014le)i Fs(calc.c)p
-Fn(:)434 2289 y Fd(#include)i(<tmc.h>)434 2355 y(#include)g("calc.h")
-434 2488 y(/*)h(Requirement)e(analysis)h(took)h(100)f(milliseconds.)f
-(*/)434 2554 y(/***)i(WARNING:)f(THIS)g(IS)h(GENERATED)e(CODE.)i(***/)
-434 2687 y(/*)g(----)f(start)h(of)f(/usr/local/lib/tmc.ct)e(----)j(*/)
-434 2820 y(/*)g(Routines)f(for)g('calc'.)527 2953 y(template)g(file:)
-184 b(/usr/local/lib/tmc.ct)527 3019 y(datastructure)29
-b(file:)h(calc.ds)527 3086 y(tm)h(version:)276 b(36)527
-3152 y(tm)31 b(kernel)f(version:)60 b(2.0-beta3)465 3218
-y(*/)434 3351 y(#ifndef)30 b(FIRSTROOM)434 3418 y(#define)g(FIRSTROOM)g
-(0)434 3484 y(#endif)434 3617 y(static)g(long)h(newcnt_statement_list)d
-(=)j(0;)434 3683 y(static)f(long)h(frecnt_statement_list)d(=)j(0;)434
-3816 y(static)f(long)h(newcnt_ExprConst)e(=)h(0;)434
-3883 y(static)g(long)h(frecnt_ExprConst)e(=)h(0;)434
-3949 y(static)g(long)h(newcnt_ExprNegate)e(=)h(0;)434
-4015 y(static)g(long)h(frecnt_ExprNegate)e(=)h(0;)434
-4082 y(static)g(long)h(newcnt_ExprPlus)e(=)i(0;)434 4148
-y(static)f(long)h(frecnt_ExprPlus)e(=)i(0;)434 4215 y(static)f(long)h
-(newcnt_ExprSymbol)e(=)h(0;)434 4281 y(static)g(long)h
-(frecnt_ExprSymbol)e(=)h(0;)434 4347 y(static)g(long)h
-(newcnt_ExprTimes)e(=)h(0;)434 4414 y(static)g(long)h(frecnt_ExprTimes)
-e(=)h(0;)434 4480 y(static)g(long)h(newcnt_statement)e(=)h(0;)434
-4547 y(static)g(long)h(frecnt_statement)e(=)h(0;)434
-4680 y(static)g(char)h(tm_srcfile[])e(=)i(__FILE__;)434
-4812 y(static)f(char)h(tm_allocfreed[])e(=)i("\045-20s:)f(\0456ld)g
-(allocated,)g(\0456ld)g(freed.\045s\\n";)434 4945 y(#ifndef)g(FATAL)434
-5012 y(#define)g(FATAL\(msg\))g(tm_fatal\(tm_srcfile,__LINE__,msg\))434
-5078 y(#endif)434 5211 y(/*)h(Error)f(strings.)g(*/)434
-5277 y(static)g(char)h(tm_badcons[])e(=)i("bad)f(constructor)g(for)g
-('\045s':)h('\045s'";)434 5344 y(static)f(char)h(tm_badeof[])e(=)i
-("unexpected)f(end)g(of)h(file";)434 5477 y(#ifndef)f(FATALTAG)434
-5543 y(#define)g(FATALTAG\(tag\))g
-(tm_badtag\(tm_srcfile,__LINE__,tag\))434 5609 y(#endif)434
-5742 y(/**************************************************)465
-5809 y(*)124 b(set)30 b(array)g(room)h(routines)647 b(*)p
+b Fn(73)434 315 y Fd(/*)31 b(Code)f(generation)g(required)g(120)g
+(milliseconds.)g(*/)227 521 y Fn(and)d(a)g(C)h(source)e(\014le)i
+Fs(calc.c)p Fn(:)434 695 y Fd(#include)i(<tmc.h>)434
+761 y(#include)g("calc.h")434 894 y(/*)h(Requirement)e(analysis)h(took)
+h(120)f(milliseconds.)f(*/)434 960 y(/***)i(WARNING:)f(THIS)g(IS)h
+(GENERATED)e(CODE.)i(***/)434 1093 y(/*)g(----)f(start)h(of)f
+(/usr/local/lib/tmc.ct)e(----)j(*/)434 1226 y(/*)g(Routines)f(for)g
+('calc'.)527 1359 y(template)g(file:)184 b(/usr/local/lib/tmc.ct)527
+1425 y(datastructure)29 b(file:)h(calc.ds)527 1492 y(tm)h(version:)276
+b(36)527 1558 y(tm)31 b(kernel)f(version:)60 b(2.0-beta4)465
+1624 y(*/)434 1757 y(#ifndef)30 b(FIRSTROOM)434 1824
+y(#define)g(FIRSTROOM)g(0)434 1890 y(#endif)434 2023
+y(static)g(long)h(newcnt_statement_list)d(=)j(0;)434
+2089 y(static)f(long)h(frecnt_statement_list)d(=)j(0;)434
+2222 y(static)f(long)h(newcnt_ExprConst)e(=)h(0;)434
+2289 y(static)g(long)h(frecnt_ExprConst)e(=)h(0;)434
+2355 y(static)g(long)h(newcnt_ExprNegate)e(=)h(0;)434
+2421 y(static)g(long)h(frecnt_ExprNegate)e(=)h(0;)434
+2488 y(static)g(long)h(newcnt_ExprPlus)e(=)i(0;)434 2554
+y(static)f(long)h(frecnt_ExprPlus)e(=)i(0;)434 2621 y(static)f(long)h
+(newcnt_ExprSymbol)e(=)h(0;)434 2687 y(static)g(long)h
+(frecnt_ExprSymbol)e(=)h(0;)434 2753 y(static)g(long)h
+(newcnt_ExprTimes)e(=)h(0;)434 2820 y(static)g(long)h(frecnt_ExprTimes)
+e(=)h(0;)434 2886 y(static)g(long)h(newcnt_statement)e(=)h(0;)434
+2953 y(static)g(long)h(frecnt_statement)e(=)h(0;)434
+3086 y(static)g(char)h(tm_srcfile[])e(=)i(__FILE__;)434
+3218 y(static)f(char)h(tm_allocfreed[])e(=)i("\045-20s:)f(\0456ld)g
+(allocated,)g(\0456ld)g(freed.\045s\\n";)434 3351 y(#ifndef)g(FATAL)434
+3418 y(#define)g(FATAL\(msg\))g(tm_fatal\(tm_srcfile,__LINE__,msg\))434
+3484 y(#endif)434 3617 y(/*)h(Error)f(strings.)g(*/)434
+3683 y(static)g(char)h(tm_badcons[])e(=)i("bad)f(constructor)g(for)g
+('\045s':)h('\045s'";)434 3750 y(static)f(char)h(tm_badeof[])e(=)i
+("unexpected)f(end)g(of)h(file";)434 3883 y(#ifndef)f(FATALTAG)434
+3949 y(#define)g(FATALTAG\(tag\))g
+(tm_badtag\(tm_srcfile,__LINE__,tag\))434 4015 y(#endif)434
+4148 y(/**************************************************)465
+4215 y(*)124 b(set)30 b(array)g(room)h(routines)647 b(*)465
+4281 y(**************************************************/)434
+4414 y(/*)31 b(Announce)f(that)g(you)h(will)f(need)g(setroom)g(for)h
+('rm')f(elements)g(in)465 4480 y(*)h(statement_list)e('l'.)465
+4547 y(*/)434 4613 y(static)h(statement_list)g
+(setroom_statement_list\()e(statement_list)h(l,)h(const)h(unsigned)e
+(int)i(rm)g(\))434 4680 y({)558 4746 y(if\()f(l->room>=rm)g(\){)681
+4812 y(return)g(l;)558 4879 y(})558 4945 y(if\()g(l->room==0)g(\){)681
+5012 y(l->arr)g(=)h(TM_MALLOC\()f(statement)g(*,)g(rm)h(*)g
+(sizeof\(*\(l->arr\)\))d(\);)558 5078 y(})558 5144 y(else)i({)681
+5211 y(l->arr)g(=)h(TM_REALLOC\()f(statement)f(*,)i(l->arr,)f(rm)h(*)f
+(sizeof\(*\(l->arr\)\))f(\);)558 5277 y(})558 5344 y(l->room)h(=)h(rm;)
+558 5410 y(return)f(l;)434 5477 y(})434 5609 y
+(/**************************************************)465
+5676 y(*)124 b(Allocation)29 b(routines)771 b(*)465 5742
+y(**************************************************/)p
 eop
 %%Page: 74 74
 74 73 bop -9 -28 a Fn(74)588 b Fm(APPENDIX)28 b(B.)55
 b(AN)28 b(EXAMPLE)f(PR)n(OJECT:)f(EXPRESSION)g(OPTIMIZA)-7
-b(TION)229 315 y Fd
-(**************************************************/)198
-448 y(/*)31 b(Announce)f(that)g(you)g(will)h(need)f(setroom)g(for)h
-('rm')f(elements)g(in)229 514 y(*)h(statement_list)e('l'.)229
-581 y(*/)198 647 y(static)h(statement_list)f(setroom_statement_list\()f
-(statement_list)h(l,)i(const)f(unsigned)g(int)h(rm)f(\))198
-713 y({)322 780 y(if\()g(l->room>=rm)g(\){)445 846 y(return)g(l;)322
-913 y(})322 979 y(if\()g(l->room==0)g(\){)445 1046 y(l->arr)g(=)h
-(TM_MALLOC\()f(statement)f(*,)i(rm)g(*)f(sizeof\(*\(l->arr\)\))f(\);)
-322 1112 y(})322 1178 y(else)h({)445 1245 y(l->arr)g(=)h(TM_REALLOC\()e
-(statement)h(*,)h(l->arr,)f(rm)g(*)h(sizeof\(*\(l->arr\)\))e(\);)322
-1311 y(})322 1378 y(l->room)h(=)g(rm;)322 1444 y(return)g(l;)198
-1510 y(})198 1643 y
-(/**************************************************)229
-1710 y(*)123 b(Allocation)30 b(routines)771 b(*)229 1776
-y(**************************************************/)198
-1909 y(#ifdef)30 b(LOGNEW)198 1975 y(#undef)g(new_ExprConst)198
-2042 y(#define)g(new_ExprConst\(n\))f(real_new_ExprConst\(n,_f,_l\))198
-2108 y(#undef)h(new_ExprNegate)198 2175 y(#define)g
-(new_ExprNegate\(x\))f(real_new_ExprNegate\(x,_f,_l\))198
-2241 y(#undef)h(new_ExprPlus)198 2307 y(#define)g(new_ExprPlus\(a,b\))f
-(real_new_ExprPlus\(a,b,_f,_l\))198 2374 y(#undef)h(new_ExprSymbol)198
-2440 y(#define)g(new_ExprSymbol\(s\))f(real_new_ExprSymbol\(s,_f,_l\))
-198 2507 y(#undef)h(new_ExprTimes)198 2573 y(#define)g
-(new_ExprTimes\(a,b\))f(real_new_ExprTimes\(a,b,_f,_l\))198
-2640 y(#undef)h(new_statement)198 2706 y(#define)g
+b(TION)198 315 y Fd(#ifdef)30 b(LOGNEW)198 381 y(#undef)g
+(new_ExprConst)198 448 y(#define)g(new_ExprConst\(n\))f
+(real_new_ExprConst\(n,_f,_l\))198 514 y(#undef)h(new_ExprNegate)198
+581 y(#define)g(new_ExprNegate\(x\))f(real_new_ExprNegate\(x,_f,_l\))
+198 647 y(#undef)h(new_ExprPlus)198 713 y(#define)g
+(new_ExprPlus\(a,b\))f(real_new_ExprPlus\(a,b,_f,_l\))198
+780 y(#undef)h(new_ExprSymbol)198 846 y(#define)g(new_ExprSymbol\(s\))f
+(real_new_ExprSymbol\(s,_f,_l\))198 913 y(#undef)h(new_ExprTimes)198
+979 y(#define)g(new_ExprTimes\(a,b\))f(real_new_ExprTimes\(a,b,_f,_l\))
+198 1046 y(#undef)h(new_statement)198 1112 y(#define)g
 (new_statement\(lhs,rhs\))e(real_new_statement\(lhs,rhs,_f,_l\))198
-2772 y(#undef)i(new_statement_list)198 2839 y(#define)g
+1178 y(#undef)i(new_statement_list)198 1245 y(#define)g
 (new_statement_list\(\))e(real_new_statement_list\(_f,_l\))198
-2905 y(#endif)198 3038 y(#ifdef)i(LOGNEW)198 3104 y(statement_list)f
+1311 y(#endif)198 1444 y(#ifdef)i(LOGNEW)198 1510 y(statement_list)f
 (real_new_statement_list\()f(const)i(char)h(*_f,)f(const)g(int)h(_l)f
-(\))198 3171 y(#else)198 3237 y(statement_list)f(new_statement_list\()g
-(void)h(\))198 3304 y(#endif)198 3370 y({)322 3437 y(statement_list)f
-(nw;)322 3569 y(nw)h(=)h(TM_MALLOC\()f(statement_list,)f(sizeof\(*nw\))
-g(\);)322 3636 y(nw->sz)h(=)g(0;)198 3702 y(#if)h(FIRSTROOM==0)322
-3769 y(nw->arr)f(=)g(\(statement)g(*\))h(0;)322 3835
-y(nw->room)e(=)i(0;)198 3901 y(#else)322 3968 y(nw->arr)f(=)g
+(\))198 1577 y(#else)198 1643 y(statement_list)f(new_statement_list\()g
+(void)h(\))198 1710 y(#endif)198 1776 y({)322 1843 y(statement_list)f
+(nw;)322 1975 y(nw)h(=)h(TM_MALLOC\()f(statement_list,)f(sizeof\(*nw\))
+g(\);)322 2042 y(nw->sz)h(=)g(0;)198 2108 y(#if)h(FIRSTROOM==0)322
+2175 y(nw->arr)f(=)g(\(statement)g(*\))h(0;)322 2241
+y(nw->room)e(=)i(0;)198 2307 y(#else)322 2374 y(nw->arr)f(=)g
 (TM_MALLOC\()g(statement)g(*,)g(FIRSTROOM*sizeof\(statement\))e(\);)322
-4034 y(nw->room)h(=)i(FIRSTROOM;)198 4101 y(#endif)322
-4167 y(newcnt_statement_list++;)198 4234 y(#ifdef)f(LOGNEW)322
-4300 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)h(_l)h(\);)198
-4366 y(#endif)322 4433 y(return)f(nw;)198 4499 y(})198
-4632 y(#ifdef)g(LOGNEW)198 4698 y(ExprConst)g(real_new_ExprConst\()e
+2440 y(nw->room)h(=)i(FIRSTROOM;)198 2507 y(#endif)322
+2573 y(newcnt_statement_list++;)198 2640 y(#ifdef)f(LOGNEW)322
+2706 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)h(_l)h(\);)198
+2772 y(#endif)322 2839 y(return)f(nw;)198 2905 y(})198
+3038 y(#ifdef)g(LOGNEW)198 3104 y(ExprConst)g(real_new_ExprConst\()e
 (int)j(p_n,)f(const)g(char)h(*_f,)f(const)g(int)h(_l)g(\))198
-4765 y(#else)198 4831 y(ExprConst)f(new_ExprConst\()f(int)h(p_n)h(\))
-198 4898 y(#endif)198 4964 y({)322 5031 y(ExprConst)e(nw;)322
-5163 y(nw)h(=)h(TM_MALLOC\()f(ExprConst,)f(sizeof\(*nw\))h(\);)322
-5230 y(nw->tag)g(=)g(TAGExprConst;)322 5296 y(nw->n)g(=)h(p_n;)322
-5363 y(newcnt_ExprConst++;)198 5429 y(#ifdef)f(LOGNEW)322
-5496 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)h(_l)h(\);)198
-5562 y(#endif)322 5628 y(return)f(nw;)198 5695 y(})p
+3171 y(#else)198 3237 y(ExprConst)f(new_ExprConst\()f(int)h(p_n)h(\))
+198 3304 y(#endif)198 3370 y({)322 3437 y(ExprConst)e(nw;)322
+3569 y(nw)h(=)h(TM_MALLOC\()f(ExprConst,)f(sizeof\(*nw\))h(\);)322
+3636 y(nw->tag)g(=)g(TAGExprConst;)322 3702 y(nw->n)g(=)h(p_n;)322
+3769 y(newcnt_ExprConst++;)198 3835 y(#ifdef)f(LOGNEW)322
+3901 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)h(_l)h(\);)198
+3968 y(#endif)322 4034 y(return)f(nw;)198 4101 y(})198
+4234 y(#ifdef)g(LOGNEW)198 4300 y(ExprNegate)g(real_new_ExprNegate\()e
+(expr)i(p_x,)h(const)f(char)g(*_f,)h(const)f(int)h(_l)f(\))198
+4366 y(#else)198 4433 y(ExprNegate)g(new_ExprNegate\()f(expr)h(p_x)h
+(\))198 4499 y(#endif)198 4566 y({)322 4632 y(ExprNegate)e(nw;)322
+4765 y(nw)h(=)h(TM_MALLOC\()f(ExprNegate,)f(sizeof\(*nw\))h(\);)322
+4831 y(nw->tag)g(=)g(TAGExprNegate;)322 4898 y(nw->x)g(=)h(p_x;)322
+4964 y(newcnt_ExprNegate++;)198 5031 y(#ifdef)f(LOGNEW)322
+5097 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)h(_l)h(\);)198
+5163 y(#endif)322 5230 y(return)f(nw;)198 5296 y(})198
+5429 y(#ifdef)g(LOGNEW)198 5496 y(ExprPlus)g(real_new_ExprPlus\()f
+(expr)h(p_a,)g(expr)h(p_b,)f(const)g(char)h(*_f,)f(const)g(int)h(_l)f
+(\))198 5562 y(#else)198 5628 y(ExprPlus)g(new_ExprPlus\()f(expr)i
+(p_a,)f(expr)g(p_b)h(\))198 5695 y(#endif)198 5761 y({)p
 eop
 %%Page: 75 75
 75 74 bop 227 -28 a Fm(B.3.)55 b(GENERA)-7 b(TION)27
 b(OF)g(THE)h(TM)f(TEMPLA)-7 b(TE)27 b(FUNCTIONS)1144
-b Fn(75)434 315 y Fd(#ifdef)30 b(LOGNEW)434 381 y(ExprNegate)g
-(real_new_ExprNegate\()e(expr)j(p_x,)f(const)g(char)h(*_f,)f(const)g
-(int)h(_l)f(\))434 448 y(#else)434 514 y(ExprNegate)g(new_ExprNegate\()
-f(expr)h(p_x)h(\))434 581 y(#endif)434 647 y({)558 713
-y(ExprNegate)e(nw;)558 846 y(nw)h(=)h(TM_MALLOC\()f(ExprNegate,)f
-(sizeof\(*nw\))h(\);)558 913 y(nw->tag)g(=)h(TAGExprNegate;)558
-979 y(nw->x)f(=)h(p_x;)558 1046 y(newcnt_ExprNegate++;)434
-1112 y(#ifdef)f(LOGNEW)558 1178 y(nw->lognew_id)f(=)i(tm_new_logid\()e
-(_f,)i(_l)f(\);)434 1245 y(#endif)558 1311 y(return)g(nw;)434
-1378 y(})434 1510 y(#ifdef)g(LOGNEW)434 1577 y(ExprPlus)g
-(real_new_ExprPlus\()f(expr)h(p_a,)h(expr)f(p_b,)g(const)h(char)f(*_f,)
-g(const)h(int)f(_l)h(\))434 1643 y(#else)434 1710 y(ExprPlus)f
-(new_ExprPlus\()f(expr)i(p_a,)f(expr)h(p_b)f(\))434 1776
-y(#endif)434 1843 y({)558 1909 y(ExprPlus)g(nw;)558 2042
-y(nw)g(=)h(TM_MALLOC\()f(ExprPlus,)g(sizeof\(*nw\))f(\);)558
-2108 y(nw->tag)h(=)h(TAGExprPlus;)558 2175 y(nw->a)f(=)h(p_a;)558
-2241 y(nw->b)f(=)h(p_b;)558 2307 y(newcnt_ExprPlus++;)434
-2374 y(#ifdef)f(LOGNEW)558 2440 y(nw->lognew_id)f(=)i(tm_new_logid\()e
-(_f,)i(_l)f(\);)434 2507 y(#endif)558 2573 y(return)g(nw;)434
-2640 y(})434 2772 y(#ifdef)g(LOGNEW)434 2839 y(ExprSymbol)g
-(real_new_ExprSymbol\()e(tmstring)i(p_s,)h(const)f(char)g(*_f,)h(const)
-f(int)g(_l)h(\))434 2905 y(#else)434 2972 y(ExprSymbol)f
-(new_ExprSymbol\()f(tmstring)h(p_s)g(\))434 3038 y(#endif)434
-3104 y({)558 3171 y(ExprSymbol)f(nw;)558 3304 y(nw)h(=)h(TM_MALLOC\()f
-(ExprSymbol,)f(sizeof\(*nw\))h(\);)558 3370 y(nw->tag)g(=)h
-(TAGExprSymbol;)558 3437 y(nw->s)f(=)h(p_s;)558 3503
-y(newcnt_ExprSymbol++;)434 3569 y(#ifdef)f(LOGNEW)558
-3636 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)i(_l)f(\);)434
-3702 y(#endif)558 3769 y(return)g(nw;)434 3835 y(})434
-3968 y(#ifdef)g(LOGNEW)434 4034 y(ExprTimes)g(real_new_ExprTimes\()f
+b Fn(75)558 315 y Fd(ExprPlus)30 b(nw;)558 448 y(nw)g(=)h(TM_MALLOC\()f
+(ExprPlus,)g(sizeof\(*nw\))f(\);)558 514 y(nw->tag)h(=)h(TAGExprPlus;)
+558 581 y(nw->a)f(=)h(p_a;)558 647 y(nw->b)f(=)h(p_b;)558
+713 y(newcnt_ExprPlus++;)434 780 y(#ifdef)f(LOGNEW)558
+846 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)i(_l)f(\);)434
+913 y(#endif)558 979 y(return)g(nw;)434 1046 y(})434
+1178 y(#ifdef)g(LOGNEW)434 1245 y(ExprSymbol)g(real_new_ExprSymbol\()e
+(tmstring)i(p_s,)h(const)f(char)g(*_f,)h(const)f(int)g(_l)h(\))434
+1311 y(#else)434 1378 y(ExprSymbol)f(new_ExprSymbol\()f(tmstring)h(p_s)
+g(\))434 1444 y(#endif)434 1510 y({)558 1577 y(ExprSymbol)f(nw;)558
+1710 y(nw)h(=)h(TM_MALLOC\()f(ExprSymbol,)f(sizeof\(*nw\))h(\);)558
+1776 y(nw->tag)g(=)h(TAGExprSymbol;)558 1843 y(nw->s)f(=)h(p_s;)558
+1909 y(newcnt_ExprSymbol++;)434 1975 y(#ifdef)f(LOGNEW)558
+2042 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)i(_l)f(\);)434
+2108 y(#endif)558 2175 y(return)g(nw;)434 2241 y(})434
+2374 y(#ifdef)g(LOGNEW)434 2440 y(ExprTimes)g(real_new_ExprTimes\()f
 (expr)h(p_a,)g(expr)h(p_b,)f(const)g(char)h(*_f,)f(const)g(int)h(_l)f
-(\))434 4101 y(#else)434 4167 y(ExprTimes)g(new_ExprTimes\()f(expr)i
-(p_a,)f(expr)g(p_b)h(\))434 4234 y(#endif)434 4300 y({)558
-4366 y(ExprTimes)f(nw;)558 4499 y(nw)g(=)h(TM_MALLOC\()f(ExprTimes,)f
-(sizeof\(*nw\))h(\);)558 4566 y(nw->tag)g(=)h(TAGExprTimes;)558
-4632 y(nw->a)f(=)h(p_a;)558 4698 y(nw->b)f(=)h(p_b;)558
-4765 y(newcnt_ExprTimes++;)434 4831 y(#ifdef)f(LOGNEW)558
-4898 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)i(_l)f(\);)434
-4964 y(#endif)558 5031 y(return)g(nw;)434 5097 y(})434
-5230 y(#ifdef)g(LOGNEW)434 5296 y(statement)g(real_new_statement\()f
+(\))434 2507 y(#else)434 2573 y(ExprTimes)g(new_ExprTimes\()f(expr)i
+(p_a,)f(expr)g(p_b)h(\))434 2640 y(#endif)434 2706 y({)558
+2772 y(ExprTimes)f(nw;)558 2905 y(nw)g(=)h(TM_MALLOC\()f(ExprTimes,)f
+(sizeof\(*nw\))h(\);)558 2972 y(nw->tag)g(=)h(TAGExprTimes;)558
+3038 y(nw->a)f(=)h(p_a;)558 3104 y(nw->b)f(=)h(p_b;)558
+3171 y(newcnt_ExprTimes++;)434 3237 y(#ifdef)f(LOGNEW)558
+3304 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)i(_l)f(\);)434
+3370 y(#endif)558 3437 y(return)g(nw;)434 3503 y(})434
+3636 y(#ifdef)g(LOGNEW)434 3702 y(statement)g(real_new_statement\()f
 (tmstring)g(p_lhs,)i(expr)f(p_rhs,)g(const)g(char)h(*_f,)f(const)g(int)
-h(_l)f(\))434 5363 y(#else)434 5429 y(statement)g(new_statement\()f
-(tmstring)h(p_lhs,)g(expr)h(p_rhs)f(\))434 5496 y(#endif)434
-5562 y({)558 5628 y(statement)g(nw;)558 5761 y(nw)g(=)h(TM_MALLOC\()f
-(statement,)f(sizeof\(*nw\))h(\);)p eop
+h(_l)f(\))434 3769 y(#else)434 3835 y(statement)g(new_statement\()f
+(tmstring)h(p_lhs,)g(expr)h(p_rhs)f(\))434 3901 y(#endif)434
+3968 y({)558 4034 y(statement)g(nw;)558 4167 y(nw)g(=)h(TM_MALLOC\()f
+(statement,)f(sizeof\(*nw\))h(\);)558 4234 y(nw->tag)g(=)h
+(TAGstatement;)558 4300 y(nw->lhs)f(=)h(p_lhs;)558 4366
+y(nw->rhs)f(=)h(p_rhs;)558 4433 y(newcnt_statement++;)434
+4499 y(#ifdef)f(LOGNEW)558 4566 y(nw->lognew_id)f(=)i(tm_new_logid\()e
+(_f,)i(_l)f(\);)434 4632 y(#endif)558 4698 y(return)g(nw;)434
+4765 y(})434 4898 y
+(/**************************************************)465
+4964 y(*)124 b(Freeing)30 b(routines)863 b(*)465 5031
+y(**************************************************/)434
+5163 y(/*)31 b(Free)f(an)h(element)f('e')g(of)h(class)f(type)h
+('statement'.)e(*/)434 5230 y(static)h(void)h(fre_statement\()e
+(statement)h(e)g(\))434 5296 y({)558 5363 y(if\()g(e)h(==)g
+(statementNIL)e(\){)681 5429 y(return;)558 5496 y(})558
+5562 y(frecnt_statement++;)434 5628 y(#ifdef)h(LOGNEW)558
+5695 y(tm_fre_logid\()f(e->lognew_id)g(\);)434 5761 y(#endif)p
+eop
 %%Page: 76 76
 76 75 bop -9 -28 a Fn(76)588 b Fm(APPENDIX)28 b(B.)55
 b(AN)28 b(EXAMPLE)f(PR)n(OJECT:)f(EXPRESSION)g(OPTIMIZA)-7
-b(TION)322 315 y Fd(nw->tag)30 b(=)g(TAGstatement;)322
-381 y(nw->lhs)g(=)g(p_lhs;)322 448 y(nw->rhs)g(=)g(p_rhs;)322
-514 y(newcnt_statement++;)198 581 y(#ifdef)g(LOGNEW)322
-647 y(nw->lognew_id)f(=)i(tm_new_logid\()e(_f,)h(_l)h(\);)198
-713 y(#endif)322 780 y(return)f(nw;)198 846 y(})198 979
-y(/**************************************************)229
-1046 y(*)123 b(Freeing)30 b(routines)864 b(*)229 1112
-y(**************************************************/)198
-1245 y(/*)31 b(Free)f(an)h(element)f('e')g(of)h(class)f(type)g
-('statement'.)g(*/)198 1311 y(static)g(void)h(fre_statement\()e
-(statement)g(e)i(\))198 1378 y({)322 1444 y(if\()f(e)h(==)f
-(statementNIL)g(\){)445 1510 y(return;)322 1577 y(})322
-1643 y(frecnt_statement++;)198 1710 y(#ifdef)g(LOGNEW)322
-1776 y(tm_fre_logid\()f(e->lognew_id)g(\);)198 1843 y(#endif)322
-1909 y(TM_FREE\()g(e)i(\);)198 1975 y(})198 2108 y(/*)g(Free)f(an)h
-(element)f('e')g(of)h(class)f(type)g('ExprConst'.)g(*/)198
-2175 y(static)g(void)h(fre_ExprConst\()e(ExprConst)g(e)i(\))198
-2241 y({)322 2307 y(if\()f(e)h(==)f(ExprConstNIL)g(\){)445
-2374 y(return;)322 2440 y(})322 2507 y(frecnt_ExprConst++;)198
-2573 y(#ifdef)g(LOGNEW)322 2640 y(tm_fre_logid\()f(e->lognew_id)g(\);)
-198 2706 y(#endif)322 2772 y(TM_FREE\()g(e)i(\);)198
-2839 y(})198 2972 y(/*)g(Free)f(an)h(element)f('e')g(of)h(class)f(type)
-g('ExprNegate'.)g(*/)198 3038 y(static)g(void)h(fre_ExprNegate\()e
-(ExprNegate)g(e)i(\))198 3104 y({)322 3171 y(if\()f(e)h(==)f
-(ExprNegateNIL)g(\){)445 3237 y(return;)322 3304 y(})322
-3370 y(frecnt_ExprNegate++;)198 3437 y(#ifdef)g(LOGNEW)322
-3503 y(tm_fre_logid\()f(e->lognew_id)g(\);)198 3569 y(#endif)322
-3636 y(TM_FREE\()g(e)i(\);)198 3702 y(})198 3835 y(/*)g(Free)f(an)h
+b(TION)322 315 y Fd(TM_FREE\()29 b(e)i(\);)198 381 y(})198
+514 y(/*)g(Free)f(an)h(element)f('e')g(of)h(class)f(type)g
+('ExprConst'.)g(*/)198 581 y(static)g(void)h(fre_ExprConst\()e
+(ExprConst)g(e)i(\))198 647 y({)322 713 y(if\()f(e)h(==)f(ExprConstNIL)
+g(\){)445 780 y(return;)322 846 y(})322 913 y(frecnt_ExprConst++;)198
+979 y(#ifdef)g(LOGNEW)322 1046 y(tm_fre_logid\()f(e->lognew_id)g(\);)
+198 1112 y(#endif)322 1178 y(TM_FREE\()g(e)i(\);)198
+1245 y(})198 1378 y(/*)g(Free)f(an)h(element)f('e')g(of)h(class)f(type)
+g('ExprNegate'.)g(*/)198 1444 y(static)g(void)h(fre_ExprNegate\()e
+(ExprNegate)g(e)i(\))198 1510 y({)322 1577 y(if\()f(e)h(==)f
+(ExprNegateNIL)g(\){)445 1643 y(return;)322 1710 y(})322
+1776 y(frecnt_ExprNegate++;)198 1843 y(#ifdef)g(LOGNEW)322
+1909 y(tm_fre_logid\()f(e->lognew_id)g(\);)198 1975 y(#endif)322
+2042 y(TM_FREE\()g(e)i(\);)198 2108 y(})198 2241 y(/*)g(Free)f(an)h
 (element)f('e')g(of)h(class)f(type)g('ExprPlus'.)g(*/)198
-3901 y(static)g(void)h(fre_ExprPlus\()e(ExprPlus)h(e)g(\))198
-3968 y({)322 4034 y(if\()g(e)h(==)f(ExprPlusNIL)g(\){)445
-4101 y(return;)322 4167 y(})322 4234 y(frecnt_ExprPlus++;)198
-4300 y(#ifdef)g(LOGNEW)322 4366 y(tm_fre_logid\()f(e->lognew_id)g(\);)
-198 4433 y(#endif)322 4499 y(TM_FREE\()g(e)i(\);)198
-4566 y(})198 4698 y(/*)g(Free)f(an)h(element)f('e')g(of)h(class)f(type)
-g('ExprSymbol'.)g(*/)198 4765 y(static)g(void)h(fre_ExprSymbol\()e
-(ExprSymbol)g(e)i(\))198 4831 y({)322 4898 y(if\()f(e)h(==)f
-(ExprSymbolNIL)g(\){)445 4964 y(return;)322 5031 y(})322
-5097 y(frecnt_ExprSymbol++;)198 5163 y(#ifdef)g(LOGNEW)322
-5230 y(tm_fre_logid\()f(e->lognew_id)g(\);)198 5296 y(#endif)322
-5363 y(TM_FREE\()g(e)i(\);)198 5429 y(})198 5562 y(/*)g(Free)f(an)h
+2307 y(static)g(void)h(fre_ExprPlus\()e(ExprPlus)h(e)g(\))198
+2374 y({)322 2440 y(if\()g(e)h(==)f(ExprPlusNIL)g(\){)445
+2507 y(return;)322 2573 y(})322 2640 y(frecnt_ExprPlus++;)198
+2706 y(#ifdef)g(LOGNEW)322 2772 y(tm_fre_logid\()f(e->lognew_id)g(\);)
+198 2839 y(#endif)322 2905 y(TM_FREE\()g(e)i(\);)198
+2972 y(})198 3104 y(/*)g(Free)f(an)h(element)f('e')g(of)h(class)f(type)
+g('ExprSymbol'.)g(*/)198 3171 y(static)g(void)h(fre_ExprSymbol\()e
+(ExprSymbol)g(e)i(\))198 3237 y({)322 3304 y(if\()f(e)h(==)f
+(ExprSymbolNIL)g(\){)445 3370 y(return;)322 3437 y(})322
+3503 y(frecnt_ExprSymbol++;)198 3569 y(#ifdef)g(LOGNEW)322
+3636 y(tm_fre_logid\()f(e->lognew_id)g(\);)198 3702 y(#endif)322
+3769 y(TM_FREE\()g(e)i(\);)198 3835 y(})198 3968 y(/*)g(Free)f(an)h
 (element)f('e')g(of)h(class)f(type)g('ExprTimes'.)g(*/)198
-5628 y(static)g(void)h(fre_ExprTimes\()e(ExprTimes)g(e)i(\))198
-5695 y({)322 5761 y(if\()f(e)h(==)f(ExprTimesNIL)g(\){)p
-eop
+4034 y(static)g(void)h(fre_ExprTimes\()e(ExprTimes)g(e)i(\))198
+4101 y({)322 4167 y(if\()f(e)h(==)f(ExprTimesNIL)g(\){)445
+4234 y(return;)322 4300 y(})322 4366 y(frecnt_ExprTimes++;)198
+4433 y(#ifdef)g(LOGNEW)322 4499 y(tm_fre_logid\()f(e->lognew_id)g(\);)
+198 4566 y(#endif)322 4632 y(TM_FREE\()g(e)i(\);)198
+4698 y(})198 4831 y(/*)g(Free)f(a)h(list)f(of)h(statement)f(elements)f
+('l'.)i(*/)198 4898 y(static)f(void)h(fre_statement_list\()d
+(statement_list)h(l)i(\))198 4964 y({)322 5031 y(if\()f(l)h(==)f
+(statement_listNIL)f(\){)445 5097 y(return;)322 5163
+y(})198 5230 y(#ifdef)h(LOGNEW)322 5296 y(tm_fre_logid\()f
+(l->lognew_id)g(\);)198 5363 y(#endif)322 5429 y
+(frecnt_statement_list++;)322 5496 y(if\()h(l->room!=0)g(\){)445
+5562 y(TM_FREE\()g(l->arr)g(\);)322 5628 y(})322 5695
+y(TM_FREE\()f(l)i(\);)198 5761 y(})p eop
 %%Page: 77 77
 77 76 bop 227 -28 a Fm(B.3.)55 b(GENERA)-7 b(TION)27
 b(OF)g(THE)h(TM)f(TEMPLA)-7 b(TE)27 b(FUNCTIONS)1144
-b Fn(77)681 315 y Fd(return;)558 381 y(})558 448 y(frecnt_ExprTimes++;)
-434 514 y(#ifdef)30 b(LOGNEW)558 581 y(tm_fre_logid\()f(e->lognew_id)g
-(\);)434 647 y(#endif)558 713 y(TM_FREE\()h(e)g(\);)434
-780 y(})434 913 y(/*)h(Free)f(a)h(list)f(of)h(statement)f(elements)g
-('l'.)g(*/)434 979 y(static)g(void)h(fre_statement_list\()d
-(statement_list)h(l)i(\))434 1046 y({)558 1112 y(if\()f(l)h(==)g
-(statement_listNIL)d(\){)681 1178 y(return;)558 1245
-y(})434 1311 y(#ifdef)i(LOGNEW)558 1378 y(tm_fre_logid\()f
-(l->lognew_id)g(\);)434 1444 y(#endif)558 1510 y
-(frecnt_statement_list++;)558 1577 y(if\()h(l->room!=0)g(\){)681
-1643 y(TM_FREE\()g(l->arr)g(\);)558 1710 y(})558 1776
-y(TM_FREE\()g(l)g(\);)434 1843 y(})434 1975 y
+b Fn(77)434 381 y Fd
 (/**************************************************)465
-2042 y(*)124 b(Real)30 b(append)g(routines)740 b(*)465
-2108 y(**************************************************/)434
-2307 y(/*)31 b(Append)f(a)h(statement)f(element)g('e')g(to)h(list)f
-('l',)g(and)h(return)f(the)h(new)f(list.)g(*/)434 2374
+448 y(*)124 b(Real)30 b(append)g(routines)740 b(*)465
+514 y(**************************************************/)434
+647 y(/*)31 b(Append)f(a)h(statement)f(element)g('e')g(to)h(list)f
+('l',)g(and)h(return)f(the)h(new)f(list.)g(*/)434 713
 y(statement_list)f(append_statement_list\()g(statement_list)g(l,)h
-(statement)g(e)h(\))434 2440 y({)558 2507 y(if\()f(l->sz)h(>=)f
-(l->room)g(\){)681 2573 y(l)h(=)g(setroom_statement_list\()d(l,)i
-(1+\(l->sz\)+\(l->sz\))f(\);)558 2640 y(})558 2706 y(l->arr[l->sz])g(=)
-i(e;)558 2772 y(l->sz++;)558 2839 y(return)f(l;)434 2905
-y(})434 3038 y(/**************************************************)465
-3104 y(*)124 b(Recursive)29 b(freeing)h(routines)555
-b(*)465 3171 y(**************************************************/)434
-3370 y(static)30 b(void)h(rfre_statement\()e(statement)h(\);)434
-3437 y(static)g(void)h(rfre_ExprConst\()e(ExprConst)h(\);)434
-3503 y(static)g(void)h(rfre_ExprNegate\()e(ExprNegate)g(\);)434
-3569 y(static)h(void)h(rfre_ExprPlus\()e(ExprPlus)h(\);)434
-3636 y(static)g(void)h(rfre_ExprSymbol\()e(ExprSymbol)g(\);)434
-3702 y(static)h(void)h(rfre_ExprTimes\()e(ExprTimes)h(\);)434
-3835 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h(of)g(class)f
-(type)g('expr')527 3901 y(and)g(all)h(elements)f(in)g(it.)465
-3968 y(*/)434 4034 y(void)h(rfre_expr\()e(expr)i(e)f(\))434
-4101 y({)558 4167 y(if\()g(e)h(==)g(exprNIL)f(\){)681
-4234 y(return;)558 4300 y(})558 4366 y(switch\()g(e->tag)g(\){)681
-4433 y(case)h(TAGExprPlus:)805 4499 y(rfre_ExprPlus\()e(\(ExprPlus\))h
-(e)g(\);)805 4566 y(break;)681 4698 y(case)h(TAGExprTimes:)805
-4765 y(rfre_ExprTimes\()e(\(ExprTimes\))g(e)i(\);)805
-4831 y(break;)681 4964 y(case)g(TAGExprNegate:)805 5031
-y(rfre_ExprNegate\()e(\(ExprNegate\))g(e)i(\);)805 5097
-y(break;)681 5230 y(case)g(TAGExprConst:)805 5296 y(rfre_ExprConst\()e
-(\(ExprConst\))g(e)i(\);)805 5363 y(break;)681 5496 y(case)g
-(TAGExprSymbol:)805 5562 y(rfre_ExprSymbol\()e(\(ExprSymbol\))g(e)i
-(\);)805 5628 y(break;)681 5761 y(default:)p eop
+(statement)g(e)h(\))434 780 y({)558 846 y(if\()f(l->sz)h(>=)f(l->room)g
+(\){)681 913 y(l)h(=)g(setroom_statement_list\()d(l,)i
+(1+\(l->sz\)+\(l->sz\))f(\);)558 979 y(})558 1046 y(l->arr[l->sz])g(=)i
+(e;)558 1112 y(l->sz++;)558 1178 y(return)f(l;)434 1245
+y(})434 1378 y(/**************************************************)465
+1444 y(*)124 b(Recursive)29 b(freeing)h(routines)555
+b(*)465 1510 y(**************************************************/)434
+1643 y(static)30 b(void)h(rfre_statement\()e(statement)h(\);)434
+1710 y(static)g(void)h(rfre_ExprConst\()e(ExprConst)h(\);)434
+1776 y(static)g(void)h(rfre_ExprNegate\()e(ExprNegate)g(\);)434
+1843 y(static)h(void)h(rfre_ExprPlus\()e(ExprPlus)h(\);)434
+1909 y(static)g(void)h(rfre_ExprSymbol\()e(ExprSymbol)g(\);)434
+1975 y(static)h(void)h(rfre_ExprTimes\()e(ExprTimes)h(\);)434
+2042 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h(of)g(class)f
+(type)g('expr')527 2108 y(and)g(all)h(elements)f(in)g(it.)465
+2175 y(*/)434 2241 y(void)h(rfre_expr\()e(expr)i(e)f(\))434
+2307 y({)558 2374 y(if\()g(e)h(==)g(exprNIL)f(\){)681
+2440 y(return;)558 2507 y(})558 2573 y(switch\()g(e->tag)g(\){)681
+2640 y(case)h(TAGExprPlus:)805 2706 y(rfre_ExprPlus\()e(\(ExprPlus\))h
+(e)g(\);)805 2772 y(break;)681 2905 y(case)h(TAGExprTimes:)805
+2972 y(rfre_ExprTimes\()e(\(ExprTimes\))g(e)i(\);)805
+3038 y(break;)681 3171 y(case)g(TAGExprNegate:)805 3237
+y(rfre_ExprNegate\()e(\(ExprNegate\))g(e)i(\);)805 3304
+y(break;)681 3437 y(case)g(TAGExprConst:)805 3503 y(rfre_ExprConst\()e
+(\(ExprConst\))g(e)i(\);)805 3569 y(break;)681 3702 y(case)g
+(TAGExprSymbol:)805 3769 y(rfre_ExprSymbol\()e(\(ExprSymbol\))g(e)i
+(\);)805 3835 y(break;)681 3968 y(default:)805 4034 y(FATALTAG\()f
+(\(int\))g(e->tag)g(\);)558 4101 y(})434 4167 y(})434
+4300 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h(of)g(class)f
+(type)g('statement')527 4366 y(and)g(all)h(elements)f(in)g(it.)465
+4433 y(*/)434 4499 y(static)g(void)h(rfre_statement\()e(statement)h(e)g
+(\))434 4566 y({)558 4632 y(if\()g(e)h(==)g(statementNIL)e(\){)681
+4698 y(return;)558 4765 y(})558 4831 y(/*)h(There)h(are)f(no)h
+(subclasses.)e(*/)558 4898 y(rfre_tmstring\()g(e->lhs)h(\);)558
+4964 y(rfre_expr\()f(e->rhs)i(\);)558 5031 y(fre_statement\()e(e)i(\);)
+434 5097 y(})434 5230 y(/*)g(Recursively)e(free)i(an)f(element)g('e')h
+(of)g(class)f(type)g('ExprConst')527 5296 y(and)g(all)h(elements)f(in)g
+(it.)465 5363 y(*/)434 5429 y(static)g(void)h(rfre_ExprConst\()e
+(ExprConst)h(e)g(\))434 5496 y({)558 5562 y(if\()g(e)h(==)g
+(ExprConstNIL)e(\){)681 5628 y(return;)558 5695 y(})558
+5761 y(/*)h(There)h(are)f(no)h(subclasses.)e(*/)p eop
 %%Page: 78 78
 78 77 bop -9 -28 a Fn(78)588 b Fm(APPENDIX)28 b(B.)55
 b(AN)28 b(EXAMPLE)f(PR)n(OJECT:)f(EXPRESSION)g(OPTIMIZA)-7
-b(TION)569 315 y Fd(FATALTAG\()29 b(\(int\))i(e->tag)f(\);)322
-381 y(})198 448 y(})198 581 y(/*)h(Recursively)e(free)i(an)f(element)g
-('e')h(of)f(class)h(type)f('statement')291 647 y(and)g(all)h(elements)f
-(in)g(it.)229 713 y(*/)198 780 y(static)g(void)h(rfre_statement\()e
-(statement)g(e)i(\))198 846 y({)322 913 y(if\()f(e)h(==)f(statementNIL)
-g(\){)445 979 y(return;)322 1046 y(})322 1112 y(/*)g(There)g(are)h(no)g
-(subclasses.)e(*/)322 1178 y(rfre_tmstring\()g(e->lhs)h(\);)322
-1245 y(rfre_expr\()f(e->rhs)h(\);)322 1311 y(fre_statement\()f(e)h(\);)
-198 1378 y(})198 1510 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h
-(of)f(class)h(type)f('ExprConst')291 1577 y(and)g(all)h(elements)f(in)g
-(it.)229 1643 y(*/)198 1710 y(static)g(void)h(rfre_ExprConst\()e
-(ExprConst)g(e)i(\))198 1776 y({)322 1843 y(if\()f(e)h(==)f
-(ExprConstNIL)g(\){)445 1909 y(return;)322 1975 y(})322
-2042 y(/*)g(There)g(are)h(no)g(subclasses.)e(*/)322 2108
-y(rfre_int\()g(e->n)i(\);)322 2175 y(fre_ExprConst\()e(e)h(\);)198
-2241 y(})198 2374 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h(of)f
-(class)h(type)f('ExprNegate')291 2440 y(and)g(all)h(elements)f(in)g
-(it.)229 2507 y(*/)198 2573 y(static)g(void)h(rfre_ExprNegate\()d
-(ExprNegate)i(e)h(\))198 2640 y({)322 2706 y(if\()f(e)h(==)f
-(ExprNegateNIL)g(\){)445 2772 y(return;)322 2839 y(})322
+b(TION)322 315 y Fd(rfre_int\()29 b(e->n)i(\);)322 381
+y(fre_ExprConst\()e(e)h(\);)198 448 y(})198 581 y(/*)h(Recursively)e
+(free)i(an)f(element)g('e')h(of)f(class)h(type)f('ExprNegate')291
+647 y(and)g(all)h(elements)f(in)g(it.)229 713 y(*/)198
+780 y(static)g(void)h(rfre_ExprNegate\()d(ExprNegate)i(e)h(\))198
+846 y({)322 913 y(if\()f(e)h(==)f(ExprNegateNIL)g(\){)445
+979 y(return;)322 1046 y(})322 1112 y(/*)g(There)g(are)h(no)g
+(subclasses.)e(*/)322 1178 y(rfre_expr\()g(e->x)i(\);)322
+1245 y(fre_ExprNegate\()e(e)h(\);)198 1311 y(})198 1444
+y(/*)h(Recursively)e(free)i(an)f(element)g('e')h(of)f(class)h(type)f
+('ExprPlus')291 1510 y(and)g(all)h(elements)f(in)g(it.)229
+1577 y(*/)198 1643 y(static)g(void)h(rfre_ExprPlus\()e(ExprPlus)h(e)g
+(\))198 1710 y({)322 1776 y(if\()g(e)h(==)f(ExprPlusNIL)g(\){)445
+1843 y(return;)322 1909 y(})322 1975 y(/*)g(There)g(are)h(no)g
+(subclasses.)e(*/)322 2042 y(rfre_expr\()g(e->a)i(\);)322
+2108 y(rfre_expr\()e(e->b)i(\);)322 2175 y(fre_ExprPlus\()e(e)i(\);)198
+2241 y(})198 2374 y(/*)g(Recursively)e(free)i(an)f(element)g('e')h(of)f
+(class)h(type)f('ExprSymbol')291 2440 y(and)g(all)h(elements)f(in)g
+(it.)229 2507 y(*/)198 2573 y(static)g(void)h(rfre_ExprSymbol\()d
+(ExprSymbol)i(e)h(\))198 2640 y({)322 2706 y(if\()f(e)h(==)f
+(ExprSymbolNIL)g(\){)445 2772 y(return;)322 2839 y(})322
 2905 y(/*)g(There)g(are)h(no)g(subclasses.)e(*/)322 2972
-y(rfre_expr\()g(e->x)i(\);)322 3038 y(fre_ExprNegate\()e(e)h(\);)198
-3104 y(})198 3237 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h(of)f
-(class)h(type)f('ExprPlus')291 3304 y(and)g(all)h(elements)f(in)g(it.)
-229 3370 y(*/)198 3437 y(static)g(void)h(rfre_ExprPlus\()e(ExprPlus)h
-(e)g(\))198 3503 y({)322 3569 y(if\()g(e)h(==)f(ExprPlusNIL)g(\){)445
-3636 y(return;)322 3702 y(})322 3769 y(/*)g(There)g(are)h(no)g
-(subclasses.)e(*/)322 3835 y(rfre_expr\()g(e->a)i(\);)322
-3901 y(rfre_expr\()e(e->b)i(\);)322 3968 y(fre_ExprPlus\()e(e)i(\);)198
-4034 y(})198 4167 y(/*)g(Recursively)e(free)i(an)f(element)g('e')h(of)f
-(class)h(type)f('ExprSymbol')291 4234 y(and)g(all)h(elements)f(in)g
-(it.)229 4300 y(*/)198 4366 y(static)g(void)h(rfre_ExprSymbol\()d
-(ExprSymbol)i(e)h(\))198 4433 y({)322 4499 y(if\()f(e)h(==)f
-(ExprSymbolNIL)g(\){)445 4566 y(return;)322 4632 y(})322
-4698 y(/*)g(There)g(are)h(no)g(subclasses.)e(*/)322 4765
-y(rfre_tmstring\()g(e->s)h(\);)322 4831 y(fre_ExprSymbol\()f(e)h(\);)
-198 4898 y(})198 5031 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h
-(of)f(class)h(type)f('ExprTimes')291 5097 y(and)g(all)h(elements)f(in)g
-(it.)229 5163 y(*/)198 5230 y(static)g(void)h(rfre_ExprTimes\()e
-(ExprTimes)g(e)i(\))198 5296 y({)322 5363 y(if\()f(e)h(==)f
-(ExprTimesNIL)g(\){)445 5429 y(return;)322 5496 y(})322
-5562 y(/*)g(There)g(are)h(no)g(subclasses.)e(*/)322 5628
-y(rfre_expr\()g(e->a)i(\);)322 5695 y(rfre_expr\()e(e->b)i(\);)322
-5761 y(fre_ExprTimes\()e(e)h(\);)p eop
+y(rfre_tmstring\()g(e->s)h(\);)322 3038 y(fre_ExprSymbol\()f(e)h(\);)
+198 3104 y(})198 3237 y(/*)h(Recursively)e(free)i(an)f(element)g('e')h
+(of)f(class)h(type)f('ExprTimes')291 3304 y(and)g(all)h(elements)f(in)g
+(it.)229 3370 y(*/)198 3437 y(static)g(void)h(rfre_ExprTimes\()e
+(ExprTimes)g(e)i(\))198 3503 y({)322 3569 y(if\()f(e)h(==)f
+(ExprTimesNIL)g(\){)445 3636 y(return;)322 3702 y(})322
+3769 y(/*)g(There)g(are)h(no)g(subclasses.)e(*/)322 3835
+y(rfre_expr\()g(e->a)i(\);)322 3901 y(rfre_expr\()e(e->b)i(\);)322
+3968 y(fre_ExprTimes\()e(e)h(\);)198 4034 y(})198 4167
+y(/*)h(Recursively)e(free)i(a)f(list)h(of)f(elements)g('e')h(of)f(type)
+h(statement.)e(*/)198 4234 y(void)h(rfre_statement_list\()f
+(statement_list)g(e)i(\))198 4300 y({)322 4366 y(unsigned)e(int)i(ix;)
+322 4499 y(if\()f(e)h(==)f(statement_listNIL)f(\){)445
+4566 y(return;)322 4632 y(})322 4698 y(for\()h(ix=0;)g(ix<e->sz;)g
+(ix++)g(\){)445 4765 y(rfre_statement\()f(e->arr[ix])h(\);)322
+4831 y(})322 4898 y(fre_statement_list\()e(e)j(\);)198
+4964 y(})198 5097 y
+(/**************************************************)229
+5163 y(*)123 b(print_<type>)30 b(and)g(print_<type>_list)f(routines)h
+(*)229 5230 y(**************************************************/)198
+5363 y(static)g(void)h(print_statement\()d(TMPRINTSTATE)i(*st,)g(const)
+g(statement)g(\);)198 5429 y(static)g(void)h(print_expr\()e
+(TMPRINTSTATE)g(*st,)i(const)f(expr)g(\);)198 5496 y(static)g(void)h
+(print_ExprConst\()d(TMPRINTSTATE)i(*st,)g(const)g(ExprConst)g(\);)198
+5562 y(static)g(void)h(print_ExprNegate\()d(TMPRINTSTATE)i(*st,)g
+(const)g(ExprNegate)g(\);)198 5628 y(static)g(void)h(print_ExprPlus\()e
+(TMPRINTSTATE)g(*st,)h(const)h(ExprPlus)e(\);)198 5695
+y(static)h(void)h(print_ExprSymbol\()d(TMPRINTSTATE)i(*st,)g(const)g
+(ExprSymbol)g(\);)198 5761 y(static)g(void)h(print_ExprTimes\()d
+(TMPRINTSTATE)i(*st,)g(const)g(ExprTimes)g(\);)p eop
 %%Page: 79 79
 79 78 bop 227 -28 a Fm(B.3.)55 b(GENERA)-7 b(TION)27
 b(OF)g(THE)h(TM)f(TEMPLA)-7 b(TE)27 b(FUNCTIONS)1144
-b Fn(79)434 315 y Fd(})434 448 y(/*)31 b(Recursively)e(free)i(a)g(list)
-f(of)h(elements)e('e')i(of)g(type)f(statement.)g(*/)434
-514 y(void)h(rfre_statement_list\()d(statement_list)h(e)i(\))434
-581 y({)558 647 y(unsigned)f(int)g(ix;)558 780 y(if\()g(e)h(==)g
-(statement_listNIL)d(\){)681 846 y(return;)558 913 y(})558
-979 y(for\()i(ix=0;)g(ix<e->sz;)g(ix++)h(\){)681 1046
-y(rfre_statement\()e(e->arr[ix])h(\);)558 1112 y(})558
-1178 y(fre_statement_list\()e(e)j(\);)434 1245 y(})434
-1378 y(/**************************************************)465
-1444 y(*)124 b(print_<type>)29 b(and)h(print_<type>_list)f(routines)h
-(*)465 1510 y(**************************************************/)434
-1710 y(static)g(void)h(print_statement\()e(TMPRINTSTATE)g(*st,)h(const)
-h(statement)e(\);)434 1776 y(static)h(void)h(print_expr\()e
-(TMPRINTSTATE)h(*st,)g(const)g(expr)h(\);)434 1843 y(static)f(void)h
-(print_ExprConst\()e(TMPRINTSTATE)g(*st,)h(const)h(ExprConst)e(\);)434
-1909 y(static)h(void)h(print_ExprNegate\()e(TMPRINTSTATE)g(*st,)h
-(const)h(ExprNegate)e(\);)434 1975 y(static)h(void)h(print_ExprPlus\()e
-(TMPRINTSTATE)g(*st,)i(const)f(ExprPlus)g(\);)434 2042
-y(static)g(void)h(print_ExprSymbol\()e(TMPRINTSTATE)g(*st,)h(const)h
-(ExprSymbol)e(\);)434 2108 y(static)h(void)h(print_ExprTimes\()e
-(TMPRINTSTATE)g(*st,)h(const)h(ExprTimes)e(\);)434 2241
-y(/*)i(Print)f(an)h(element)f('t')g(of)h(class)f(type)h('statement')465
-2307 y(*)g(using)f(print)g(optimizer.)465 2374 y(*/)434
-2440 y(static)g(void)h(print_statement\()e(TMPRINTSTATE)g(*st,)h(const)
-h(statement)e(t)i(\))434 2507 y({)558 2573 y(if\()f(t)h(==)g
-(statementNIL)e(\){)681 2640 y(tm_printword\()h(st,)g("@")h(\);)681
-2706 y(return;)558 2772 y(})558 2839 y(tm_opencons\()e(st)i(\);)558
-2905 y(tm_printword\()e(st,)i("statement")e(\);)558 2972
-y(print_tmstring\()g(st,)h(t->lhs)g(\);)558 3038 y(print_expr\()f(st,)i
-(t->rhs)f(\);)558 3104 y(tm_closecons\()f(st)i(\);)434
-3171 y(})434 3304 y(/*)g(Print)f(an)h(element)f('t')g(of)h(class)f
-(type)h('expr')465 3370 y(*)g(using)f(print)g(optimizer.)465
-3437 y(*/)434 3503 y(static)g(void)h(print_expr\()e(TMPRINTSTATE)h
-(*st,)g(const)g(expr)h(t)f(\))434 3569 y({)558 3636 y(if\()g(t)h(==)g
-(exprNIL)f(\){)681 3702 y(tm_printword\()g(st,)g("@")h(\);)681
-3769 y(return;)558 3835 y(})558 3901 y(switch\()f(t->tag)g(\){)681
-3968 y(case)h(TAGExprPlus:)805 4034 y(print_ExprPlus\()e(st,)h
-(\(ExprPlus\))g(t)h(\);)805 4101 y(break;)681 4234 y(case)g
-(TAGExprTimes:)805 4300 y(print_ExprTimes\()e(st,)h(\(ExprTimes\))g(t)g
-(\);)805 4366 y(break;)681 4499 y(case)h(TAGExprNegate:)805
-4566 y(print_ExprNegate\()e(st,)h(\(ExprNegate\))f(t)i(\);)805
-4632 y(break;)681 4765 y(case)g(TAGExprConst:)805 4831
+b Fn(79)434 315 y Fd(/*)31 b(Print)f(an)h(element)f('t')g(of)h(class)f
+(type)h('statement')465 381 y(*)g(using)f(print)g(optimizer.)465
+448 y(*/)434 514 y(static)g(void)h(print_statement\()e(TMPRINTSTATE)g
+(*st,)h(const)h(statement)e(t)i(\))434 581 y({)558 647
+y(if\()f(t)h(==)g(statementNIL)e(\){)681 713 y(tm_printword\()h(st,)g
+("@")h(\);)681 780 y(return;)558 846 y(})558 913 y(tm_opencons\()e(st)i
+(\);)558 979 y(tm_printword\()e(st,)i("statement")e(\);)558
+1046 y(print_tmstring\()g(st,)h(t->lhs)g(\);)558 1112
+y(print_expr\()f(st,)i(t->rhs)f(\);)558 1178 y(tm_closecons\()f(st)i
+(\);)434 1245 y(})434 1378 y(/*)g(Print)f(an)h(element)f('t')g(of)h
+(class)f(type)h('expr')465 1444 y(*)g(using)f(print)g(optimizer.)465
+1510 y(*/)434 1577 y(static)g(void)h(print_expr\()e(TMPRINTSTATE)h
+(*st,)g(const)g(expr)h(t)f(\))434 1643 y({)558 1710 y(if\()g(t)h(==)g
+(exprNIL)f(\){)681 1776 y(tm_printword\()g(st,)g("@")h(\);)681
+1843 y(return;)558 1909 y(})558 1975 y(switch\()f(t->tag)g(\){)681
+2042 y(case)h(TAGExprPlus:)805 2108 y(print_ExprPlus\()e(st,)h
+(\(ExprPlus\))g(t)h(\);)805 2175 y(break;)681 2307 y(case)g
+(TAGExprTimes:)805 2374 y(print_ExprTimes\()e(st,)h(\(ExprTimes\))g(t)g
+(\);)805 2440 y(break;)681 2573 y(case)h(TAGExprNegate:)805
+2640 y(print_ExprNegate\()e(st,)h(\(ExprNegate\))f(t)i(\);)805
+2706 y(break;)681 2839 y(case)g(TAGExprConst:)805 2905
 y(print_ExprConst\()e(st,)h(\(ExprConst\))g(t)g(\);)805
-4898 y(break;)681 5031 y(case)h(TAGExprSymbol:)805 5097
+2972 y(break;)681 3104 y(case)h(TAGExprSymbol:)805 3171
 y(print_ExprSymbol\()e(st,)h(\(ExprSymbol\))f(t)i(\);)805
-5163 y(break;)681 5296 y(default:)805 5363 y(FATALTAG\()f(\(int\))g
-(t->tag)g(\);)558 5429 y(})434 5496 y(})434 5628 y(/*)h(Print)f(an)h
+3237 y(break;)681 3370 y(default:)805 3437 y(FATALTAG\()f(\(int\))g
+(t->tag)g(\);)558 3503 y(})434 3569 y(})434 3702 y(/*)h(Print)f(an)h
 (element)f('t')g(of)h(class)f(type)h('ExprConst')465
-5695 y(*)g(using)f(print)g(optimizer.)465 5761 y(*/)p
-eop
+3769 y(*)g(using)f(print)g(optimizer.)465 3835 y(*/)434
+3901 y(static)g(void)h(print_ExprConst\()e(TMPRINTSTATE)g(*st,)h(const)
+h(ExprConst)e(t)i(\))434 3968 y({)558 4034 y(if\()f(t)h(==)g
+(ExprConstNIL)e(\){)681 4101 y(tm_printword\()h(st,)g("@")h(\);)681
+4167 y(return;)558 4234 y(})558 4300 y(tm_opencons\()e(st)i(\);)558
+4366 y(tm_printword\()e(st,)i("ExprConst")e(\);)558 4433
+y(print_int\()g(st,)i(t->n)f(\);)558 4499 y(tm_closecons\()f(st)i(\);)
+434 4566 y(})434 4698 y(/*)g(Print)f(an)h(element)f('t')g(of)h(class)f
+(type)h('ExprNegate')465 4765 y(*)g(using)f(print)g(optimizer.)465
+4831 y(*/)434 4898 y(static)g(void)h(print_ExprNegate\()e(TMPRINTSTATE)
+g(*st,)h(const)h(ExprNegate)e(t)i(\))434 4964 y({)558
+5031 y(if\()f(t)h(==)g(ExprNegateNIL)e(\){)681 5097 y(tm_printword\()h
+(st,)g("@")h(\);)681 5163 y(return;)558 5230 y(})558
+5296 y(tm_opencons\()e(st)i(\);)558 5363 y(tm_printword\()e(st,)i
+("ExprNegate")e(\);)558 5429 y(print_expr\()g(st,)i(t->x)f(\);)558
+5496 y(tm_closecons\()f(st)i(\);)434 5562 y(})434 5695
+y(/*)g(Print)f(an)h(element)f('t')g(of)h(class)f(type)h('ExprPlus')465
+5761 y(*)g(using)f(print)g(optimizer.)p eop
 %%Page: 80 80
 80 79 bop -9 -28 a Fn(80)588 b Fm(APPENDIX)28 b(B.)55
 b(AN)28 b(EXAMPLE)f(PR)n(OJECT:)f(EXPRESSION)g(OPTIMIZA)-7
-b(TION)198 315 y Fd(static)30 b(void)h(print_ExprConst\()d
-(TMPRINTSTATE)i(*st,)g(const)g(ExprConst)g(t)h(\))198
-381 y({)322 448 y(if\()f(t)h(==)f(ExprConstNIL)g(\){)445
-514 y(tm_printword\()f(st,)i("@")f(\);)445 581 y(return;)322
-647 y(})322 713 y(tm_opencons\()f(st)i(\);)322 780 y(tm_printword\()e
-(st,)h("ExprConst")g(\);)322 846 y(print_int\()f(st,)i(t->n)f(\);)322
-913 y(tm_closecons\()f(st)h(\);)198 979 y(})198 1112
-y(/*)h(Print)f(an)h(element)f('t')g(of)h(class)f(type)g('ExprNegate')
-229 1178 y(*)h(using)f(print)g(optimizer.)229 1245 y(*/)198
-1311 y(static)g(void)h(print_ExprNegate\()d(TMPRINTSTATE)i(*st,)g
-(const)g(ExprNegate)g(t)h(\))198 1378 y({)322 1444 y(if\()f(t)h(==)f
-(ExprNegateNIL)g(\){)445 1510 y(tm_printword\()f(st,)i("@")f(\);)445
-1577 y(return;)322 1643 y(})322 1710 y(tm_opencons\()f(st)i(\);)322
-1776 y(tm_printword\()e(st,)h("ExprNegate")g(\);)322
-1843 y(print_expr\()f(st,)i(t->x)f(\);)322 1909 y(tm_closecons\()f(st)h
-(\);)198 1975 y(})198 2108 y(/*)h(Print)f(an)h(element)f('t')g(of)h
-(class)f(type)g('ExprPlus')229 2175 y(*)h(using)f(print)g(optimizer.)
-229 2241 y(*/)198 2307 y(static)g(void)h(print_ExprPlus\()e
+b(TION)229 315 y Fd(*/)198 381 y(static)30 b(void)h(print_ExprPlus\()e
 (TMPRINTSTATE)g(*st,)h(const)h(ExprPlus)e(t)i(\))198
-2374 y({)322 2440 y(if\()f(t)h(==)f(ExprPlusNIL)g(\){)445
-2507 y(tm_printword\()f(st,)i("@")f(\);)445 2573 y(return;)322
-2640 y(})322 2706 y(tm_opencons\()f(st)i(\);)322 2772
-y(tm_printword\()e(st,)h("ExprPlus")g(\);)322 2839 y(print_expr\()f
-(st,)i(t->a)f(\);)322 2905 y(print_expr\()f(st,)i(t->b)f(\);)322
-2972 y(tm_closecons\()f(st)h(\);)198 3038 y(})198 3171
-y(/*)h(Print)f(an)h(element)f('t')g(of)h(class)f(type)g('ExprSymbol')
-229 3237 y(*)h(using)f(print)g(optimizer.)229 3304 y(*/)198
-3370 y(static)g(void)h(print_ExprSymbol\()d(TMPRINTSTATE)i(*st,)g
-(const)g(ExprSymbol)g(t)h(\))198 3437 y({)322 3503 y(if\()f(t)h(==)f
-(ExprSymbolNIL)g(\){)445 3569 y(tm_printword\()f(st,)i("@")f(\);)445
-3636 y(return;)322 3702 y(})322 3769 y(tm_opencons\()f(st)i(\);)322
-3835 y(tm_printword\()e(st,)h("ExprSymbol")g(\);)322
-3901 y(print_tmstring\()f(st,)h(t->s)g(\);)322 3968 y(tm_closecons\()f
-(st)h(\);)198 4034 y(})198 4167 y(/*)h(Print)f(an)h(element)f('t')g(of)
-h(class)f(type)g('ExprTimes')229 4234 y(*)h(using)f(print)g(optimizer.)
-229 4300 y(*/)198 4366 y(static)g(void)h(print_ExprTimes\()d
+448 y({)322 514 y(if\()f(t)h(==)f(ExprPlusNIL)g(\){)445
+581 y(tm_printword\()f(st,)i("@")f(\);)445 647 y(return;)322
+713 y(})322 780 y(tm_opencons\()f(st)i(\);)322 846 y(tm_printword\()e
+(st,)h("ExprPlus")g(\);)322 913 y(print_expr\()f(st,)i(t->a)f(\);)322
+979 y(print_expr\()f(st,)i(t->b)f(\);)322 1046 y(tm_closecons\()f(st)h
+(\);)198 1112 y(})198 1245 y(/*)h(Print)f(an)h(element)f('t')g(of)h
+(class)f(type)g('ExprSymbol')229 1311 y(*)h(using)f(print)g(optimizer.)
+229 1378 y(*/)198 1444 y(static)g(void)h(print_ExprSymbol\()d
+(TMPRINTSTATE)i(*st,)g(const)g(ExprSymbol)g(t)h(\))198
+1510 y({)322 1577 y(if\()f(t)h(==)f(ExprSymbolNIL)g(\){)445
+1643 y(tm_printword\()f(st,)i("@")f(\);)445 1710 y(return;)322
+1776 y(})322 1843 y(tm_opencons\()f(st)i(\);)322 1909
+y(tm_printword\()e(st,)h("ExprSymbol")g(\);)322 1975
+y(print_tmstring\()f(st,)h(t->s)g(\);)322 2042 y(tm_closecons\()f(st)h
+(\);)198 2108 y(})198 2241 y(/*)h(Print)f(an)h(element)f('t')g(of)h
+(class)f(type)g('ExprTimes')229 2307 y(*)h(using)f(print)g(optimizer.)
+229 2374 y(*/)198 2440 y(static)g(void)h(print_ExprTimes\()d
 (TMPRINTSTATE)i(*st,)g(const)g(ExprTimes)g(t)h(\))198
-4433 y({)322 4499 y(if\()f(t)h(==)f(ExprTimesNIL)g(\){)445
-4566 y(tm_printword\()f(st,)i("@")f(\);)445 4632 y(return;)322
-4698 y(})322 4765 y(tm_opencons\()f(st)i(\);)322 4831
-y(tm_printword\()e(st,)h("ExprTimes")g(\);)322 4898 y(print_expr\()f
-(st,)i(t->a)f(\);)322 4964 y(print_expr\()f(st,)i(t->b)f(\);)322
-5031 y(tm_closecons\()f(st)h(\);)198 5097 y(})198 5230
+2507 y({)322 2573 y(if\()f(t)h(==)f(ExprTimesNIL)g(\){)445
+2640 y(tm_printword\()f(st,)i("@")f(\);)445 2706 y(return;)322
+2772 y(})322 2839 y(tm_opencons\()f(st)i(\);)322 2905
+y(tm_printword\()e(st,)h("ExprTimes")g(\);)322 2972 y(print_expr\()f
+(st,)i(t->a)f(\);)322 3038 y(print_expr\()f(st,)i(t->b)f(\);)322
+3104 y(tm_closecons\()f(st)h(\);)198 3171 y(})198 3304
 y(/*)h(Print)f(a)h(list)f(of)h(elements)f('l')g(of)h(type)f
-('statement')291 5296 y(using)g(print)g(optimizer.)229
-5363 y(*/)198 5429 y(void)g(print_statement_list\()f(TMPRINTSTATE)g
-(*st,)h(const)h(statement_list)e(l)i(\))198 5496 y({)322
-5562 y(unsigned)e(int)i(ix;)322 5695 y(if\()f(l)h(==)f
-(statement_listNIL)f(\){)445 5761 y(tm_printword\()g(st,)i("@")f(\);)p
-eop
+('statement')291 3370 y(using)g(print)g(optimizer.)229
+3437 y(*/)198 3503 y(void)g(print_statement_list\()f(TMPRINTSTATE)g
+(*st,)h(const)h(statement_list)e(l)i(\))198 3569 y({)322
+3636 y(unsigned)e(int)i(ix;)322 3769 y(if\()f(l)h(==)f
+(statement_listNIL)f(\){)445 3835 y(tm_printword\()g(st,)i("@")f(\);)
+445 3901 y(return;)322 3968 y(})322 4034 y(tm_openlist\()f(st)i(\);)322
+4101 y(for\()f(ix=0;)g(ix<l->sz;)g(ix++)g(\){)445 4167
+y(print_statement\()f(st,)h(l->arr[ix])g(\);)322 4234
+y(})322 4300 y(tm_closelist\()f(st)h(\);)198 4366 y(})198
+4499 y(/**************************************************)229
+4566 y(*)123 b(Scan)31 b(routines.)925 b(*)229 4632 y
+(**************************************************/)198
+4765 y(#ifdef)30 b(LOGNEW)198 4831 y(#define)g(fscan_statement\(f,ep\))
+e(real_fscan_statement\(f,ep,_f,_l\))198 4898 y(#define)i
+(fscan_expr\(f,ep\))f(real_fscan_expr\(f,ep,_f,_l\))198
+4964 y(#undef)h(fscan_statement_list)198 5031 y(#define)g
+(fscan_statement_list\(f,lp\))e
+(real_fscan_statement_list\(f,lp,_f,_l\))198 5097 y(static)i(int)h
+(real_fscan_statement\()d(FILE)i(*,)h(statement)f(*,)g(const)h(char)f
+(*_f,)g(const)h(int)f(_l)h(\);)198 5163 y(static)f(int)h
+(real_fscan_expr\()e(FILE)h(*,)h(expr)f(*,)h(const)f(char)g(*_f,)h
+(const)f(int)g(_l)h(\);)198 5230 y(#else)198 5296 y(static)f(int)h
+(fscan_statement\()e(FILE)h(*,)h(statement)e(*)i(\);)198
+5363 y(static)f(int)h(fscan_expr\()e(FILE)i(*,)f(expr)h(*)f(\);)198
+5429 y(#endif)198 5562 y(/*)h(Read)f(a)h(class)f(of)h(type)f(statement)
+291 5628 y(from)g(file)g('f')h(and)f(allocate)g(space)h(for)f(it.)291
+5695 y(Set)g(the)h(pointer)f('p')g(to)h(point)f(to)h(that)f(structure.)
+229 5761 y(*/)p eop
 %%Page: 81 81
 81 80 bop 227 -28 a Fm(B.3.)55 b(GENERA)-7 b(TION)27
 b(OF)g(THE)h(TM)f(TEMPLA)-7 b(TE)27 b(FUNCTIONS)1144
-b Fn(81)681 315 y Fd(return;)558 381 y(})558 448 y(tm_openlist\()29
-b(st)i(\);)558 514 y(for\()f(ix=0;)g(ix<l->sz;)g(ix++)h(\){)681
-581 y(print_statement\()e(st,)i(l->arr[ix])e(\);)558
-647 y(})558 713 y(tm_closelist\()g(st)i(\);)434 780 y(})434
-913 y(/**************************************************)465
-979 y(*)124 b(Scan)30 b(routines.)925 b(*)465 1046 y
-(**************************************************/)434
-1178 y(#ifdef)30 b(LOGNEW)434 1245 y(#define)g(fscan_statement\(f,ep\))
-f(real_fscan_statement\(f,ep,_f,_l\))434 1311 y(#define)h
-(fscan_expr\(f,ep\))f(real_fscan_expr\(f,ep,_f,_l\))434
-1378 y(#undef)h(fscan_statement_list)434 1444 y(#define)g
-(fscan_statement_list\(f,lp\))e
-(real_fscan_statement_list\(f,lp,_f,_l\))434 1577 y(static)i(int)h
-(real_fscan_statement\()d(FILE)j(*,)f(statement)g(*,)h(const)f(char)g
-(*_f,)h(const)f(int)g(_l)h(\);)434 1643 y(static)f(int)h
-(real_fscan_expr\()e(FILE)h(*,)h(expr)f(*,)h(const)f(char)g(*_f,)h
-(const)f(int)h(_l)f(\);)434 1776 y(#else)434 1909 y(static)g(int)h
-(fscan_statement\()e(FILE)h(*,)h(statement)f(*)g(\);)434
-1975 y(static)g(int)h(fscan_expr\()e(FILE)i(*,)f(expr)h(*)g(\);)434
-2108 y(#endif)434 2241 y(/*)g(Read)f(a)h(class)f(of)h(type)f(statement)
-527 2307 y(from)g(file)h('f')f(and)h(allocate)f(space)g(for)g(it.)527
-2374 y(Set)g(the)h(pointer)f('p')g(to)h(point)f(to)h(that)f(structure.)
-465 2440 y(*/)434 2507 y(#ifdef)g(LOGNEW)434 2573 y(static)g(int)h
+b Fn(81)434 315 y Fd(#ifdef)30 b(LOGNEW)434 381 y(static)g(int)h
 (real_fscan_statement\()d(FILE)j(*f,)f(statement)g(*p,)g(const)h(char)f
-(*_f,)g(const)h(int)f(_l)h(\))434 2640 y(#else)434 2706
+(*_f,)g(const)h(int)f(_l)h(\))434 448 y(#else)434 514
 y(static)f(int)h(fscan_statement\()e(FILE)h(*f,)h(statement)e(*p)i(\))
-434 2772 y(#endif)434 2839 y({)558 2905 y(int)f(n;)558
-2972 y(int)g(c;)558 3038 y(int)g(err;)558 3104 y(char)g(tm_word[13];)91
+434 581 y(#endif)434 647 y({)558 713 y(int)f(n;)558 780
+y(int)g(c;)558 846 y(int)g(err;)558 913 y(char)g(tm_word[13];)91
 b(/*)31 b(Largest)f(constructor)f(should)i(fit)f(in)h(it..)f(*/)434
-3237 y(#ifdef)g(LOGNEW)558 3304 y(\(void\))g(_f;)558
-3370 y(\(void\))g(_l;)434 3437 y(#endif)558 3503 y(*p)g(=)h
-(statementNIL;)558 3569 y(n)g(=)f(tm_fscanopenbrac\()f(f)i(\);)558
-3636 y(err)f(=)h(tm_fscanspace\()e(f)i(\);)558 3702 y(if\()f(err)h(\){)
-681 3769 y(return)f(1;)558 3835 y(})558 3901 y(c)h(=)f(getc\()h(f)f
-(\);)558 3968 y(if\()g(c)h(==)g('@')f(\){)681 4034 y(return)g
-(tm_fscanclosebrac\()f(f,)i(n)f(\);)558 4101 y(})558
-4167 y(ungetc\()g(c,)g(f)h(\);)558 4234 y(if\()f(tm_fscancons\()g(f,)g
-(tm_word,)g(13)h(\))f(\){)681 4300 y(return)g(1;)558
-4366 y(})558 4433 y(if\()g(strcmp\()g(tm_word,)g("statement")g(\))g(==)
-h(0)g(\){)681 4499 y(tmstring)f(l_lhs;)681 4566 y(expr)h(l_rhs;)681
-4698 y(l_lhs)g(=)f(tmstringNIL;)681 4765 y(if\()h(!err\){)805
-4831 y(err)f(=)h(fscan_tmstring\()e(f,)i(&l_lhs)f(\);)681
-4898 y(})681 4964 y(l_rhs)h(=)f(exprNIL;)681 5031 y(if\()h(!err\){)805
-5097 y(err)f(=)h(fscan_expr\()f(f,)g(&l_rhs)g(\);)681
-5163 y(})681 5230 y(*p)h(=)g(new_statement\()e(l_lhs,)h(l_rhs)g(\);)558
-5296 y(})558 5363 y(else)g({)681 5429 y(\(void\))g(sprintf\()g
+1046 y(#ifdef)g(LOGNEW)558 1112 y(\(void\))g(_f;)558
+1178 y(\(void\))g(_l;)434 1245 y(#endif)558 1311 y(*p)g(=)h
+(statementNIL;)558 1378 y(n)g(=)f(tm_fscanopenbrac\()f(f)i(\);)558
+1444 y(err)f(=)h(tm_fscanspace\()e(f)i(\);)558 1510 y(if\()f(err)h(\){)
+681 1577 y(return)f(1;)558 1643 y(})558 1710 y(c)h(=)f(getc\()h(f)f
+(\);)558 1776 y(if\()g(c)h(==)g('@')f(\){)681 1843 y(return)g
+(tm_fscanclosebrac\()f(f,)i(n)f(\);)558 1909 y(})558
+1975 y(ungetc\()g(c,)g(f)h(\);)558 2042 y(if\()f(tm_fscancons\()g(f,)g
+(tm_word,)g(13)h(\))f(\){)681 2108 y(return)g(1;)558
+2175 y(})558 2241 y(if\()g(strcmp\()g(tm_word,)g("statement")g(\))g(==)
+h(0)g(\){)681 2307 y(tmstring)f(l_lhs;)681 2374 y(expr)h(l_rhs;)681
+2507 y(l_lhs)g(=)f(tmstringNIL;)681 2573 y(if\()h(!err\){)805
+2640 y(err)f(=)h(fscan_tmstring\()e(f,)i(&l_lhs)f(\);)681
+2706 y(})681 2772 y(l_rhs)h(=)f(exprNIL;)681 2839 y(if\()h(!err\){)805
+2905 y(err)f(=)h(fscan_expr\()f(f,)g(&l_rhs)g(\);)681
+2972 y(})681 3038 y(*p)h(=)g(new_statement\()e(l_lhs,)h(l_rhs)g(\);)558
+3104 y(})558 3171 y(else)g({)681 3237 y(\(void\))g(sprintf\()g
 (tm_errmsg,)g(tm_badcons,)f("statement",)h(tm_word)g(\);)681
-5496 y(return)g(1;)558 5562 y(})558 5628 y(if\()g(err)h(\){)681
-5695 y(return)f(1;)558 5761 y(})p eop
+3304 y(return)g(1;)558 3370 y(})558 3437 y(if\()g(err)h(\){)681
+3503 y(return)f(1;)558 3569 y(})558 3636 y(return)g
+(tm_fscanclosebrac\()f(f,)h(n)h(\);)434 3702 y(})434
+3835 y(/*)g(Read)f(a)h(class)f(of)h(type)f(expr)527 3901
+y(from)g(file)h('f')f(and)h(allocate)f(space)g(for)g(it.)527
+3968 y(Set)g(the)h(pointer)f('p')g(to)h(point)f(to)h(that)f(structure.)
+465 4034 y(*/)434 4101 y(#ifdef)g(LOGNEW)434 4167 y(static)g(int)h
+(real_fscan_expr\()e(FILE)h(*f,)h(expr)f(*p,)h(const)f(char)g(*_f,)h
+(const)f(int)g(_l)h(\))434 4234 y(#else)434 4300 y(static)f(int)h
+(fscan_expr\()e(FILE)i(*f,)f(expr)h(*p)f(\))434 4366
+y(#endif)434 4433 y({)558 4499 y(int)g(n;)558 4566 y(int)g(c;)558
+4632 y(int)g(err;)558 4698 y(char)g(tm_word[14];)91 b(/*)31
+b(Largest)f(constructor)f(should)i(fit)f(in)h(it..)f(*/)558
+4831 y(*p)g(=)h(exprNIL;)558 4898 y(n)g(=)f(tm_fscanopenbrac\()f(f)i
+(\);)558 4964 y(err)f(=)h(tm_fscanspace\()e(f)i(\);)558
+5031 y(if\()f(err)h(\){)681 5097 y(return)f(1;)558 5163
+y(})558 5230 y(c)h(=)f(getc\()h(f)f(\);)558 5296 y(if\()g(c)h(==)g('@')
+f(\){)681 5363 y(return)g(tm_fscanclosebrac\()f(f,)i(n)f(\);)558
+5429 y(})558 5496 y(ungetc\()g(c,)g(f)h(\);)558 5562
+y(if\()f(tm_fscancons\()g(f,)g(tm_word,)g(14)h(\))f(\){)681
+5628 y(return)g(1;)558 5695 y(})558 5761 y(if\()g(strcmp\()g(tm_word,)g
+("ExprPlus")g(\))h(==)f(0)h(\){)p eop
 %%Page: 82 82
 82 81 bop -9 -28 a Fn(82)588 b Fm(APPENDIX)28 b(B.)55
 b(AN)28 b(EXAMPLE)f(PR)n(OJECT:)f(EXPRESSION)g(OPTIMIZA)-7
-b(TION)322 315 y Fd(return)30 b(tm_fscanclosebrac\()e(f,)j(n)g(\);)198
-381 y(})198 514 y(/*)g(Read)f(a)h(class)f(of)h(type)f(expr)291
-581 y(from)g(file)g('f')h(and)f(allocate)g(space)h(for)f(it.)291
-647 y(Set)g(the)h(pointer)f('p')g(to)h(point)f(to)h(that)f(structure.)
-229 713 y(*/)198 780 y(#ifdef)g(LOGNEW)198 846 y(static)g(int)h
-(real_fscan_expr\()e(FILE)h(*f,)g(expr)h(*p,)f(const)h(char)f(*_f,)g
-(const)h(int)f(_l)h(\))198 913 y(#else)198 979 y(static)f(int)h
-(fscan_expr\()e(FILE)i(*f,)f(expr)g(*p)h(\))198 1046
-y(#endif)198 1112 y({)322 1178 y(int)f(n;)322 1245 y(int)g(c;)322
-1311 y(int)g(err;)322 1378 y(char)g(tm_word[14];)91 b(/*)31
-b(Largest)f(constructor)f(should)h(fit)h(in)f(it..)h(*/)322
-1510 y(*p)f(=)h(exprNIL;)322 1577 y(n)f(=)h(tm_fscanopenbrac\()e(f)i
-(\);)322 1643 y(err)f(=)h(tm_fscanspace\()e(f)i(\);)322
-1710 y(if\()f(err)h(\){)445 1776 y(return)f(1;)322 1843
-y(})322 1909 y(c)g(=)h(getc\()f(f)h(\);)322 1975 y(if\()f(c)h(==)f('@')
-h(\){)445 2042 y(return)f(tm_fscanclosebrac\()f(f,)h(n)h(\);)322
-2108 y(})322 2175 y(ungetc\()f(c,)g(f)h(\);)322 2241
-y(if\()f(tm_fscancons\()f(f,)i(tm_word,)f(14)g(\))h(\){)445
-2307 y(return)f(1;)322 2374 y(})322 2440 y(if\()g(strcmp\()g(tm_word,)g
-("ExprPlus")g(\))g(==)h(0)g(\){)445 2507 y(expr)f(l_a;)445
-2573 y(expr)g(l_b;)445 2706 y(l_a)h(=)f(exprNIL;)445
-2772 y(if\()h(!err\){)569 2839 y(err)f(=)h(fscan_expr\()e(f,)i(&l_a)f
-(\);)445 2905 y(})445 2972 y(l_b)h(=)f(exprNIL;)445 3038
-y(if\()h(!err\){)569 3104 y(err)f(=)h(fscan_expr\()e(f,)i(&l_b)f(\);)
-445 3171 y(})445 3237 y(*p)h(=)61 b(\(expr\))30 b(new_ExprPlus\()g
-(l_a,)g(l_b)h(\);)322 3304 y(})322 3370 y(else)f(if\()g(strcmp\()g
-(tm_word,)g("ExprTimes")g(\))h(==)f(0)h(\){)445 3437
-y(expr)f(l_a;)445 3503 y(expr)g(l_b;)445 3636 y(l_a)h(=)f(exprNIL;)445
-3702 y(if\()h(!err\){)569 3769 y(err)f(=)h(fscan_expr\()e(f,)i(&l_a)f
-(\);)445 3835 y(})445 3901 y(l_b)h(=)f(exprNIL;)445 3968
-y(if\()h(!err\){)569 4034 y(err)f(=)h(fscan_expr\()e(f,)i(&l_b)f(\);)
-445 4101 y(})445 4167 y(*p)h(=)61 b(\(expr\))30 b(new_ExprTimes\()g
-(l_a,)g(l_b)g(\);)322 4234 y(})322 4300 y(else)g(if\()g(strcmp\()g
-(tm_word,)g("ExprNegate")g(\))g(==)h(0)g(\){)445 4366
-y(expr)f(l_x;)445 4499 y(l_x)h(=)f(exprNIL;)445 4566
-y(if\()h(!err\){)569 4632 y(err)f(=)h(fscan_expr\()e(f,)i(&l_x)f(\);)
-445 4698 y(})445 4765 y(*p)h(=)61 b(\(expr\))30 b(new_ExprNegate\()f
-(l_x)i(\);)322 4831 y(})322 4898 y(else)f(if\()g(strcmp\()g(tm_word,)g
-("ExprConst")g(\))h(==)f(0)h(\){)445 4964 y(int)g(l_n;)445
-5097 y(l_n)g(=)f(intNIL;)445 5163 y(if\()h(!err\){)569
-5230 y(err)f(=)h(fscan_int\()e(f,)i(&l_n)f(\);)445 5296
-y(})445 5363 y(*p)h(=)61 b(\(expr\))30 b(new_ExprConst\()g(l_n)g(\);)
-322 5429 y(})322 5496 y(else)g(if\()g(strcmp\()g(tm_word,)g
-("ExprSymbol")g(\))g(==)h(0)g(\){)445 5562 y(tmstring)f(l_s;)445
-5695 y(l_s)h(=)f(tmstringNIL;)445 5761 y(if\()h(!err\){)p
-eop
+b(TION)445 315 y Fd(expr)30 b(l_a;)445 381 y(expr)g(l_b;)445
+514 y(l_a)h(=)f(exprNIL;)445 581 y(if\()h(!err\){)569
+647 y(err)f(=)h(fscan_expr\()e(f,)i(&l_a)f(\);)445 713
+y(})445 780 y(l_b)h(=)f(exprNIL;)445 846 y(if\()h(!err\){)569
+913 y(err)f(=)h(fscan_expr\()e(f,)i(&l_b)f(\);)445 979
+y(})445 1046 y(*p)h(=)61 b(\(expr\))30 b(new_ExprPlus\()g(l_a,)g(l_b)h
+(\);)322 1112 y(})322 1178 y(else)f(if\()g(strcmp\()g(tm_word,)g
+("ExprTimes")g(\))h(==)f(0)h(\){)445 1245 y(expr)f(l_a;)445
+1311 y(expr)g(l_b;)445 1444 y(l_a)h(=)f(exprNIL;)445
+1510 y(if\()h(!err\){)569 1577 y(err)f(=)h(fscan_expr\()e(f,)i(&l_a)f
+(\);)445 1643 y(})445 1710 y(l_b)h(=)f(exprNIL;)445 1776
+y(if\()h(!err\){)569 1843 y(err)f(=)h(fscan_expr\()e(f,)i(&l_b)f(\);)
+445 1909 y(})445 1975 y(*p)h(=)61 b(\(expr\))30 b(new_ExprTimes\()g
+(l_a,)g(l_b)g(\);)322 2042 y(})322 2108 y(else)g(if\()g(strcmp\()g
+(tm_word,)g("ExprNegate")g(\))g(==)h(0)g(\){)445 2175
+y(expr)f(l_x;)445 2307 y(l_x)h(=)f(exprNIL;)445 2374
+y(if\()h(!err\){)569 2440 y(err)f(=)h(fscan_expr\()e(f,)i(&l_x)f(\);)
+445 2507 y(})445 2573 y(*p)h(=)61 b(\(expr\))30 b(new_ExprNegate\()f
+(l_x)i(\);)322 2640 y(})322 2706 y(else)f(if\()g(strcmp\()g(tm_word,)g
+("ExprConst")g(\))h(==)f(0)h(\){)445 2772 y(int)g(l_n;)445
+2905 y(l_n)g(=)f(intNIL;)445 2972 y(if\()h(!err\){)569
+3038 y(err)f(=)h(fscan_int\()e(f,)i(&l_n)f(\);)445 3104
+y(})445 3171 y(*p)h(=)61 b(\(expr\))30 b(new_ExprConst\()g(l_n)g(\);)
+322 3237 y(})322 3304 y(else)g(if\()g(strcmp\()g(tm_word,)g
+("ExprSymbol")g(\))g(==)h(0)g(\){)445 3370 y(tmstring)f(l_s;)445
+3503 y(l_s)h(=)f(tmstringNIL;)445 3569 y(if\()h(!err\){)569
+3636 y(err)f(=)h(fscan_tmstring\()e(f,)h(&l_s)h(\);)445
+3702 y(})445 3769 y(*p)g(=)61 b(\(expr\))30 b(new_ExprSymbol\()f(l_s)i
+(\);)322 3835 y(})322 3901 y(else)f({)445 3968 y(\(void\))g(sprintf\()g
+(tm_errmsg,)g(tm_badcons,)f("expr",)h(tm_word)g(\);)445
+4034 y(return)g(1;)322 4101 y(})322 4167 y(if\()g(err)h(\){)445
+4234 y(return)f(1;)322 4300 y(})322 4366 y(return)g
+(tm_fscanclosebrac\()e(f,)j(n)g(\);)198 4433 y(})198
+4566 y(/*)g(Read)f(an)h(instance)f(of)g(a)h(list)f(of)h(datastructure)e
+(of)i(type)f(statement)291 4632 y(from)g(file)g('f')h(and)f(allocate)g
+(space)h(for)f(it.)h(Set)f(the)h(pointer)f('p')g(to)291
+4698 y(point)g(to)h(that)f(structure.)229 4765 y(*/)198
+4831 y(#ifdef)g(LOGNEW)198 4898 y(int)h(real_fscan_statement_list\()c
+(FILE)k(*f,)f(statement_list)f(*p,)i(const)f(char)g(*_f,)h(const)f(int)
+g(_l)h(\))198 4964 y(#else)198 5031 y(int)g(fscan_statement_list\()d
+(FILE)i(*f,)h(statement_list)e(*p)h(\))198 5097 y(#endif)198
+5163 y({)322 5230 y(int)g(c;)322 5296 y(int)g(n;)322
+5363 y(statement)f(nw;)322 5429 y(int)h(err)h(=)f(0;)322
+5562 y(*p)g(=)h(statement_listNIL;)322 5628 y(n)f(=)h
+(tm_fscanopenbrac\()e(f)i(\);)322 5695 y(if\()f(tm_fscanspace\()f(f)i
+(\))g(\){)445 5761 y(return)f(1;)p eop
 %%Page: 83 83
 83 82 bop 227 -28 a Fm(B.3.)55 b(GENERA)-7 b(TION)27
 b(OF)g(THE)h(TM)f(TEMPLA)-7 b(TE)27 b(FUNCTIONS)1144
-b Fn(83)805 315 y Fd(err)30 b(=)h(fscan_tmstring\()e(f,)i(&l_s)f(\);)
-681 381 y(})681 448 y(*p)h(=)62 b(\(expr\))30 b(new_ExprSymbol\()f(l_s)
-h(\);)558 514 y(})558 581 y(else)g({)681 647 y(\(void\))g(sprintf\()g
-(tm_errmsg,)g(tm_badcons,)f("expr",)h(tm_word)g(\);)681
-713 y(return)g(1;)558 780 y(})558 846 y(if\()g(err)h(\){)681
-913 y(return)f(1;)558 979 y(})558 1046 y(return)g(tm_fscanclosebrac\()f
-(f,)h(n)h(\);)434 1112 y(})434 1245 y(/*)g(Read)f(an)h(instance)f(of)g
-(a)h(list)g(of)f(datastructure)f(of)i(type)f(statement)527
-1311 y(from)g(file)h('f')f(and)h(allocate)f(space)g(for)g(it.)h(Set)f
-(the)h(pointer)f('p')g(to)527 1378 y(point)g(to)h(that)f(structure.)465
-1444 y(*/)434 1510 y(#ifdef)g(LOGNEW)434 1577 y(int)h
-(real_fscan_statement_list\()c(FILE)k(*f,)f(statement_list)f(*p,)i
-(const)f(char)h(*_f,)f(const)g(int)h(_l)f(\))434 1643
-y(#else)434 1710 y(int)h(fscan_statement_list\()d(FILE)i(*f,)h
-(statement_list)e(*p)i(\))434 1776 y(#endif)434 1843
-y({)558 1909 y(int)f(c;)558 1975 y(int)g(n;)558 2042
-y(statement)g(nw;)558 2108 y(int)g(err)h(=)g(0;)558 2241
-y(*p)f(=)h(statement_listNIL;)558 2307 y(n)g(=)f(tm_fscanopenbrac\()f
-(f)i(\);)558 2374 y(if\()f(tm_fscanspace\()f(f)i(\))g(\){)681
-2440 y(return)f(1;)558 2507 y(})558 2573 y(c)h(=)f(getc\()h(f)f(\);)558
-2640 y(if\()g(c)h(==)g('@')f(\){)681 2706 y(return)g
-(tm_fscanclosebrac\()f(f,)i(n)f(\);)558 2772 y(})558
-2839 y(ungetc\()g(c,)g(f)h(\);)558 2905 y(if\()f(tm_fneedc\()g(f,)h
-('[')f(\))h(\){)681 2972 y(return)f(1;)558 3038 y(})558
-3104 y(*p)g(=)h(new_statement_list\(\);)558 3171 y(if\()f
-(tm_fscanspace\()f(f)i(\))g(\){)681 3237 y(return)f(1;)558
-3304 y(})558 3370 y(c)h(=)f(getc\()h(f)f(\);)558 3437
-y(if\()g(c)h(==)g(']')f(\){)681 3503 y(return)g(0;)558
-3569 y(})558 3636 y(if\()g(c)h(==)g(EOF)f(\){)681 3702
+b Fn(83)558 315 y Fd(})558 381 y(c)31 b(=)f(getc\()h(f)f(\);)558
+448 y(if\()g(c)h(==)g('@')f(\){)681 514 y(return)g(tm_fscanclosebrac\()
+f(f,)i(n)f(\);)558 581 y(})558 647 y(ungetc\()g(c,)g(f)h(\);)558
+713 y(if\()f(tm_fneedc\()g(f,)h('[')f(\))h(\){)681 780
+y(return)f(1;)558 846 y(})558 913 y(*p)g(=)h(new_statement_list\(\);)
+558 979 y(if\()f(tm_fscanspace\()f(f)i(\))g(\){)681 1046
+y(return)f(1;)558 1112 y(})558 1178 y(c)h(=)f(getc\()h(f)f(\);)558
+1245 y(if\()g(c)h(==)g(']')f(\){)681 1311 y(return)g(0;)558
+1378 y(})558 1444 y(if\()g(c)h(==)g(EOF)f(\){)681 1510
 y(\(void\))g(strcpy\()g(tm_errmsg,)g(tm_badeof)g(\);)681
-3769 y(return)g(1;)558 3835 y(})558 3901 y(ungetc\()g(c,)g(f)h(\);)558
-3968 y(for\(;;\){)681 4034 y(if\()g(!err)f(\){)805 4101
-y(err)g(=)h(fscan_statement\()e(f,)i(&nw)f(\);)681 4167
-y(})681 4234 y(*p)h(=)g(append_statement_list\()d(*p,)i(nw)h(\);)681
-4300 y(if\()g(err)f(||)h(tm_fscanspace\()e(f)i(\))g(\){)805
-4366 y(return)f(1;)681 4433 y(})681 4499 y(c)h(=)g(getc\()f(f)h(\);)681
-4566 y(if\()g(c)g(==)f(EOF)h(\){)805 4632 y(\(void\))f(strcpy\()g
-(tm_errmsg,)g(tm_badeof)f(\);)805 4698 y(return)h(1;)681
-4765 y(})681 4831 y(if\()h(c)g(!=)f(',')h(\){)805 4898
-y(ungetc\()f(c,)g(f)h(\);)805 4964 y(break;)681 5031
-y(})558 5097 y(})558 5163 y(if\()f(tm_fneedc\()g(f,)h(']')f(\))h(\){)
-681 5230 y(return)f(1;)558 5296 y(})558 5363 y(return)g
-(tm_fscanclosebrac\()f(f,)h(n)h(\);)434 5429 y(})434
-5562 y(/**************************************************)465
-5628 y(*)124 b(Miscellaneous)29 b(routines)678 b(*)465
-5695 y(**************************************************/)434
-5761 y(/*)31 b(Print)f(allocation)g(and)g(freeing)g(statistics)g(to)h
-(file)f('f'.)g(*/)p eop
+1577 y(return)g(1;)558 1643 y(})558 1710 y(ungetc\()g(c,)g(f)h(\);)558
+1776 y(for\(;;\){)681 1843 y(if\()g(!err)f(\){)805 1909
+y(err)g(=)h(fscan_statement\()e(f,)i(&nw)f(\);)681 1975
+y(})681 2042 y(*p)h(=)g(append_statement_list\()d(*p,)i(nw)h(\);)681
+2108 y(if\()g(err)f(||)h(tm_fscanspace\()e(f)i(\))g(\){)805
+2175 y(return)f(1;)681 2241 y(})681 2307 y(c)h(=)g(getc\()f(f)h(\);)681
+2374 y(if\()g(c)g(==)f(EOF)h(\){)805 2440 y(\(void\))f(strcpy\()g
+(tm_errmsg,)g(tm_badeof)f(\);)805 2507 y(return)h(1;)681
+2573 y(})681 2640 y(if\()h(c)g(!=)f(',')h(\){)805 2706
+y(ungetc\()f(c,)g(f)h(\);)805 2772 y(break;)681 2839
+y(})558 2905 y(})558 2972 y(if\()f(tm_fneedc\()g(f,)h(']')f(\))h(\){)
+681 3038 y(return)f(1;)558 3104 y(})558 3171 y(return)g
+(tm_fscanclosebrac\()f(f,)h(n)h(\);)434 3237 y(})434
+3370 y(/**************************************************)465
+3437 y(*)124 b(Miscellaneous)29 b(routines)678 b(*)465
+3503 y(**************************************************/)434
+3569 y(/*)31 b(Print)f(allocation)g(and)g(freeing)g(statistics)g(to)h
+(file)f('f'.)g(*/)434 3636 y(void)h(stat_calc\()e(FILE)i(*f)f(\))434
+3702 y({)558 3769 y(fprintf\()681 3835 y(f,)681 3901
+y(tm_allocfreed,)681 3968 y("ExprConst",)681 4034 y(newcnt_ExprConst,)
+681 4101 y(frecnt_ExprConst,)681 4167 y
+(\(\(newcnt_ExprConst==frecnt_ExprConst\)?)c("":)31 b("<-"\))558
+4234 y(\);)558 4300 y(fprintf\()681 4366 y(f,)681 4433
+y(tm_allocfreed,)681 4499 y("ExprNegate",)681 4566 y
+(newcnt_ExprNegate,)681 4632 y(frecnt_ExprNegate,)681
+4698 y(\(\(newcnt_ExprNegate==frecnt_ExprNegate\)?)26
+b("":)31 b("<-"\))558 4765 y(\);)558 4831 y(fprintf\()681
+4898 y(f,)681 4964 y(tm_allocfreed,)681 5031 y("ExprPlus",)681
+5097 y(newcnt_ExprPlus,)681 5163 y(frecnt_ExprPlus,)681
+5230 y(\(\(newcnt_ExprPlus==frecnt_ExprPlus\)?)c("":)j("<-"\))558
+5296 y(\);)558 5363 y(fprintf\()681 5429 y(f,)681 5496
+y(tm_allocfreed,)681 5562 y("ExprSymbol",)681 5628 y
+(newcnt_ExprSymbol,)681 5695 y(frecnt_ExprSymbol,)681
+5761 y(\(\(newcnt_ExprSymbol==frecnt_ExprSymbol\)?)c("":)31
+b("<-"\))p eop
 %%Page: 84 84
 84 83 bop -9 -28 a Fn(84)588 b Fm(APPENDIX)28 b(B.)55
 b(AN)28 b(EXAMPLE)f(PR)n(OJECT:)f(EXPRESSION)g(OPTIMIZA)-7
-b(TION)198 315 y Fd(void)30 b(stat_calc\()g(FILE)g(*f)h(\))198
-381 y({)322 448 y(fprintf\()445 514 y(f,)445 581 y(tm_allocfreed,)445
-647 y("ExprConst",)445 713 y(newcnt_ExprConst,)445 780
-y(frecnt_ExprConst,)445 846 y
-(\(\(newcnt_ExprConst==frecnt_ExprConst\)?)26 b("":)31
-b("<-"\))322 913 y(\);)322 979 y(fprintf\()445 1046 y(f,)445
-1112 y(tm_allocfreed,)445 1178 y("ExprNegate",)445 1245
-y(newcnt_ExprNegate,)445 1311 y(frecnt_ExprNegate,)445
-1378 y(\(\(newcnt_ExprNegate==frecnt_ExprNegate\)?)26
-b("":)k("<-"\))322 1444 y(\);)322 1510 y(fprintf\()445
-1577 y(f,)445 1643 y(tm_allocfreed,)445 1710 y("ExprPlus",)445
-1776 y(newcnt_ExprPlus,)445 1843 y(frecnt_ExprPlus,)445
-1909 y(\(\(newcnt_ExprPlus==frecnt_ExprPlus\)?)c("":)31
-b("<-"\))322 1975 y(\);)322 2042 y(fprintf\()445 2108
-y(f,)445 2175 y(tm_allocfreed,)445 2241 y("ExprSymbol",)445
-2307 y(newcnt_ExprSymbol,)445 2374 y(frecnt_ExprSymbol,)445
-2440 y(\(\(newcnt_ExprSymbol==frecnt_ExprSymbol\)?)26
-b("":)k("<-"\))322 2507 y(\);)322 2573 y(fprintf\()445
-2640 y(f,)445 2706 y(tm_allocfreed,)445 2772 y("ExprTimes",)445
-2839 y(newcnt_ExprTimes,)445 2905 y(frecnt_ExprTimes,)445
-2972 y(\(\(newcnt_ExprTimes==frecnt_ExprTimes\)?)c("":)31
-b("<-"\))322 3038 y(\);)322 3104 y(fprintf\()445 3171
-y(f,)445 3237 y(tm_allocfreed,)445 3304 y("statement",)445
-3370 y(newcnt_statement,)445 3437 y(frecnt_statement,)445
-3503 y(\(\(newcnt_statement==frecnt_statement\)?)26 b("":)31
-b("<-"\))322 3569 y(\);)322 3636 y(fprintf\()445 3702
-y(f,)445 3769 y(tm_allocfreed,)e("statement_list",)445
-3835 y(newcnt_statement_list,)445 3901 y(frecnt_statement_list,)445
-3968 y(\(\(newcnt_statement_list==frecnt_statement_list\)?)c("":)30
-b("<-"\))322 4034 y(\);)198 4101 y(})198 4234 y(/*)h(Return)f(-1)g(if)h
+b(TION)322 315 y Fd(\);)322 381 y(fprintf\()445 448 y(f,)445
+514 y(tm_allocfreed,)445 581 y("ExprTimes",)445 647 y
+(newcnt_ExprTimes,)445 713 y(frecnt_ExprTimes,)445 780
+y(\(\(newcnt_ExprTimes==frecnt_ExprTimes\)?)26 b("":)31
+b("<-"\))322 846 y(\);)322 913 y(fprintf\()445 979 y(f,)445
+1046 y(tm_allocfreed,)445 1112 y("statement",)445 1178
+y(newcnt_statement,)445 1245 y(frecnt_statement,)445
+1311 y(\(\(newcnt_statement==frecnt_statement\)?)26 b("":)31
+b("<-"\))322 1378 y(\);)322 1444 y(fprintf\()445 1510
+y(f,)445 1577 y(tm_allocfreed,)e("statement_list",)445
+1643 y(newcnt_statement_list,)445 1710 y(frecnt_statement_list,)445
+1776 y(\(\(newcnt_statement_list==frecnt_statement_list\)?)c("":)30
+b("<-"\))322 1843 y(\);)198 1909 y(})198 2042 y(/*)h(Return)f(-1)g(if)h
 (there)f(is)h(a)g(structure)e(that)i(has)f(freed)h(more)f(than)g
-(allocated,)g(or)229 4300 y(*)h(else)f(return)g(1)h(if)g(there)f(is)g
+(allocated,)g(or)229 2108 y(*)h(else)f(return)g(1)h(if)g(there)f(is)g
 (a)h(structure)f(that)g(has)h(been)f(freed)g(less)h(than)229
-4366 y(*)g(allocated,)e(or)i(else)f(return)g(0.)229 4433
-y(*/)198 4499 y(int)h(get_balance_calc\()d(void)j(\))198
-4566 y({)322 4632 y(int)f(res;)322 4765 y(res)g(=)h(0;)322
-4831 y(/*)f(Check)g(for)h(too)f(many)h(fre\(\)s.)f(*/)322
-4898 y(if\()g(newcnt_statement_list<frecnt_statement_list)c(\){)445
-4964 y(return)k(-1;)322 5031 y(})322 5097 y(if\()g
-(newcnt_ExprConst<frecnt_ExprConst)d(\){)445 5163 y(return)j(-1;)322
-5230 y(})322 5296 y(if\()g(newcnt_ExprNegate<frecnt_ExprNegate)d(\){)
-445 5363 y(return)j(-1;)322 5429 y(})322 5496 y(if\()g
-(newcnt_ExprPlus<frecnt_ExprPlus)d(\){)445 5562 y(return)j(-1;)322
-5628 y(})322 5695 y(if\()g(newcnt_ExprSymbol<frecnt_ExprSymbol)d(\){)
-445 5761 y(return)j(-1;)p eop
+2175 y(*)g(allocated,)e(or)i(else)f(return)g(0.)229 2241
+y(*/)198 2307 y(int)h(get_balance_calc\()d(void)j(\))198
+2374 y({)322 2440 y(int)f(res;)322 2573 y(res)g(=)h(0;)322
+2640 y(/*)f(Check)g(for)h(too)f(many)h(fre\(\)s.)f(*/)322
+2706 y(if\()g(newcnt_statement_list<frecnt_statement_list)c(\){)445
+2772 y(return)k(-1;)322 2839 y(})322 2905 y(if\()g
+(newcnt_ExprConst<frecnt_ExprConst)d(\){)445 2972 y(return)j(-1;)322
+3038 y(})322 3104 y(if\()g(newcnt_ExprNegate<frecnt_ExprNegate)d(\){)
+445 3171 y(return)j(-1;)322 3237 y(})322 3304 y(if\()g
+(newcnt_ExprPlus<frecnt_ExprPlus)d(\){)445 3370 y(return)j(-1;)322
+3437 y(})322 3503 y(if\()g(newcnt_ExprSymbol<frecnt_ExprSymbol)d(\){)
+445 3569 y(return)j(-1;)322 3636 y(})322 3702 y(if\()g
+(newcnt_ExprTimes<frecnt_ExprTimes)d(\){)445 3769 y(return)j(-1;)322
+3835 y(})322 3901 y(if\()g(newcnt_statement<frecnt_statement)d(\){)445
+3968 y(return)j(-1;)322 4034 y(})322 4101 y(/*)g(Check)g(for)h(too)f
+(few)h(fre\(\)s.)f(*/)322 4167 y(if\()g
+(newcnt_statement_list>frecnt_statement_list)c(\){)445
+4234 y(res)31 b(=)f(1;)322 4300 y(})322 4366 y(if\()g
+(newcnt_ExprConst>frecnt_ExprConst)d(\){)445 4433 y(res)k(=)f(1;)322
+4499 y(})322 4566 y(if\()g(newcnt_ExprNegate>frecnt_ExprNegate)d(\){)
+445 4632 y(res)k(=)f(1;)322 4698 y(})322 4765 y(if\()g
+(newcnt_ExprPlus>frecnt_ExprPlus)d(\){)445 4831 y(res)k(=)f(1;)322
+4898 y(})322 4964 y(if\()g(newcnt_ExprSymbol>frecnt_ExprSymbol)d(\){)
+445 5031 y(res)k(=)f(1;)322 5097 y(})322 5163 y(if\()g
+(newcnt_ExprTimes>frecnt_ExprTimes)d(\){)445 5230 y(res)k(=)f(1;)322
+5296 y(})322 5363 y(if\()g(newcnt_statement>frecnt_statement)d(\){)445
+5429 y(res)k(=)f(1;)322 5496 y(})322 5562 y(return)g(res;)198
+5628 y(})198 5761 y(/*)h(----)f(end)h(of)f(/usr/local/lib/tmc.ct)e
+(----)j(*/)p eop
 %%Page: 85 85
 85 84 bop 227 -28 a Fm(B.3.)64 b(GENERA)-7 b(TION)27
 b(OF)h(THE)f(TM)h(TEMPLA)-7 b(TE)26 b(FUNCTIONS)1135
-b Fn(85)558 315 y Fd(})558 381 y(if\()30 b
-(newcnt_ExprTimes<frecnt_ExprTimes)d(\){)681 448 y(return)j(-1;)558
-514 y(})558 581 y(if\()g(newcnt_statement<frecnt_statement)d(\){)681
-647 y(return)j(-1;)558 713 y(})558 780 y(/*)g(Check)h(for)f(too)h(many)
-f(fre\(\)s.)g(*/)558 846 y(if\()g
-(newcnt_statement_list>frecnt_statement_list)c(\){)681
-913 y(res)31 b(=)g(1;)558 979 y(})558 1046 y(if\()f
-(newcnt_ExprConst>frecnt_ExprConst)d(\){)681 1112 y(res)k(=)g(1;)558
-1178 y(})558 1245 y(if\()f(newcnt_ExprNegate>frecnt_ExprNegate)d(\){)
-681 1311 y(res)k(=)g(1;)558 1378 y(})558 1444 y(if\()f
-(newcnt_ExprPlus>frecnt_ExprPlus)d(\){)681 1510 y(res)k(=)g(1;)558
-1577 y(})558 1643 y(if\()f(newcnt_ExprSymbol>frecnt_ExprSymbol)d(\){)
-681 1710 y(res)k(=)g(1;)558 1776 y(})558 1843 y(if\()f
-(newcnt_ExprTimes>frecnt_ExprTimes)d(\){)681 1909 y(res)k(=)g(1;)558
-1975 y(})558 2042 y(if\()f(newcnt_statement>frecnt_statement)d(\){)681
-2108 y(res)k(=)g(1;)558 2175 y(})558 2241 y(return)f(res;)434
-2307 y(})434 2440 y(/*)h(----)f(end)h(of)f(/usr/local/lib/tmc.ct)f
-(----)h(*/)434 2507 y(/*)h(Code)f(generation)g(required)g(150)g
+b Fn(85)434 315 y Fd(/*)31 b(Code)f(generation)g(required)g(170)g
 (milliseconds.)g(*/)p eop
 %%Page: 86 86
 86 85 bop -9 -28 a Fn(86)588 b Fm(APPENDIX)28 b(B.)55
