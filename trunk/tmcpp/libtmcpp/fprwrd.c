@@ -12,7 +12,7 @@
 #include "tmcpp.h"
 
 /* definition of 'fprint' for a 'tmword' */
-void fprint_tmword( FILE *f, const char *s )
+void fprint_tmword( FILE *f, const tmconstword s )
 {
     if( s == 0 ){
 	fputs( "@", f );
