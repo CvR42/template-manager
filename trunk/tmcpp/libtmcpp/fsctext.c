@@ -46,7 +46,7 @@ int fscan_tmtext( FILE *f, tmtext **s )
 	    if( tm_fscanescapedchar( f, &c ) ){
 		return 1;
 	    }
-	    putc_tmtext( c, *s );
+	    putc_tmtext( (char) c, *s );
 	}
     }
     return tm_fscanclosebrac( f, brac );

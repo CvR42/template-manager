@@ -20,7 +20,7 @@ tmtext *tmtext::append( const tmtext *nw )
 // Given a string 's', append 's'.
 tmtext *tmtext::append( const char *s )
 {
-    size_t s_sz = strlen( s );
+    size_type s_sz = (size_type) strlen( s );
 
     reserve( sz+s_sz );
     copyblock( arr+sz, s, s_sz );

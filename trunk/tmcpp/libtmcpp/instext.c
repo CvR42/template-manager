@@ -14,13 +14,10 @@
  * appended. If 'pos' is negative, it is assumed that the
  * text must be inserted at the start.
  */
-tmtext *tmtext::insert( const long pos_parm, const tmtext *nw )
+tmtext *tmtext::insert( const size_type pos_parm, const tmtext *nw )
 {
-    long pos = pos_parm;
+    size_type pos = pos_parm;
 
-    if( pos<0 ){
-	pos = 0;
-    }
     if( pos>sz ){
 	pos = sz;
     }
@@ -35,10 +32,10 @@ tmtext *tmtext::insert( const long pos_parm, const tmtext *nw )
  * appended. If 'pos' is negative, it is assumed that the
  * text must be inserted at the start.
  */
-tmtext *tmtext::insert( const long pos_parm, const char *s )
+tmtext *tmtext::insert( const size_type pos_parm, const char *s )
 {
-    long pos = pos_parm;
-    size_t s_sz = strlen( s );
+    size_type pos = pos_parm;
+    size_type s_sz = (size_type) strlen( s );
 
     if( pos<0 ){
 	pos = 0;
@@ -57,9 +54,9 @@ tmtext *tmtext::insert( const long pos_parm, const char *s )
  * appended. If 'pos' is negative, it is assumed that the
  * char must be inserted at the start.
  */
-tmtext *tmtext::insert( const long pos_parm, const char c )
+tmtext *tmtext::insert( const size_type pos_parm, const char c )
 {
-    long pos = pos_parm;
+    size_type pos = pos_parm;
 
     if( pos<0 ){
 	pos = 0;

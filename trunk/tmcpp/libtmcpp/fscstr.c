@@ -52,7 +52,7 @@ int fscan_tmstring_nolognew( FILE *f, tmstring *s )
 	    sz += sz+1;
 	    buf = realloc_tmstring_nolognew( buf, sz );
 	}
-	buf[ix++] = c;
+	buf[ix++] = (char) c;
     }
     buf[ix] = '\0';
     *s = buf;

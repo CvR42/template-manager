@@ -11,19 +11,19 @@
 /* Given a position 'pos' and a size 'blk_sz', make room for 'blk_sz'
  * characters in the ext, starting at position 'pos'.
  */
-void tmtext::insblock( const long pos, const long blk_sz )
+void tmtext::insblock( const size_type pos, const size_type blk_sz )
 {
     reserve( sz+blk_sz );
-    long z = sz-pos;
-    if( z<=0 ){
+    if( pos>= sz ){
 	// The chars are to be inserted at the end of the tmtext
 	sz += blk_sz;
 	return;
     }
+    size_type z = sz-pos;
 #if HAVE_MEMMOVE
     char *s = arr+pos;
     char *d = arr+pos+blk_sz;
-    memmove( d, s, z );
+    memmove( d, s, (unsigned int) z );
 #else
     char *s = arr+sz;
     char *d = arr+sz+blk_sz;
