@@ -1160,6 +1160,12 @@ static void doswitch( const Switch tpl, FILE *outfile )
     sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz != 1 ){
+	if( sl->sz == 0 ){
+	    strcpy( errarg, "it has no parameters" );
+	}
+	else {
+	    sprintf( errarg, "it has %u parameters", sl->sz );
+	}
 	line_error( "A switch command requires exactly one parameter" );
 	rfre_tmstring_list( sl );
 	return;

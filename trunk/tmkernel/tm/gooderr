@@ -3,7 +3,7 @@ testin: second .default block ignored
 testin: variable not found: iserniet
 testin: missing close bracket: ')'
 testin: no case matches, and there is no .default: value 'bla'
-testin: A switch command requires exactly one parameter
+testin: A switch command requires exactly one parameter: it has 2 parameters
 testsub: variable not found: blablabla
 testsub: variable not found: blablabla
 
