@@ -33,6 +33,56 @@
 #include "var.h"
 #include "srchfile.h"
 
+/* Forward declarations. */
+static Type_list update_reach_Type( Type_list tl, bool *visited, const Type t );
+
+/* Given a list of types, return a list of strings representing these
+ * types.
+ */
+static tmstring make_typename( const char *pre, const char *suff, const Type t )
+{
+    return mklistnm( pre, t->basetype, suff, t->level );
+}
+
+/* Given a list of types, return a list of strings representing these
+ * types.
+ */
+static tmstring_list make_typename_list( const Type_list tl )
+{
+    unsigned int ix;
+    tmstring_list sl;
+    const char *pre;
+    const char *suff;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    sl = setroom_tmstring_list( new_tmstring_list(), tl->sz );
+    for( ix=0; ix<tl->sz; ix++ ){
+	sl = append_tmstring_list( sl, make_typename( pre, suff, tl->arr[ix] ) );
+    }
+    return sl;
+}
+
+
+/* Given a list of types, return a list of strings representing these
+ * types.
+ */
+static tmstring flat_Type_list( const Type_list tl )
+{
+    tmstring_list sl = make_typename_list( tl );
+    tmstring ans;
+
+    ans = flatstrings( sl );
+    rfre_tmstring_list( sl );
+    return ans;
+}
+
 /***************************************************************
  *   tm functions                                              *
  ***************************************************************/
@@ -1566,22 +1616,25 @@ static tmstring fnmetatype( const tmstring_list sl )
 /* Given a type, return the alias of the type, or the original if
  * it doesn't have one.
  */
-static tmstring calc_alias( const tmstring type )
+static tmstring calc_alias( const char *pre, const char *suff, const tmstring type )
 {
     unsigned int ix;
 
     ix = find_type_ix( allds, type );
     if( ix<allds->sz ){
 	ds d = allds->arr[ix];
+	Type t;
+	tmstring tnm;
+	tmstring res;
 
 	if( d->tag != TAGDsAlias ){
 	    return rdup_tmstring( type );
 	}
-	if( d->inherits->sz != 1 ){
-	    assert( FALSE );
-	    return rdup_tmstring( type );
-	}
-	return calc_alias( d->inherits->arr[0] );
+	t = to_DsAlias( d )->type;
+	tnm = calc_alias( pre, suff, t->basetype );
+	res = mklistnm( pre, tnm, suff, t->level );
+	rfre_tmstring( tnm );
+	return res;
     }
     return rdup_tmstring( type );
 }
@@ -1592,12 +1645,22 @@ static tmstring fnalias( const tmstring_list sl )
     unsigned int ix;
     tmstring_list res;
     tmstring ans;
+    const char *pre;
+    const char *suff;
 
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
     res = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	res = append_tmstring_list(
 	    res,
-	    calc_alias( sl->arr[ix] )
+	    calc_alias( pre, suff, sl->arr[ix] )
 	);
     }
     ans = flatstrings( res );
@@ -1716,19 +1779,19 @@ static tmstring fnfields( const tmstring_list sl )
  */
 static tmstring fntypename( const tmstring_list sl )
 {
-    field e;
+    Field e;
 
     if( sl->sz != 2 ){
 	line_error( "'ttypename' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, sl->arr[0], sl->arr[1] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return new_tmstring( e->type );
+    return new_tmstring( e->type->basetype );
 }
 
 /* Given a type name and element name, return the
@@ -1738,19 +1801,19 @@ static tmstring fntypename( const tmstring_list sl )
  */
 static tmstring fnttypeclass( const tmstring_list sl )
 {
-    field e;
+    Field e;
 
     if( sl->sz != 2 ){
 	line_error( "'fieldtypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, sl->arr[0], sl->arr[1] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return new_tmstring( ( e->level != 0 ? "list" : "single" ) );
+    return new_tmstring( ( e->type->level != 0 ? "list" : "single" ) );
 }
 
 /* Given a type name and element name, return the
@@ -1758,25 +1821,25 @@ static tmstring fnttypeclass( const tmstring_list sl )
  */
 static tmstring fntypelevel( const tmstring_list sl )
 {
-    field e;
+    Field e;
 
     if( sl->sz != 2 ){
 	line_error( "'typelevel' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, sl->arr[0], sl->arr[1] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return newuintstr( e->level );
+    return newuintstr( e->type->level );
 }
 
 /* Given a list of types, return the types of the fields of these types,
  * and the list of types they inherit from.
- * Unknown alltypes are ignored.
- * List alltypes for the fields are constructed with LISTPRE and LISTSIFF.
+ * Unknown types are ignored.
+ * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
 static tmstring fnalltypes( const tmstring_list tl )
 {
@@ -1802,15 +1865,15 @@ static tmstring fnalltypes( const tmstring_list tl )
 
 	collect_all_fields( &fields, allds, tnm );
 	for( fix=0; fix<fields->sz; fix++ ){
-	    const field e = find_field( allds, tnm, fields->arr[fix] );
+	    const Field e = find_field( allds, tnm, fields->arr[fix] );
 
 	    /* Since we only enumerate the fields we know exist for this
 	     * type, this should never fail.
 	     */
-	    assert( e != fieldNIL );
+	    assert( e != FieldNIL );
 	    nl = append_tmstring_list(
 		nl,
-		mklistnm( pre, e->type, suff, e->level )
+		make_typename( pre, suff, e->type )
 	    );
 	}
 	rfre_tmstring_list( fields );
@@ -1824,30 +1887,20 @@ static tmstring fnalltypes( const tmstring_list tl )
  * Unknown types are ignored.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fntypes( const tmstring_list tl )
+static tmstring fntypes( const tmstring_list pl )
 {
-    const char *pre;
-    const char *suff;
     unsigned int tix;
-    tmstring_list nl;
+    Type_list tl;
     tmstring ans;
 
-    pre = getvar( LISTPRE );
-    if( pre == CHARNIL ){
-	pre = "";
-    }
-    suff = getvar( LISTSUFF );
-    if( suff == CHARNIL ){
-	suff = "";
-    }
-    nl = new_tmstring_list();
-    for( tix=0; tix<tl->sz; tix++ ){
-	const tmstring tnm = tl->arr[tix];
+    tl = new_Type_list();
+    for( tix=0; tix<pl->sz; tix++ ){
+	const tmstring tnm = pl->arr[tix];
 	const unsigned int ix = find_type_ix( allds, tnm );
 
 	if( ix<allds->sz ){
 	    const ds d = allds->arr[ix];
-	    field_list fl = field_listNIL;
+	    Field_list fl = Field_listNIL;
 
 	    switch( d->tag ){
 		case TAGDsConstructorBase:
@@ -1869,22 +1922,137 @@ static tmstring fntypes( const tmstring_list tl )
 		    break;
 
 	    }
-	    if( fl != field_listNIL ){
+	    if( fl != Field_listNIL ){
 		unsigned int fix;
 
 		for( fix=0; fix<fl->sz; fix++ ){
-		    field e = fl->arr[fix];
-
-		    nl = append_tmstring_list(
-			nl,
-			mklistnm( pre, e->type, suff, e->level )
-		    );
+		    tl = append_Type_list( tl, rdup_Type( fl->arr[fix]->type ) );
 		}
 	    }
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flat_Type_list( tl );
+    rfre_Type_list( tl );
+    return ans;
+}
+
+/* Given a list of types 'tl', and a type 't', add it to the list. */
+static Type_list add_Type_list( Type_list tl, Type t )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<tl->sz; ix++ ){
+	const Type lt = tl->arr[ix];
+
+	if( lt->level == t->level && strcmp( lt->basetype, t->basetype ) == 0 ){
+	    rfre_Type( t );
+	    return tl;
+	}
+    }
+    return append_Type_list( tl, t );
+}
+
+/* Given a list of type 'tl', an array of 'visited' flags and a type name,
+ * update the list of types with the reach of this type.
+ */
+static Type_list update_reach( Type_list tl, bool *visited, tmstring tnm )
+{
+    const unsigned int ix = find_type_ix( allds, tnm );
+    Type t;
+
+    if( ix<allds->sz ){
+	unsigned int tix;
+	tmstring_list inheritors;
+	const ds d = allds->arr[ix];
+	tmstring_list fieldnames;
+
+	if( visited[ix] ){
+	    /* Been there, done that, got the T-shirt. */
+	    return tl;
+	}
+	visited[ix] = TRUE;
+	inheritors = new_tmstring_list();
+	collect_inheritors( &inheritors, allds, tnm );
+	for( tix=0; tix<inheritors->sz; tix++ ){
+	    tl = update_reach( tl, visited, inheritors->arr[tix] );
+	}
+	rfre_tmstring_list( inheritors );
+	fieldnames = new_tmstring_list();
+	collect_all_fields( &fieldnames, allds, tnm );
+	for( tix=0; tix<fieldnames->sz; tix++ ){
+	    Field f = find_field( allds, tnm, fieldnames->arr[tix] );
+
+	    if( f != FieldNIL ){
+		tl = update_reach_Type( tl, visited, f->type );
+	    }
+	}
+	rfre_tmstring_list( fieldnames );
+	switch( d->tag ){
+	    case TAGDsAlias:
+		tl = update_reach_Type( tl, visited, to_DsAlias(d)->type );
+		break;
+
+	    case TAGDsConstructorBase:
+	    case TAGDsTuple:
+	    case TAGDsClass:
+	    case TAGDsConstructor:
+		break;
+
+	}
+    }
+    t = new_Type( 0, rdup_tmstring( tnm ) );
+    tl = add_Type_list( tl, t );
+    return tl;
+}
+
+/* Given a list of type 'tl', an array of 'visited' flags and a type 't',
+ * update the list of types with the reach of this type.
+ */
+static Type_list update_reach_Type( Type_list tl, bool *visited, const Type t )
+{
+    unsigned int level;
+
+    for( level=1; level<=t->level; level++ ){
+	Type dt = rdup_Type( t );
+
+	dt->level = level;
+	tl = add_Type_list( tl, dt );
+    }
+    tl = update_reach( tl, visited, t->basetype );
+    return tl;
+}
+
+/* Given a list of types, return the reach of each of these types.
+ * Unknown types have only themselves as reach.
+ * List types have themselves as reach, plus the reach of their element type.
+ * All other types have themselves as reach, plus the reach of the
+ * subclasses of the type, and the fields (including inherited ones) of
+ * the type.
+ * List types for the fields are constructed with LISTPRE and LISTSIFF.
+ */
+static tmstring fnreach( const tmstring_list pl )
+{
+    unsigned int ix;
+    Type_list tl;
+    tmstring ans;
+    bool *visited;
+    unsigned int sz;
+
+    sz = allds->sz;
+    tl = new_Type_list();
+    visited = TM_MALLOC( bool *, sizeof(bool)*sz );
+    if( visited == NULL ){                          
+        return new_tmstring( "" );
+    }
+    for( ix=0; ix<sz; ix++ ){
+        visited[ix] = FALSE;
+    }
+    for( ix=0; ix<pl->sz; ix++ ){
+	tl = update_reach( tl, visited, pl->arr[ix] );
+    }
+    TM_FREE( visited );          
+    ans = flat_Type_list( tl );
+    rfre_Type_list( tl );
     return ans;
 }
 
@@ -1893,7 +2061,7 @@ static tmstring fntypes( const tmstring_list tl )
  */
 static tmstring fntype( const tmstring_list sl )
 {
-    field e;
+    Field e;
     const char *pre;
     const char *suff;
 
@@ -1902,7 +2070,7 @@ static tmstring fntype( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     e = find_field( allds, sl->arr[0], sl->arr[1] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
@@ -1915,7 +2083,7 @@ static tmstring fntype( const tmstring_list sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    return mklistnm( pre, e->type, suff, e->level );
+    return make_typename( pre, suff, e->type );
 }
 
 /* construct a list of constructors for the given types */
@@ -1986,7 +2154,7 @@ static tmstring fnctypename( const tmstring_list sl )
 {
     ds d;
     tmstring_list cl;
-    field e;
+    Field e;
 
     if( sl->sz != 3 ){
 	line_error( "'ctypename' requires a type, a constructor and a field name" );
@@ -2005,12 +2173,12 @@ static tmstring fnctypename( const tmstring_list sl )
 	line_error( "not a member of this constructor type" );
     }
     e = find_field( allds, sl->arr[1], sl->arr[2] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in constructor '%s'", sl->arr[2], sl->arr[1] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return new_tmstring( e->type );
+    return new_tmstring( e->type->basetype );
 }
 
 /* given a type name, constructor name and element name, return the
@@ -2024,7 +2192,7 @@ static tmstring fnctypeclass( const tmstring_list sl )
 {
     ds d;
     tmstring_list cl;
-    field e;
+    Field e;
 
     if( sl->sz != 3 ){
 	line_error( "'ctypeclass' requires a type, a constructor and a field name" );
@@ -2043,12 +2211,12 @@ static tmstring fnctypeclass( const tmstring_list sl )
 	line_error( "not a member of this constructor type" );
     }
     e = find_field( allds, sl->arr[1], sl->arr[2] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return new_tmstring( ( e->level!=0 ? "list" : "single" ) );
+    return new_tmstring( ( e->type->level!=0 ? "list" : "single" ) );
 }
 
 /* given a type name, constructor name and element name, return the
@@ -2059,7 +2227,7 @@ static tmstring fnctypellev( const tmstring_list sl )
 {
     ds d;
     tmstring_list cl;
-    field e;
+    Field e;
 
     if( sl->sz != 3 ){
 	line_error( "'ctypellev' requires a type, a constructor and a field name" );
@@ -2078,12 +2246,12 @@ static tmstring fnctypellev( const tmstring_list sl )
 	line_error( "not a member of this constructor type" );
     }
     e = find_field( allds, sl->arr[1], sl->arr[2] );
-    if( e == fieldNIL ){
+    if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return newuintstr( e->level );
+    return newuintstr( e->type->level );
 }
 
 /* Given a type name 't' and a list of types 'tl', return 'TRUE' if
@@ -2128,15 +2296,24 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 	    break;
 
 	case TAGDsAlias:
+	{
+	    Type t = to_DsAlias(d)->type;
+
+	    if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
+		return TRUE;
+	    }
 	    break;
+	}
 
 	case TAGDsTuple:
 	{
-	    field_list fl = to_DsTuple(d)->fields;
+	    Field_list fl = to_DsTuple(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
-		field e = fl->arr[ix];
-		if( e->level==0 && member_tmstring_list( e->type, tl ) ){
+		const Field e = fl->arr[ix];
+		const Type t = e->type;
+
+		if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2145,11 +2322,13 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsClass:
 	{
-	    field_list fl = to_DsClass(d)->fields;
+	    Field_list fl = to_DsClass(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
-		field e = fl->arr[ix];
-		if( e->level==0 && member_tmstring_list( e->type, tl ) ){
+		const Field e = fl->arr[ix];
+		const Type t = e->type;
+
+		if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2158,11 +2337,13 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsConstructor:
 	{
-	    field_list fl = to_DsConstructor(d)->fields;
+	    const Field_list fl = to_DsConstructor(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
-		field e = fl->arr[ix];
-		if( e->level==0 && member_tmstring_list( e->type, tl ) ){
+		const Field e = fl->arr[ix];
+		const Type t = e->type;
+
+		if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2637,6 +2818,7 @@ static struct fnentry fntab[] = {
      { "or", fnor },
      { "prefix", fnprefix },
      { "processortime", fnprocessortime },
+     { "reach", fnreach },
      { "rev", fnrev },
      { "rmlist", fnrmlist },
      { "searchfile", fnsearchfile },

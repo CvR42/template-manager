@@ -26,7 +26,7 @@
    template file:      /usr/local/lib/tmc.ct
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta14
+   tm kernel version:  2.0-beta15
  */
 
 #ifndef FIRSTROOM
@@ -34,12 +34,13 @@
 #endif
 
 /* Counters for allocation and freeing. */
+static long newcnt_Field_list = 0, frecnt_Field_list = 0;
+static long newcnt_Switchcase_list = 0, frecnt_Switchcase_list = 0;
+static long newcnt_Type_list = 0, frecnt_Type_list = 0;
 static long newcnt_alternative_list = 0, frecnt_alternative_list = 0;
 static long newcnt_classComponent_list = 0, frecnt_classComponent_list = 0;
 static long newcnt_ds_list = 0, frecnt_ds_list = 0;
-static long newcnt_field_list = 0, frecnt_field_list = 0;
 static long newcnt_macro_list = 0, frecnt_macro_list = 0;
-static long newcnt_switchcase_list = 0, frecnt_switchcase_list = 0;
 static long newcnt_tmstring_list = 0, frecnt_tmstring_list = 0;
 static long newcnt_tplelm_list = 0, frecnt_tplelm_list = 0;
 static long newcnt_var_list = 0, frecnt_var_list = 0;
@@ -60,6 +61,7 @@ static long newcnt_DsConstructorBase = 0, frecnt_DsConstructorBase = 0;
 static long newcnt_DsTuple = 0, frecnt_DsTuple = 0;
 static long newcnt_Error = 0, frecnt_Error = 0;
 static long newcnt_Exit = 0, frecnt_Exit = 0;
+static long newcnt_Field = 0, frecnt_Field = 0;
 static long newcnt_Foreach = 0, frecnt_Foreach = 0;
 static long newcnt_GlobalAppend = 0, frecnt_GlobalAppend = 0;
 static long newcnt_GlobalSet = 0, frecnt_GlobalSet = 0;
@@ -73,11 +75,11 @@ static long newcnt_Rename = 0, frecnt_Rename = 0;
 static long newcnt_Return = 0, frecnt_Return = 0;
 static long newcnt_Set = 0, frecnt_Set = 0;
 static long newcnt_Switch = 0, frecnt_Switch = 0;
+static long newcnt_Switchcase = 0, frecnt_Switchcase = 0;
+static long newcnt_Type = 0, frecnt_Type = 0;
 static long newcnt_While = 0, frecnt_While = 0;
 static long newcnt_alternative = 0, frecnt_alternative = 0;
-static long newcnt_field = 0, frecnt_field = 0;
 static long newcnt_macro = 0, frecnt_macro = 0;
-static long newcnt_switchcase = 0, frecnt_switchcase = 0;
 static long newcnt_var = 0, frecnt_var = 0;
 
 
@@ -99,18 +101,18 @@ static char tm_nilptr[] = "NIL pointer";
  **************************************************/
 
 /* Announce that you will need room for 'rm' elements in
- *  field_list 'l'.
+ *  Field_list 'l'.
  */
-static field_list setroom_field_list( field_list l, const unsigned int rm )
+static Field_list setroom_Field_list( Field_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
 	return l;
     }
     if( l->room==0 ){
-	l->arr = TM_MALLOC( field *, rm * sizeof(*(l->arr)) );
+	l->arr = TM_MALLOC( Field *, rm * sizeof(*(l->arr)) );
     }
     else {
-	l->arr = TM_REALLOC( field *, l->arr, rm * sizeof(*(l->arr)) );
+	l->arr = TM_REALLOC( Field *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -119,7 +121,7 @@ static field_list setroom_field_list( field_list l, const unsigned int rm )
 /* Announce that you will need room for 'rm' elements in
  *  tmstring_list 'l'.
  */
-static tmstring_list setroom_tmstring_list( tmstring_list l, const unsigned int rm )
+tmstring_list setroom_tmstring_list( tmstring_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
 	return l;
@@ -153,18 +155,36 @@ static tplelm_list setroom_tplelm_list( tplelm_list l, const unsigned int rm )
 }
 
 /* Announce that you will need room for 'rm' elements in
- *  switchcase_list 'l'.
+ *  Switchcase_list 'l'.
  */
-static switchcase_list setroom_switchcase_list( switchcase_list l, const unsigned int rm )
+static Switchcase_list setroom_Switchcase_list( Switchcase_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
 	return l;
     }
     if( l->room==0 ){
-	l->arr = TM_MALLOC( switchcase *, rm * sizeof(*(l->arr)) );
+	l->arr = TM_MALLOC( Switchcase *, rm * sizeof(*(l->arr)) );
     }
     else {
-	l->arr = TM_REALLOC( switchcase *, l->arr, rm * sizeof(*(l->arr)) );
+	l->arr = TM_REALLOC( Switchcase *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need room for 'rm' elements in
+ *  Type_list 'l'.
+ */
+static Type_list setroom_Type_list( Type_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( Type *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( Type *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -286,7 +306,7 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #undef new_DeleteType
 #define new_DeleteType(lno,line) real_new_DeleteType(lno,line,_f,_l)
 #undef new_DsAlias
-#define new_DsAlias(name,inherits) real_new_DsAlias(name,inherits,_f,_l)
+#define new_DsAlias(name,inherits,type) real_new_DsAlias(name,inherits,type,_f,_l)
 #undef new_DsClass
 #define new_DsClass(name,inherits,fields,isvirtual) real_new_DsClass(name,inherits,fields,isvirtual,_f,_l)
 #undef new_DsConstructor
@@ -299,6 +319,8 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_Error(lno,str) real_new_Error(lno,str,_f,_l)
 #undef new_Exit
 #define new_Exit(lno,str) real_new_Exit(lno,str,_f,_l)
+#undef new_Field
+#define new_Field(name,type) real_new_Field(name,type,_f,_l)
 #undef new_Foreach
 #define new_Foreach(lno,felist,body) real_new_Foreach(lno,felist,body,_f,_l)
 #undef new_GlobalAppend
@@ -325,30 +347,32 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_Set(lno,line) real_new_Set(lno,line,_f,_l)
 #undef new_Switch
 #define new_Switch(lno,val,cases,deflt) real_new_Switch(lno,val,cases,deflt,_f,_l)
+#undef new_Switchcase
+#define new_Switchcase(cases,action) real_new_Switchcase(cases,action,_f,_l)
+#undef new_Type
+#define new_Type(level,basetype) real_new_Type(level,basetype,_f,_l)
 #undef new_While
 #define new_While(lno,cond,body) real_new_While(lno,cond,body,_f,_l)
 #undef new_alternative
 #define new_alternative(label,component) real_new_alternative(label,component,_f,_l)
-#undef new_field
-#define new_field(level,name,type) real_new_field(level,name,type,_f,_l)
 #undef new_macro
 #define new_macro(lvl,name,orgfile,fpl,body) real_new_macro(lvl,name,orgfile,fpl,body,_f,_l)
-#undef new_switchcase
-#define new_switchcase(cases,action) real_new_switchcase(cases,action,_f,_l)
 #undef new_var
 #define new_var(lvl,name,val) real_new_var(lvl,name,val,_f,_l)
+#undef new_Field_list
+#define new_Field_list() real_new_Field_list(_f,_l)
+#undef new_Switchcase_list
+#define new_Switchcase_list() real_new_Switchcase_list(_f,_l)
+#undef new_Type_list
+#define new_Type_list() real_new_Type_list(_f,_l)
 #undef new_alternative_list
 #define new_alternative_list() real_new_alternative_list(_f,_l)
 #undef new_classComponent_list
 #define new_classComponent_list() real_new_classComponent_list(_f,_l)
 #undef new_ds_list
 #define new_ds_list() real_new_ds_list(_f,_l)
-#undef new_field_list
-#define new_field_list() real_new_field_list(_f,_l)
 #undef new_macro_list
 #define new_macro_list() real_new_macro_list(_f,_l)
-#undef new_switchcase_list
-#define new_switchcase_list() real_new_switchcase_list(_f,_l)
 #undef new_tmstring_list
 #define new_tmstring_list() real_new_tmstring_list(_f,_l)
 #undef new_tplelm_list
@@ -356,6 +380,78 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #undef new_var_list
 #define new_var_list() real_new_var_list(_f,_l)
 #endif
+
+#ifdef LOGNEW
+Field_list real_new_Field_list( const char *_f, const int _l )
+#else
+Field_list new_Field_list( void )
+#endif
+{
+    Field_list nw;
+
+    nw = TM_MALLOC( Field_list, sizeof(*nw) );
+    nw->sz = 0;
+#if FIRSTROOM==0
+    nw->arr = (Field *) 0;
+    nw->room = 0;
+#else
+    nw->arr = TM_MALLOC( Field *, FIRSTROOM*sizeof(Field) );
+    nw->room = FIRSTROOM;
+#endif
+    newcnt_Field_list++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+Switchcase_list real_new_Switchcase_list( const char *_f, const int _l )
+#else
+Switchcase_list new_Switchcase_list( void )
+#endif
+{
+    Switchcase_list nw;
+
+    nw = TM_MALLOC( Switchcase_list, sizeof(*nw) );
+    nw->sz = 0;
+#if FIRSTROOM==0
+    nw->arr = (Switchcase *) 0;
+    nw->room = 0;
+#else
+    nw->arr = TM_MALLOC( Switchcase *, FIRSTROOM*sizeof(Switchcase) );
+    nw->room = FIRSTROOM;
+#endif
+    newcnt_Switchcase_list++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+Type_list real_new_Type_list( const char *_f, const int _l )
+#else
+Type_list new_Type_list( void )
+#endif
+{
+    Type_list nw;
+
+    nw = TM_MALLOC( Type_list, sizeof(*nw) );
+    nw->sz = 0;
+#if FIRSTROOM==0
+    nw->arr = (Type *) 0;
+    nw->room = 0;
+#else
+    nw->arr = TM_MALLOC( Type *, FIRSTROOM*sizeof(Type) );
+    nw->room = FIRSTROOM;
+#endif
+    newcnt_Type_list++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
 
 #ifdef LOGNEW
 alternative_list real_new_alternative_list( const char *_f, const int _l )
@@ -430,30 +526,6 @@ ds_list new_ds_list( void )
 }
 
 #ifdef LOGNEW
-field_list real_new_field_list( const char *_f, const int _l )
-#else
-field_list new_field_list( void )
-#endif
-{
-    field_list nw;
-
-    nw = TM_MALLOC( field_list, sizeof(*nw) );
-    nw->sz = 0;
-#if FIRSTROOM==0
-    nw->arr = (field *) 0;
-    nw->room = 0;
-#else
-    nw->arr = TM_MALLOC( field *, FIRSTROOM*sizeof(field) );
-    nw->room = FIRSTROOM;
-#endif
-    newcnt_field_list++;
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
-#ifdef LOGNEW
 macro_list real_new_macro_list( const char *_f, const int _l )
 #else
 macro_list new_macro_list( void )
@@ -471,30 +543,6 @@ macro_list new_macro_list( void )
     nw->room = FIRSTROOM;
 #endif
     newcnt_macro_list++;
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
-#ifdef LOGNEW
-switchcase_list real_new_switchcase_list( const char *_f, const int _l )
-#else
-switchcase_list new_switchcase_list( void )
-#endif
-{
-    switchcase_list nw;
-
-    nw = TM_MALLOC( switchcase_list, sizeof(*nw) );
-    nw->sz = 0;
-#if FIRSTROOM==0
-    nw->arr = (switchcase *) 0;
-    nw->room = 0;
-#else
-    nw->arr = TM_MALLOC( switchcase *, FIRSTROOM*sizeof(switchcase) );
-    nw->room = FIRSTROOM;
-#endif
-    newcnt_switchcase_list++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
 #endif
@@ -635,9 +683,9 @@ CCAlternatives new_CCAlternatives( alternative_list p_alternatives )
 
 /* Allocate a new instance of class 'CCFields'. */
 #ifdef LOGNEW
-CCFields real_new_CCFields( field_list p_fields, const char *_f, const int _l )
+CCFields real_new_CCFields( Field_list p_fields, const char *_f, const int _l )
 #else
-CCFields new_CCFields( field_list p_fields )
+CCFields new_CCFields( Field_list p_fields )
 #endif
 {
     CCFields nw;
@@ -771,9 +819,9 @@ DeleteType new_DeleteType( int p_lno, tmstring p_line )
 
 /* Allocate a new instance of class 'DsAlias'. */
 #ifdef LOGNEW
-DsAlias real_new_DsAlias( tmstring p_name, tmstring_list p_inherits, const char *_f, const int _l )
+DsAlias real_new_DsAlias( tmstring p_name, tmstring_list p_inherits, Type p_type, const char *_f, const int _l )
 #else
-DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits )
+DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits, Type p_type )
 #endif
 {
     DsAlias nw;
@@ -782,6 +830,7 @@ DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits )
     nw->tag = TAGDsAlias;
     nw->name = p_name;
     nw->inherits = p_inherits;
+    nw->type = p_type;
     newcnt_DsAlias++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -791,9 +840,9 @@ DsAlias new_DsAlias( tmstring p_name, tmstring_list p_inherits )
 
 /* Allocate a new instance of class 'DsClass'. */
 #ifdef LOGNEW
-DsClass real_new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_isvirtual, const char *_f, const int _l )
+DsClass real_new_DsClass( tmstring p_name, tmstring_list p_inherits, Field_list p_fields, tmbool p_isvirtual, const char *_f, const int _l )
 #else
-DsClass new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fields, tmbool p_isvirtual )
+DsClass new_DsClass( tmstring p_name, tmstring_list p_inherits, Field_list p_fields, tmbool p_isvirtual )
 #endif
 {
     DsClass nw;
@@ -813,9 +862,9 @@ DsClass new_DsClass( tmstring p_name, tmstring_list p_inherits, field_list p_fie
 
 /* Allocate a new instance of class 'DsConstructor'. */
 #ifdef LOGNEW
-DsConstructor real_new_DsConstructor( tmstring p_name, tmstring_list p_inherits, field_list p_fields, const char *_f, const int _l )
+DsConstructor real_new_DsConstructor( tmstring p_name, tmstring_list p_inherits, Field_list p_fields, const char *_f, const int _l )
 #else
-DsConstructor new_DsConstructor( tmstring p_name, tmstring_list p_inherits, field_list p_fields )
+DsConstructor new_DsConstructor( tmstring p_name, tmstring_list p_inherits, Field_list p_fields )
 #endif
 {
     DsConstructor nw;
@@ -855,9 +904,9 @@ DsConstructorBase new_DsConstructorBase( tmstring p_name, tmstring_list p_inheri
 
 /* Allocate a new instance of class 'DsTuple'. */
 #ifdef LOGNEW
-DsTuple real_new_DsTuple( tmstring p_name, tmstring_list p_inherits, field_list p_fields, const char *_f, const int _l )
+DsTuple real_new_DsTuple( tmstring p_name, tmstring_list p_inherits, Field_list p_fields, const char *_f, const int _l )
 #else
-DsTuple new_DsTuple( tmstring p_name, tmstring_list p_inherits, field_list p_fields )
+DsTuple new_DsTuple( tmstring p_name, tmstring_list p_inherits, Field_list p_fields )
 #endif
 {
     DsTuple nw;
@@ -908,6 +957,25 @@ Exit new_Exit( int p_lno, tmstring p_str )
     nw->lno = p_lno;
     nw->str = p_str;
     newcnt_Exit++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+/* Allocate a new instance of tuple 'Field'. */
+#ifdef LOGNEW
+Field real_new_Field( tmstring p_name, Type p_type, const char *_f, const int _l )
+#else
+Field new_Field( tmstring p_name, Type p_type )
+#endif
+{
+    Field nw;
+
+    nw = TM_MALLOC( Field, sizeof(*nw) );
+    nw->name = p_name;
+    nw->type = p_type;
+    newcnt_Field++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
 #endif
@@ -1161,9 +1229,9 @@ Set new_Set( int p_lno, tmstring p_line )
 
 /* Allocate a new instance of class 'Switch'. */
 #ifdef LOGNEW
-Switch real_new_Switch( int p_lno, tmstring p_val, switchcase_list p_cases, tplelm_list p_deflt, const char *_f, const int _l )
+Switch real_new_Switch( int p_lno, tmstring p_val, Switchcase_list p_cases, tplelm_list p_deflt, const char *_f, const int _l )
 #else
-Switch new_Switch( int p_lno, tmstring p_val, switchcase_list p_cases, tplelm_list p_deflt )
+Switch new_Switch( int p_lno, tmstring p_val, Switchcase_list p_cases, tplelm_list p_deflt )
 #endif
 {
     Switch nw;
@@ -1175,6 +1243,44 @@ Switch new_Switch( int p_lno, tmstring p_val, switchcase_list p_cases, tplelm_li
     nw->cases = p_cases;
     nw->deflt = p_deflt;
     newcnt_Switch++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+/* Allocate a new instance of tuple 'Switchcase'. */
+#ifdef LOGNEW
+Switchcase real_new_Switchcase( tmstring p_cases, tplelm_list p_action, const char *_f, const int _l )
+#else
+Switchcase new_Switchcase( tmstring p_cases, tplelm_list p_action )
+#endif
+{
+    Switchcase nw;
+
+    nw = TM_MALLOC( Switchcase, sizeof(*nw) );
+    nw->cases = p_cases;
+    nw->action = p_action;
+    newcnt_Switchcase++;
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+/* Allocate a new instance of tuple 'Type'. */
+#ifdef LOGNEW
+Type real_new_Type( uint p_level, tmstring p_basetype, const char *_f, const int _l )
+#else
+Type new_Type( uint p_level, tmstring p_basetype )
+#endif
+{
+    Type nw;
+
+    nw = TM_MALLOC( Type, sizeof(*nw) );
+    nw->level = p_level;
+    nw->basetype = p_basetype;
+    newcnt_Type++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
 #endif
@@ -1221,26 +1327,6 @@ alternative new_alternative( tmstring p_label, classComponent p_component )
     return nw;
 }
 
-/* Allocate a new instance of tuple 'field'. */
-#ifdef LOGNEW
-field real_new_field( uint p_level, tmstring p_name, tmstring p_type, const char *_f, const int _l )
-#else
-field new_field( uint p_level, tmstring p_name, tmstring p_type )
-#endif
-{
-    field nw;
-
-    nw = TM_MALLOC( field, sizeof(*nw) );
-    nw->level = p_level;
-    nw->name = p_name;
-    nw->type = p_type;
-    newcnt_field++;
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
 /* Allocate a new instance of tuple 'macro'. */
 #ifdef LOGNEW
 macro real_new_macro( uint p_lvl, tmstring p_name, tmstring p_orgfile, tmstring_list p_fpl, tplelm_list p_body, const char *_f, const int _l )
@@ -1257,25 +1343,6 @@ macro new_macro( uint p_lvl, tmstring p_name, tmstring p_orgfile, tmstring_list 
     nw->fpl = p_fpl;
     nw->body = p_body;
     newcnt_macro++;
-#ifdef LOGNEW
-    nw->lognew_id = tm_new_logid( _f, _l );
-#endif
-    return nw;
-}
-
-/* Allocate a new instance of tuple 'switchcase'. */
-#ifdef LOGNEW
-switchcase real_new_switchcase( tmstring p_cases, tplelm_list p_action, const char *_f, const int _l )
-#else
-switchcase new_switchcase( tmstring p_cases, tplelm_list p_action )
-#endif
-{
-    switchcase nw;
-
-    nw = TM_MALLOC( switchcase, sizeof(*nw) );
-    nw->cases = p_cases;
-    nw->action = p_action;
-    newcnt_switchcase++;
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
 #endif
@@ -1306,18 +1373,20 @@ var new_var( uint p_lvl, tmstring p_name, tmstring p_val )
  *    Freeing routines                            *
  **************************************************/
 
+static void fre_Field_list( Field_list );
+static void fre_Type_list( Type_list );
 static void fre_alternative_list( alternative_list );
 static void fre_classComponent_list( classComponent_list );
 static void fre_ds_list( ds_list );
-static void fre_field_list( field_list );
 static void fre_macro_list( macro_list );
 static void fre_tmstring_list( tmstring_list );
 static void fre_tplelm_list( tplelm_list );
 static void fre_var_list( var_list );
-static void fre_switchcase_list( switchcase_list );
+static void fre_Switchcase_list( Switchcase_list );
+static void fre_Type( Type );
 static void fre_macro( macro );
+static void fre_Field( Field );
 static void fre_alternative( alternative );
-static void fre_field( field );
 static void fre_var( var );
 static void fre_Append( Append );
 static void fre_Appendfile( Appendfile );
@@ -1350,7 +1419,20 @@ static void fre_Return( Return );
 static void fre_Set( Set );
 static void fre_Switch( Switch );
 static void fre_While( While );
-static void fre_switchcase( switchcase );
+static void fre_Switchcase( Switchcase );
+/* Free an element 'e' of tuple type 'Type'. */
+static void fre_Type( Type e )
+{
+    if( e == TypeNIL ){
+	return;
+    }
+    frecnt_Type++;
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+    TM_FREE( e );
+}
+
 /* Free an element 'e' of tuple type 'macro'. */
 static void fre_macro( macro e )
 {
@@ -1364,6 +1446,19 @@ static void fre_macro( macro e )
     TM_FREE( e );
 }
 
+/* Free an element 'e' of tuple type 'Field'. */
+static void fre_Field( Field e )
+{
+    if( e == FieldNIL ){
+	return;
+    }
+    frecnt_Field++;
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+    TM_FREE( e );
+}
+
 /* Free an element 'e' of tuple type 'alternative'. */
 static void fre_alternative( alternative e )
 {
@@ -1371,19 +1466,6 @@ static void fre_alternative( alternative e )
 	return;
     }
     frecnt_alternative++;
-#ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
-#endif
-    TM_FREE( e );
-}
-
-/* Free an element 'e' of tuple type 'field'. */
-static void fre_field( field e )
-{
-    if( e == fieldNIL ){
-	return;
-    }
-    frecnt_field++;
 #ifdef LOGNEW
     tm_fre_logid( e->lognew_id );
 #endif
@@ -2023,17 +2105,49 @@ static void fre_While( While e )
     }
 }
 
-/* Free an element 'e' of tuple type 'switchcase'. */
-static void fre_switchcase( switchcase e )
+/* Free an element 'e' of tuple type 'Switchcase'. */
+static void fre_Switchcase( Switchcase e )
 {
-    if( e == switchcaseNIL ){
+    if( e == SwitchcaseNIL ){
 	return;
     }
-    frecnt_switchcase++;
+    frecnt_Switchcase++;
 #ifdef LOGNEW
     tm_fre_logid( e->lognew_id );
 #endif
     TM_FREE( e );
+}
+
+/* Free a list of Field elements 'l'. */
+static void fre_Field_list( Field_list l )
+{
+    if( l == Field_listNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( l->lognew_id );
+#endif
+    frecnt_Field_list++;
+    if( l->room!=0 ){
+	TM_FREE( l->arr );
+    }
+    TM_FREE( l );
+}
+
+/* Free a list of Type elements 'l'. */
+static void fre_Type_list( Type_list l )
+{
+    if( l == Type_listNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( l->lognew_id );
+#endif
+    frecnt_Type_list++;
+    if( l->room!=0 ){
+	TM_FREE( l->arr );
+    }
+    TM_FREE( l );
 }
 
 /* Free a list of alternative elements 'l'. */
@@ -2078,22 +2192,6 @@ static void fre_ds_list( ds_list l )
     tm_fre_logid( l->lognew_id );
 #endif
     frecnt_ds_list++;
-    if( l->room!=0 ){
-	TM_FREE( l->arr );
-    }
-    TM_FREE( l );
-}
-
-/* Free a list of field elements 'l'. */
-static void fre_field_list( field_list l )
-{
-    if( l == field_listNIL ){
-	return;
-    }
-#ifdef LOGNEW
-    tm_fre_logid( l->lognew_id );
-#endif
-    frecnt_field_list++;
     if( l->room!=0 ){
 	TM_FREE( l->arr );
     }
@@ -2164,16 +2262,16 @@ static void fre_var_list( var_list l )
     TM_FREE( l );
 }
 
-/* Free a list of switchcase elements 'l'. */
-static void fre_switchcase_list( switchcase_list l )
+/* Free a list of Switchcase elements 'l'. */
+static void fre_Switchcase_list( Switchcase_list l )
 {
-    if( l == switchcase_listNIL ){
+    if( l == Switchcase_listNIL ){
 	return;
     }
 #ifdef LOGNEW
     tm_fre_logid( l->lognew_id );
 #endif
-    frecnt_switchcase_list++;
+    frecnt_Switchcase_list++;
     if( l->room!=0 ){
 	TM_FREE( l->arr );
     }
@@ -2183,6 +2281,39 @@ static void fre_switchcase_list( switchcase_list l )
 /**************************************************
  *    Append routines                             *
  **************************************************/
+
+/* Append a Field element 'e' to list 'l', and return the new list. */
+Field_list append_Field_list( Field_list l, Field e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_Field_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
+
+/* Append a Switchcase element 'e' to list 'l', and return the new list. */
+Switchcase_list append_Switchcase_list( Switchcase_list l, Switchcase e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_Switchcase_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
+
+/* Append a Type element 'e' to list 'l', and return the new list. */
+Type_list append_Type_list( Type_list l, Type e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_Type_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
 
 /* Append a alternative element 'e' to list 'l', and return the new list. */
 alternative_list append_alternative_list( alternative_list l, alternative e )
@@ -2211,28 +2342,6 @@ ds_list append_ds_list( ds_list l, ds e )
 {
     if( l->sz >= l->room ){
 	l = setroom_ds_list( l, 1+(l->sz)+(l->sz) );
-    }
-    l->arr[l->sz] = e;
-    l->sz++;
-    return l;
-}
-
-/* Append a field element 'e' to list 'l', and return the new list. */
-field_list append_field_list( field_list l, field e )
-{
-    if( l->sz >= l->room ){
-	l = setroom_field_list( l, 1+(l->sz)+(l->sz) );
-    }
-    l->arr[l->sz] = e;
-    l->sz++;
-    return l;
-}
-
-/* Append a switchcase element 'e' to list 'l', and return the new list. */
-switchcase_list append_switchcase_list( switchcase_list l, switchcase e )
-{
-    if( l->sz >= l->room ){
-	l = setroom_switchcase_list( l, 1+(l->sz)+(l->sz) );
     }
     l->arr[l->sz] = e;
     l->sz++;
@@ -2355,6 +2464,29 @@ var_list insert_var_list( var_list l, const unsigned int pos, var e )
  *    Concatenate routines                        *
  **************************************************/
 
+/* Concatenate Field list 'lb' after Field list 'la'.
+   The list descriptor of list 'lb' is freed,
+   since its contents has been moved to 'la'.
+ */
+Field_list concat_Field_list( Field_list la, Field_list lb )
+{
+    unsigned int cnt;
+    Field *sp;
+    Field *dp;
+
+    la = setroom_Field_list( la, la->sz+lb->sz );
+    cnt = lb->sz;
+    sp = lb->arr;
+    dp = &la->arr[la->sz];
+    while( cnt!=0 ){
+	*dp++ = *sp++;
+	cnt--;
+    }
+    la->sz += lb->sz;
+    fre_Field_list( lb );
+    return la;
+}
+
 /* Concatenate ds list 'lb' after ds list 'la'.
    The list descriptor of list 'lb' is freed,
    since its contents has been moved to 'la'.
@@ -2375,29 +2507,6 @@ ds_list concat_ds_list( ds_list la, ds_list lb )
     }
     la->sz += lb->sz;
     fre_ds_list( lb );
-    return la;
-}
-
-/* Concatenate field list 'lb' after field list 'la'.
-   The list descriptor of list 'lb' is freed,
-   since its contents has been moved to 'la'.
- */
-field_list concat_field_list( field_list la, field_list lb )
-{
-    unsigned int cnt;
-    field *sp;
-    field *dp;
-
-    la = setroom_field_list( la, la->sz+lb->sz );
-    cnt = lb->sz;
-    sp = lb->arr;
-    dp = &la->arr[la->sz];
-    while( cnt!=0 ){
-	*dp++ = *sp++;
-	cnt--;
-    }
-    la->sz += lb->sz;
-    fre_field_list( lb );
     return la;
 }
 
@@ -2428,9 +2537,9 @@ tmstring_list concat_tmstring_list( tmstring_list la, tmstring_list lb )
  *    Recursive freeing routines                  *
  **************************************************/
 
-static void rfre_switchcase_list( switchcase_list );
+static void rfre_Switchcase_list( Switchcase_list );
+static void rfre_Field( Field );
 static void rfre_alternative( alternative );
-static void rfre_field( field );
 static void rfre_var( var );
 static void rfre_Append( Append );
 static void rfre_Appendfile( Appendfile );
@@ -2463,7 +2572,20 @@ static void rfre_Return( Return );
 static void rfre_Set( Set );
 static void rfre_Switch( Switch );
 static void rfre_While( While );
-static void rfre_switchcase( switchcase );
+static void rfre_Switchcase( Switchcase );
+/* Recursively free an element 'e' of tuple type 'Type'
+ * and all elements in it.
+ */
+void rfre_Type( Type e )
+{
+    if( e == TypeNIL ){
+	return;
+    }
+    rfre_uint( e->level );
+    rfre_tmstring( e->basetype );
+    fre_Type( e );
+}
+
 /* Recursively free an element 'e' of class type 'classComponent'
  * and all elements in it.
  */
@@ -2646,6 +2768,19 @@ void rfre_tplelm( tplelm e )
     }
 }
 
+/* Recursively free an element 'e' of tuple type 'Field'
+ * and all elements in it.
+ */
+static void rfre_Field( Field e )
+{
+    if( e == FieldNIL ){
+	return;
+    }
+    rfre_tmstring( e->name );
+    rfre_Type( e->type );
+    fre_Field( e );
+}
+
 /* Recursively free an element 'e' of tuple type 'alternative'
  * and all elements in it.
  */
@@ -2657,20 +2792,6 @@ static void rfre_alternative( alternative e )
     rfre_tmstring( e->label );
     rfre_classComponent( e->component );
     fre_alternative( e );
-}
-
-/* Recursively free an element 'e' of tuple type 'field'
- * and all elements in it.
- */
-static void rfre_field( field e )
-{
-    if( e == fieldNIL ){
-	return;
-    }
-    rfre_uint( e->level );
-    rfre_tmstring( e->name );
-    rfre_tmstring( e->type );
-    fre_field( e );
 }
 
 /* Recursively free an element 'e' of tuple type 'var'
@@ -2757,7 +2878,7 @@ static void rfre_CCFields( CCFields e )
     }
     switch( e->tag ){
 	case TAGCCFields:
-	    rfre_field_list( e->fields );
+	    rfre_Field_list( e->fields );
 	    fre_CCFields( e );
 	    break;
 
@@ -2895,6 +3016,7 @@ static void rfre_DsAlias( DsAlias e )
 	case TAGDsAlias:
 	    rfre_tmstring( e->name );
 	    rfre_tmstring_list( e->inherits );
+	    rfre_Type( e->type );
 	    fre_DsAlias( e );
 	    break;
 
@@ -2915,7 +3037,7 @@ static void rfre_DsClass( DsClass e )
 	case TAGDsClass:
 	    rfre_tmstring( e->name );
 	    rfre_tmstring_list( e->inherits );
-	    rfre_field_list( e->fields );
+	    rfre_Field_list( e->fields );
 	    rfre_tmbool( e->isvirtual );
 	    fre_DsClass( e );
 	    break;
@@ -2937,7 +3059,7 @@ static void rfre_DsConstructor( DsConstructor e )
 	case TAGDsConstructor:
 	    rfre_tmstring( e->name );
 	    rfre_tmstring_list( e->inherits );
-	    rfre_field_list( e->fields );
+	    rfre_Field_list( e->fields );
 	    fre_DsConstructor( e );
 	    break;
 
@@ -2979,7 +3101,7 @@ static void rfre_DsTuple( DsTuple e )
 	case TAGDsTuple:
 	    rfre_tmstring( e->name );
 	    rfre_tmstring_list( e->inherits );
-	    rfre_field_list( e->fields );
+	    rfre_Field_list( e->fields );
 	    fre_DsTuple( e );
 	    break;
 
@@ -3285,7 +3407,7 @@ static void rfre_Switch( Switch e )
 	case TAGSwitch:
 	    rfre_int( e->lno );
 	    rfre_tmstring( e->val );
-	    rfre_switchcase_list( e->cases );
+	    rfre_Switchcase_list( e->cases );
 	    rfre_tplelm_list( e->deflt );
 	    fre_Switch( e );
 	    break;
@@ -3316,17 +3438,45 @@ static void rfre_While( While e )
     }
 }
 
-/* Recursively free an element 'e' of tuple type 'switchcase'
+/* Recursively free an element 'e' of tuple type 'Switchcase'
  * and all elements in it.
  */
-static void rfre_switchcase( switchcase e )
+static void rfre_Switchcase( Switchcase e )
 {
-    if( e == switchcaseNIL ){
+    if( e == SwitchcaseNIL ){
 	return;
     }
     rfre_tmstring( e->cases );
     rfre_tplelm_list( e->action );
-    fre_switchcase( e );
+    fre_Switchcase( e );
+}
+
+/* Recursively free a list of elements 'e' of type Field. */
+void rfre_Field_list( Field_list e )
+{
+    unsigned int ix;
+
+    if( e == Field_listNIL ){
+	return;
+    }
+    for( ix=0; ix<e->sz; ix++ ){
+	rfre_Field( e->arr[ix] );
+    }
+    fre_Field_list( e );
+}
+
+/* Recursively free a list of elements 'e' of type Type. */
+void rfre_Type_list( Type_list e )
+{
+    unsigned int ix;
+
+    if( e == Type_listNIL ){
+	return;
+    }
+    for( ix=0; ix<e->sz; ix++ ){
+	rfre_Type( e->arr[ix] );
+    }
+    fre_Type_list( e );
 }
 
 /* Recursively free a list of elements 'e' of type alternative. */
@@ -3369,20 +3519,6 @@ void rfre_ds_list( ds_list e )
 	rfre_ds( e->arr[ix] );
     }
     fre_ds_list( e );
-}
-
-/* Recursively free a list of elements 'e' of type field. */
-void rfre_field_list( field_list e )
-{
-    unsigned int ix;
-
-    if( e == field_listNIL ){
-	return;
-    }
-    for( ix=0; ix<e->sz; ix++ ){
-	rfre_field( e->arr[ix] );
-    }
-    fre_field_list( e );
 }
 
 /* Recursively free a list of elements 'e' of type macro. */
@@ -3441,27 +3577,28 @@ void rfre_var_list( var_list e )
     fre_var_list( e );
 }
 
-/* Recursively free a list of elements 'e' of type switchcase. */
-static void rfre_switchcase_list( switchcase_list e )
+/* Recursively free a list of elements 'e' of type Switchcase. */
+static void rfre_Switchcase_list( Switchcase_list e )
 {
     unsigned int ix;
 
-    if( e == switchcase_listNIL ){
+    if( e == Switchcase_listNIL ){
 	return;
     }
     for( ix=0; ix<e->sz; ix++ ){
-	rfre_switchcase( e->arr[ix] );
+	rfre_Switchcase( e->arr[ix] );
     }
-    fre_switchcase_list( e );
+    fre_Switchcase_list( e );
 }
 
 /**************************************************
  *    print_<type> and print_<type>_list routines *
  **************************************************/
 
-static void print_field_list( TMPRINTSTATE *st, const field_list );
+static void print_Field_list( TMPRINTSTATE *st, const Field_list );
 static void print_ds( TMPRINTSTATE *st, const ds );
-static void print_field( TMPRINTSTATE *st, const field );
+static void print_Type( TMPRINTSTATE *st, const Type );
+static void print_Field( TMPRINTSTATE *st, const Field );
 static void print_DsAlias( TMPRINTSTATE *st, const DsAlias );
 static void print_DsClass( TMPRINTSTATE *st, const DsClass );
 static void print_DsConstructor( TMPRINTSTATE *st, const DsConstructor );
@@ -3502,19 +3639,33 @@ static void print_ds( TMPRINTSTATE *st, const ds t )
     }
 }
 
-/* Print an element 't' of tuple type 'field'
+/* Print an element 't' of tuple type 'Type'
  * using print optimizer.
  */
-static void print_field( TMPRINTSTATE *st, const field t )
+static void print_Type( TMPRINTSTATE *st, const Type t )
 {
-    if( t == fieldNIL ){
+    if( t == TypeNIL ){
 	tm_printword( st, "@" );
 	return;
     }
     tm_opentuple( st );
     print_uint( st, t->level );
+    print_tmstring( st, t->basetype );
+    tm_closetuple( st );
+}
+
+/* Print an element 't' of tuple type 'Field'
+ * using print optimizer.
+ */
+static void print_Field( TMPRINTSTATE *st, const Field t )
+{
+    if( t == FieldNIL ){
+	tm_printword( st, "@" );
+	return;
+    }
+    tm_opentuple( st );
     print_tmstring( st, t->name );
-    print_tmstring( st, t->type );
+    print_Type( st, t->type );
     tm_closetuple( st );
 }
 
@@ -3533,6 +3684,7 @@ static void print_DsAlias( TMPRINTSTATE *st, const DsAlias t )
 	    tm_printword( st, "DsAlias" );
 	    print_tmstring( st, t->name );
 	    print_tmstring_list( st, t->inherits );
+	    print_Type( st, t->type );
 	    tm_closecons( st );
 	    break;
 
@@ -3556,7 +3708,7 @@ static void print_DsClass( TMPRINTSTATE *st, const DsClass t )
 	    tm_printword( st, "DsClass" );
 	    print_tmstring( st, t->name );
 	    print_tmstring_list( st, t->inherits );
-	    print_field_list( st, t->fields );
+	    print_Field_list( st, t->fields );
 	    print_tmbool( st, t->isvirtual );
 	    tm_closecons( st );
 	    break;
@@ -3581,7 +3733,7 @@ static void print_DsConstructor( TMPRINTSTATE *st, const DsConstructor t )
 	    tm_printword( st, "DsConstructor" );
 	    print_tmstring( st, t->name );
 	    print_tmstring_list( st, t->inherits );
-	    print_field_list( st, t->fields );
+	    print_Field_list( st, t->fields );
 	    tm_closecons( st );
 	    break;
 
@@ -3629,7 +3781,7 @@ static void print_DsTuple( TMPRINTSTATE *st, const DsTuple t )
 	    tm_printword( st, "DsTuple" );
 	    print_tmstring( st, t->name );
 	    print_tmstring_list( st, t->inherits );
-	    print_field_list( st, t->fields );
+	    print_Field_list( st, t->fields );
 	    tm_closecons( st );
 	    break;
 
@@ -3674,20 +3826,20 @@ void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list l )
     tm_closelist( st );
 }
 
-/* Print a list of elements 'l' of type 'field'
+/* Print a list of elements 'l' of type 'Field'
    using print optimizer.
  */
-static void print_field_list( TMPRINTSTATE *st, const field_list l )
+static void print_Field_list( TMPRINTSTATE *st, const Field_list l )
 {
     unsigned int ix;
 
-    if( l == field_listNIL ){
+    if( l == Field_listNIL ){
 	tm_printword( st, "@" );
 	return;
     }
     tm_openlist( st );
     for( ix=0; ix<l->sz; ix++ ){
-	print_field( st, l->arr[ix] );
+	print_Field( st, l->arr[ix] );
     }
     tm_closelist( st );
 }
@@ -3697,11 +3849,13 @@ static void print_field_list( TMPRINTSTATE *st, const field_list l )
  **************************************************/
 
 #ifdef LOGNEW
+#undef rdup_Type
+#define rdup_Type(e) real_rdup_Type(e,_f,_l)
 #undef rdup_ds
 #define rdup_ds(e) real_rdup_ds(e,_f,_l)
 #undef rdup_tplelm
 #define rdup_tplelm(e) real_rdup_tplelm(e,_f,_l)
-#define rdup_field(e) real_rdup_field(e,_f,_l)
+#define rdup_Field(e) real_rdup_Field(e,_f,_l)
 #define rdup_Append(e) real_rdup_Append(e,_f,_l)
 #define rdup_Appendfile(e) real_rdup_Appendfile(e,_f,_l)
 #define rdup_Call(e) real_rdup_Call(e,_f,_l)
@@ -3729,16 +3883,16 @@ static void print_field_list( TMPRINTSTATE *st, const field_list l )
 #define rdup_Set(e) real_rdup_Set(e,_f,_l)
 #define rdup_Switch(e) real_rdup_Switch(e,_f,_l)
 #define rdup_While(e) real_rdup_While(e,_f,_l)
-#define rdup_switchcase(e) real_rdup_switchcase(e,_f,_l)
-#undef rdup_field_list
-#define rdup_field_list(l) real_rdup_field_list(l,_f,_l)
+#define rdup_Switchcase(e) real_rdup_Switchcase(e,_f,_l)
+#undef rdup_Field_list
+#define rdup_Field_list(l) real_rdup_Field_list(l,_f,_l)
 #undef rdup_tmstring_list
 #define rdup_tmstring_list(l) real_rdup_tmstring_list(l,_f,_l)
 #undef rdup_tplelm_list
 #define rdup_tplelm_list(l) real_rdup_tplelm_list(l,_f,_l)
-#define rdup_switchcase_list(l) real_rdup_switchcase_list(l,_f,_l)
-static switchcase_list real_rdup_switchcase_list( const switchcase_list, const char *, const int );
-static field real_rdup_field( const field, const char *, const int );
+#define rdup_Switchcase_list(l) real_rdup_Switchcase_list(l,_f,_l)
+static Switchcase_list real_rdup_Switchcase_list( const Switchcase_list, const char *, const int );
+static Field real_rdup_Field( const Field, const char *, const int );
 static Append real_rdup_Append( const Append, const char *, const int );
 static Appendfile real_rdup_Appendfile( const Appendfile, const char *, const int );
 static Call real_rdup_Call( const Call, const char *, const int );
@@ -3766,10 +3920,10 @@ static Return real_rdup_Return( const Return, const char *, const int );
 static Set real_rdup_Set( const Set, const char *, const int );
 static Switch real_rdup_Switch( const Switch, const char *, const int );
 static While real_rdup_While( const While, const char *, const int );
-static switchcase real_rdup_switchcase( const switchcase, const char *, const int );
+static Switchcase real_rdup_Switchcase( const Switchcase, const char *, const int );
 #else
-static switchcase_list rdup_switchcase_list( const switchcase_list );
-static field rdup_field( const field );
+static Switchcase_list rdup_Switchcase_list( const Switchcase_list );
+static Field rdup_Field( const Field );
 static Append rdup_Append( const Append );
 static Appendfile rdup_Appendfile( const Appendfile );
 static Call rdup_Call( const Call );
@@ -3797,8 +3951,26 @@ static Return rdup_Return( const Return );
 static Set rdup_Set( const Set );
 static Switch rdup_Switch( const Switch );
 static While rdup_While( const While );
-static switchcase rdup_switchcase( const switchcase );
+static Switchcase rdup_Switchcase( const Switchcase );
 #endif
+/* Recursively duplicate a tuple Type element 'e'. */
+#ifdef LOGNEW
+Type real_rdup_Type( const Type e, const char *_f, const int _l )
+#else
+Type rdup_Type( const Type e )
+#endif
+{
+    uint i_level;
+    tmstring i_basetype;
+
+    if( e == TypeNIL ){
+	return TypeNIL;
+    }
+    i_level = rdup_uint( e->level );
+    i_basetype = rdup_tmstring( e->basetype );
+    return new_Type( i_level, i_basetype );
+}
+
 /* Recursively duplicate a class ds element 'e'. */
 #ifdef LOGNEW
 ds real_rdup_ds( const ds e, const char *_f, const int _l )
@@ -3914,24 +4086,22 @@ tplelm rdup_tplelm( const tplelm e )
     return tplelmNIL;
 }
 
-/* Recursively duplicate a tuple field element 'e'. */
+/* Recursively duplicate a tuple Field element 'e'. */
 #ifdef LOGNEW
-static field real_rdup_field( const field e, const char *_f, const int _l )
+static Field real_rdup_Field( const Field e, const char *_f, const int _l )
 #else
-static field rdup_field( const field e )
+static Field rdup_Field( const Field e )
 #endif
 {
-    uint i_level;
     tmstring i_name;
-    tmstring i_type;
+    Type i_type;
 
-    if( e == fieldNIL ){
-	return fieldNIL;
+    if( e == FieldNIL ){
+	return FieldNIL;
     }
-    i_level = rdup_uint( e->level );
     i_name = rdup_tmstring( e->name );
-    i_type = rdup_tmstring( e->type );
-    return new_field( i_level, i_name, i_type );
+    i_type = rdup_Type( e->type );
+    return new_Field( i_name, i_type );
 }
 
 /* Recursively duplicate a class Append element 'e'. */
@@ -4051,13 +4221,15 @@ static DsAlias rdup_DsAlias( const DsAlias e )
 {
     tmstring i_name;
     tmstring_list i_inherits;
+    Type i_type;
 
     if( e == DsAliasNIL ){
 	return DsAliasNIL;
     }
     i_name = rdup_tmstring( e->name );
     i_inherits = rdup_tmstring_list( e->inherits );
-    return new_DsAlias( i_name, i_inherits );
+    i_type = rdup_Type( e->type );
+    return new_DsAlias( i_name, i_inherits, i_type );
 }
 
 /* Recursively duplicate a class DsClass element 'e'. */
@@ -4069,7 +4241,7 @@ static DsClass rdup_DsClass( const DsClass e )
 {
     tmstring i_name;
     tmstring_list i_inherits;
-    field_list i_fields;
+    Field_list i_fields;
     tmbool i_isvirtual;
 
     if( e == DsClassNIL ){
@@ -4077,7 +4249,7 @@ static DsClass rdup_DsClass( const DsClass e )
     }
     i_name = rdup_tmstring( e->name );
     i_inherits = rdup_tmstring_list( e->inherits );
-    i_fields = rdup_field_list( e->fields );
+    i_fields = rdup_Field_list( e->fields );
     i_isvirtual = rdup_tmbool( e->isvirtual );
     return new_DsClass( i_name, i_inherits, i_fields, i_isvirtual );
 }
@@ -4091,14 +4263,14 @@ static DsConstructor rdup_DsConstructor( const DsConstructor e )
 {
     tmstring i_name;
     tmstring_list i_inherits;
-    field_list i_fields;
+    Field_list i_fields;
 
     if( e == DsConstructorNIL ){
 	return DsConstructorNIL;
     }
     i_name = rdup_tmstring( e->name );
     i_inherits = rdup_tmstring_list( e->inherits );
-    i_fields = rdup_field_list( e->fields );
+    i_fields = rdup_Field_list( e->fields );
     return new_DsConstructor( i_name, i_inherits, i_fields );
 }
 
@@ -4131,14 +4303,14 @@ static DsTuple rdup_DsTuple( const DsTuple e )
 {
     tmstring i_name;
     tmstring_list i_inherits;
-    field_list i_fields;
+    Field_list i_fields;
 
     if( e == DsTupleNIL ){
 	return DsTupleNIL;
     }
     i_name = rdup_tmstring( e->name );
     i_inherits = rdup_tmstring_list( e->inherits );
-    i_fields = rdup_field_list( e->fields );
+    i_fields = rdup_Field_list( e->fields );
     return new_DsTuple( i_name, i_inherits, i_fields );
 }
 
@@ -4413,7 +4585,7 @@ static Switch rdup_Switch( const Switch e )
 {
     int i_lno;
     tmstring i_val;
-    switchcase_list i_cases;
+    Switchcase_list i_cases;
     tplelm_list i_deflt;
 
     if( e == SwitchNIL ){
@@ -4421,7 +4593,7 @@ static Switch rdup_Switch( const Switch e )
     }
     i_lno = rdup_int( e->lno );
     i_val = rdup_tmstring( e->val );
-    i_cases = rdup_switchcase_list( e->cases );
+    i_cases = rdup_Switchcase_list( e->cases );
     i_deflt = rdup_tplelm_list( e->deflt );
     return new_Switch( i_lno, i_val, i_cases, i_deflt );
 }
@@ -4446,44 +4618,44 @@ static While rdup_While( const While e )
     return new_While( i_lno, i_cond, i_body );
 }
 
-/* Recursively duplicate a tuple switchcase element 'e'. */
+/* Recursively duplicate a tuple Switchcase element 'e'. */
 #ifdef LOGNEW
-static switchcase real_rdup_switchcase( const switchcase e, const char *_f, const int _l )
+static Switchcase real_rdup_Switchcase( const Switchcase e, const char *_f, const int _l )
 #else
-static switchcase rdup_switchcase( const switchcase e )
+static Switchcase rdup_Switchcase( const Switchcase e )
 #endif
 {
     tmstring i_cases;
     tplelm_list i_action;
 
-    if( e == switchcaseNIL ){
-	return switchcaseNIL;
+    if( e == SwitchcaseNIL ){
+	return SwitchcaseNIL;
     }
     i_cases = rdup_tmstring( e->cases );
     i_action = rdup_tplelm_list( e->action );
-    return new_switchcase( i_cases, i_action );
+    return new_Switchcase( i_cases, i_action );
 }
 
-/* Recursively duplicate field list 'l'. */
+/* Recursively duplicate Field list 'l'. */
 #ifdef LOGNEW
-field_list real_rdup_field_list( const field_list l, const char *_f, const int _l )
+Field_list real_rdup_Field_list( const Field_list l, const char *_f, const int _l )
 #else
-field_list rdup_field_list( const field_list l )
+Field_list rdup_Field_list( const Field_list l )
 #endif
 {
     unsigned int ix;
-    field_list nw;
-    field *ar;
-    field *o_r;
+    Field_list nw;
+    Field *ar;
+    Field *o_r;
 
-    if( l == field_listNIL ){
-	return field_listNIL;
+    if( l == Field_listNIL ){
+	return Field_listNIL;
     }
-    nw = setroom_field_list( new_field_list(), l->sz );
+    nw = setroom_Field_list( new_Field_list(), l->sz );
     ar = nw->arr;
     o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_field( *o_r++ );
+	*ar++ = rdup_Field( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -4539,26 +4711,26 @@ tplelm_list rdup_tplelm_list( const tplelm_list l )
     return nw;
 }
 
-/* Recursively duplicate switchcase list 'l'. */
+/* Recursively duplicate Switchcase list 'l'. */
 #ifdef LOGNEW
-static switchcase_list real_rdup_switchcase_list( const switchcase_list l, const char *_f, const int _l )
+static Switchcase_list real_rdup_Switchcase_list( const Switchcase_list l, const char *_f, const int _l )
 #else
-static switchcase_list rdup_switchcase_list( const switchcase_list l )
+static Switchcase_list rdup_Switchcase_list( const Switchcase_list l )
 #endif
 {
     unsigned int ix;
-    switchcase_list nw;
-    switchcase *ar;
-    switchcase *o_r;
+    Switchcase_list nw;
+    Switchcase *ar;
+    Switchcase *o_r;
 
-    if( l == switchcase_listNIL ){
-	return switchcase_listNIL;
+    if( l == Switchcase_listNIL ){
+	return Switchcase_listNIL;
     }
-    nw = setroom_switchcase_list( new_switchcase_list(), l->sz );
+    nw = setroom_Switchcase_list( new_Switchcase_list(), l->sz );
     ar = nw->arr;
     o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_switchcase( *o_r++ );
+	*ar++ = rdup_Switchcase( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -4821,6 +4993,14 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"Field",
+	newcnt_Field,
+	frecnt_Field,
+	((newcnt_Field==frecnt_Field)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"Foreach",
 	newcnt_Foreach,
 	frecnt_Foreach,
@@ -4925,6 +5105,22 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"Switchcase",
+	newcnt_Switchcase,
+	frecnt_Switchcase,
+	((newcnt_Switchcase==frecnt_Switchcase)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"Type",
+	newcnt_Type,
+	frecnt_Type,
+	((newcnt_Type==frecnt_Type)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"While",
 	newcnt_While,
 	frecnt_While,
@@ -4941,14 +5137,6 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
-	"field",
-	newcnt_field,
-	frecnt_field,
-	((newcnt_field==frecnt_field)? "": "<-")
-    );
-    fprintf(
-	f,
-	tm_allocfreed,
 	"macro",
 	newcnt_macro,
 	frecnt_macro,
@@ -4957,18 +5145,31 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
-	"switchcase",
-	newcnt_switchcase,
-	frecnt_switchcase,
-	((newcnt_switchcase==frecnt_switchcase)? "": "<-")
-    );
-    fprintf(
-	f,
-	tm_allocfreed,
 	"var",
 	newcnt_var,
 	frecnt_var,
 	((newcnt_var==frecnt_var)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed, "Field_list",
+	newcnt_Field_list,
+	frecnt_Field_list,
+	((newcnt_Field_list==frecnt_Field_list)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed, "Switchcase_list",
+	newcnt_Switchcase_list,
+	frecnt_Switchcase_list,
+	((newcnt_Switchcase_list==frecnt_Switchcase_list)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed, "Type_list",
+	newcnt_Type_list,
+	frecnt_Type_list,
+	((newcnt_Type_list==frecnt_Type_list)? "": "<-")
     );
     fprintf(
 	f,
@@ -4993,24 +5194,10 @@ void stat_tm( FILE *f )
     );
     fprintf(
 	f,
-	tm_allocfreed, "field_list",
-	newcnt_field_list,
-	frecnt_field_list,
-	((newcnt_field_list==frecnt_field_list)? "": "<-")
-    );
-    fprintf(
-	f,
 	tm_allocfreed, "macro_list",
 	newcnt_macro_list,
 	frecnt_macro_list,
 	((newcnt_macro_list==frecnt_macro_list)? "": "<-")
-    );
-    fprintf(
-	f,
-	tm_allocfreed, "switchcase_list",
-	newcnt_switchcase_list,
-	frecnt_switchcase_list,
-	((newcnt_switchcase_list==frecnt_switchcase_list)? "": "<-")
     );
     fprintf(
 	f,
@@ -5042,6 +5229,15 @@ void stat_tm( FILE *f )
 int get_balance_tm( void )
 {
     /* Check for too many fre()s. */
+    if( newcnt_Field_list<frecnt_Field_list ){
+	return -1;
+    }
+    if( newcnt_Switchcase_list<frecnt_Switchcase_list ){
+	return -1;
+    }
+    if( newcnt_Type_list<frecnt_Type_list ){
+	return -1;
+    }
     if( newcnt_alternative_list<frecnt_alternative_list ){
 	return -1;
     }
@@ -5051,13 +5247,7 @@ int get_balance_tm( void )
     if( newcnt_ds_list<frecnt_ds_list ){
 	return -1;
     }
-    if( newcnt_field_list<frecnt_field_list ){
-	return -1;
-    }
     if( newcnt_macro_list<frecnt_macro_list ){
-	return -1;
-    }
-    if( newcnt_switchcase_list<frecnt_switchcase_list ){
 	return -1;
     }
     if( newcnt_tmstring_list<frecnt_tmstring_list ){
@@ -5120,6 +5310,9 @@ int get_balance_tm( void )
     if( newcnt_Exit<frecnt_Exit ){
 	return -1;
     }
+    if( newcnt_Field<frecnt_Field ){
+	return -1;
+    }
     if( newcnt_Foreach<frecnt_Foreach ){
 	return -1;
     }
@@ -5159,25 +5352,34 @@ int get_balance_tm( void )
     if( newcnt_Switch<frecnt_Switch ){
 	return -1;
     }
+    if( newcnt_Switchcase<frecnt_Switchcase ){
+	return -1;
+    }
+    if( newcnt_Type<frecnt_Type ){
+	return -1;
+    }
     if( newcnt_While<frecnt_While ){
 	return -1;
     }
     if( newcnt_alternative<frecnt_alternative ){
 	return -1;
     }
-    if( newcnt_field<frecnt_field ){
-	return -1;
-    }
     if( newcnt_macro<frecnt_macro ){
-	return -1;
-    }
-    if( newcnt_switchcase<frecnt_switchcase ){
 	return -1;
     }
     if( newcnt_var<frecnt_var ){
 	return -1;
     }
     /* Check for too few free()s. */
+    if( newcnt_Field_list>frecnt_Field_list ){
+	return 1;
+    }
+    if( newcnt_Switchcase_list>frecnt_Switchcase_list ){
+	return 1;
+    }
+    if( newcnt_Type_list>frecnt_Type_list ){
+	return 1;
+    }
     if( newcnt_alternative_list>frecnt_alternative_list ){
 	return 1;
     }
@@ -5187,13 +5389,7 @@ int get_balance_tm( void )
     if( newcnt_ds_list>frecnt_ds_list ){
 	return 1;
     }
-    if( newcnt_field_list>frecnt_field_list ){
-	return 1;
-    }
     if( newcnt_macro_list>frecnt_macro_list ){
-	return 1;
-    }
-    if( newcnt_switchcase_list>frecnt_switchcase_list ){
 	return 1;
     }
     if( newcnt_tmstring_list>frecnt_tmstring_list ){
@@ -5256,6 +5452,9 @@ int get_balance_tm( void )
     if( newcnt_Exit>frecnt_Exit ){
 	return 1;
     }
+    if( newcnt_Field>frecnt_Field ){
+	return 1;
+    }
     if( newcnt_Foreach>frecnt_Foreach ){
 	return 1;
     }
@@ -5295,19 +5494,19 @@ int get_balance_tm( void )
     if( newcnt_Switch>frecnt_Switch ){
 	return 1;
     }
+    if( newcnt_Switchcase>frecnt_Switchcase ){
+	return 1;
+    }
+    if( newcnt_Type>frecnt_Type ){
+	return 1;
+    }
     if( newcnt_While>frecnt_While ){
 	return 1;
     }
     if( newcnt_alternative>frecnt_alternative ){
 	return 1;
     }
-    if( newcnt_field>frecnt_field ){
-	return 1;
-    }
     if( newcnt_macro>frecnt_macro ){
-	return 1;
-    }
-    if( newcnt_switchcase>frecnt_switchcase ){
 	return 1;
     }
     if( newcnt_var>frecnt_var ){
@@ -5317,4 +5516,4 @@ int get_balance_tm( void )
 }
 
 /* ---- end of /usr/local/lib/tmc.ct ---- */
-/* Code generation required 760 milliseconds. */
+/* Code generation required 750 milliseconds. */

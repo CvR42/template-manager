@@ -176,12 +176,12 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
     unsigned int ix;
     tplelm_list block;
     tplelm_list deflt;
-    switchcase_list cases;
+    Switchcase_list cases;
     switchstate state = SWS_NONE;
     tmstring val;
 
     block = new_tplelm_list();
-    cases = new_switchcase_list();
+    cases = new_Switchcase_list();
     deflt = tplelm_listNIL;
     val = tmstringNIL;
     for( ix=0; ix<el->sz; ix++ ){
@@ -204,9 +204,9 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 			break;
 
 		    case SWS_CASE:
-			cases = append_switchcase_list(
+			cases = append_Switchcase_list(
 			    cases,
-			    new_switchcase( rdup_tmstring( val ), block )
+			    new_Switchcase( rdup_tmstring( val ), block )
 			);
 			block = new_tplelm_list();
 			break;
@@ -898,9 +898,19 @@ static tmstring_list rename_tmstring_list( tmstring_list dl, const tmstring old,
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static field rename_field( field f, const tmstring old, const tmstring nw )
+static Type rename_Type( Type t, const tmstring old, const tmstring nw )
 {
-    f->type = rename_tmstring( f->type, old, nw );
+    t->basetype = rename_tmstring( t->basetype, old, nw );
+    return t;
+}
+
+/* Given a list of fields, an old type name 'old' and a new
+ * type name 'nw', rewrite these fields to use the new type name
+ * instead of the old type name.
+ */
+static Field rename_Field( Field f, const tmstring old, const tmstring nw )
+{
+    f->type = rename_Type( f->type, old, nw );
     return f;
 }
 
@@ -908,12 +918,12 @@ static field rename_field( field f, const tmstring old, const tmstring nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static field_list rename_field_list( field_list dl, const tmstring old, const tmstring nw )
+static Field_list rename_Field_list( Field_list dl, const tmstring old, const tmstring nw )
 {
     unsigned int ix;
 
     for( ix=0; ix<dl->sz; ix++ ){
-	dl->arr[ix] = rename_field( dl->arr[ix], old, nw );
+	dl->arr[ix] = rename_Field( dl->arr[ix], old, nw );
     }
     return dl;
 }
@@ -939,7 +949,7 @@ static ds rename_ds( ds d, const tmstring old, const tmstring nw )
 	{
 	    DsTuple dsub = to_DsTuple( d );
 
-	    dsub->fields = rename_field_list( dsub->fields, old, nw );
+	    dsub->fields = rename_Field_list( dsub->fields, old, nw );
 	    break;
 	}
 
@@ -947,18 +957,22 @@ static ds rename_ds( ds d, const tmstring old, const tmstring nw )
 	{
 	    DsClass dsub = to_DsClass( d );
 
-	    dsub->fields = rename_field_list( dsub->fields, old, nw );
+	    dsub->fields = rename_Field_list( dsub->fields, old, nw );
 	    break;
 	}
 
 	case TAGDsAlias:
+	{
+	    DsAlias dsub = to_DsAlias( d );
+	    dsub->type = rename_Type( dsub->type, old, nw );
 	    break;
+	}
 
 	case TAGDsConstructor:
 	{
 	    DsConstructor dsub = to_DsConstructor( d );
 
-	    dsub->fields = rename_field_list( dsub->fields, old, nw );
+	    dsub->fields = rename_Field_list( dsub->fields, old, nw );
 	    break;
 	}
 
@@ -1117,21 +1131,21 @@ static void dodeletetype( const DeleteType tpl )
 }
 
 /* Handle 'if' command. */
-static void doif( const tplelm tpl, FILE *outfile )
+static void doif( const If tpl, FILE *outfile )
 {
     char *is;
     char *os;
     bool cond;
 
-    is = to_If(tpl)->cond;
+    is = tpl->cond;
     os = alevalto( &is, '\0' );
     cond = istruestr( os );
     fre_tmstring( os );
     if( cond ){
-	dotrans( to_If(tpl)->ifthen, outfile );
+	dotrans( tpl->ifthen, outfile );
     }
     else {
-	dotrans( to_If(tpl)->ifelse, outfile );
+	dotrans( tpl->ifelse, outfile );
     }
 }
 
@@ -1143,7 +1157,7 @@ static void doswitch( const Switch tpl, FILE *outfile )
     bool visited = FALSE;
     tmstring_list sl;
     unsigned int ix;
-    switchcase_list cases;
+    Switchcase_list cases;
 
     is = tpl->val;
     os = alevalto( &is, '\0' );
@@ -1236,14 +1250,14 @@ static void dowhile( const tplelm tpl, FILE *outfile )
  * in separate words, copy the macro body, and store it in the
  * macro table.
  */
-static void domacro( const tplelm tpl )
+static void domacro( const Macro tpl )
 {
     char *nm;
     char *is;
     char *os;
     tmstring_list sl;
 
-    is = to_Macro(tpl)->formals;
+    is = tpl->formals;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1339,7 +1353,7 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 		break;
 
 	    case TAGIf:
-		doif( e, outfile );
+		doif( to_If( e ), outfile );
 		break;
 
 	    case TAGSwitch:
@@ -1407,7 +1421,7 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 		break;
 
 	    case TAGMacro:
-		domacro( e );
+		domacro( to_Macro( e ) );
 		break;
 
 	    case TAGCall:
