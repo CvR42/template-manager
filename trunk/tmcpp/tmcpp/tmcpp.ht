@@ -161,7 +161,7 @@ public:
 .endforeach
 /* Type casting macros. */
 .foreach t $(need_ds)
-#define to_$t(e) (($t)e)
+#define to_$t(e) (($t *)e)
 .endforeach
 
 .. new_<type> routines

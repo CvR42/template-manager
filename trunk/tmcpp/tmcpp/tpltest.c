@@ -40,23 +40,23 @@ int main( void )
         exit( 1 );
     }
     rfre_toplevel_list( ds );
-    infile = fopen( "testi", "r" );
+    infile = fopen( "testin", "r" );
     if( infile == NULL ){
-        fprintf( stderr, "Cannot open input file" );
+        fprintf( stderr, "Cannot open input file\n" );
         exit( 1 );
     }
     outfile = fopen( "testout", "w" );
     if( outfile == NULL ){
-        fprintf( stderr, "Cannot open output file" );
+        fprintf( stderr, "Cannot open output file\n" );
         exit( 1 );
     }
     if( freopen( "testerr", "w", stderr ) == NULL ){
-        fprintf( stderr, "Cannot redirect error file" );
+        fprintf( stderr, "Cannot redirect error file\n" );
         exit( 1 );
     }
     tm_lineno = 1;
     if( fscan_toplevel_list( infile, &ds ) ){
-	fprintf( stderr, "Read error at line testi(%d): %s\n", tm_lineno, tm_errmsg );
+	fprintf( stderr, "Read error at line testin(%d): %s\n", tm_lineno, tm_errmsg );
         exit( 1 );
     }
     toplevel_list *dscopy = rdup_toplevel_list( ds );
