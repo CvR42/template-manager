@@ -84,3 +84,19 @@
 .append wantdefs new_switchcase
 .append wantdefs new_switchcase_list
 .append wantdefs append_switchcase_list
+/* Type casting macros. */
+.foreach t ${typelist}
+.if ${member $t ${ttypelist}}    
+.foreach e ${telmlist $t}                    
+#define to_$t(e) (e)          
+.endforeach
+.endif   
+.if ${member $t ${ctypelist}}                
+.foreach c ${conslist $t}                
+.foreach e ${celmlist $t $c}                    
+#define to_$c(e) (&(e->u.ue_$c))
+.endforeach                                       
+.endforeach     
+.endif           
+.endforeach
+
