@@ -336,6 +336,29 @@ int sum_btree( btree t )
 }
 \end{verbatim}
 \end{showfile}
+\subsection{Class hierarchy inquery functions}
+Since Tm allows chains of inheritance relation of arbitrary length, it
+is sometimes useful to determine whether an element belongs to a given
+subclass, without having to enumerate all members of the subclass.
+For this purpose the \verb'is_<type>()' macros are provided.
+\begin{verbatim}
+bool is_<type>( <supertype> e );
+bool is_<type>_list( <type>_list e );
+\end{verbatim}
+\begin{desc}
+\index{is_<type>@\verb+is_<type>()+}
+\index{is_<type>_list@\verb+is_<type>_list()+}
+Given an element return \verb'TRUE' if it is a member of type
+\verb'<type>' or one of its subclasses, or \verb'FALSE' if it has
+the type of another subclass of the root class of \verb'<type>'.
+For classes that do not have superclasses, the macro degenerates to
+the constant \verb'TRUE'.
+\par
+For elements that are member of another type tree, the result is
+unspecified.
+\par
+These macros are currently only available in the \verb'tmc' template.
+\end{desc}
 \section{Dynamic memory allocation}
 \label{s.allocation}
 \index{allocation}
@@ -476,7 +499,7 @@ store {\tt rm} elements;
 in the linked list template this function is a dummy.
 The room in a list is never reduced.
 \par
-Functions that add elements to a list (\verb+append_<type>_list()+,
+Functions that add elements to a list (such as \verb+append_<type>_list()+,
 \verb+concat_<type>_list()+ and
 \verb+insert_<type>_list()+) use this function implicitly, the
 user only needs these functions for efficiency reasons
@@ -560,6 +583,23 @@ the element is appended after {\tt l}.
 Element {\tt e} is now `owned' by list {\tt l}.
 \end{desc}
 \begin{verbatim}
+<type>_list insertlist_<type>_list(
+ <type>_list la,
+ unsigned p,
+ <type>_list lb
+);
+\end{verbatim}
+\begin{desc}
+\index{insertlist_<type>_list@\verb+insertlist_<type>_list()+}
+Insert list {\tt lb} at position {\tt p} in list {\tt la}.
+All elements at and after position {\tt p} are moved up in the list
+(they have their index in the list incremented).
+If {\tt p} is greater than or equal to the length of {\tt l},
+the elements are appended after {\tt la}.
+All elements in {\tt lb} are now `owned' by list {\tt la}, and the
+list container of {\tt lb} is destroyed.
+\end{desc}
+\begin{verbatim}
 <type>_list delete_<type>_list( <type>_list l, unsigned int pos );
 \end{verbatim}
 \begin{desc}
@@ -591,8 +631,28 @@ If there was a valid element at position {\tt pos}, it is assigned
 to \verb'*e', and \verb'*valid' is set to {\tt 1}. Otherwise
 \verb'*valid' is set to {\tt 0}, and \verb'*e' is left unchanged.
 \par
-This function is similar to \verb'extract_<type>_list()', but instead
+This function is similar to \verb'delete_<type>_list()', but instead
 of deleting an element, it puts it in possession of the caller.
+\end{desc}
+\begin{verbatim}
+<type>_list extractlist_<type>_list(
+ <type>_list l,
+ unsigned int from,
+ unsigned int to,
+ <type>_list *e
+);
+\end{verbatim}
+\begin{desc}
+\index{extractlist_<type>_list@\verb+extractlist_<type>_list()+}
+Remove the elements in the range {\tt from} up to, but not including {\tt to} from list {\tt l},
+put them in a new list, and assign this list to \verb'*e'.
+All elements after position {\tt to} are moved down
+(have their index in the list decremented) to fill the gap.
+If a range extends beyond the size of {\tt l}, the range is silently
+truncated.
+\par
+This function is similar to \verb'extract_<type>_list()', but it
+extracts a range of elements instead of a single one.
 \end{desc}
 \begin{verbatim}
 <type>_list reverse_<type>_list( <type>_list l );
