@@ -61,6 +61,9 @@
 .if ${eq $(template) ald}
 .append groups null
 .endif
+.if ${eq $(template) tmc}
+.append groups is
+.endif
 ..
 .. Reset all want_<groups> variables
 .foreach g $(groups) stat
@@ -272,6 +275,13 @@
 .macro req_null l
 .call require null "${delisttypes $l}"
 .call require null "${types ${singletypes $l} ${nonvirtual ${subclasses $l}}}"
+.call require ds "$l"
+.endmacro
+.endif
+..
+.. ** is **
+.if ${eq $(template) tmc}
+.macro req_is l
 .call require ds "$l"
 .endmacro
 .endif

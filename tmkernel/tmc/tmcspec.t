@@ -52,4 +52,9 @@
 .append wantdefs subtuple_list
 .append wantdefs new_subtuple_list
 .append wantdefs new_smt
+.append wantdefs is_expr
+.append wantdefs is_toplevel_list
+.append wantdefs is_exprFold
+.append wantdefs is_internalExpr
+.append wantdefs is_TopNone
 .set notwantdefs new_subtuple_list
