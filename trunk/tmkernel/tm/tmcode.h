@@ -1,13 +1,13 @@
-/* Requirement analysis took 220 milliseconds. */
+/* Requirement analysis took 200 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /home/blob/users/reeuwijk/lab/lib/calu.ht ---- */
+/* ---- start of /usr/local/lib/calu.ht ---- */
 /* External definitions (Version for array list).
 
-   template file:      /home/blob/users/reeuwijk/lab/lib/calu.ht
+   template file:      /usr/local/lib/calu.ht
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  *** development -- not for distribution ***
+   tm kernel version:  2.0-beta4
  */
 
 /* data structures */
@@ -61,7 +61,7 @@ typedef enum en_tags_ds {
 } tags_ds;
 
 typedef enum en_tags_tplelm {
-    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert, TAGCase, TAGDefault
+    TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSwitch, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGAppendfile, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert, TAGCase, TAGDefault
 } tags_tplelm;
 
 
@@ -257,6 +257,13 @@ typedef struct str_Redirect {
     tplelm_list body;
 } C_Redirect;
 
+/* Structure for constructor Appendfile */
+typedef struct str_Appendfile {
+    int lno;
+    tmstring fname;
+    tplelm_list body;
+} C_Appendfile;
+
 /* Structure for constructor Include */
 typedef struct str_Include {
     int lno;
@@ -315,6 +322,7 @@ struct str_tplelm {
 	C_Error ue_Error;
 	C_Exit ue_Exit;
 	C_Redirect ue_Redirect;
+	C_Appendfile ue_Appendfile;
 	C_Include ue_Include;
 	C_Macro ue_Macro;
 	C_Call ue_Call;
@@ -423,22 +431,39 @@ struct str_var_list {
 #define to_alternative(e) (e)
 #define to_alternative(e) (e)
 #define to_CCSuper(e) (&(e->u.ue_CCSuper))
+#define CCSuper u.ue_CCSuper
 #define to_CCFields(e) (&(e->u.ue_CCFields))
+#define CCFields u.ue_CCFields
 #define to_CCAlternatives(e) (&(e->u.ue_CCAlternatives))
+#define CCAlternatives u.ue_CCAlternatives
 #define to_CCSublist(e) (&(e->u.ue_CCSublist))
+#define CCSublist u.ue_CCSublist
 #define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
+#define DsConstructorBase u.ue_DsConstructorBase
 #define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
+#define DsConstructorBase u.ue_DsConstructorBase
 #define to_DsConstructorBase(e) (&(e->u.ue_DsConstructorBase))
+#define DsConstructorBase u.ue_DsConstructorBase
 #define to_DsTuple(e) (&(e->u.ue_DsTuple))
+#define DsTuple u.ue_DsTuple
 #define to_DsTuple(e) (&(e->u.ue_DsTuple))
+#define DsTuple u.ue_DsTuple
 #define to_DsTuple(e) (&(e->u.ue_DsTuple))
+#define DsTuple u.ue_DsTuple
 #define to_DsClass(e) (&(e->u.ue_DsClass))
+#define DsClass u.ue_DsClass
 #define to_DsClass(e) (&(e->u.ue_DsClass))
+#define DsClass u.ue_DsClass
 #define to_DsClass(e) (&(e->u.ue_DsClass))
+#define DsClass u.ue_DsClass
 #define to_DsClass(e) (&(e->u.ue_DsClass))
+#define DsClass u.ue_DsClass
 #define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
+#define DsConstructor u.ue_DsConstructor
 #define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
+#define DsConstructor u.ue_DsConstructor
 #define to_DsConstructor(e) (&(e->u.ue_DsConstructor))
+#define DsConstructor u.ue_DsConstructor
 #define to_field(e) (e)
 #define to_field(e) (e)
 #define to_field(e) (e)
@@ -450,50 +475,101 @@ struct str_var_list {
 #define to_switchcase(e) (e)
 #define to_switchcase(e) (e)
 #define to_Plain(e) (&(e->u.ue_Plain))
+#define Plain u.ue_Plain
 #define to_Plain(e) (&(e->u.ue_Plain))
+#define Plain u.ue_Plain
 #define to_Foreach(e) (&(e->u.ue_Foreach))
+#define Foreach u.ue_Foreach
 #define to_Foreach(e) (&(e->u.ue_Foreach))
+#define Foreach u.ue_Foreach
 #define to_Foreach(e) (&(e->u.ue_Foreach))
+#define Foreach u.ue_Foreach
 #define to_While(e) (&(e->u.ue_While))
+#define While u.ue_While
 #define to_While(e) (&(e->u.ue_While))
+#define While u.ue_While
 #define to_While(e) (&(e->u.ue_While))
+#define While u.ue_While
 #define to_If(e) (&(e->u.ue_If))
+#define If u.ue_If
 #define to_If(e) (&(e->u.ue_If))
+#define If u.ue_If
 #define to_If(e) (&(e->u.ue_If))
+#define If u.ue_If
 #define to_If(e) (&(e->u.ue_If))
+#define If u.ue_If
 #define to_Switch(e) (&(e->u.ue_Switch))
+#define Switch u.ue_Switch
 #define to_Switch(e) (&(e->u.ue_Switch))
+#define Switch u.ue_Switch
 #define to_Switch(e) (&(e->u.ue_Switch))
+#define Switch u.ue_Switch
 #define to_Switch(e) (&(e->u.ue_Switch))
+#define Switch u.ue_Switch
 #define to_Set(e) (&(e->u.ue_Set))
+#define Set u.ue_Set
 #define to_Set(e) (&(e->u.ue_Set))
+#define Set u.ue_Set
 #define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
+#define GlobalSet u.ue_GlobalSet
 #define to_GlobalSet(e) (&(e->u.ue_GlobalSet))
+#define GlobalSet u.ue_GlobalSet
 #define to_Append(e) (&(e->u.ue_Append))
+#define Append u.ue_Append
 #define to_Append(e) (&(e->u.ue_Append))
+#define Append u.ue_Append
 #define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
+#define GlobalAppend u.ue_GlobalAppend
 #define to_GlobalAppend(e) (&(e->u.ue_GlobalAppend))
+#define GlobalAppend u.ue_GlobalAppend
 #define to_Error(e) (&(e->u.ue_Error))
+#define Error u.ue_Error
 #define to_Error(e) (&(e->u.ue_Error))
+#define Error u.ue_Error
 #define to_Exit(e) (&(e->u.ue_Exit))
+#define Exit u.ue_Exit
 #define to_Exit(e) (&(e->u.ue_Exit))
+#define Exit u.ue_Exit
 #define to_Redirect(e) (&(e->u.ue_Redirect))
+#define Redirect u.ue_Redirect
 #define to_Redirect(e) (&(e->u.ue_Redirect))
+#define Redirect u.ue_Redirect
 #define to_Redirect(e) (&(e->u.ue_Redirect))
+#define Redirect u.ue_Redirect
+#define to_Appendfile(e) (&(e->u.ue_Appendfile))
+#define Appendfile u.ue_Appendfile
+#define to_Appendfile(e) (&(e->u.ue_Appendfile))
+#define Appendfile u.ue_Appendfile
+#define to_Appendfile(e) (&(e->u.ue_Appendfile))
+#define Appendfile u.ue_Appendfile
 #define to_Include(e) (&(e->u.ue_Include))
+#define Include u.ue_Include
 #define to_Include(e) (&(e->u.ue_Include))
+#define Include u.ue_Include
 #define to_Macro(e) (&(e->u.ue_Macro))
+#define Macro u.ue_Macro
 #define to_Macro(e) (&(e->u.ue_Macro))
+#define Macro u.ue_Macro
 #define to_Macro(e) (&(e->u.ue_Macro))
+#define Macro u.ue_Macro
 #define to_Call(e) (&(e->u.ue_Call))
+#define Call u.ue_Call
 #define to_Call(e) (&(e->u.ue_Call))
+#define Call u.ue_Call
 #define to_Return(e) (&(e->u.ue_Return))
+#define Return u.ue_Return
 #define to_Return(e) (&(e->u.ue_Return))
+#define Return u.ue_Return
 #define to_Insert(e) (&(e->u.ue_Insert))
+#define Insert u.ue_Insert
 #define to_Insert(e) (&(e->u.ue_Insert))
+#define Insert u.ue_Insert
 #define to_Case(e) (&(e->u.ue_Case))
+#define Case u.ue_Case
 #define to_Case(e) (&(e->u.ue_Case))
+#define Case u.ue_Case
 #define to_Default(e) (&(e->u.ue_Default))
+#define Default u.ue_Default
 #define to_var(e) (e)
 #define to_var(e) (e)
 #define to_var(e) (e)
@@ -523,6 +599,7 @@ struct str_var_list {
 #define new_Error(lno,errstr) real_new_Error(lno,errstr,__FILE__,__LINE__)
 #define new_Exit(lno,str) real_new_Exit(lno,str,__FILE__,__LINE__)
 #define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,__FILE__,__LINE__)
+#define new_Appendfile(lno,fname,body) real_new_Appendfile(lno,fname,body,__FILE__,__LINE__)
 #define new_Include(lno,fname) real_new_Include(lno,fname,__FILE__,__LINE__)
 #define new_Macro(lno,formpar,macbody) real_new_Macro(lno,formpar,macbody,__FILE__,__LINE__)
 #define new_Call(lno,callline) real_new_Call(lno,callline,__FILE__,__LINE__)
@@ -668,6 +745,11 @@ extern tplelm real_new_Redirect( int, tmstring, tplelm_list, const char *, const
 extern tplelm new_Redirect( int, tmstring, tplelm_list );
 #endif
 #ifdef LOGNEW
+extern tplelm real_new_Appendfile( int, tmstring, tplelm_list, const char *, const int );
+#else
+extern tplelm new_Appendfile( int, tmstring, tplelm_list );
+#endif
+#ifdef LOGNEW
 extern tplelm real_new_Include( int, tmstring, const char *, const int );
 #else
 extern tplelm new_Include( int, tmstring );
@@ -783,5 +865,5 @@ extern tplelm_list rdup_tplelm_list( const tplelm_list );
 extern void flush_tm( void );
 extern void stat_tm( FILE * );
 extern int get_balance_tm( void );
-/* ---- end of /home/blob/users/reeuwijk/lab/lib/calu.ht ---- */
-/* Code generation required 300 milliseconds. */
+/* ---- end of /usr/local/lib/calu.ht ---- */
+/* Code generation required 280 milliseconds. */

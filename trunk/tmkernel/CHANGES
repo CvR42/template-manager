@@ -1,4 +1,7 @@
 New in version 2.0:
+- 'inheritsort': a Tm function that sorts a list of types so that
+  inherited types are placed after the types they inherit from.
+
 - A new meta-type 'class'. Only the new C template 'tmc' supports this
   meta-type; the older C templates calu, cald and cllu don't.
   Tm has a number of new functions to support the new meta-type, and

@@ -1,0 +1,63 @@
+%%
+%% This is file `javagrammar.sty'
+%%
+%% ---- Identification
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{javagrammar}
+%% ---- initial code
+\RequirePackage{ifthen}
+%\RequirePackage{verbatim}
+\newboolean{indexgrammar}
+%% ---- Declaration of options
+\DeclareOption{index}{\setboolean{indexgrammar}{true}}
+\DeclareOption{noindex}{\setboolean{indexgrammar}{false}}
+%% ---- Execution of options
+\ExecuteOptions{noindex}
+\ProcessOptions
+%% ---- Definitions
+\def\java@sanitize{\@makeother\$\@makeother\&%
+\@makeother\#\@makeother\^\@makeother\_\@makeother\%\@makeother\~}
+\newcommand{\term}[1]{{\tt\java@sanitize #1}}
+\newcommand{\nonterm}[1]{{\it #1}}
+\newcommand{\opt}[1]{{#1\hspace{-0.2ex}\raisebox{-0.6ex}{\scriptsize\it opt}}}
+\newcommand{\symlist}[1]{{#1\hspace{-0.1ex}\raisebox{-0.6ex}{\scriptsize\it list}}}
+\newenvironment{production}[1]
+{
+	\list{}{\itemsep \z@
+		\itemindent   -1.5em%
+		\listparindent\itemindent
+		\rightmargin  \leftmargin
+		\advance\leftmargin 1em}%
+	\item\relax {\it #1}\/:\ifthenelse{\boolean{indexgrammar}}{\index{#1@{\it #1}}}{}\\\relax\java@sanitize\it\sloppy%
+}
+{\endlist\par}
+\newenvironment{production*}[1]
+{
+	\list{}{\itemsep \z@
+		\itemindent   -1.5em%
+		\listparindent\itemindent
+		\rightmargin  \leftmargin
+		\advance\leftmargin 1em}%
+	\item\relax {\it #1}\/:{}\\\relax\java@sanitize\it\sloppy%
+}
+{\endlist\par}
+\newenvironment{oneofproduction}[1]
+{
+	\list{}{\itemsep \z@
+		\itemindent   -1.5em%
+		\listparindent\itemindent
+		\rightmargin  \leftmargin
+		\advance\leftmargin 1em}%
+	\item\relax {\it #1: one of}\ifthenelse{\boolean{indexgrammar}}{\index{#1@{\it #1}}}{}\\\relax\tt\java@sanitize\sloppy%
+}
+{\endlist\par}
+\newenvironment{oneofproduction*}[1]
+{
+	\list{}{\itemsep \z@
+		\itemindent   -1.5em%
+		\listparindent\itemindent
+		\rightmargin  \leftmargin
+		\advance\leftmargin 1em}%
+	\item\relax {\it #1: one of}\\\relax\tt\java@sanitize\sloppy%
+}
+{\endlist\par}

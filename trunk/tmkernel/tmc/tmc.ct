@@ -339,7 +339,7 @@ $(stic_$t)void fre_$t_list( $t_list l )
 .endif
 .if ${len $(need_append_list)}
 /**************************************************
- *    Real append routines                        *
+ *    Append routines                             *
  **************************************************/
 
 .call ansi_static append_list "$$t_list append_$$t_list( $$t_list, $$t )"
