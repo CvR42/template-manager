@@ -172,7 +172,7 @@ public:
     tmtext( const long sz=32 );
     tmtext( const tmtext &c );
     tmtext( const char *s );
-    ~tmtext();
+    virtual ~tmtext();
     void reserve( const long rm );
     virtual tmtext *clone() const { return new tmtext( *this ); }
     virtual void destroy() { delete this; }
