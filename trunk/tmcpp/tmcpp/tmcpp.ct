@@ -193,7 +193,7 @@ $t_list::$t_list( const $t_list &l ): sz(0), room(0), arr(0)
 $t_list::~$t_list()
 {
     if( arr != 0 ){
-	TM_FREE( arr );
+	free( arr );
     }
 .if ${member $t $(need_stat_list)}
     freecount++;
@@ -221,10 +221,10 @@ void $t_list::reserve( const size_type rm )
 	return;
     }
     if( room==0 ){
-	arr = TM_MALLOC( value_type *, rm * sizeof(*(arr)) );
+	arr = (value_type *) tm_malloc( rm * sizeof(*(arr)) );
     }
     else {
-	arr = TM_REALLOC( value_type *, arr, rm * sizeof(*(arr)) );
+	arr = (value_type *) tm_realloc( arr, rm * sizeof(*(arr)) );
     }
     room = rm;
 }
