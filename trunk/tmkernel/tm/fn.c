@@ -745,8 +745,8 @@ static tmstring fnuniq( const tmstring_list sl )
 }
 
 /* filt findpat newpat e1..en
-   find all elements matching 'findpat' and replace them
-   by 'newpat'. Do not copy elements that don't match.
+ * find all elements matching 'findpat' and replace them
+ * by 'newpat'. Do not copy elements that don't match.
  */
 static tmstring fnfilt( const tmstring_list sl )
 {
@@ -1992,6 +1992,32 @@ static tmstring fndefined( const tmstring_list sl )
     return newboolstr( v != CHARNIL );
 }
 
+/* matchmacro pat
+ * Return a list of all macros whose name matches pattern 'pat'.
+ */
+static tmstring fnmatchmacro( const tmstring_list sl )
+{
+    tmstring ans;
+    char *errm;
+    tmstring_list nl;
+
+    if( sl->sz != 1 ){
+	line_error( "'matchmacro' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    nl = new_tmstring_list();
+    errm = match_macros( sl->arr[0], &nl );
+    if( errm != NULL ){
+	(void) strcpy( errarg, errm );
+	line_error( "bad regular expression" );
+	rfre_tmstring_list( nl );
+	return new_tmstring( "" );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
 /* -- nested evaluation: 'call' and 'eval' -- */
 
 /* Evaluate the given parameters again. */
@@ -2193,11 +2219,12 @@ static struct fnentry fntab[] = {
      { "index", fnindex },
      { "inheritors", fninheritors },
      { "inherits", fninherits },
+     { "delisttypes", fndelisttypes },
      { "isinenv", fnisinenv },
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
      { "listtypes", fnlisttypes },
-     { "delisttypes", fndelisttypes },
+     { "matchmacro", fnmatchmacro },
      { "max", fnmax },
      { "member", fnmember },
      { "min", fnmin },
@@ -2235,8 +2262,8 @@ static struct fnentry fntab[] = {
      { "ttypename", fntypename },
      { "tuplelist", fntuplelist },
      { "type", fntype },
-     { "types", fntypes },
      { "typelevel", fntypelevel },
+     { "types", fntypes },
      { "typelist", fntypelist },
      { "typename", fntypename },
      { "uniq", fnuniq },

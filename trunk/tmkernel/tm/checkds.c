@@ -38,47 +38,6 @@ void cktuple( tmstring nm, field_list fields )
     }
 }
 
-#if 0
-/* Ensure that there are no double names in each of the constructors of
- * constructor type with name 'nm' and constructors 'cons'.
- */
-void ckconstructor( tmstring nm, constructor_list cons )
-{
-    constructor conx;
-    field_list fields;
-    unsigned int cix;	/* index in constructor list */
-    unsigned int ix;	/* index of currently checked field */
-    unsigned int six;	/* index for searching of fields/constr. */
-    field fx;		/* checked field */
-    field fy;		/* searched field */
-    tmstring fnm;	/* name of currently checked field */
-    tmstring connm;	/* name of current constructor */
-
-    for( cix=0; cix<cons->sz; cix++ ){
-	conx = cons->arr[cix];
-	fields = conx->fields;
-	connm = conx->name;
-	for( ix=0; ix<fields->sz; ix++ ){
-	    fx = fields->arr[ix];
-	    fnm = fx->name;
-	    for( six=ix+1; six<fields->sz; six++ ){
-		fy = fields->arr[six];
-		if( strcmp( fy->name, fnm ) == 0 ){
-		    sprintf(
-			errpos,
-			"in type '%s', constructor '%s'",
-			nm,
-			connm
-		    );
-		    sprintf( errarg, "'%s'", fnm );
-		    error( "double use of field name" );
-		}
-	    }
-	}
-    }
-}
-#endif
-
 /* Given a list of datastructure definitions, an index in the list,
  * a list of visited flags and a list of accepted flags, check the
  * data structure with the given index for circular inheritances.

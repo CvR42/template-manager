@@ -26,6 +26,7 @@
 #include "error.h"
 #include "var.h"
 #include "global.h"
+#include "refex.h"
 
 /******************************************************
  *    hashing parameters                              *    
@@ -114,6 +115,33 @@ macro findmacro( const tmstring nm )
 	if( strcmp( nm, m->name ) == 0 ) return m;
     }
     return macroNIL;
+}
+
+char *match_macros( const tmstring pat, tmstring_list *matches )
+{
+    tmstring errm;
+    unsigned int hv;
+
+    errm = ref_comp( pat );
+    if( errm != NULL ){
+	return errm;
+    }
+    for( hv=0; hv<HASHWIDTH; hv++ ){
+	unsigned int ix;
+	macro_list l = macros[hv];
+
+	for( ix=0; ix<l->sz; ix++ ){
+	    macro m = l->arr[ix];
+
+	    if( ref_exec( m->name ) ){
+		*matches = append_tmstring_list(
+		    *matches,
+		    rdup_tmstring( m->name )
+		);
+	    }
+	}
+    }
+    return NULL;
 }
 
 /* Add a new macro to the known macros. If macro a macro of that name
