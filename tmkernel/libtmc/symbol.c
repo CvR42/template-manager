@@ -50,13 +50,13 @@ static unsigned int hash( const char *s )
 /* Make a new storage space for a tmsymbol. */
 static tmsymbol newtmsymbol( tmsymbol l, tmstring s )
 {
-    tmsymbol new;
+    tmsymbol nw;
 
-    new = TM_MALLOC( tmsymbol, sizeof( *new )  );
-    new->next = l;
-    new->name = s;
-    new->data = (tm_neutralp) 0;
-    return new;
+    nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
+    nw->next = l;
+    nw->name = s;
+    nw->data = (tm_neutralp) 0;
+    return nw;
 }
 
 /* Try to locate string 'name' in the given list 'list'.

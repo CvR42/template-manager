@@ -26,9 +26,6 @@
 #define FALSE 0
 #endif
 
-typedef short bool;
-
-
 /* datastructures */
 typedef struct str_Sstack *Sstack;
 typedef struct str_sunit *sunit;
@@ -83,56 +80,56 @@ static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev );
 
 static Sstack newSstack( sunit par_ulist )
 {
-    Sstack new;
+    Sstack nw;
 
-    new = TM_MALLOC( Sstack, sizeof( *new ) );
-    new->next = SstackNIL;
-    new->ulist = par_ulist;
-    return new;
+    nw = TM_MALLOC( Sstack, sizeof( *nw ) );
+    nw->next = SstackNIL;
+    nw->ulist = par_ulist;
+    return nw;
 }
 
 static sunit newSuWord( tmstring par_word )
 {
-    SuWord new;
+    SuWord nw;
 
-    new = TM_MALLOC( SuWord, sizeof( *new ) );
-    new->next = sunitNIL;
-    new->tag = TAGSuWord;
-    new->word = par_word;
-    return (sunit) new;
+    nw = TM_MALLOC( SuWord, sizeof( *nw ) );
+    nw->next = sunitNIL;
+    nw->tag = TAGSuWord;
+    nw->word = par_word;
+    return (sunit) nw;
 }
 
 static sunit newSuCons( sunit par_ulist )
 {
-    SuCons new;
+    SuCons nw;
 
-    new = TM_MALLOC( SuCons, sizeof( *new ) );
-    new->next = sunitNIL;
-    new->tag = TAGSuCons;
-    new->ulist = par_ulist;
-    return (sunit) new;
+    nw = TM_MALLOC( SuCons, sizeof( *nw ) );
+    nw->next = sunitNIL;
+    nw->tag = TAGSuCons;
+    nw->ulist = par_ulist;
+    return (sunit) nw;
 }
 
 static sunit newSuList( sunit par_ulist )
 {
-    SuList new;
+    SuList nw;
 
-    new = TM_MALLOC( SuList, sizeof( *new )  );
-    new->next = sunitNIL;
-    new->tag = TAGSuList;
-    new->ulist = par_ulist;
-    return (sunit) new;
+    nw = TM_MALLOC( SuList, sizeof( *nw )  );
+    nw->next = sunitNIL;
+    nw->tag = TAGSuList;
+    nw->ulist = par_ulist;
+    return (sunit) nw;
 }
 
 static sunit newSuTuple( sunit par_ulist )
 {
-    SuTuple new;
+    SuTuple nw;
 
-    new = TM_MALLOC( SuTuple, sizeof( *new ) );
-    new->next = sunitNIL;
-    new->tag = TAGSuTuple;
-    new->ulist = par_ulist;
-    return (sunit) new;
+    nw = TM_MALLOC( SuTuple, sizeof( *nw ) );
+    nw->next = sunitNIL;
+    nw->tag = TAGSuTuple;
+    nw->ulist = par_ulist;
+    return (sunit) nw;
 }
 
 /*******************************************************************
@@ -560,11 +557,11 @@ static tmstring horprintcons( TMPRINTSTATE *st, sunit l )
 /* push current level on st->stack */
 static void pushlev( TMPRINTSTATE *st )
 {
-    Sstack new;
+    Sstack nw;
 
-    new = newSstack( st->curlist );
-    new->next = st->stack;
-    st->stack = new;
+    nw = newSstack( st->curlist );
+    nw->next = st->stack;
+    st->stack = nw;
 }
 
 static void poplev( TMPRINTSTATE *st )
@@ -593,26 +590,26 @@ void tm_opencons( TMPRINTSTATE *st )
 /* terminate current constructor */
 void tm_closecons( TMPRINTSTATE *st )
 {
-    sunit new;
+    sunit nw;
     int len;
 
     st->braclev--;
     len = lencons( st->curlist );
     if( len != 0 && (len + (st->braclev * st->istep)) < st->width ){
-	new = newSuWord( horprintcons( st, st->curlist ) );
+	nw = newSuWord( horprintcons( st, st->curlist ) );
 	rfresunit_list( st->curlist );
     }
     else {
-	new = newSuCons( st->curlist );
+	nw = newSuCons( st->curlist );
     }
     poplev( st );
     if( st->braclev<1 ){
-	vertprintsunit( st, new, 0 );
+	vertprintsunit( st, nw, 0 );
 	fputc( '\n', st->file );
-	rfresunit( new );
+	rfresunit( nw );
 	return;
     }
-    st->curlist = appsunitlist( st->curlist, new );
+    st->curlist = appsunitlist( st->curlist, nw );
 }
 
 /* start a new list */
@@ -626,26 +623,26 @@ void tm_openlist( TMPRINTSTATE *st )
 /* terminate current list */
 void tm_closelist( TMPRINTSTATE *st )
 {
-    sunit new;
+    sunit nw;
     int len;
 
     st->braclev--;
     len = lenlist( st->curlist );
     if( len != 0 && (len + (st->braclev * st->istep)) < st->width ){
-	new = newSuWord( horprintlist( st, st->curlist ) );
+	nw = newSuWord( horprintlist( st, st->curlist ) );
 	rfresunit_list( st->curlist );
     }
     else {
-	new = newSuList( st->curlist );
+	nw = newSuList( st->curlist );
     }
     poplev( st );
     if( st->braclev<1 ){
-	vertprintsunit( st, new, 0 );
+	vertprintsunit( st, nw, 0 );
 	fputc( '\n', st->file );
-	rfresunit( new );
+	rfresunit( nw );
 	return;
     }
-    st->curlist = appsunitlist( st->curlist, new );
+    st->curlist = appsunitlist( st->curlist, nw );
 }
 
 /* start a new tuple */
@@ -659,26 +656,26 @@ void tm_opentuple( TMPRINTSTATE *st )
 /* terminate current tuple */
 void tm_closetuple( TMPRINTSTATE *st )
 {
-    sunit new;
+    sunit nw;
     int len;
 
     st->braclev--;
     len = lentuple( st->curlist );
     if( len != 0 && (len + (st->braclev * st->istep)) < st->width ){
-	new = newSuWord( horprinttuple( st, st->curlist ) );
+	nw = newSuWord( horprinttuple( st, st->curlist ) );
 	rfresunit_list( st->curlist );
     }
     else {
-	new = newSuTuple( st->curlist );
+	nw = newSuTuple( st->curlist );
     }
     poplev( st );
     if( st->braclev<1 ){
-	vertprintsunit( st, new, 0 );
+	vertprintsunit( st, nw, 0 );
 	fputc( '\n', st->file );
-	rfresunit( new );
+	rfresunit( nw );
 	return;
     }
-    st->curlist = appsunitlist( st->curlist, new );
+    st->curlist = appsunitlist( st->curlist, nw );
 }
 
 /* Add word 'w' to the current unit list, or print it
@@ -686,15 +683,15 @@ void tm_closetuple( TMPRINTSTATE *st )
  */
 void tm_printword( TMPRINTSTATE *st, const char *w )
 {
-    sunit new;
+    sunit nw;
 
     if( st->braclev<1 ){
 	fputs( w, st->file );
 	fputc( '\n', st->file );
 	return;
     }
-    new = newSuWord( new_tmstring_nolognew( w ) );
-    st->curlist = appsunitlist( st->curlist, new );
+    nw = newSuWord( new_tmstring_nolognew( w ) );
+    st->curlist = appsunitlist( st->curlist, nw );
 }
 
 TMPRINTSTATE *tm_setprint(
