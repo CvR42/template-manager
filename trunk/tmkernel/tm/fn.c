@@ -598,6 +598,36 @@ static tmstring fnsort( const tmstring_list sl )
     return ans;
 }
 
+static int sizesortcmp( const void *pa, const void *pb )
+{
+     const char **sa = (const char **) pa;
+     const char **sb = (const char **) pb;
+     size_t sza;
+     size_t szb;
+
+     sza = strlen( *sa );
+     szb = strlen( *sb );
+     if( sza<szb ){
+	 return -1;
+     }
+     if( sza>szb ){
+	 return 1;
+     }
+     return strcmp( *sa, *sb );
+}
+
+/* sizesort e1..en */
+static tmstring fnsizesort( const tmstring_list sl )
+{
+    tmstring ans;
+    int (*cmpf)( const void *, const void * );
+
+    cmpf = sizesortcmp;
+    qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
+    ans = flatstrings( sl );
+    return ans;
+}
+
 /* rev e1..en */
 static tmstring fnrev( const tmstring_list sl )
 {
@@ -923,6 +953,126 @@ static tmstring fnnot( const tmstring_list sl )
 }
 
 /* -- datastructure access & file name access -- */
+
+/* listtypes <list> */
+static tmstring fnlisttypes( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list nl;
+    unsigned int ix;
+    char *pre;
+    char *suff;
+    size_t sufflen;
+    size_t prelen;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    prelen = strlen( pre );
+    sufflen = strlen( suff );
+    nl = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	tmstring s = sl->arr[ix];
+	size_t l = strlen( s );
+
+	if(
+	    l>prelen+sufflen &&
+	    strncmp( pre, s, prelen ) == 0 &&
+	    strncmp( suff, s+l-sufflen, sufflen ) == 0 
+	){
+	    nl = append_tmstring_list( nl, rdup_tmstring( s ) );
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
+/* delisttypes <list> */
+static tmstring fndelisttypes( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list nl;
+    unsigned int ix;
+    char *pre;
+    char *suff;
+    size_t sufflen;
+    size_t prelen;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    prelen = strlen( pre );
+    sufflen = strlen( suff );
+    nl = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	tmstring s = sl->arr[ix];
+	size_t l = strlen( s );
+
+	if(
+	    l>prelen+sufflen &&
+	    strncmp( pre, s, prelen ) == 0 &&
+	    strncmp( suff, s+l-sufflen, sufflen ) == 0 
+	){
+	    tmstring ns = rdup_tmstring( s+prelen );
+
+	    ns[l-(prelen+sufflen)] = '\0';
+	    nl = append_tmstring_list( nl, ns );
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
+/* singletypes <list> */
+static tmstring fnsingletypes( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list nl;
+    unsigned int ix;
+    char *pre;
+    char *suff;
+    size_t sufflen;
+    size_t prelen;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    prelen = strlen( pre );
+    sufflen = strlen( suff );
+    nl = new_tmstring_list();
+    for( ix=0; ix<sl->sz; ix++ ){
+	tmstring s = sl->arr[ix];
+	size_t l = strlen( s );
+
+	if(
+	    l<=prelen+sufflen ||
+	    strncmp( pre, s, prelen ) != 0 ||
+	    strncmp( suff, s+l-sufflen, sufflen ) != 0 
+	){
+	    nl = append_tmstring_list( nl, rdup_tmstring( s ) );
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
 
 /* stemname <list> */
 static tmstring fnstemname( const tmstring_list sl )
@@ -1431,6 +1581,71 @@ static tmstring fntypelevel( const tmstring_list sl )
     return newintstr( e->level );
 }
 
+/* Given a list of types, return the types of the fields of these types.
+ * Unknown types are ignored.
+ * List types for the fields are constructed with LISTPRE and LISTSIFF.
+ */
+static tmstring fntypes( const tmstring_list tl )
+{
+    char *pre;
+    char *suff;
+    unsigned int tix;
+    tmstring_list nl;
+    tmstring ans;
+
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    nl = new_tmstring_list();
+    for( tix=0; tix<tl->sz; tix++ ){
+	const tmstring tnm = tl->arr[tix];
+	const unsigned int ix = find_type_ix( allds, tnm );
+
+	if( ix<allds->sz ){
+	    const ds d = allds->arr[ix];
+	    field_list fl = field_listNIL;
+
+	    switch( d->tag ){
+		case TAGDsCons:
+		    break;
+
+		case TAGDsTuple:
+		    fl = d->DsTuple.fields;
+		    break;
+
+		case TAGDsClass:
+		    fl = d->DsClass.fields;
+		    break;
+
+		case TAGDsConstructor:
+		    fl = d->DsConstructor.fields;
+		    break;
+
+	    }
+	    if( fl != field_listNIL ){
+		unsigned int fix;
+
+		for( fix=0; fix<fl->sz; fix++ ){
+		    field e = fl->arr[fix];
+
+		    nl = append_tmstring_list(
+			nl,
+			mklistnm( pre, e->type, suff, e->level )
+		    );
+		}
+	    }
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
 /* Given a type name and element name, return the
    type of the given element, constructed from its type name and list level.
  */
@@ -1461,26 +1676,31 @@ static tmstring fntype( const tmstring_list sl )
     return mklistnm( pre, e->type, suff, e->level );
 }
 
-/* construct a list of constructors for given type */
-static tmstring fnconslist( const tmstring_list sl )
+/* construct a list of constructors for the given types */
+static tmstring fnconslist( const tmstring_list tl )
 {
-    ds d;
+    tmstring_list nl;
+    unsigned int tix;
+    tmstring ans;
 
-    if( sl->sz != 1 ){
-	line_error( "'conslist' requires a type name" );
-	return new_tmstring( "" );
+    nl = new_tmstring_list();
+    for( tix=0; tix<tl->sz; tix++ ){
+	unsigned int dix = find_type_ix( allds, tl->arr[tix] );
+
+	if( dix<allds->sz ){
+	    const ds d = allds->arr[dix];
+
+	    if( d->tag == TAGDsCons ){
+		nl = concat_tmstring_list(
+		    nl,
+		    rdup_tmstring_list( d->DsCons.constructors )
+		);
+	    }
+	}
     }
-    d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL ){
-	/* findtype already complained about this. */
-	return new_tmstring( "" );
-    }
-    if( d->tag != TAGDsCons ){
-	sprintf( errarg, "'%s'", sl->arr[0] );
-	line_error( "not a constructor type" );
-	return new_tmstring( "" );
-    }
-    return flatstrings( d->DsCons.constructors );
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
 }
 
 /* construct a list of fields for given type */
@@ -1498,7 +1718,7 @@ static tmstring fncelmlist( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     if( sl->sz == 3 ){
-	if( strcmp( sl->arr[1], "inherited" ) == 0 ){
+	if( strcmp( sl->arr[2], "inherited" ) == 0 ){
 	    inherited = TRUE;
 	}
 	else {
@@ -1656,21 +1876,13 @@ static void markdep(
 )
 {
     unsigned int tix;
-    bool found;
     ds d;
 
-    found = FALSE;
-    d = dsNIL;
-    for( tix = 0; tix<dl->sz; tix++ ){
-	d = dl->arr[tix];
-	if( strcmp( get_type_name( d ), tnm ) == 0 ){
-	    found = TRUE;
-	    break;
-	}
-    }
-    if( !found ){
+    tix = find_type_ix( dl, tnm );
+    if( tix>=dl->sz ){
 	return;
     }
+    d = dl->arr[tix];
     if( marked[tix] ){
 	if( levels[tix]<listlev ){
 	    levels[tix] = listlev;
@@ -1682,11 +1894,27 @@ static void markdep(
     switch( d->tag ){
 	case TAGDsCons:
 	{
-	    unsigned int cix;
+	    unsigned int ix;
 	    tmstring_list cl = d->DsCons.constructors;
 
-	    for( cix=0; cix<cl->sz; cix++ ){
-		markdep( marked, levels, cl->arr[cix], 0, dl );
+	    for( ix=0; ix<cl->sz; ix++ ){
+		unsigned int cix;
+
+		cix = find_type_ix( dl, cl->arr[ix] );
+		if( cix<cl->sz ){
+		    ds c = dl->arr[ix];
+
+		    if( c->tag == TAGDsConstructor ){
+			field_list el = c->DsConstructor.fields;
+			unsigned int eix;
+
+			for( eix=0; eix<el->sz; eix++ ){
+			    const field e = el->arr[eix];
+
+			    markdep( marked, levels, e->type, e->level, dl );
+			}
+		    }
+		}
 	    }
 	    break;
 	}
@@ -1757,7 +1985,7 @@ static tmstring fndeptype( const tmstring_list sl )
     int lev;
 
     if( sl->sz<1 ){
-	line_error( "'ctypellev' requires at least one parameter" );
+	line_error( "'deptype' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     if( strcmp( sl->arr[0], "single" ) == 0 ){
@@ -2170,6 +2398,8 @@ static struct fnentry fntab[] = {
      { "isinenv", fnisinenv },
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
+     { "listtypes", fnlisttypes },
+     { "delisttypes", fndelisttypes },
      { "max", fnmax },
      { "member", fnmember },
      { "min", fnmin },
@@ -2184,6 +2414,8 @@ static struct fnentry fntab[] = {
      { "searchpath", fnsearchpath },
      { "seplist", fnseplist },
      { "shift", fnshift },
+     { "singletypes", fnsingletypes },
+     { "sizesort", fnsizesort },
      { "sort", fnsort },
      { "stemname", fnstemname },
      { "strcmp", fnstrcmp },
@@ -2205,6 +2437,7 @@ static struct fnentry fntab[] = {
      { "ttypename", fntypename },
      { "tuplelist", fntuplelist },
      { "type", fntype },
+     { "types", fntypes },
      { "typelevel", fntypelevel },
      { "typelist", fntypelist },
      { "typename", fntypename },

@@ -54,6 +54,7 @@
 ..
 .append wantdefs new_var
 .append wantdefs new_var_list
+.append wantdefs append_var_list
 .append wantdefs delete_var_list
 .append wantdefs insert_var_list
 .append wantdefs rfre_var_list

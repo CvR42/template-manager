@@ -82,8 +82,12 @@ static long newcnt_If = 0;
 static long frecnt_If = 0;
 static long newcnt_Set = 0;
 static long frecnt_Set = 0;
+static long newcnt_GlobalSet = 0;
+static long frecnt_GlobalSet = 0;
 static long newcnt_Append = 0;
 static long frecnt_Append = 0;
+static long newcnt_GlobalAppend = 0;
+static long frecnt_GlobalAppend = 0;
 static long newcnt_Error = 0;
 static long frecnt_Error = 0;
 static long newcnt_Exit = 0;
@@ -357,7 +361,9 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #undef new_While
 #undef new_If
 #undef new_Set
+#undef new_GlobalSet
 #undef new_Append
+#undef new_GlobalAppend
 #undef new_Error
 #undef new_Exit
 #undef new_Redirect
@@ -371,7 +377,9 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #define new_While(lno,whilecond,whilelines) real_new_While(lno,whilecond,whilelines,_f,_l)
 #define new_If(lno,ifcond,ifthen,ifelse) real_new_If(lno,ifcond,ifthen,ifelse,_f,_l)
 #define new_Set(lno,setline) real_new_Set(lno,setline,_f,_l)
+#define new_GlobalSet(lno,setline) real_new_GlobalSet(lno,setline,_f,_l)
 #define new_Append(lno,appline) real_new_Append(lno,appline,_f,_l)
+#define new_GlobalAppend(lno,appline) real_new_GlobalAppend(lno,appline,_f,_l)
 #define new_Error(lno,errstr) real_new_Error(lno,errstr,_f,_l)
 #define new_Exit(lno,str) real_new_Exit(lno,str,_f,_l)
 #define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,_f,_l)
@@ -1167,6 +1175,36 @@ tplelm new_Set( int p_lno, tmstring p_setline )
 }
 
 #ifdef LOGNEW
+tplelm real_new_GlobalSet( int p_lno, tmstring p_setline, const char *_f, const int _l )
+#else
+tplelm new_GlobalSet( int p_lno, tmstring p_setline )
+#endif
+{
+    tplelm nw;
+
+#ifdef USECACHE
+    if( cacheix_tplelm > 0 ){
+	nw = cache_tplelm[--cacheix_tplelm];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( tplelm, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGGlobalSet;
+    nw->GlobalSet.lno = p_lno;
+    nw->GlobalSet.setline = p_setline;
+#ifdef STAT
+    newcnt_GlobalSet++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
 tplelm real_new_Append( int p_lno, tmstring p_appline, const char *_f, const int _l )
 #else
 tplelm new_Append( int p_lno, tmstring p_appline )
@@ -1189,6 +1227,36 @@ tplelm new_Append( int p_lno, tmstring p_appline )
     nw->Append.appline = p_appline;
 #ifdef STAT
     newcnt_Append++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+tplelm real_new_GlobalAppend( int p_lno, tmstring p_appline, const char *_f, const int _l )
+#else
+tplelm new_GlobalAppend( int p_lno, tmstring p_appline )
+#endif
+{
+    tplelm nw;
+
+#ifdef USECACHE
+    if( cacheix_tplelm > 0 ){
+	nw = cache_tplelm[--cacheix_tplelm];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( tplelm, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGGlobalAppend;
+    nw->GlobalAppend.lno = p_lno;
+    nw->GlobalAppend.appline = p_appline;
+#ifdef STAT
+    newcnt_GlobalAppend++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1646,8 +1714,16 @@ static void fre_tplelm( tplelm e )
 	    frecnt_Set++;
 	    break;
 
+	case TAGGlobalSet:
+	    frecnt_GlobalSet++;
+	    break;
+
 	case TAGAppend:
 	    frecnt_Append++;
+	    break;
+
+	case TAGGlobalAppend:
+	    frecnt_GlobalAppend++;
 	    break;
 
 	case TAGError:
@@ -1973,6 +2049,17 @@ tplelm_list append_tplelm_list( tplelm_list l, tplelm e )
 {
     if( l->sz >= l->room ){
 	l = setroom_tplelm_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
+
+/* Append a var element 'e' to list 'l', and return the new list. */
+var_list append_var_list( var_list l, var e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_var_list( l, 1+(l->sz)+(l->sz) );
     }
     l->arr[l->sz] = e;
     l->sz++;
@@ -2306,9 +2393,19 @@ void rfre_tplelm( tplelm e )
 	    rfre_tmstring( e->Set.setline );
 	    break;
 
+	case TAGGlobalSet:
+	    rfre_int( e->GlobalSet.lno );
+	    rfre_tmstring( e->GlobalSet.setline );
+	    break;
+
 	case TAGAppend:
 	    rfre_int( e->Append.lno );
 	    rfre_tmstring( e->Append.appline );
+	    break;
+
+	case TAGGlobalAppend:
+	    rfre_int( e->GlobalAppend.lno );
+	    rfre_tmstring( e->GlobalAppend.appline );
 	    break;
 
 	case TAGError:
@@ -2777,6 +2874,16 @@ static tplelm rdup_tplelm( const tplelm e )
 	    return new_Set( i_lno, i_setline );
 	}
 
+	case TAGGlobalSet:
+	{
+	    int i_lno;
+	    tmstring i_setline;
+
+	    i_lno = rdup_int( e->GlobalSet.lno );
+	    i_setline = rdup_tmstring( e->GlobalSet.setline );
+	    return new_GlobalSet( i_lno, i_setline );
+	}
+
 	case TAGAppend:
 	{
 	    int i_lno;
@@ -2785,6 +2892,16 @@ static tplelm rdup_tplelm( const tplelm e )
 	    i_lno = rdup_int( e->Append.lno );
 	    i_appline = rdup_tmstring( e->Append.appline );
 	    return new_Append( i_lno, i_appline );
+	}
+
+	case TAGGlobalAppend:
+	{
+	    int i_lno;
+	    tmstring i_appline;
+
+	    i_lno = rdup_int( e->GlobalAppend.lno );
+	    i_appline = rdup_tmstring( e->GlobalAppend.appline );
+	    return new_GlobalAppend( i_lno, i_appline );
 	}
 
 	case TAGError:
@@ -3271,10 +3388,26 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"GlobalSet",
+	newcnt_GlobalSet,
+	frecnt_GlobalSet,
+	((newcnt_GlobalSet==frecnt_GlobalSet)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"Append",
 	newcnt_Append,
 	frecnt_Append,
 	((newcnt_Append==frecnt_Append)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"GlobalAppend",
+	newcnt_GlobalAppend,
+	frecnt_GlobalAppend,
+	((newcnt_GlobalAppend==frecnt_GlobalAppend)? "": "<-")
     );
     fprintf(
 	f,
