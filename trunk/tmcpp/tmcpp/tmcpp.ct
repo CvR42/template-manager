@@ -446,8 +446,8 @@ void $t_list::destroy()
 ///////////////////////////////////////////////////
 
 .. Forward declarations
-.call ansi_static print_list "void print_$$t_list( TMPRINTSTATE *, const $$t_list * )"
-.call ansi_static print "void print_$$t( TMPRINTSTATE *, const $$t * )"
+.call ansi_static print_list "void print_$$t_list( TmPrintState *, const $$t_list * )"
+.call ansi_static print "void print_$$t( TmPrintState *, const $$t * )"
 .foreach t $(need_print)
 .set stic_$t "static "
 .endforeach
@@ -457,33 +457,33 @@ void $t_list::destroy()
 .foreach t $(need_print)
 // Print an element 't' of ${metatype $t} type '$t'
 // using print optimizer.
-$(stic_$t)void print_$t( TMPRINTSTATE *st, const $t *t )
+$(stic_$t)void print_$t( TmPrintState *st, const $t *t )
 {
     if( t == $tNIL ){
-	tm_printword( st, "@" );
+	st->printWord( "@" );
 	return;
     }
 .switch ${metatype $t}
 .case alias
 .error Internal error: alias $t still present.
 .case tuple
-    tm_opentuple( st );
+    st->openTuple();
 .foreach e ${allfields $t}
     print_${type $t $e}( st, t->$e );
 .endforeach
-    tm_closetuple( st );
+    st->closeTuple();
 .case constructor class constructorbase
 .if ${len ${nonvirtual $t ${subclasses $t}}}
     switch( t->tag ){
 .if ${isvirtual $t}
 .else
 	case TAG$t:
-	    tm_opencons( st );
-	    tm_printword( st, "$t" );
+	    st->openConstructor();
+	    st->printWord( "$t" );
 .foreach e ${allfields $t}
 	    print_${type $t $e}( st, t->$e );
 .endforeach
-	    tm_closecons( st );
+	    st->closeConstructor();
 	    break;
 
 .endif
@@ -497,12 +497,12 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t *t )
 	    FATALTAG( t->tag );
     }
 .else
-    tm_opencons( st );
-    tm_printword( st, "$t" );
+    st->openConstructor();
+    st->printWord( "$t" );
 .foreach e ${allfields $t}
     print_${type $t $e}( st, t->$e );
 .endforeach
-    tm_closecons( st );
+    st->closeConstructor();
 .endif
 .endswitch
 }
@@ -510,13 +510,13 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t *t )
 .endforeach
 .foreach t $(need_print_list)
 // Print list 'l' using print optimizer.
-void print_$t_list( TMPRINTSTATE *st, const $t_list *l )
+void print_$t_list( TmPrintState *st, const $t_list *l )
 {
-    tm_openlist( st );
+    st->openList();
     for( unsigned int ix=0; ix<l->sz; ix++ ){
 	print_$t( st, l->arr[ix] );
     }
-    tm_closelist( st );
+    st->closeList();
 }
 
 .endforeach
