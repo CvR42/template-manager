@@ -23,7 +23,7 @@ test:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done
 
 all:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) all test install; cd ..; done
+	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
 
 install:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done

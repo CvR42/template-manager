@@ -1,3 +1,43 @@
+New in version 2.0:
+- A new meta-type 'class'. Only the new C template 'tmc' supports this
+  meta-type; the older C templates calu, cald and cllu don't.
+  Tm has a number of new functions to support the new meta-type, and
+  other functions are renamed and generalized to support all types.
+  The older names of these functions have been retained for backward
+  compatibility, but will be removed in a future version.
+
+- .expandinherits is gone again.
+
+- The Tm function 'deptype' is gone. Instead, a couple of new functions
+  make it simpler to construct your own version. E.g. listtypes,
+  singletypes, delisttypes. The documentation describes a way to use
+  these functions for dependence analysis.
+
+- There is a new function that returns the current time of execution
+  in milliseconds. Mildly useful for determining why the template takes
+  such a long time.
+
+- Almost all restrictions on Tm datastructures have been lifted. E.g.
+  names may now contain '_'s, constructors may start with a lowercase
+  character, types and field names  may start with an uppercase character,
+  etc.
+
+- Constuctors are now considered as types, and are for example listed
+  in ${typelist}.
+
+- There is a new .switch statement that does the obvious.
+
+- There is a new ${if <cond> <then> <else>} function.
+
+- A number of new functions provide information on inheritance. Next to
+  the existing ${inherits t}, there are: ${inheritors t}, ${superclasses t}
+  and ${subclasses t}.
+
+- A new function ${type e} constructs a complete type name from the
+  information about that field, and from the variables listpre and
+  listsuff.
+
+
 New in version 1.2:
 - Documentation moved to a separate package.
 
