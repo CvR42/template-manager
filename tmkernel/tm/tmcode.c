@@ -18,14 +18,14 @@
 
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /home/gargamel/reeuwijk/i586/lib/calu.ct ---- */
+/* ---- start of /usr/local/lib/calu.ct ---- */
 
 /* Routines for 'tm'.
 
-   template file:      /home/gargamel/reeuwijk/i586/lib/calu.ct
+   template file:      /usr/local/lib/calu.ct
    datastructure file: tm.ds
    tm version:         35
-   tm kernel version:  1.2
+   tm kernel version:  *** development -- not for distribution ***
  */
 
 #ifndef FIRSTROOM
@@ -33,6 +33,10 @@
 #endif
 
 #ifdef STAT
+static long newcnt_alternative_list = 0;
+static long frecnt_alternative_list = 0;
+static long newcnt_classComponent_list = 0;
+static long frecnt_classComponent_list = 0;
 static long newcnt_constructor_list = 0;
 static long frecnt_constructor_list = 0;
 static long newcnt_ds_list = 0;
@@ -48,12 +52,24 @@ static long frecnt_tplelm_list = 0;
 static long newcnt_var_list = 0;
 static long frecnt_var_list = 0;
 
+static long newcnt_alternative = 0;
+static long frecnt_alternative = 0;
+static long newcnt_CCSuper = 0;
+static long frecnt_CCSuper = 0;
+static long newcnt_CCFields = 0;
+static long frecnt_CCFields = 0;
+static long newcnt_CCAlternatives = 0;
+static long frecnt_CCAlternatives = 0;
+static long newcnt_CCSublist = 0;
+static long frecnt_CCSublist = 0;
 static long newcnt_constructor = 0;
 static long frecnt_constructor = 0;
 static long newcnt_DsCons = 0;
 static long frecnt_DsCons = 0;
 static long newcnt_DsTuple = 0;
 static long frecnt_DsTuple = 0;
+static long newcnt_DsClass = 0;
+static long frecnt_DsClass = 0;
 static long newcnt_field = 0;
 static long frecnt_field = 0;
 static long newcnt_macro = 0;
@@ -116,6 +132,10 @@ static long frecnt_var = 0;
 #endif
 
 #ifdef USECACHE
+static short int cacheix_alternative_list = 0;
+static alternative_list cache_alternative_list[CACHESZ]; 
+static short int cacheix_classComponent_list = 0;
+static classComponent_list cache_classComponent_list[CACHESZ]; 
 static short int cacheix_constructor_list = 0;
 static constructor_list cache_constructor_list[CACHESZ]; 
 static short int cacheix_ds_list = 0;
@@ -130,6 +150,10 @@ static short int cacheix_tplelm_list = 0;
 static tplelm_list cache_tplelm_list[CACHESZ]; 
 static short int cacheix_var_list = 0;
 static var_list cache_var_list[CACHESZ]; 
+static short int cacheix_alternative = 0;
+static alternative cache_alternative[CACHESZ];
+static short int cacheix_classComponent = 0;
+static classComponent cache_classComponent[CACHESZ];
 static short int cacheix_constructor = 0;
 static constructor cache_constructor[CACHESZ];
 static short int cacheix_ds = 0;
@@ -164,6 +188,42 @@ static char tm_nilptr[] = "NIL pointer";
 /**************************************************
  *    set array room routines                     *
  **************************************************/
+
+/* Announce that you will need setroom for 'rm' elements in
+ * alternative_list 'l'.
+ */
+static alternative_list setroom_alternative_list( alternative_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( alternative *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( alternative *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need setroom for 'rm' elements in
+ * classComponent_list 'l'.
+ */
+static classComponent_list setroom_classComponent_list( classComponent_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( classComponent *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( classComponent *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
 
 /* Announce that you will need setroom for 'rm' elements in
  * constructor_list 'l'.
@@ -296,12 +356,24 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
  **************************************************/
 
 #ifdef LOGNEW
+#undef new_alternative
+#define new_alternative(label,component) real_new_alternative(label,component,_f,_l)
+#undef new_CCSuper
+#undef new_CCFields
+#undef new_CCAlternatives
+#undef new_CCSublist
+#define new_CCSuper(super) real_new_CCSuper(super,_f,_l)
+#define new_CCFields(fields) real_new_CCFields(fields,_f,_l)
+#define new_CCAlternatives(alternatives) real_new_CCAlternatives(alternatives,_f,_l)
+#define new_CCSublist(components) real_new_CCSublist(components,_f,_l)
 #undef new_constructor
 #define new_constructor(name,fields) real_new_constructor(name,fields,_f,_l)
 #undef new_DsCons
 #undef new_DsTuple
-#define new_DsCons(ctypename,cinherits,conslist) real_new_DsCons(ctypename,cinherits,conslist,_f,_l)
-#define new_DsTuple(ttypename,tinherits,tuplefields) real_new_DsTuple(ttypename,tinherits,tuplefields,_f,_l)
+#undef new_DsClass
+#define new_DsCons(name,inherits,constructors) real_new_DsCons(name,inherits,constructors,_f,_l)
+#define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,_f,_l)
+#define new_DsClass(name,virtual,inherits,fields) real_new_DsClass(name,virtual,inherits,fields,_f,_l)
 #undef new_field
 #define new_field(level,name,type) real_new_field(level,name,type,_f,_l)
 #undef new_macro
@@ -338,6 +410,10 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #define new_Insert(lno,fname) real_new_Insert(lno,fname,_f,_l)
 #undef new_var
 #define new_var(lvl,name,val) real_new_var(lvl,name,val,_f,_l)
+#undef new_alternative_list
+#define new_alternative_list() real_new_alternative_list(_f,_l)
+#undef new_classComponent_list
+#define new_classComponent_list() real_new_classComponent_list(_f,_l)
 #undef new_constructor_list
 #define new_constructor_list() real_new_constructor_list(_f,_l)
 #undef new_ds_list
@@ -353,6 +429,76 @@ static var_list setroom_var_list( var_list l, const unsigned int rm )
 #undef new_var_list
 #define new_var_list() real_new_var_list(_f,_l)
 #endif
+
+#ifdef LOGNEW
+alternative_list real_new_alternative_list( const char *_f, const int _l )
+#else
+alternative_list new_alternative_list( void )
+#endif
+{
+    alternative_list nw;
+
+#ifdef USECACHE
+    if( cacheix_alternative_list > 0 ){
+	nw = cache_alternative_list[--cacheix_alternative_list];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( alternative_list, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->sz = 0;
+#if FIRSTROOM==0
+    nw->arr = (alternative *) 0;
+    nw->room = 0;
+#else
+    nw->arr = TM_MALLOC( alternative *, FIRSTROOM*sizeof(alternative) );
+    nw->room = FIRSTROOM;
+#endif
+#ifdef STAT
+    newcnt_alternative_list++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+classComponent_list real_new_classComponent_list( const char *_f, const int _l )
+#else
+classComponent_list new_classComponent_list( void )
+#endif
+{
+    classComponent_list nw;
+
+#ifdef USECACHE
+    if( cacheix_classComponent_list > 0 ){
+	nw = cache_classComponent_list[--cacheix_classComponent_list];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( classComponent_list, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->sz = 0;
+#if FIRSTROOM==0
+    nw->arr = (classComponent *) 0;
+    nw->room = 0;
+#else
+    nw->arr = TM_MALLOC( classComponent *, FIRSTROOM*sizeof(classComponent) );
+    nw->room = FIRSTROOM;
+#endif
+#ifdef STAT
+    newcnt_classComponent_list++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
 
 #ifdef LOGNEW
 constructor_list real_new_constructor_list( const char *_f, const int _l )
@@ -600,6 +746,151 @@ var_list new_var_list( void )
 }
 
 #ifdef LOGNEW
+alternative real_new_alternative( tmstring p_label, classComponent p_component, const char *_f, const int _l )
+#else
+alternative new_alternative( tmstring p_label, classComponent p_component )
+#endif
+{
+    alternative nw;
+
+#ifdef USECACHE
+    if( cacheix_alternative > 0 ){
+	nw = cache_alternative[--cacheix_alternative];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( alternative, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->label = p_label;
+    nw->component = p_component;
+#ifdef STAT
+    newcnt_alternative++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+classComponent real_new_CCSuper( tmstring p_super, const char *_f, const int _l )
+#else
+classComponent new_CCSuper( tmstring p_super )
+#endif
+{
+    classComponent nw;
+
+#ifdef USECACHE
+    if( cacheix_classComponent > 0 ){
+	nw = cache_classComponent[--cacheix_classComponent];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( classComponent, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGCCSuper;
+    nw->CCSuper.super = p_super;
+#ifdef STAT
+    newcnt_CCSuper++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+classComponent real_new_CCFields( field_list p_fields, const char *_f, const int _l )
+#else
+classComponent new_CCFields( field_list p_fields )
+#endif
+{
+    classComponent nw;
+
+#ifdef USECACHE
+    if( cacheix_classComponent > 0 ){
+	nw = cache_classComponent[--cacheix_classComponent];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( classComponent, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGCCFields;
+    nw->CCFields.fields = p_fields;
+#ifdef STAT
+    newcnt_CCFields++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+classComponent real_new_CCAlternatives( alternative_list p_alternatives, const char *_f, const int _l )
+#else
+classComponent new_CCAlternatives( alternative_list p_alternatives )
+#endif
+{
+    classComponent nw;
+
+#ifdef USECACHE
+    if( cacheix_classComponent > 0 ){
+	nw = cache_classComponent[--cacheix_classComponent];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( classComponent, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGCCAlternatives;
+    nw->CCAlternatives.alternatives = p_alternatives;
+#ifdef STAT
+    newcnt_CCAlternatives++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+classComponent real_new_CCSublist( classComponent_list p_components, const char *_f, const int _l )
+#else
+classComponent new_CCSublist( classComponent_list p_components )
+#endif
+{
+    classComponent nw;
+
+#ifdef USECACHE
+    if( cacheix_classComponent > 0 ){
+	nw = cache_classComponent[--cacheix_classComponent];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( classComponent, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGCCSublist;
+    nw->CCSublist.components = p_components;
+#ifdef STAT
+    newcnt_CCSublist++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
 constructor real_new_constructor( tmstring p_name, field_list p_fields, const char *_f, const int _l )
 #else
 constructor new_constructor( tmstring p_name, field_list p_fields )
@@ -629,9 +920,9 @@ constructor new_constructor( tmstring p_name, field_list p_fields )
 }
 
 #ifdef LOGNEW
-ds real_new_DsCons( tmstring p_ctypename, tmstring_list p_cinherits, constructor_list p_conslist, const char *_f, const int _l )
+ds real_new_DsCons( tmstring p_name, tmstring_list p_inherits, constructor_list p_constructors, const char *_f, const int _l )
 #else
-ds new_DsCons( tmstring p_ctypename, tmstring_list p_cinherits, constructor_list p_conslist )
+ds new_DsCons( tmstring p_name, tmstring_list p_inherits, constructor_list p_constructors )
 #endif
 {
     ds nw;
@@ -647,9 +938,9 @@ ds new_DsCons( tmstring p_ctypename, tmstring_list p_cinherits, constructor_list
     }
 #endif
     nw->tag = TAGDsCons;
-    nw->DsCons.ctypename = p_ctypename;
-    nw->DsCons.cinherits = p_cinherits;
-    nw->DsCons.conslist = p_conslist;
+    nw->DsCons.name = p_name;
+    nw->DsCons.inherits = p_inherits;
+    nw->DsCons.constructors = p_constructors;
 #ifdef STAT
     newcnt_DsCons++;
 #endif
@@ -660,9 +951,9 @@ ds new_DsCons( tmstring p_ctypename, tmstring_list p_cinherits, constructor_list
 }
 
 #ifdef LOGNEW
-ds real_new_DsTuple( tmstring p_ttypename, tmstring_list p_tinherits, field_list p_tuplefields, const char *_f, const int _l )
+ds real_new_DsTuple( tmstring p_name, tmstring_list p_inherits, field_list p_fields, const char *_f, const int _l )
 #else
-ds new_DsTuple( tmstring p_ttypename, tmstring_list p_tinherits, field_list p_tuplefields )
+ds new_DsTuple( tmstring p_name, tmstring_list p_inherits, field_list p_fields )
 #endif
 {
     ds nw;
@@ -678,11 +969,43 @@ ds new_DsTuple( tmstring p_ttypename, tmstring_list p_tinherits, field_list p_tu
     }
 #endif
     nw->tag = TAGDsTuple;
-    nw->DsTuple.ttypename = p_ttypename;
-    nw->DsTuple.tinherits = p_tinherits;
-    nw->DsTuple.tuplefields = p_tuplefields;
+    nw->DsTuple.name = p_name;
+    nw->DsTuple.inherits = p_inherits;
+    nw->DsTuple.fields = p_fields;
 #ifdef STAT
     newcnt_DsTuple++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
+ds real_new_DsClass( tmstring p_name, tmbool p_virtual, tmstring_list p_inherits, field_list p_fields, const char *_f, const int _l )
+#else
+ds new_DsClass( tmstring p_name, tmbool p_virtual, tmstring_list p_inherits, field_list p_fields )
+#endif
+{
+    ds nw;
+
+#ifdef USECACHE
+    if( cacheix_ds > 0 ){
+	nw = cache_ds[--cacheix_ds];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( ds, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGDsClass;
+    nw->DsClass.name = p_name;
+    nw->DsClass.virtual = p_virtual;
+    nw->DsClass.inherits = p_inherits;
+    nw->DsClass.fields = p_fields;
+#ifdef STAT
+    newcnt_DsClass++;
 #endif
 #ifdef LOGNEW
     nw->lognew_id = tm_new_logid( _f, _l );
@@ -1242,6 +1565,67 @@ var new_var( uint p_lvl, tmstring p_name, tmstring p_val )
  *    Freeing routines                            *
  **************************************************/
 
+/* Free an element 'e' of type 'alternative'. */
+static void fre_alternative( alternative e )
+{
+    if( e == alternativeNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_alternative++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_alternative<CACHESZ ){
+	cache_alternative[cacheix_alternative++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
+/* Free an element 'e' of type 'classComponent'. */
+static void fre_classComponent( classComponent e )
+{
+    if( e == classComponentNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef STAT
+    switch( e->tag ){
+	case TAGCCSuper:
+	    frecnt_CCSuper++;
+	    break;
+
+	case TAGCCFields:
+	    frecnt_CCFields++;
+	    break;
+
+	case TAGCCAlternatives:
+	    frecnt_CCAlternatives++;
+	    break;
+
+	case TAGCCSublist:
+	    frecnt_CCSublist++;
+	    break;
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+#endif
+#ifdef USECACHE
+    if( cacheix_classComponent<CACHESZ ){
+	cache_classComponent[cacheix_classComponent++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
 /* Free an element 'e' of type 'constructor'. */
 static void fre_constructor( constructor e )
 {
@@ -1280,6 +1664,10 @@ static void fre_ds( ds e )
 
 	case TAGDsTuple:
 	    frecnt_DsTuple++;
+	    break;
+
+	case TAGDsClass:
+	    frecnt_DsClass++;
 	    break;
 
 	default:
@@ -1440,6 +1828,54 @@ static void fre_var( var e )
     }
 #endif
     TM_FREE( e );
+}
+
+/* Free a list of alternative elements 'l'. */
+static void fre_alternative_list( alternative_list l )
+{
+    if( l == alternative_listNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( l->lognew_id );
+#endif
+#ifdef STAT
+    frecnt_alternative_list++;
+#endif
+    if( l->room!=0 ){
+	TM_FREE( l->arr );
+    }
+#ifdef USECACHE
+    if( cacheix_alternative_list<CACHESZ ){
+	cache_alternative_list[cacheix_alternative_list++] = l;
+	return;
+    }
+#endif
+    TM_FREE( l );
+}
+
+/* Free a list of classComponent elements 'l'. */
+static void fre_classComponent_list( classComponent_list l )
+{
+    if( l == classComponent_listNIL ){
+	return;
+    }
+#ifdef LOGNEW
+    tm_fre_logid( l->lognew_id );
+#endif
+#ifdef STAT
+    frecnt_classComponent_list++;
+#endif
+    if( l->room!=0 ){
+	TM_FREE( l->arr );
+    }
+#ifdef USECACHE
+    if( cacheix_classComponent_list<CACHESZ ){
+	cache_classComponent_list[cacheix_classComponent_list++] = l;
+	return;
+    }
+#endif
+    TM_FREE( l );
 }
 
 /* Free a list of constructor elements 'l'. */
@@ -1615,6 +2051,28 @@ static void fre_var_list( var_list l )
  **************************************************/
 
 
+/* Append a alternative element 'e' to list 'l', and return the new list. */
+alternative_list append_alternative_list( alternative_list l, alternative e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_alternative_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
+
+/* Append a classComponent element 'e' to list 'l', and return the new list. */
+classComponent_list append_classComponent_list( classComponent_list l, classComponent e )
+{
+    if( l->sz >= l->room ){
+	l = setroom_classComponent_list( l, 1+(l->sz)+(l->sz) );
+    }
+    l->arr[l->sz] = e;
+    l->sz++;
+    return l;
+}
+
 /* Append a constructor element 'e' to list 'l', and return the new list. */
 constructor_list append_constructor_list( constructor_list l, constructor e )
 {
@@ -1753,6 +2211,29 @@ var_list insert_var_list( var_list l, const unsigned int pos, var e )
  *    concatenate routines                    *
  **********************************************/
 
+/* Concatenate ds list 'lb' after ds list 'la'.
+   The list descriptor of list 'lb' is freed,
+   since its contents has been moved to 'la'.
+ */
+ds_list concat_ds_list( ds_list la, ds_list lb )
+{
+    unsigned int cnt;
+    ds *sp;
+    ds *dp;
+
+    la = setroom_ds_list( la, la->sz+lb->sz );
+    cnt = lb->sz;
+    sp = lb->arr;
+    dp = &la->arr[la->sz];
+    while( cnt!=0 ){
+	*dp++ = *sp++;
+	cnt--;
+    }
+    la->sz += lb->sz;
+    fre_ds_list( lb );
+    return la;
+}
+
 /* Concatenate field list 'lb' after field list 'la'.
    The list descriptor of list 'lb' is freed,
    since its contents has been moved to 'la'.
@@ -1782,6 +2263,7 @@ field_list concat_field_list( field_list la, field_list lb )
 
 static void rfre_constructor_list( constructor_list );
 
+static void rfre_alternative( alternative );
 static void rfre_field( field );
 static void rfre_var( var );
 
@@ -1795,21 +2277,72 @@ void rfre_ds( ds e )
     }
     switch( e->tag ){
 	case TAGDsCons:
-	    rfre_tmstring( e->DsCons.ctypename );
-	    rfre_tmstring_list( e->DsCons.cinherits );
-	    rfre_constructor_list( e->DsCons.conslist );
+	    rfre_tmstring( e->DsCons.name );
+	    rfre_tmstring_list( e->DsCons.inherits );
+	    rfre_constructor_list( e->DsCons.constructors );
 	    break;
 
 	case TAGDsTuple:
-	    rfre_tmstring( e->DsTuple.ttypename );
-	    rfre_tmstring_list( e->DsTuple.tinherits );
-	    rfre_field_list( e->DsTuple.tuplefields );
+	    rfre_tmstring( e->DsTuple.name );
+	    rfre_tmstring_list( e->DsTuple.inherits );
+	    rfre_field_list( e->DsTuple.fields );
+	    break;
+
+	case TAGDsClass:
+	    rfre_tmstring( e->DsClass.name );
+	    rfre_tmbool( e->DsClass.virtual );
+	    rfre_tmstring_list( e->DsClass.inherits );
+	    rfre_field_list( e->DsClass.fields );
 	    break;
 
 	default:
 	    FATALTAG( (int) e->tag );
     }
     fre_ds( e );
+}
+
+/* Recursively free an element 'e' of type 'classComponent'
+   and all elements in it.
+ */
+void rfre_classComponent( classComponent e )
+{
+    if( e == classComponentNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGCCSuper:
+	    rfre_tmstring( e->CCSuper.super );
+	    break;
+
+	case TAGCCFields:
+	    rfre_field_list( e->CCFields.fields );
+	    break;
+
+	case TAGCCAlternatives:
+	    rfre_alternative_list( e->CCAlternatives.alternatives );
+	    break;
+
+	case TAGCCSublist:
+	    rfre_classComponent_list( e->CCSublist.components );
+	    break;
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+    fre_classComponent( e );
+}
+
+/* Recursively free an element 'e' of type 'alternative'
+   and all elements in it.
+ */
+static void rfre_alternative( alternative e )
+{
+    if( e == alternativeNIL ){
+	return;
+    }
+    rfre_tmstring( e->label );
+    rfre_classComponent( e->component );
+    fre_alternative( e );
 }
 
 /* Recursively free an element 'e' of type 'constructor'
@@ -1965,6 +2498,34 @@ void rfre_tplelm( tplelm e )
     fre_tplelm( e );
 }
 
+/* Recursively free a list of elements 'e' of type alternative. */
+void rfre_alternative_list( alternative_list e )
+{
+    unsigned int ix;
+
+    if( e == alternative_listNIL ){
+	return;
+    }
+    for( ix=0; ix<e->sz; ix++ ){
+	rfre_alternative( e->arr[ix] );
+    }
+    fre_alternative_list( e );
+}
+
+/* Recursively free a list of elements 'e' of type classComponent. */
+void rfre_classComponent_list( classComponent_list e )
+{
+    unsigned int ix;
+
+    if( e == classComponent_listNIL ){
+	return;
+    }
+    for( ix=0; ix<e->sz; ix++ ){
+	rfre_classComponent( e->arr[ix] );
+    }
+    fre_classComponent_list( e );
+}
+
 /* Recursively free a list of elements 'e' of type constructor. */
 static void rfre_constructor_list( constructor_list e )
 {
@@ -2087,16 +2648,24 @@ static void print_ds( TMPRINTSTATE *st, const ds t )
     switch( t->tag ){
 	case TAGDsCons:
 	    tm_printword( st, "DsCons" );
-	    print_tmstring( st, t->DsCons.ctypename );
-	    print_tmstring_list( st, t->DsCons.cinherits );
-	    print_constructor_list( st, t->DsCons.conslist );
+	    print_tmstring( st, t->DsCons.name );
+	    print_tmstring_list( st, t->DsCons.inherits );
+	    print_constructor_list( st, t->DsCons.constructors );
 	    break;
 
 	case TAGDsTuple:
 	    tm_printword( st, "DsTuple" );
-	    print_tmstring( st, t->DsTuple.ttypename );
-	    print_tmstring_list( st, t->DsTuple.tinherits );
-	    print_field_list( st, t->DsTuple.tuplefields );
+	    print_tmstring( st, t->DsTuple.name );
+	    print_tmstring_list( st, t->DsTuple.inherits );
+	    print_field_list( st, t->DsTuple.fields );
+	    break;
+
+	case TAGDsClass:
+	    tm_printword( st, "DsClass" );
+	    print_tmstring( st, t->DsClass.name );
+	    print_tmbool( st, t->DsClass.virtual );
+	    print_tmstring_list( st, t->DsClass.inherits );
+	    print_field_list( st, t->DsClass.fields );
 	    break;
 
 	default:
@@ -2250,26 +2819,40 @@ ds rdup_ds( const ds e )
     switch( e->tag ){
 	case TAGDsCons:
 	{
-	    tmstring i_ctypename;
-	    tmstring_list i_cinherits;
-	    constructor_list i_conslist;
+	    tmstring i_name;
+	    tmstring_list i_inherits;
+	    constructor_list i_constructors;
 
-	    i_ctypename = rdup_tmstring( e->DsCons.ctypename );
-	    i_cinherits = rdup_tmstring_list( e->DsCons.cinherits );
-	    i_conslist = rdup_constructor_list( e->DsCons.conslist );
-	    return new_DsCons( i_ctypename, i_cinherits, i_conslist );
+	    i_name = rdup_tmstring( e->DsCons.name );
+	    i_inherits = rdup_tmstring_list( e->DsCons.inherits );
+	    i_constructors = rdup_constructor_list( e->DsCons.constructors );
+	    return new_DsCons( i_name, i_inherits, i_constructors );
 	}
 
 	case TAGDsTuple:
 	{
-	    tmstring i_ttypename;
-	    tmstring_list i_tinherits;
-	    field_list i_tuplefields;
+	    tmstring i_name;
+	    tmstring_list i_inherits;
+	    field_list i_fields;
 
-	    i_ttypename = rdup_tmstring( e->DsTuple.ttypename );
-	    i_tinherits = rdup_tmstring_list( e->DsTuple.tinherits );
-	    i_tuplefields = rdup_field_list( e->DsTuple.tuplefields );
-	    return new_DsTuple( i_ttypename, i_tinherits, i_tuplefields );
+	    i_name = rdup_tmstring( e->DsTuple.name );
+	    i_inherits = rdup_tmstring_list( e->DsTuple.inherits );
+	    i_fields = rdup_field_list( e->DsTuple.fields );
+	    return new_DsTuple( i_name, i_inherits, i_fields );
+	}
+
+	case TAGDsClass:
+	{
+	    tmstring i_name;
+	    tmbool i_virtual;
+	    tmstring_list i_inherits;
+	    field_list i_fields;
+
+	    i_name = rdup_tmstring( e->DsClass.name );
+	    i_virtual = rdup_tmbool( e->DsClass.virtual );
+	    i_inherits = rdup_tmstring_list( e->DsClass.inherits );
+	    i_fields = rdup_field_list( e->DsClass.fields );
+	    return new_DsClass( i_name, i_virtual, i_inherits, i_fields );
 	}
 
 	default:
@@ -2685,6 +3268,14 @@ void flush_tm()
 #ifdef USECACHE
     short int ix;
 
+    for( ix=0; ix<cacheix_alternative_list; ix++ ){
+	TM_FREE( cache_alternative_list[ix] );
+    }
+    cacheix_alternative_list = 0;
+    for( ix=0; ix<cacheix_classComponent_list; ix++ ){
+	TM_FREE( cache_classComponent_list[ix] );
+    }
+    cacheix_classComponent_list = 0;
     for( ix=0; ix<cacheix_constructor_list; ix++ ){
 	TM_FREE( cache_constructor_list[ix] );
     }
@@ -2713,6 +3304,14 @@ void flush_tm()
 	TM_FREE( cache_var_list[ix] );
     }
     cacheix_var_list = 0;
+    for( ix=0; ix<cacheix_alternative; ix++ ){
+	TM_FREE( cache_alternative[ix] );
+    }
+    cacheix_alternative = 0;
+    for( ix=0; ix<cacheix_classComponent; ix++ ){
+	TM_FREE( cache_classComponent[ix] );
+    }
+    cacheix_classComponent = 0;
     for( ix=0; ix<cacheix_constructor; ix++ ){
 	TM_FREE( cache_constructor[ix] );
     }
@@ -2747,6 +3346,46 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"alternative",
+	newcnt_alternative,
+	frecnt_alternative,
+	((newcnt_alternative==frecnt_alternative)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"CCSuper",
+	newcnt_CCSuper,
+	frecnt_CCSuper,
+	((newcnt_CCSuper==frecnt_CCSuper)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"CCFields",
+	newcnt_CCFields,
+	frecnt_CCFields,
+	((newcnt_CCFields==frecnt_CCFields)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"CCAlternatives",
+	newcnt_CCAlternatives,
+	frecnt_CCAlternatives,
+	((newcnt_CCAlternatives==frecnt_CCAlternatives)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"CCSublist",
+	newcnt_CCSublist,
+	frecnt_CCSublist,
+	((newcnt_CCSublist==frecnt_CCSublist)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"constructor",
 	newcnt_constructor,
 	frecnt_constructor,
@@ -2767,6 +3406,14 @@ void stat_tm( FILE *f )
 	newcnt_DsTuple,
 	frecnt_DsTuple,
 	((newcnt_DsTuple==frecnt_DsTuple)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
+	"DsClass",
+	newcnt_DsClass,
+	frecnt_DsClass,
+	((newcnt_DsClass==frecnt_DsClass)? "": "<-")
     );
     fprintf(
 	f,
@@ -2914,6 +3561,20 @@ void stat_tm( FILE *f )
     );
     fprintf(
 	f,
+	tm_allocfreed, "alternative_list",
+	newcnt_alternative_list,
+	frecnt_alternative_list,
+	((newcnt_alternative_list==frecnt_alternative_list)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed, "classComponent_list",
+	newcnt_classComponent_list,
+	frecnt_classComponent_list,
+	((newcnt_classComponent_list==frecnt_classComponent_list)? "": "<-")
+    );
+    fprintf(
+	f,
 	tm_allocfreed, "constructor_list",
 	newcnt_constructor_list,
 	frecnt_constructor_list,
@@ -2966,4 +3627,4 @@ void stat_tm( FILE *f )
 #endif
 }
 
-/* ---- end of /home/gargamel/reeuwijk/i586/lib/calu.ct ---- */
+/* ---- end of /usr/local/lib/calu.ct ---- */

@@ -9,8 +9,9 @@
  */
 
 typedef enum en_lextok {
-    NONE, SEMI, BAR, NAME, COLON, COMMA, EQEQ,
+    NONE, SEMI, BAR, NAME, COLON, COMMA, EQ, EQEQ, TILDEQ,
     COLCOLEQ, INCLUDE, LSBRAC, RSBRAC, LRBRAC, RRBRAC,
+    LCBRAC, RCBRAC,
     LEXEOF, STRING, PLUS
 } lextok;
 
@@ -26,8 +27,13 @@ typedef union un_YYSTYPE {
 
 extern YYSTYPE yylval;
 
+#define LINESIZE 300
+
+extern char linebuf[];
+extern unsigned int lineix;
 extern lextok yylex( void );
 extern void init_lex( void );
 extern void end_lex( void );
 extern void stat_lex( FILE *f );
+extern void show_parse_context( FILE *f );
 

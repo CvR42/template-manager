@@ -122,6 +122,12 @@ not: '0' '1' '0' '1'
 or:  '0' '1' '0'
 ----
 
+If
+--
+if 0: [false] [] []
+if 1: [true] [true] []
+[]
+
 List manipulation:
 ----
 index:   '1' '0' '0' '0'
@@ -171,7 +177,7 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '183'
+tpllineno: '190'
 1 bla
 testsub
 ----
@@ -179,12 +185,15 @@ testsub
 Pass one
 Datastructure access functions:
 ----
-typelist: 'orig subtuple sublevel notuple toplevel thing'
+typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
 ttypelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
+classtypelist: 'subclass testclass'
     conslist orig: ''
     inherits orig: ''
+    isvirtual orig: '0'
     telmlist orig: 'file line'
+    memberlist orig: 'file line'
 	ttypeclass orig file: 'single'
 	ttypellev orig file: 0
 	ttypename orig file: 'string'
@@ -193,7 +202,9 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename orig line: 'int'
     conslist subtuple: ''
     inherits subtuple: 'orig'
+    isvirtual subtuple: '0'
     telmlist subtuple: 'tl tn'
+    memberlist subtuple: 'tl tn'
 	ttypeclass subtuple tl: 'list'
 	ttypellev subtuple tl: 1
 	ttypename subtuple tl: 'thing'
@@ -202,6 +213,7 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename subtuple tn: 'int'
     conslist sublevel: 'SubNamed SubNamedlist SubNamedlistlist'
     inherits sublevel: 'toplevel subtuple'
+    isvirtual sublevel: '0'
         celmlist: 'n'
             ctypeclass sublevel SubNamed n: 'single'
 	    ctypellev sublevel SubNamed n: 0
@@ -215,11 +227,15 @@ ctypelist: 'sublevel toplevel thing'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
             ctypename sublevel SubNamedlistlist thinglistlist: 'thing'
     telmlist sublevel: ''
+    memberlist sublevel: ''
     conslist notuple: ''
     inherits notuple: 'subtuple'
+    isvirtual notuple: '0'
     telmlist notuple: ''
+    memberlist notuple: ''
     conslist toplevel: 'Top Toptuple TopNone'
     inherits toplevel: 'subtuple'
+    isvirtual toplevel: '0'
         celmlist: 'la lb'
             ctypeclass toplevel Top la: 'list'
 	    ctypellev toplevel Top la: 1
@@ -233,10 +249,29 @@ ctypelist: 'sublevel toplevel thing'
             ctypename toplevel Toptuple tup: 'subtuple'
         celmlist: ''
     telmlist toplevel: ''
+    memberlist toplevel: ''
     conslist thing: 'Thing'
     inherits thing: ''
+    isvirtual thing: '0'
         celmlist: ''
     telmlist thing: ''
+    memberlist thing: ''
+    conslist subclass: ''
+    inherits subclass: 'testclass orig'
+    isvirtual subclass: '0'
+    telmlist subclass: ''
+    memberlist subclass: ''
+    conslist testclass: ''
+    inherits testclass: ''
+    isvirtual testclass: '0'
+    telmlist testclass: 'a b'
+    memberlist testclass: 'a b'
+	ttypeclass testclass a: 'single'
+	ttypellev testclass a: 0
+	ttypename testclass a: 'int'
+	ttypeclass testclass b: 'single'
+	ttypellev testclass b: 0
+	ttypename testclass b: 'int'
 mklist: test a test a test a  
 stemname: a b] [c [d] [e]] a[f] [[g]]
 mklist: test a [test [a [[[[[test [[[[[a  
@@ -264,22 +299,29 @@ single types dependent on toplevel: 'subtuple sublevel toplevel thing'
 list types dependent on toplevel: 'sublevel sublevel_list thing thing_list'
 single types dependent on thing: 'thing'
 list types dependent on thing: ''
+single types dependent on subclass: 'subclass'
+list types dependent on subclass: ''
+single types dependent on testclass: 'testclass'
+list types dependent on testclass: ''
 Testing error handling:
 ''
 ''
 ''
 Type sorting:
-depsort: [int orig subtuple sublevel notuple toplevel thing]
+depsort: [int orig subtuple sublevel notuple toplevel thing subclass testclass]
 ----
 Pass two
 Datastructure access functions:
 ----
-typelist: 'orig subtuple sublevel notuple toplevel thing'
+typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
 ttypelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
+classtypelist: 'subclass testclass'
     conslist orig: ''
     inherits orig: ''
+    isvirtual orig: '0'
     telmlist orig: 'file line'
+    memberlist orig: 'file line'
 	ttypeclass orig file: 'single'
 	ttypellev orig file: 0
 	ttypename orig file: 'string'
@@ -288,7 +330,9 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename orig line: 'int'
     conslist subtuple: ''
     inherits subtuple: ''
+    isvirtual subtuple: '0'
     telmlist subtuple: 'file line tl tn'
+    memberlist subtuple: 'file line tl tn'
 	ttypeclass subtuple file: 'single'
 	ttypellev subtuple file: 0
 	ttypename subtuple file: 'string'
@@ -303,6 +347,7 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename subtuple tn: 'int'
     conslist sublevel: 'SubNamed SubNamedlist SubNamedlistlist'
     inherits sublevel: ''
+    isvirtual sublevel: '0'
         celmlist: 'file line tl tn n'
             ctypeclass sublevel SubNamed file: 'single'
 	    ctypellev sublevel SubNamed file: 0
@@ -352,9 +397,12 @@ ctypelist: 'sublevel toplevel thing'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
             ctypename sublevel SubNamedlistlist thinglistlist: 'thing'
     telmlist sublevel: ''
+    memberlist sublevel: ''
     conslist notuple: ''
     inherits notuple: ''
+    isvirtual notuple: '0'
     telmlist notuple: 'file line tl tn'
+    memberlist notuple: 'file line tl tn'
 	ttypeclass notuple file: 'single'
 	ttypellev notuple file: 0
 	ttypename notuple file: 'string'
@@ -369,6 +417,7 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename notuple tn: 'int'
     conslist toplevel: 'Top Toptuple TopNone'
     inherits toplevel: ''
+    isvirtual toplevel: '0'
         celmlist: 'file line tl tn la lb'
             ctypeclass toplevel Top file: 'single'
 	    ctypellev toplevel Top file: 0
@@ -418,10 +467,41 @@ ctypelist: 'sublevel toplevel thing'
 	    ctypellev toplevel TopNone tn: 0
             ctypename toplevel TopNone tn: 'int'
     telmlist toplevel: ''
+    memberlist toplevel: ''
     conslist thing: 'Thing'
     inherits thing: ''
+    isvirtual thing: '0'
         celmlist: ''
     telmlist thing: ''
+    memberlist thing: ''
+    conslist subclass: ''
+    inherits subclass: ''
+    isvirtual subclass: '0'
+    telmlist subclass: 'a b file line'
+    memberlist subclass: 'a b file line'
+	ttypeclass subclass a: 'single'
+	ttypellev subclass a: 0
+	ttypename subclass a: 'int'
+	ttypeclass subclass b: 'single'
+	ttypellev subclass b: 0
+	ttypename subclass b: 'int'
+	ttypeclass subclass file: 'single'
+	ttypellev subclass file: 0
+	ttypename subclass file: 'string'
+	ttypeclass subclass line: 'single'
+	ttypellev subclass line: 0
+	ttypename subclass line: 'int'
+    conslist testclass: ''
+    inherits testclass: ''
+    isvirtual testclass: '0'
+    telmlist testclass: 'a b'
+    memberlist testclass: 'a b'
+	ttypeclass testclass a: 'single'
+	ttypellev testclass a: 0
+	ttypename testclass a: 'int'
+	ttypeclass testclass b: 'single'
+	ttypellev testclass b: 0
+	ttypename testclass b: 'int'
 mklist: test a test_list a_list test_list_list_list_list_list a_list_list_list_list_list  
 stemname: a b] [c [d] [e]] a[f] [[g]]
 mklist: test a [test_list [a_list [[[[[test_list_list_list_list_list [[[[[a_list_list_list_list_list  
@@ -449,22 +529,29 @@ single types dependent on toplevel: 'subtuple sublevel toplevel thing'
 list types dependent on toplevel: 'sublevel sublevel_list thing thing_list'
 single types dependent on thing: 'thing'
 list types dependent on thing: ''
+single types dependent on subclass: 'subclass'
+list types dependent on subclass: ''
+single types dependent on testclass: 'testclass'
+list types dependent on testclass: ''
 Testing error handling:
 ''
 ''
 ''
 Type sorting:
-depsort: [int orig subtuple sublevel notuple toplevel thing]
+depsort: [int orig subtuple sublevel notuple toplevel thing subclass testclass]
 ----
 Pass three
 Datastructure access functions:
 ----
-typelist: 'orig subtuple sublevel notuple toplevel thing'
+typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
 ttypelist: 'orig subtuple notuple'
 ctypelist: 'sublevel toplevel thing'
+classtypelist: 'subclass testclass'
     conslist orig: ''
     inherits orig: ''
+    isvirtual orig: '0'
     telmlist orig: 'file line'
+    memberlist orig: 'file line'
 	ttypeclass orig file: 'single'
 	ttypellev orig file: 0
 	ttypename orig file: 'string'
@@ -473,7 +560,9 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename orig line: 'int'
     conslist subtuple: ''
     inherits subtuple: ''
+    isvirtual subtuple: '0'
     telmlist subtuple: 'file line tl tn'
+    memberlist subtuple: 'file line tl tn'
 	ttypeclass subtuple file: 'single'
 	ttypellev subtuple file: 0
 	ttypename subtuple file: 'string'
@@ -488,6 +577,7 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename subtuple tn: 'int'
     conslist sublevel: 'SubNamed SubNamedlist SubNamedlistlist'
     inherits sublevel: ''
+    isvirtual sublevel: '0'
         celmlist: 'file line tl tn n'
             ctypeclass sublevel SubNamed file: 'single'
 	    ctypellev sublevel SubNamed file: 0
@@ -537,9 +627,12 @@ ctypelist: 'sublevel toplevel thing'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
             ctypename sublevel SubNamedlistlist thinglistlist: 'thing'
     telmlist sublevel: ''
+    memberlist sublevel: ''
     conslist notuple: ''
     inherits notuple: ''
+    isvirtual notuple: '0'
     telmlist notuple: 'file line tl tn'
+    memberlist notuple: 'file line tl tn'
 	ttypeclass notuple file: 'single'
 	ttypellev notuple file: 0
 	ttypename notuple file: 'string'
@@ -554,6 +647,7 @@ ctypelist: 'sublevel toplevel thing'
 	ttypename notuple tn: 'int'
     conslist toplevel: 'Top Toptuple TopNone'
     inherits toplevel: ''
+    isvirtual toplevel: '0'
         celmlist: 'file line tl tn la lb'
             ctypeclass toplevel Top file: 'single'
 	    ctypellev toplevel Top file: 0
@@ -603,10 +697,41 @@ ctypelist: 'sublevel toplevel thing'
 	    ctypellev toplevel TopNone tn: 0
             ctypename toplevel TopNone tn: 'int'
     telmlist toplevel: ''
+    memberlist toplevel: ''
     conslist thing: 'Thing'
     inherits thing: ''
+    isvirtual thing: '0'
         celmlist: ''
     telmlist thing: ''
+    memberlist thing: ''
+    conslist subclass: ''
+    inherits subclass: ''
+    isvirtual subclass: '0'
+    telmlist subclass: 'a b file line'
+    memberlist subclass: 'a b file line'
+	ttypeclass subclass a: 'single'
+	ttypellev subclass a: 0
+	ttypename subclass a: 'int'
+	ttypeclass subclass b: 'single'
+	ttypellev subclass b: 0
+	ttypename subclass b: 'int'
+	ttypeclass subclass file: 'single'
+	ttypellev subclass file: 0
+	ttypename subclass file: 'string'
+	ttypeclass subclass line: 'single'
+	ttypellev subclass line: 0
+	ttypename subclass line: 'int'
+    conslist testclass: ''
+    inherits testclass: ''
+    isvirtual testclass: '0'
+    telmlist testclass: 'a b'
+    memberlist testclass: 'a b'
+	ttypeclass testclass a: 'single'
+	ttypellev testclass a: 0
+	ttypename testclass a: 'int'
+	ttypeclass testclass b: 'single'
+	ttypellev testclass b: 0
+	ttypename testclass b: 'int'
 mklist: test a test_list a_list test_list_list_list_list_list a_list_list_list_list_list  
 stemname: a b] [c [d] [e]] a[f] [[g]]
 mklist: test a [test_list [a_list [[[[[test_list_list_list_list_list [[[[[a_list_list_list_list_list  
@@ -634,12 +759,16 @@ single types dependent on toplevel: 'subtuple sublevel toplevel thing'
 list types dependent on toplevel: 'sublevel sublevel_list thing thing_list'
 single types dependent on thing: 'thing'
 list types dependent on thing: ''
+single types dependent on subclass: 'subclass'
+list types dependent on subclass: ''
+single types dependent on testclass: 'testclass'
+list types dependent on testclass: ''
 Testing error handling:
 ''
 ''
 ''
 Type sorting:
-depsort: [int orig subtuple sublevel notuple toplevel thing]
+depsort: [int orig subtuple sublevel notuple toplevel thing subclass testclass]
 ----
 
 String manipulation functions:

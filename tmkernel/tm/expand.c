@@ -41,11 +41,21 @@ static field_list collect_fields_tmstring( tmstring super )
             return new_field_list();
 
 	case TAGDsTuple:
-	    ans = rdup_field_list( superds->DsTuple.tuplefields );
+	    ans = rdup_field_list( superds->DsTuple.fields );
 	    ans = concat_field_list(
 	        ans,
-	        collect_fields_tmstring_list( superds->DsTuple.tinherits )
+	        collect_fields_tmstring_list( superds->DsTuple.inherits )
 	    );
+	    break;
+
+	case TAGDsClass:
+	    ans = rdup_field_list( superds->DsClass.fields );
+	    ans = concat_field_list(
+	        ans,
+	        collect_fields_tmstring_list( superds->DsClass.inherits )
+	    );
+	    break;
+
     }
     return ans;
 }
@@ -98,26 +108,39 @@ static ds expand_inherits_ds( ds d )
     switch( d->tag ){
         case TAGDsCons:
         {
-	    field_list new = collect_fields_tmstring_list( d->DsCons.cinherits );
+	    field_list new = collect_fields_tmstring_list( d->DsCons.inherits );
 
-	    d->DsCons.conslist = augment_constructor_list( d->DsCons.conslist, new );
+	    d->DsCons.constructors = augment_constructor_list( d->DsCons.constructors, new );
 	    rfre_field_list( new );
-	    rfre_tmstring_list( d->DsCons.cinherits ); 
-	    d->DsCons.cinherits = new_tmstring_list();
-	    ckconstructor( d->DsCons.ctypename, d->DsCons.conslist );
+	    rfre_tmstring_list( d->DsCons.inherits ); 
+	    d->DsCons.inherits = new_tmstring_list();
+	    ckconstructor( d->DsCons.name, d->DsCons.constructors );
 	    break;
 	}
 
         case TAGDsTuple:
         {
-	    field_list new = collect_fields_tmstring_list( d->DsTuple.tinherits );
-	    d->DsTuple.tuplefields = concat_field_list(
+	    field_list new = collect_fields_tmstring_list( d->DsTuple.inherits );
+	    d->DsTuple.fields = concat_field_list(
 	        new,
-		d->DsTuple.tuplefields
+		d->DsTuple.fields
 	    );
-	    rfre_tmstring_list( d->DsTuple.tinherits ); 
-	    d->DsTuple.tinherits = new_tmstring_list();
-	    cktuple( d->DsTuple.ttypename, d->DsTuple.tuplefields );
+	    rfre_tmstring_list( d->DsTuple.inherits ); 
+	    d->DsTuple.inherits = new_tmstring_list();
+	    cktuple( d->DsTuple.name, d->DsTuple.fields );
+	    break;
+	}
+
+        case TAGDsClass:
+        {
+	    field_list new = collect_fields_tmstring_list( d->DsClass.inherits );
+	    d->DsClass.fields = concat_field_list(
+	        new,
+		d->DsClass.fields
+	    );
+	    rfre_tmstring_list( d->DsClass.inherits ); 
+	    d->DsClass.inherits = new_tmstring_list();
+	    cktuple( d->DsClass.name, d->DsClass.fields );
 	    break;
 	}
 

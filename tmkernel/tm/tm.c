@@ -104,14 +104,20 @@ static void check_ds_inheritance(
     supers = tmstring_listNIL;
     switch( me->tag ){
         case TAGDsCons:
-            supers = me->DsCons.cinherits;
-            myname = me->DsCons.ctypename;
+            supers = me->DsCons.inherits;
+            myname = me->DsCons.name;
             break;
 
 	case TAGDsTuple:
-            supers = me->DsTuple.tinherits;
-            myname = me->DsTuple.ttypename;
+            supers = me->DsTuple.inherits;
+            myname = me->DsTuple.name;
             break;
+
+	case TAGDsClass:
+	    supers = me->DsClass.inherits;
+            myname = me->DsClass.name;
+            break;
+
     }
     if( accepted[theds] ){
         return;
@@ -356,6 +362,9 @@ int main( int argc, char **argv )
     init_var();
     active_libpath = find_active_libpath();
     scanargs( argc, argv, active_libpath );
+    if( errfilename != tmstringNIL ){
+	ckfreopen( errfilename, "w", stderr );
+    }
     allds = parse_ds_file( dsfilename );
     check_ds_list_inheritance( allds );
     errcheck();
@@ -368,9 +377,6 @@ int main( int argc, char **argv )
     }
     if( outfilename != tmstringNIL ){
 	ckfreopen( outfilename, "w", stdout );
-    }
-    if( errfilename != tmstringNIL ){
-	ckfreopen( errfilename, "w", stderr );
     }
     if( listing ){
 	st = tm_setprint( stdout, 2, 79, 8, 0 );

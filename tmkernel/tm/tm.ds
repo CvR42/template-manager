@@ -4,9 +4,21 @@
 || All rights reserved.
 
 || Structure of the datastructure itself
+|| The Class type is in its canonical form. Before canonization
+|| it is represented as a classComponent list.
 ds ::=
-    DsCons ctypename:tmstring cinherits:[tmstring] conslist:[constructor] |
-    DsTuple ttypename:tmstring tinherits:[tmstring] tuplefields:[field];
+    DsCons name:tmstring inherits:[tmstring] constructors:[constructor] |
+    DsTuple name:tmstring inherits:[tmstring] fields:[field] |
+    DsClass name:tmstring virtual:tmbool inherits:[tmstring] fields:[field];
+
+classComponent ::=
+    CCSuper super:tmstring |
+    CCFields fields:[field] |
+    CCAlternatives alternatives:[alternative] |
+    CCSublist components:[classComponent]
+    ;
+
+alternative == ( label:tmstring, component:classComponent );
 
 constructor == ( name:tmstring, fields:[field] );
 
