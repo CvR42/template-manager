@@ -16,7 +16,7 @@
 /* Ensure that there are no double names in tuple with name 'nm'
  * and fields 'fields'.
  */
-void cktuple( tmstring nm, field_list fields )
+void cktuple( tmstring nm, field_list fields, tmstring_list inherits )
 {
     unsigned int ix;	/* index of currently checked field */
     unsigned int iy;	/* index of searched subsequent fields */
@@ -35,6 +35,10 @@ void cktuple( tmstring nm, field_list fields )
 		error( "double use of field name" );
 	    }
 	}
+    }
+    if( member_tmstring_list( nm, inherits ) ){
+	sprintf( errpos, "in type '%s'", nm );
+	error( "Type inherits itself" );
     }
 }
 

@@ -123,6 +123,9 @@ redirect:
 .redirect testrdir
 Dit moet in de redirect file te komen
 .endredirect
+.appendfile testrdir
+En dit wordt er achter geplakt.
+.endappendfile
 ----
 
 error:

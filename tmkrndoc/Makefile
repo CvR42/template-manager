@@ -38,7 +38,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
 	    demo.ct demo.ht democonf.t demospec.t \
             goodwords macdemo.t main.bib main.ps plot.ds readin.m xrefdemo.t \
-	    title.ct title.ds
+	    title.ct title.ds ch.sh cast.t
 
 help:
 	@echo Possible targets:

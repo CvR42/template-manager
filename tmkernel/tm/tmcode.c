@@ -16,17 +16,17 @@
 #include "global.h"
 #include "misc.h"
 
-/* Requirement analysis took 240 milliseconds. */
+/* Requirement analysis took 250 milliseconds. */
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
-/* ---- start of /home/blob/users/reeuwijk/lab/lib/calu.ct ---- */
+/* ---- start of /usr/local/lib/calu.ct ---- */
 
 /* Routines for 'tm'.
 
-   template file:      /home/blob/users/reeuwijk/lab/lib/calu.ct
+   template file:      /usr/local/lib/calu.ct
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  *** development -- not for distribution ***
+   tm kernel version:  2.0-beta4
  */
 
 #ifndef FIRSTROOM
@@ -101,6 +101,8 @@ static long newcnt_Exit = 0;
 static long frecnt_Exit = 0;
 static long newcnt_Redirect = 0;
 static long frecnt_Redirect = 0;
+static long newcnt_Appendfile = 0;
+static long frecnt_Appendfile = 0;
 static long newcnt_Include = 0;
 static long frecnt_Include = 0;
 static long newcnt_Macro = 0;
@@ -403,6 +405,7 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #undef new_Error
 #undef new_Exit
 #undef new_Redirect
+#undef new_Appendfile
 #undef new_Include
 #undef new_Macro
 #undef new_Call
@@ -422,6 +425,7 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
 #define new_Error(lno,errstr) real_new_Error(lno,errstr,_f,_l)
 #define new_Exit(lno,str) real_new_Exit(lno,str,_f,_l)
 #define new_Redirect(lno,fname,body) real_new_Redirect(lno,fname,body,_f,_l)
+#define new_Appendfile(lno,fname,body) real_new_Appendfile(lno,fname,body,_f,_l)
 #define new_Include(lno,fname) real_new_Include(lno,fname,_f,_l)
 #define new_Macro(lno,formpar,macbody) real_new_Macro(lno,formpar,macbody,_f,_l)
 #define new_Call(lno,callline) real_new_Call(lno,callline,_f,_l)
@@ -1495,6 +1499,37 @@ tplelm new_Redirect( int p_lno, tmstring p_fname, tplelm_list p_body )
 }
 
 #ifdef LOGNEW
+tplelm real_new_Appendfile( int p_lno, tmstring p_fname, tplelm_list p_body, const char *_f, const int _l )
+#else
+tplelm new_Appendfile( int p_lno, tmstring p_fname, tplelm_list p_body )
+#endif
+{
+    tplelm nw;
+
+#ifdef USECACHE
+    if( cacheix_tplelm > 0 ){
+	nw = cache_tplelm[--cacheix_tplelm];
+    }
+    else {
+#endif
+	nw = TM_MALLOC( tplelm, sizeof(*nw) );
+#ifdef USECACHE
+    }
+#endif
+    nw->tag = TAGAppendfile;
+    to_Appendfile(nw)->lno = p_lno;
+    to_Appendfile(nw)->fname = p_fname;
+    to_Appendfile(nw)->body = p_body;
+#ifdef STAT
+    newcnt_Appendfile++;
+#endif
+#ifdef LOGNEW
+    nw->lognew_id = tm_new_logid( _f, _l );
+#endif
+    return nw;
+}
+
+#ifdef LOGNEW
 tplelm real_new_Include( int p_lno, tmstring p_fname, const char *_f, const int _l )
 #else
 tplelm new_Include( int p_lno, tmstring p_fname )
@@ -1982,6 +2017,10 @@ static void fre_tplelm( tplelm e )
 	    frecnt_Redirect++;
 	    break;
 
+	case TAGAppendfile:
+	    frecnt_Appendfile++;
+	    break;
+
 	case TAGInclude:
 	    frecnt_Include++;
 	    break;
@@ -2243,7 +2282,6 @@ static void fre_var_list( var_list l )
  *    Append routines                             *
  **************************************************/
 
-
 /* Append a alternative element 'e' to list 'l', and return the new list. */
 alternative_list append_alternative_list( alternative_list l, alternative e )
 {
@@ -2489,12 +2527,10 @@ tmstring_list concat_tmstring_list( tmstring_list la, tmstring_list lb )
  **************************************************/
 
 static void rfre_switchcase_list( switchcase_list );
-
 static void rfre_alternative( alternative );
 static void rfre_field( field );
 static void rfre_var( var );
 static void rfre_switchcase( switchcase );
-
 /* Recursively free an element 'e' of type 'classComponent'
    and all elements in it.
  */
@@ -2656,6 +2692,12 @@ void rfre_tplelm( tplelm e )
 	    rfre_int( to_Redirect(e)->lno );
 	    rfre_tmstring( to_Redirect(e)->fname );
 	    rfre_tplelm_list( to_Redirect(e)->body );
+	    break;
+
+	case TAGAppendfile:
+	    rfre_int( to_Appendfile(e)->lno );
+	    rfre_tmstring( to_Appendfile(e)->fname );
+	    rfre_tplelm_list( to_Appendfile(e)->body );
 	    break;
 
 	case TAGInclude:
@@ -2884,10 +2926,8 @@ static void rfre_switchcase_list( switchcase_list e )
  **************************************************/
 
 static void print_field_list( TMPRINTSTATE *st, const field_list );
-
 static void print_ds( TMPRINTSTATE *st, const ds );
 static void print_field( TMPRINTSTATE *st, const field );
-
 /* Print an element 't' of type 'ds'
    using print optimizer.
  */
@@ -3023,16 +3063,12 @@ static void print_field_list( TMPRINTSTATE *st, const field_list l )
 #define rdup_tplelm_list(l) real_rdup_tplelm_list(l,_f,_l)
 #define rdup_switchcase_list(l) real_rdup_switchcase_list(l,_f,_l)
 static switchcase_list real_rdup_switchcase_list( const switchcase_list l, const char *_f, const int _l );
-
 static field real_rdup_field( const field e, const char *_f, const int _l );
 static switchcase real_rdup_switchcase( const switchcase e, const char *_f, const int _l );
-
 #else
 static switchcase_list rdup_switchcase_list( const switchcase_list l );
-
 static field rdup_field( const field e );
 static switchcase rdup_switchcase( const switchcase e );
-
 #endif
 /* Recursively duplicate a ds element 'e'. */
 #ifdef LOGNEW
@@ -3244,6 +3280,18 @@ tplelm rdup_tplelm( const tplelm e )
 	    i_fname = rdup_tmstring( to_Redirect(e)->fname );
 	    i_body = rdup_tplelm_list( to_Redirect(e)->body );
 	    return new_Redirect( i_lno, i_fname, i_body );
+	}
+
+	case TAGAppendfile:
+	{
+	    int i_lno;
+	    tmstring i_fname;
+	    tplelm_list i_body;
+
+	    i_lno = rdup_int( to_Appendfile(e)->lno );
+	    i_fname = rdup_tmstring( to_Appendfile(e)->fname );
+	    i_body = rdup_tplelm_list( to_Appendfile(e)->body );
+	    return new_Appendfile( i_lno, i_fname, i_body );
 	}
 
 	case TAGInclude:
@@ -3464,7 +3512,6 @@ static switchcase_list rdup_switchcase_list( const switchcase_list l )
  *    delete_<type>_list routines                 *
  **************************************************/
 
-
 /* Delete 'ds' element at position 'pos' in list 'l'. */
 ds_list delete_ds_list( ds_list l, const unsigned int pos )
 {
@@ -3544,7 +3591,6 @@ var_list delete_var_list( var_list l, const unsigned int pos )
 /**************************************************
  *    extract_<type>_list routines                 *
  **************************************************/
-
 
 /* Extract 'tmstring' element at position 'pos' in list 'l'. */
 tmstring_list extract_tmstring_list(
@@ -3851,6 +3897,14 @@ void stat_tm( FILE *f )
     fprintf(
 	f,
 	tm_allocfreed,
+	"Appendfile",
+	newcnt_Appendfile,
+	frecnt_Appendfile,
+	((newcnt_Appendfile==frecnt_Appendfile)? "": "<-")
+    );
+    fprintf(
+	f,
+	tm_allocfreed,
 	"Include",
 	newcnt_Include,
 	frecnt_Include,
@@ -4090,6 +4144,9 @@ int get_balance_tm( void )
     if( newcnt_Redirect<frecnt_Redirect ){
         return -1;
     }
+    if( newcnt_Appendfile<frecnt_Appendfile ){
+        return -1;
+    }
     if( newcnt_Include<frecnt_Include ){
         return -1;
     }
@@ -4214,6 +4271,9 @@ int get_balance_tm( void )
     if( newcnt_Redirect>frecnt_Redirect ){
         res = 1;
     }
+    if( newcnt_Appendfile>frecnt_Appendfile ){
+        res = 1;
+    }
     if( newcnt_Include>frecnt_Include ){
         res = 1;
     }
@@ -4242,5 +4302,5 @@ int get_balance_tm( void )
     return res;
 }
 
-/* ---- end of /home/blob/users/reeuwijk/lab/lib/calu.ct ---- */
-/* Code generation required 430 milliseconds. */
+/* ---- end of /usr/local/lib/calu.ct ---- */
+/* Code generation required 440 milliseconds. */

@@ -15,7 +15,7 @@ the {\tt .set} command (to set some parameters for the modules),
 and the {\tt ..} command (to add comments to the {\Tm} input).
 \section{Conventions}
 Boolean functions return the string `{\tt 0}' for
-{\it false} \/or the string `{\tt 1}' for {\it true}.
+{\it false} or the string `{\tt 1}' for {\it true}.
 At places where a boolean expression is expected,
 the string `{\tt 0}' is {\it false},
 all other strings are {\it true}.
@@ -28,11 +28,13 @@ must end before the end of the line, and it may not contain
 double quote characters.
 Thus,
 the following lines each contain one word:
+\begin{showfile}
 \begin{verbatim}
 a
 word
 "this is quoted and therefore treated as one word"
 \end{verbatim}
+\end{showfile}
 \section{Line commands}
 Each time a dot (`{\tt .}') is encountered as the first character of a line,
 that line is interpreted as a {\Tm} line command.
@@ -43,9 +45,24 @@ Otherwise the first word after the dot
 is interpreted as the line command,
 and the remainder of the line is interpreted as a list of parameters.
 The list of parameters is evaluated each time the command is executed.
-Evaluation of the parameters does {\em not} \/occur for termination commands
+Evaluation of the parameters does {\em not} occur for termination commands
 ({\tt .endif}, {\tt .endforeach}, {\tt .endwhile}, etc.).
 \subsection{Assignment}
+\label{s.assignment}
+Assignment statements modify the value of a variable. In most of these
+statements, the new value is stored in the current \defn{context}.
+A context is created upon invocation of a macro, or the execution of a
+\verb'.include' command. Upon completion of the macro, or termination
+of the \verb'.include', the context is destroyed, and the old value of
+a variable (if it has a value in the old context) is visible again.
+This means that it usually is not necessary to worry about side-effects
+of macros or included files.
+\par
+Since in some cases it is desirable to allow side-effects, the
+\verb'.globalappend' and \verb'.globalset' commands are provided.
+These commands remove all current values of a variable from all
+contexts, and store the new value in the outermost context. As a result
+the new value is visible in all contexts.
 \begin{verbatim}
 .set <var> <val>..<val>
 \end{verbatim}
@@ -101,10 +118,10 @@ This is usually used to halt upon fatal errors in a template.
 \begin{desc}
 \index{.foreach@\verb+.foreach+}
 Set variable {\tt <var>} to each of the values {\tt <val>} and do a
-repeated translation of all following lines up to the next unbalanced
-{\tt .endforeach}
-for each of these values of {\tt <var>}.
-The new value of the variable is visible in the current context.
+translation of all following lines up to the next unbalanced
+{\tt .endforeach} for each of these values of {\tt <var>}.
+The new value of the variable is only visible in the current context.
+See section \ref{s.assignment} for a discussion of contexts.
 \par
 For example:
 \begin{showfile}
@@ -158,8 +175,8 @@ If the list of cases is exhausted, but no case has been executed,
 execute the statement in the \verb'.default' section, if it exists.
 
 The list of words of a case statement may contain any number of words,
-including 0.  There can be at most one \verb'.default' section. Note
-that more than one case can be executed for a switch value.
+including no words at all. There can be at most one \verb'.default'
+section. Note that more than one case can be executed for a switch value.
 \par
 For example:
 \begin{showfile}
@@ -242,6 +259,16 @@ Redirect the output up to the balancing \verb'.endredirect' to the given
 file.
 The parameter list of the \verb'.redirect' command must evaluate to
 exactly one filename.
+The old contents of the file is overwritten without warning.
+\end{desc}
+\begin{verbatim}
+.appendfile <filename>
+\end{verbatim}
+\begin{desc}
+\index{.appendfile@\verb+.appendfile+}
+Append the output up to the balancing \verb'.endappendfile' to the given
+file. The parameter list of the \verb'.appendfile' command must evaluate
+to exactly one filename. If the file does not exist it is created.
 \end{desc}
 \subsection{Macros}
 \begin{verbatim}
@@ -306,12 +333,11 @@ the change can be made permanent.
 Record the given values as return value of the current macro.
 Any previous return value is replaced by this one.
 Contrary to the {\tt return} command in {\C}, this \verb+.return+
-command does {\em not} \/terminate execution of the macro.
+command does {\em not} terminate execution of the macro.
 \par
 See the example shown for the \verb'.macro' command for an example of the
 use of the \verb'.return' command.
 \end{desc}
-----
 \section{Variables}
 Variables are referenced with the expression
 {\tt \$(<varname>)} or optionally {\tt \$<letter>} for single character
@@ -381,7 +407,7 @@ code.
 {\tt verbose}\index{verbose@{\tt verbose}}
 &
 The verbose flag.
-It is {\it true} \/if the flag {\tt -v} has been given at the command line,
+It is {\it true} if the flag {\tt -v} has been given at the command line,
 else {\it false}.
 \end{desctab}
 \par
@@ -391,9 +417,11 @@ names from elements names or vice versa.
 \section{Functions}
 \label{s.fn}
 Functions are invoked with the expression
+\begin{showfile}
 \begin{verbatim}
 ${<fnname> <par>..<par>}
 \end{verbatim}
+\end{showfile}
 Each time the characters `{\tt \$\{}' are encountered,
 the string up to the next unbalanced `{\tt \}}' is evaluated,
 and the resulting string is
@@ -402,48 +430,48 @@ interpreted as a function invocation consisting of a function with the name
 \subsection{Comparison functions}
 Most comparison functions only work on numbers---and will complain if they
 get anything else than a number---but {\tt eq} and {\tt neq} work on strings.
-Do {\it not} \/compare numbers with these functions
+Do {\it not} compare numbers with these functions
 since this is not safe (to these functions `{\tt 0}'
 is different from `{\tt 00}').
 \par
 \begin{desctab}
 {\tt eq sa sb}\index{eq@{\tt eq}}
 &
-Return {\it true} \/if the string $\verb'sa' = \verb'sb'$.
+Return {\it true} if the string $\verb'sa' = \verb'sb'$.
 Strings are equal if they are of the same length and are have the
 same character at the same position in the string.
 To compare numbers use {\tt ==}.
 \\
 {\tt neq sa sb}\index{neq@{\tt neq}}
 &
-Return {\it true} \/if the string ${\tt sa} \not= {\tt sb}$.
+Return {\it true} if the string ${\tt sa} \not= {\tt sb}$.
 To compare numbers use \verb'!='.
 \\
 {\tt == na nb}\index{==@{\tt ==}}
 &
-Return {\it true} \/if ${\tt na} = {\tt nb}$.
+Return {\it true} if ${\tt na} = {\tt nb}$.
 To compare strings use {\tt eq}.
 \\
 \verb'!= na nb'\index{"!=@{\tt "!=}}
 &
-Return {\it true} \/if ${\tt na} \not= {\tt nb}$.
+Return {\it true} if ${\tt na} \not= {\tt nb}$.
 To compare strings use {\tt neq}.
 \\
 {\tt < na nb}\index{<@{\tt <}}
 &
-Return {\it true} \/if ${\tt na} < {\tt nb}$.
+Return {\it true} if ${\tt na} < {\tt nb}$.
 \\
 {\tt <= na nb}\index{<=@{\tt <=}}
 &
-Return {\it true} \/if ${\tt na} \leq {\tt nb}$.
+Return {\it true} if ${\tt na} \leq {\tt nb}$.
 \\
 {\tt > na nb}\index{>@{\tt >}}
 &
-Return {\it true} \/if ${\tt na} > {\tt nb}$.
+Return {\it true} if ${\tt na} > {\tt nb}$.
 \\
 {\tt >= na nb}\index{>=@{\tt >=}}
 &
-Return {\it true} \/if ${\tt na} \geq {\tt nb}$.
+Return {\it true} if ${\tt na} \geq {\tt nb}$.
 \end{desctab}
 For example:
 \begin{showfile}
@@ -504,17 +532,17 @@ will produce:
 \begin{desctab}
 {\tt and b1..bn}\index{and@{\tt and}}
 &
-Return {\it true} \/if all of {\tt b1} {\ldots} {\tt bn} are {\it true},
+Return {\it true} if all of {\tt b1} {\ldots} {\tt bn} are {\it true},
 or else {\it false}.
 The {\tt and} of an empty list is {\it true}.
 \\
 {\tt not b}\index{not@{\tt not}}
 &
-Return {\it true} \/if {\tt b} is {\it false}, or else {\it true}.
+Return {\it true} if {\tt b} is {\it false}, or else {\it true}.
 \\
 {\tt or b1..bn}\index{or@{\tt or}}
 &
-Return {\it true} \/if one of {\tt b1}
+Return {\it true} if one of {\tt b1}
 {\ldots} {\tt bn} is {\it true},
 or else {\it false}.
 The {\tt or} of an empty list is {\it false}.
@@ -582,8 +610,8 @@ or 0 if {\tt w} does not occur in the list.
 \\
 {\tt member w e..e}\index{member@{\tt member}}
 &
-Return {\it true} \/if word \verb'w' occurs in the list of elements,
-or {\it false} \/if it does not.
+Return {\it true} if word \verb'w' occurs in the list of elements,
+or {\it false} if it does not.
 \\
 {\tt shift e..e}\index{shift@{\tt shift}}
 &
@@ -600,7 +628,7 @@ The first element of an empty list is empty.
 Given a separator {\tt s} and a list of elements, create a new string
 that consists of all the elements in the list separated by a copy of
 {\tt s}.  {\em Note}: in contrast to other functions that return a list,
-the elements in the new list are {\em only} \/separated by the given
+the elements in the new list are {\em only} separated by the given
 separator; no additional spaces are added.
 \\
 {\tt prefix pf e..e}\index{prefix@{\tt prefix}}
@@ -702,7 +730,7 @@ in a set (see below), it is treated as an ordinary character.
 &
 Matches one of the characters in the set.
 If the first character in the set is `\verb!^!',
-it matches a character {\em not} \/in the set. A shorthand like
+it matches a character {\em not} in the set. A shorthand like
 \verb!a-z! is used to specify a set of
 characters \verb!a! up to \verb!z!, inclusive. The special
 characters `\verb!]!' and `\verb!-!' have no special
@@ -787,7 +815,7 @@ If the variable does not exist an empty string is returned.
 {\tt isinenv nm}\index{isinenv@{\tt isinenv}}
 &
 Determine whether environment variable {\tt nm} exists.
-Return {\it true}\/ if it exists, or {\it false} \/if it does not.
+Return {\it true} if it exists, or {\it false} \/if it does not.
 \\
 {\tt dsfilename}\index{dsfilename@{\tt dsfilename}}
 &
@@ -831,18 +859,22 @@ macros. The order of the returned list is arbitrary.
 \\
 {\tt defined v}\index{defined@{\tt defined}}
 &
-Return {\it true} \/if variable {\tt v} is defined,
-or {\it false} \/otherwise.
+Return {\it true} if variable {\tt v} is defined,
+or {\it false} otherwise.
 \end{desctab}
 \par
 For example:
+\begin{showfile}
 \begin{verbatim}
 ${getenv SHELL}
 \end{verbatim}
+\end{showfile}
 may produce (depending on the value of the \verb+SHELL+ environment variable):
+\begin{showfile}
 \begin{verbatim}
 /bin/csh
 \end{verbatim}
+\end{showfile}
 \subsection{Data structure access functions}
 \begin{desctab}
 {\tt classlist}\index{classlist@{\tt classlist}}
@@ -862,14 +894,11 @@ Return the list of {\em constructor} types defined in the data structure file.
 {\tt fields t [inherited]}\index{fields@{\tt fields}}
 &
 Given a type {\tt t}, return the list of field names of that type.
-Only tuple, constructor and class types may have fields; for a constructor
-base type an empty list is returned.
 \par
 If a second parameter is given, and this parameter is the string
 {\tt inherited}, the fields of the superclasses of this type are also
 listed. The fields are ordered `height first', so that the fields of
-superclasses are listed before the fields of their inheritors. Since
-a constructor base type may also inherit, it may have fields now.
+superclasses are listed before the fields of their inheritors.
 \\
 {\tt isvirtual t}\index{isvirtual@{\tt isvirtual}}
 &
@@ -939,17 +968,19 @@ will produce (assuming the data structure definitions of page \pageref{plotds}):
 \begin{showfile}
 \verbatiminput{fnds.out}
 \end{showfile}
-\subsection{Class inquery functions}
+\subsection{Class inquiry functions}
 The functions listed below all access the inheritance information
 of the defined types.
 \begin{desctab}
-{\tt inherits t}\index{inherits@{\tt inherits}}
+{\tt inherits t..t}\index{inherits@{\tt inherits}}
 &
-Given a type {\tt t}, return the list of types this type inherits directly.
+Given a list of types, return the list of types this type inherits directly.
+\par
+If a type is inherited by several types, it will be listed several times.
 \\
-{\tt inheritors t}\index{inheritors@{\tt inheritors}}
+{\tt inheritors t..t}\index{inheritors@{\tt inheritors}}
 &
-Given a type {\tt t},
+Given a list of types,
 return the list of types that inherit directly from this type.
 \\
 {\tt subclasses t..t}\index{subclasses@{\tt subclasses}}
@@ -957,10 +988,12 @@ return the list of types that inherit directly from this type.
 Given a list of types,
 return the list of types that inherit directly or indirectly from these types.
 \\
-{\tt superclasses t}\index{superclasses@{\tt superclasses}}
+{\tt superclasses t..t}\index{superclasses@{\tt superclasses}}
 &
-Given a type {\tt t}, return the list of types this type inherits directly
+Given a list of types, return the list of types this type inherits directly
 or indirectly.
+\par
+If a type is inherited by several types, it will be listed several times.
 \\
 \end{desctab}
 For example:
@@ -986,6 +1019,8 @@ for a single element and a list of elements respectively.
 \par
 Field {\tt e} may belong to the given type or one of the superclasses
 of the type.
+\par
+This function is obsolete; use \verb'typelevel' instead.
 \\
 {\tt ttypelist}\index{ttypelist@{\tt ttypelist}}
 &
@@ -1057,7 +1092,7 @@ These functions implement some of the complicated operations that
 are necessary during code generation. 
 \par
 One definition must be introduced:
-A type $t$ {\em depends} \/on a type $s$ if $s$
+A type $t$ {\em depends} on a type $s$ if $s$
 is used in at least one of the elements of $t$,
 or if $t$ has a type in one of its elements that depends on $s$.
 Also,
@@ -1075,9 +1110,9 @@ a list name from a single type name.
 If one of these variables is not defined, an empty string is assumed.
 \par
 \begin{desctab}
-{\tt depsort t1..tn}\index{depsort@{\tt depsort}}
+{\tt depsort t..t}\index{depsort@{\tt depsort}}
 &
-Given a list of types {\tt t1} $\cdots$ {\tt tn},
+Given a list of types,
 rearrange them so that all types that contain a certain type
 are placed after the type itself.
 Thus, if a type {\tt ta} uses a type {\tt tb}, {\tt tb} will
@@ -1087,9 +1122,13 @@ The function will complain about circularities.
 \par
 List types are considered to contain their element type.
 \par
-By using this function it is not necessary to introduce forward declarations
-for types and the manipulation functions on types.
 The function does not consider inheritance relations.
+\\
+{\tt inheritsort t..t}\index{inheritsort@{\tt inheritsort}}
+&
+Given a list of types,
+rearrange them so that all types that all types are placed after
+the types they inherit from.
 \\
 {\tt delisttypes t..t}\index{delisttypes@{\tt delisttypes}}
 &
@@ -1175,9 +1214,11 @@ will produce:
 \label{s.intexpr}
 \index{arithmetic expressions|(}
 Arithmetic expressions have the form
+\begin{showfile}
 \begin{verbatim}
 $[<expr>]
 \end{verbatim}
+\end{showfile}
 Each time the characters `{\tt \$[}' are encountered,
 the string up to the next unbalanced `{\tt ]}' is evaluated,
 and the resulting string is
