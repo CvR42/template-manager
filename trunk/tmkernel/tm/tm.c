@@ -47,7 +47,7 @@ static dbflag flagtab[] = {
     { 'f', &fntr, "tracing of function evaluations" },
     { 'l', &listing, "list parsetree" },
     { 'm', &maintr, "tracing of main actions" },
-    { 'n', &noerrorline, "don't generate line numbers in error messages (useful for diffs in error messages" },
+    { 'n', &noerrorline, "don't generate line numbers in error messages (useful for diffs)" },
     { 's', &prstat, "statistics" },
     { 'v', &vartr, "variable and macro tracing" },
     { 'x', &lextr, "tracing of lexical analyzer" },
