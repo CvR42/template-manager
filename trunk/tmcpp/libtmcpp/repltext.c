@@ -42,7 +42,7 @@ tmtext *replace_tmtext(
 	insblock_tmtext( t, to, inssz );
     }
     else if( inssz<0 ){
-	delblock_tmtext( t, to+inssz, to );
+	t->erase( to+inssz, to );
     }
     copyblock_tmtext( t->arr+from, nw->arr, nw->sz );
     return t;
