@@ -1,0 +1,26 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. File: pasvar.pt
+..
+.. Variable declarations 
+    { ---- start of ${tplfilename} ---- }
+.if ${index Stat$(basename) $(need_misc)}
+    { allocation/freeing counters }
+.foreach t $(need_stat)
+.if ${member $t ${ttypelist}}
+    CntNew$t: integer;
+    CntFre$t: integer;
+.else
+.foreach c ${conslist $t}
+    CntNew$c: integer;
+    CntFre$c: integer;
+.endforeach
+.endif
+.endforeach
+.endif
+    { ---- end of ${tplfilename} ---- }

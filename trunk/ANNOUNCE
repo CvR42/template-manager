@@ -1,0 +1,81 @@
+Subject: ANNOUNCE: Tm, a general template preprocessor
+Keywords: template, Tm, FTP, software, Pascal, Miranda, C, preprocessor, URL
+
+[ This was posted before, but was canceled due to a misunderstanding.
+  My apologies if you've seen this before.
+]
+
+I hereby announce the availability of the most recent version of my
+template preprocessor 'Tm' (for _T_emplate _m_anager).
+
+Tm is a preprocessor that takes a code template and some datastructure
+definitions, and generates source code for an arbitrary programming
+language. Thus, by using Tm you can have templates in any programming
+language.
+
+           +---------------+        +----------------+
+           | datastructure |        |      code      |
+           |   definition  |        |    template    |
+           +---------------+        +----------------+
+                  |                         |
+                  -----------      ----------
+                            |      |
+                            V      V
+                         /-------------\
+                         |     Tm      |
+                         |             |
+                         \-------------/
+                                |
+                                V
+                        +---------------+
+                        |    source     |
+                        |     code      |
+                        +---------------+
+
+The kernel distribution package of Tm contains extensive C templates and
+a support library that have been tested and used extensively in the past
+six years. These templates have been used in more than ten medium and
+large programming project.  There are separate packages with a Pascal
+and a Miranda template, but these have been used less intensively.
+
+Tm is flexible enough that useful templates can be written for any
+sufficiently powerful programming language. For example, I have written
+templates for Lisp and for the functional programming language Clean,
+although these are not good enough for public release. Templates for
+languages such as Java and Fortran 90, and for functional languages,
+are also eminently possible.
+
+By using templates, especially the standard templates, you can reap
+the benefits of any template: the code is re-used more intensively, is
+therefore tested more intensively, is more likely to be documented, and
+is standardized.
+
+Tm is described in the following paper:
+
+C. van Reeuwijk, "Tm: a Code Generator for Recursive Data Structures",
+Software - Practice and Experience, Volume 22(10) 899-908 (October 1992)
+
+The Tm ftp site contains the Tm kernel distribution, consisting of:
+
+- All the sources for Tm itself (Tm is written in C)
+- A set of C templates that can generate code for general-purpose
+  datastructure manipulation.
+- The sources for a C support library for the templates above.
+- The LaTeX sources for an extensive manual describing Tm, the C
+  templates and the support library. The resulting PostScript file
+  is also included.
+
+The kernel distribution has been compiled succesfully on many UNIX
+variants, including Linux. It has als been compiled with Borland C++
+version 5.0 under Windows 95, and on an Atari ST using Pure C 1.1.
+
+The ftp site also contains a Pascal and a Miranda template.
+
+All Tm-related software is copyrighted free software.
+
+For more details, see my Tm web pages:
+http://www.cp.tn.tudelft.nl/C.vanReeuwijk/tm.html
+
+Or the Tm ftp site:
+
+ftp://ftp.cp.tn.tudelft.nl/pub/cp/software/Tm/

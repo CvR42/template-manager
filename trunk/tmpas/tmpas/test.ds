@@ -1,0 +1,12 @@
+|| datastructure to test Miranda functions.
+|| Note that Pascal type names are used.
+plot ::=
+||    TestString s:string |
+    TestBool b:boolean |
+    TestChar c:char |
+    TestNum n:real |
+    TestInt i:integer |
+    TestList l:[plot] |
+    TestTuple t:xypoint;
+
+xypoint == (x:real, y:real);

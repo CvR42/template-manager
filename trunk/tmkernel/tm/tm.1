@@ -1,0 +1,81 @@
+.TH TM 1 "ESPRIT 881 (FORFUN)"
+.UC
+.SH NAME
+tm \- interface code generator
+.SH SYNOPSIS
+.B tm
+[
+.B \-d<debugflags>
+] [
+.B \-e <file>
+] [
+.B \-h
+] [
+.B \-o <file>
+] [
+.B \-v
+]
+[
+.B \-I<path>
+]
+[dsfile]
+[infile]
+.br
+.SH DESCRIPTION
+.I Tm
+reads a
+.I dsfile
+containing a description of the data structures
+and a template file
+.I infile
+containing templates of code to generate and inclusion
+commands for standard templates.
+] [
+.B \-e <file>
+.PP
+If no template file is given,
+.I tm
+reads from the standard input.
+If no data structure file is given,
+.I tm
+assumes an empty data structure file.
+Template and data structure files are searched for in the current directory,
+in a standard Tm library, and in additional directories specified
+with the
+.I \-I
+option.
+.SH OPTIONS
+.IP \-d<debugflags>
+Set the debugging flags given in
+.I <debugflags>.
+Use the
+.B \-h
+option to get a list of debug flags and their meaning.
+.IP \-e<file>
+Write error messages to the given file. By default they are written to stderr.
+.IP \-h
+Print the options of
+.I tm
+and some version information.
+.IP \-I
+Specify an additional directory to search for template and data structure
+files.
+.IP \-o<file>
+Write the output to the given file. By default it is written to stdout.
+.IP \-v
+Set the
+.I tm
+variable
+.B verbose
+to 1,
+default this variable is 0.
+.SH "SEE ALSO"
+C. van Reeuwijk,
+.I
+tm user manual (2nd edition),
+Delft University of Technology.
+.SH BUGS
+Very few standard libraries actually use the
+.B verbose
+variable.
+The text substitution language is terrible.
