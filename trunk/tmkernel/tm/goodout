@@ -139,7 +139,7 @@ prefix:  'pfx_a pfx_b pfx_c pfx_d pfx_e pfx_f' 'pfx_a' ''
 suffix:  'a_sfx b_sfx c_sfx d_sfx e_sfx f_sfx' 'a_sfx' ''
 len:     '6' '1' '0'
 sort:    'a a b b c c d d e e f f' '-1 1 12 2' ''
-sizesort:'Top orig thing Thing TopNone notuple Toptuple subtuple SubNamed sublevel toplevel subclass testclass subNamedlist SubNamedlistlist' '1 2 12 -1' ''
+sizesort:'Top orig Thing thing TopNone notuple SubNamed Toptuple subclass sublevel subtuple toplevel testclass subNamedlist SubNamedlistlist' '1 2 -1 12' ''
 uniq:    'a b c d e f' '-1 1 12 2' ''
 rev:     'f e d c b a' ''
 ----
@@ -439,7 +439,7 @@ Datastructure dependency
 ----
 Testing error handling:
 Type sorting:
-depsort: [int orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass]
+depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass ]
 ----
 Mode `inherited':
 =-=-=-=
@@ -830,7 +830,7 @@ Datastructure dependency
 ----
 Testing error handling:
 Type sorting:
-depsort: [int orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass]
+depsort: [int int_list orig Top TopNone subtuple Toptuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass ]
 ----
 
 String manipulation functions:

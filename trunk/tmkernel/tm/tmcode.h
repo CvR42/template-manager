@@ -1,13 +1,15 @@
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of /usr/local/lib/calu.ht ---- */
-/* Definition C datastructures (Version for array list).
+/* External definitions (Version for array list).
 
    template file:      /usr/local/lib/calu.ht
    datastructure file: tm.ds
    tm version:         36
    tm kernel version:  *** development -- not for distribution ***
  */
+
+/* data structures */
 
 /* forward reference typedefs for all types.
  * C does not like the use of undefined types, but does not
@@ -21,21 +23,21 @@ typedef struct str_macro_list *macro_list;
 typedef struct str_tmstring_list *tmstring_list;
 typedef struct str_tplelm_list *tplelm_list;
 typedef struct str_var_list *var_list;
-typedef struct str_ds *ds;
 typedef struct str_classComponent *classComponent;
 typedef struct str_alternative *alternative;
+typedef struct str_ds *ds;
 typedef struct str_field *field;
 typedef struct str_macro *macro;
-typedef struct str_var *var;
 typedef struct str_tplelm *tplelm;
+typedef struct str_var *var;
 
-#define dsNIL (ds)0
-#define classComponentNIL (classComponent)0
 #define alternativeNIL (alternative)0
+#define classComponentNIL (classComponent)0
+#define dsNIL (ds)0
 #define fieldNIL (field)0
 #define macroNIL (macro)0
-#define varNIL (var)0
 #define tplelmNIL (tplelm)0
+#define varNIL (var)0
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
 #define ds_listNIL (ds_list)0
@@ -45,24 +47,14 @@ typedef struct str_tplelm *tplelm;
 #define tplelm_listNIL (tplelm_list)0
 #define var_listNIL (var_list)0
 
-#define DsCons u.ue_DsCons
-#define DsTuple u.ue_DsTuple
-#define DsClass u.ue_DsClass
-#define DsConstructor u.ue_DsConstructor
-
-typedef enum en_tags_ds {
-    TAGDsCons, TAGDsTuple, TAGDsClass, TAGDsConstructor
-} tags_ds;
-
 #define CCSuper u.ue_CCSuper
 #define CCFields u.ue_CCFields
 #define CCAlternatives u.ue_CCAlternatives
 #define CCSublist u.ue_CCSublist
-
-typedef enum en_tags_classComponent {
-    TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
-} tags_classComponent;
-
+#define DsCons u.ue_DsCons
+#define DsTuple u.ue_DsTuple
+#define DsClass u.ue_DsClass
+#define DsConstructor u.ue_DsConstructor
 #define Plain u.ue_Plain
 #define Foreach u.ue_Foreach
 #define While u.ue_While
@@ -80,10 +72,60 @@ typedef enum en_tags_classComponent {
 #define Return u.ue_Return
 #define Insert u.ue_Insert
 
+typedef enum en_tags_classComponent {
+    TAGCCSuper, TAGCCFields, TAGCCAlternatives, TAGCCSublist
+} tags_classComponent;
+
+typedef enum en_tags_ds {
+    TAGDsCons, TAGDsTuple, TAGDsClass, TAGDsConstructor
+} tags_ds;
+
 typedef enum en_tags_tplelm {
     TAGPlain, TAGForeach, TAGWhile, TAGIf, TAGSet, TAGGlobalSet, TAGAppend, TAGGlobalAppend, TAGError, TAGExit, TAGRedirect, TAGInclude, TAGMacro, TAGCall, TAGReturn, TAGInsert
 } tags_tplelm;
 
+
+/* Structure for constructor CCSuper */
+typedef struct str_CCSuper {
+    tmstring super;
+} C_CCSuper;
+
+/* Structure for constructor CCFields */
+typedef struct str_CCFields {
+    field_list fields;
+} C_CCFields;
+
+/* Structure for constructor CCAlternatives */
+typedef struct str_CCAlternatives {
+    alternative_list alternatives;
+} C_CCAlternatives;
+
+/* Structure for constructor CCSublist */
+typedef struct str_CCSublist {
+    classComponent_list components;
+} C_CCSublist;
+
+/* Constructor type classComponent */
+struct str_classComponent {
+    tags_classComponent tag;
+    union uni_classComponent {
+	C_CCSuper ue_CCSuper;
+	C_CCFields ue_CCFields;
+	C_CCAlternatives ue_CCAlternatives;
+	C_CCSublist ue_CCSublist;
+    } u;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_alternative {
+    tmstring label;
+    classComponent component;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
 
 /* Structure for constructor DsCons */
 typedef struct str_DsCons {
@@ -114,6 +156,7 @@ typedef struct str_DsConstructor {
     field_list fields;
 } C_DsConstructor;
 
+/* Constructor type ds */
 struct str_ds {
     tags_ds tag;
     union uni_ds {
@@ -122,47 +165,6 @@ struct str_ds {
 	C_DsClass ue_DsClass;
 	C_DsConstructor ue_DsConstructor;
     } u;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-/* Structure for constructor CCSuper */
-typedef struct str_CCSuper {
-    tmstring super;
-} C_CCSuper;
-
-/* Structure for constructor CCFields */
-typedef struct str_CCFields {
-    field_list fields;
-} C_CCFields;
-
-/* Structure for constructor CCAlternatives */
-typedef struct str_CCAlternatives {
-    alternative_list alternatives;
-} C_CCAlternatives;
-
-/* Structure for constructor CCSublist */
-typedef struct str_CCSublist {
-    classComponent_list components;
-} C_CCSublist;
-
-struct str_classComponent {
-    tags_classComponent tag;
-    union uni_classComponent {
-	C_CCSuper ue_CCSuper;
-	C_CCFields ue_CCFields;
-	C_CCAlternatives ue_CCAlternatives;
-	C_CCSublist ue_CCSublist;
-    } u;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_alternative {
-    tmstring label;
-    classComponent component;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -183,15 +185,6 @@ struct str_macro {
     tmstring orgfile;
     tmstring_list fpl;
     tplelm_list body;
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-};
-
-struct str_var {
-    uint lvl;
-    tmstring name;
-    tmstring val;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -299,6 +292,7 @@ typedef struct str_Insert {
     tmstring fname;
 } C_Insert;
 
+/* Constructor type tplelm */
 struct str_tplelm {
     tags_tplelm tag;
     union uni_tplelm {
@@ -319,6 +313,15 @@ struct str_tplelm {
 	C_Return ue_Return;
 	C_Insert ue_Insert;
     } u;
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+};
+
+struct str_var {
+    uint lvl;
+    tmstring name;
+    tmstring val;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -629,8 +632,8 @@ extern void rfre_classComponent( classComponent );
 extern void rfre_ds( ds );
 extern void rfre_macro( macro );
 extern void rfre_tplelm( tplelm );
-extern void print_ds_list( TMPRINTSTATE *st, const ds_list );
-extern void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list );
+extern void print_ds_list( TMPRINTSTATE *, const ds_list );
+extern void print_tmstring_list( TMPRINTSTATE *, const tmstring_list );
 #ifdef LOGNEW
 #else
 #endif
@@ -650,4 +653,5 @@ extern tplelm_list rdup_tplelm_list( const tplelm_list );
 #endif
 extern void flush_tm( void );
 extern void stat_tm( FILE * );
+extern int get_balance_tm( void );
 /* ---- end of /usr/local/lib/calu.ht ---- */

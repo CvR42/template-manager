@@ -224,7 +224,7 @@ static bool parse_field_type( const tmstring nm, field *fp )
 	return TRUE;
     }
     if( curr_token==NAME ){
-	*fp = new_field( 0, nm, yylval.parstring );
+	*fp = new_field( 0, rdup_tmstring( nm ), yylval.parstring );
 	next_token();
 	return TRUE;
     }
@@ -236,6 +236,7 @@ static bool parse_field_type( const tmstring nm, field *fp )
 static bool parse_field( field *fp )
 {
     tmstring elmname;
+    bool ok;
 
     if( curr_token!=NAME ){
 	return FALSE;
@@ -247,7 +248,9 @@ static bool parse_field( field *fp )
 	return FALSE;
     }
     next_token();
-    return parse_field_type( elmname, fp );
+    ok = parse_field_type( elmname, fp );
+    rfre_tmstring( elmname );
+    return ok;
 }
 
 /* Try to parse a list of fields for a tuple body. 
@@ -348,8 +351,12 @@ static bool parse_constructor_list( const tmstring super, tmstring nm, ds_list *
 	else {
 	    yyerror( "constructor expected" );
 	    /* Try to recover by skipping tokens up to the next
-	     * '|', ';' or LEXEOF. */
+	     * '|', ';' or LEXEOF.
+	     */
 	    while( curr_token!=BAR && curr_token!=SEMI && curr_token!=LEXEOF ){
+		if( curr_token == NAME || curr_token == STRING ){
+		    rfre_tmstring( yylval.parstring );
+		}
 		next_token();
 	    }
 	}
@@ -391,6 +398,7 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
 	    break;
 	}
 	inherits = add_inherit_list( inherits, cnm );
+	rfre_tmstring( cnm );
 	cnm = tmstringNIL;
 	next_token();	/* Eat the PLUS */
     }
@@ -438,6 +446,9 @@ static bool parse_tuplebody( field_list *flp )
 		&& curr_token!=LEXEOF
 		&& curr_token!=RCBRAC
 	    ){
+		if( curr_token == NAME || curr_token == STRING ){
+		    rfre_tmstring( yylval.parstring );
+		}
 		next_token();
 	    }
 	}
@@ -463,30 +474,34 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
     inherits = new_tmstring_list();
     while( curr_token == NAME ){
 	inherits = add_inherit_list( inherits, yylval.parstring );
+	rfre_tmstring( yylval.parstring );
 	next_token();
-	if( curr_token != PLUS ){
-	    yyerror( "'+' expected" );
-	}
-	else {
+	if( curr_token == PLUS ){
 	    next_token();
 	}
+	else {
+	    yyerror( "'+' expected" );
+	    rfre_tmstring_list( inherits );
+	    return FALSE;
+	}
     }
-    if( curr_token!=LRBRAC ){
-	yyerror( "'(' expected" );
-	return FALSE;
+    if( curr_token==LRBRAC ){
+	next_token();
     }
     else {
-	next_token();
+	yyerror( "'(' expected" );
+	rfre_tmstring_list( inherits );
+	return FALSE;
     }
     ok = parse_tuplebody( &body );
     if( !ok ){
 	return FALSE;
     }
-    if( curr_token!=RRBRAC ){
-	yyerror( "')' expected" );
+    if( curr_token==RRBRAC ){
+	next_token();
     }
     else {
-	next_token();
+	yyerror( "')' expected" );
     }
     cktuple( nm, body );
     *tp = new_DsTuple( nm, inherits, body );
@@ -727,6 +742,9 @@ static bool parse_ds( ds_list *dl )
 	if( curr_token!=STRING ){
 	    yyerror( "file name string expected" );
 	    while( curr_token!=SEMI && curr_token!=LEXEOF ){
+		if( curr_token == NAME || curr_token == STRING ){
+		    rfre_tmstring( yylval.parstring );
+		}
 		next_token();
 	    }
 	    if( curr_token==SEMI ){
@@ -743,11 +761,11 @@ static bool parse_ds( ds_list *dl )
 	    /* The LEXEOF is from the included file. */
 	    next_token();
 	}
-	if( curr_token!=SEMI ){
-	    yyerror( "';' expected" );
+	if( curr_token==SEMI ){
+	    next_token();
 	}
 	else {
-	    next_token();
+	    yyerror( "';' expected" );
 	}
 	return TRUE;
     }
@@ -814,6 +832,9 @@ static bool parse_ds( ds_list *dl )
 	 * end of file or a semicolon.
 	 */
 	while( curr_token!=SEMI && curr_token!=LEXEOF ){
+	    if( curr_token == NAME || curr_token == STRING ){
+		rfre_tmstring( yylval.parstring );
+	    }
 	    next_token();
 	}
 	if( curr_token==SEMI ){

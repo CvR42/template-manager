@@ -194,8 +194,7 @@ tmstring sepstrings( const tmstring_list sl, const tmstring sep )
     for( ix=0; ix<sl->sz; ix++ ){
 	len += (int) strlen( sl->arr[ix] );
     }
-    cs = new_tmstring( "" );
-    cs = realloc_tmstring( cs, len+1 );
+    cs = create_tmstring( len+1 );
     bufp = cs;
     for( ix=0; ix<sl->sz; ix++ ){
 	if( ix!=0 ){
@@ -262,8 +261,7 @@ tmstring mklistnm( const char *pre, const tmstring tnm, const char *suff, unsign
     unsigned int n;
 
     sz = level*strlen( pre ) + strlen( tnm ) + level*strlen( suff ) + 1;
-    res = new_tmstring( "" );
-    res = realloc_tmstring( res, sz );
+    res = create_tmstring( sz );
     for( n=0; n<level; n++ ){
 	strcat( res, pre );
     }

@@ -402,7 +402,7 @@ again:
 	    }
 	}
 	yylval.parstring = new_tmstring( yytext );
-	lexshow(NAME,"NAME");
+	lexshow( NAME, "NAME" );
 	return NAME;
     }
     if( scantoken( toktree, yytext, &tokval, &toknm ) ){

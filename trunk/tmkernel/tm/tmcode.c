@@ -150,18 +150,18 @@ static short int cacheix_var_list = 0;
 static var_list cache_var_list[CACHESZ]; 
 static short int cacheix_alternative = 0;
 static alternative cache_alternative[CACHESZ];
-static short int cacheix_classComponent = 0;
-static classComponent cache_classComponent[CACHESZ];
-static short int cacheix_ds = 0;
-static ds cache_ds[CACHESZ];
 static short int cacheix_field = 0;
 static field cache_field[CACHESZ];
 static short int cacheix_macro = 0;
 static macro cache_macro[CACHESZ];
-static short int cacheix_tplelm = 0;
-static tplelm cache_tplelm[CACHESZ];
 static short int cacheix_var = 0;
 static var cache_var[CACHESZ];
+static short int cacheix_ds = 0;
+static ds cache_ds[CACHESZ];
+static short int cacheix_classComponent = 0;
+static classComponent cache_classComponent[CACHESZ];
+static short int cacheix_tplelm = 0;
+static tplelm cache_tplelm[CACHESZ];
 #endif
 
 static char tm_srcfile[] = __FILE__;
@@ -184,6 +184,60 @@ static char tm_nilptr[] = "NIL pointer";
 /**************************************************
  *    set array room routines                     *
  **************************************************/
+
+/* Announce that you will need setroom for 'rm' elements in
+ * field_list 'l'.
+ */
+static field_list setroom_field_list( field_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( field *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( field *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need setroom for 'rm' elements in
+ * tmstring_list 'l'.
+ */
+static tmstring_list setroom_tmstring_list( tmstring_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( tmstring *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( tmstring *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
+
+/* Announce that you will need setroom for 'rm' elements in
+ * tplelm_list 'l'.
+ */
+static tplelm_list setroom_tplelm_list( tplelm_list l, const unsigned int rm )
+{
+    if( l->room>=rm ){
+	return l;
+    }
+    if( l->room==0 ){
+	l->arr = TM_MALLOC( tplelm *, rm * sizeof(*(l->arr)) );
+    }
+    else {
+	l->arr = TM_REALLOC( tplelm *, l->arr, rm * sizeof(*(l->arr)) );
+    }
+    l->room = rm;
+    return l;
+}
 
 /* Announce that you will need setroom for 'rm' elements in
  * alternative_list 'l'.
@@ -240,18 +294,18 @@ static ds_list setroom_ds_list( ds_list l, const unsigned int rm )
 }
 
 /* Announce that you will need setroom for 'rm' elements in
- * field_list 'l'.
+ * var_list 'l'.
  */
-static field_list setroom_field_list( field_list l, const unsigned int rm )
+static var_list setroom_var_list( var_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
 	return l;
     }
     if( l->room==0 ){
-	l->arr = TM_MALLOC( field *, rm * sizeof(*(l->arr)) );
+	l->arr = TM_MALLOC( var *, rm * sizeof(*(l->arr)) );
     }
     else {
-	l->arr = TM_REALLOC( field *, l->arr, rm * sizeof(*(l->arr)) );
+	l->arr = TM_REALLOC( var *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -270,60 +324,6 @@ static macro_list setroom_macro_list( macro_list l, const unsigned int rm )
     }
     else {
 	l->arr = TM_REALLOC( macro *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * tmstring_list 'l'.
- */
-static tmstring_list setroom_tmstring_list( tmstring_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( tmstring *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( tmstring *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * tplelm_list 'l'.
- */
-static tplelm_list setroom_tplelm_list( tplelm_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( tplelm *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( tplelm *, l->arr, rm * sizeof(*(l->arr)) );
-    }
-    l->room = rm;
-    return l;
-}
-
-/* Announce that you will need setroom for 'rm' elements in
- * var_list 'l'.
- */
-static var_list setroom_var_list( var_list l, const unsigned int rm )
-{
-    if( l->room>=rm ){
-	return l;
-    }
-    if( l->room==0 ){
-	l->arr = TM_MALLOC( var *, rm * sizeof(*(l->arr)) );
-    }
-    else {
-	l->arr = TM_REALLOC( var *, l->arr, rm * sizeof(*(l->arr)) );
     }
     l->room = rm;
     return l;
@@ -1561,6 +1561,48 @@ static void fre_alternative( alternative e )
     TM_FREE( e );
 }
 
+/* Free an element 'e' of type 'field'. */
+static void fre_field( field e )
+{
+    if( e == fieldNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_field++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_field<CACHESZ ){
+	cache_field[cacheix_field++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
+/* Free an element 'e' of type 'var'. */
+static void fre_var( var e )
+{
+    if( e == varNIL ){
+	return;
+    }
+#ifdef STAT
+    frecnt_var++;
+#endif
+#ifdef LOGNEW
+    tm_fre_logid( e->lognew_id );
+#endif
+#ifdef USECACHE
+    if( cacheix_var<CACHESZ ){
+	cache_var[cacheix_var++] = e;
+	return;
+    }
+#endif
+    TM_FREE( e );
+}
+
 /* Free an element 'e' of type 'classComponent'. */
 static void fre_classComponent( classComponent e )
 {
@@ -1635,27 +1677,6 @@ static void fre_ds( ds e )
 #ifdef USECACHE
     if( cacheix_ds<CACHESZ ){
 	cache_ds[cacheix_ds++] = e;
-	return;
-    }
-#endif
-    TM_FREE( e );
-}
-
-/* Free an element 'e' of type 'field'. */
-static void fre_field( field e )
-{
-    if( e == fieldNIL ){
-	return;
-    }
-#ifdef STAT
-    frecnt_field++;
-#endif
-#ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
-#endif
-#ifdef USECACHE
-    if( cacheix_field<CACHESZ ){
-	cache_field[cacheix_field++] = e;
 	return;
     }
 #endif
@@ -1765,27 +1786,6 @@ static void fre_tplelm( tplelm e )
 #ifdef USECACHE
     if( cacheix_tplelm<CACHESZ ){
 	cache_tplelm[cacheix_tplelm++] = e;
-	return;
-    }
-#endif
-    TM_FREE( e );
-}
-
-/* Free an element 'e' of type 'var'. */
-static void fre_var( var e )
-{
-    if( e == varNIL ){
-	return;
-    }
-#ifdef STAT
-    frecnt_var++;
-#endif
-#ifdef LOGNEW
-    tm_fre_logid( e->lognew_id );
-#endif
-#ifdef USECACHE
-    if( cacheix_var<CACHESZ ){
-	cache_var[cacheix_var++] = e;
 	return;
     }
 #endif
@@ -2227,6 +2227,37 @@ static void rfre_alternative( alternative );
 static void rfre_field( field );
 static void rfre_var( var );
 
+/* Recursively free an element 'e' of type 'classComponent'
+   and all elements in it.
+ */
+void rfre_classComponent( classComponent e )
+{
+    if( e == classComponentNIL ){
+	return;
+    }
+    switch( e->tag ){
+	case TAGCCSuper:
+	    rfre_tmstring( e->CCSuper.super );
+	    break;
+
+	case TAGCCFields:
+	    rfre_field_list( e->CCFields.fields );
+	    break;
+
+	case TAGCCAlternatives:
+	    rfre_alternative_list( e->CCAlternatives.alternatives );
+	    break;
+
+	case TAGCCSublist:
+	    rfre_classComponent_list( e->CCSublist.components );
+	    break;
+
+	default:
+	    FATALTAG( (int) e->tag );
+    }
+    fre_classComponent( e );
+}
+
 /* Recursively free an element 'e' of type 'ds'
    and all elements in it.
  */
@@ -2267,64 +2298,6 @@ void rfre_ds( ds e )
     fre_ds( e );
 }
 
-/* Recursively free an element 'e' of type 'classComponent'
-   and all elements in it.
- */
-void rfre_classComponent( classComponent e )
-{
-    if( e == classComponentNIL ){
-	return;
-    }
-    switch( e->tag ){
-	case TAGCCSuper:
-	    rfre_tmstring( e->CCSuper.super );
-	    break;
-
-	case TAGCCFields:
-	    rfre_field_list( e->CCFields.fields );
-	    break;
-
-	case TAGCCAlternatives:
-	    rfre_alternative_list( e->CCAlternatives.alternatives );
-	    break;
-
-	case TAGCCSublist:
-	    rfre_classComponent_list( e->CCSublist.components );
-	    break;
-
-	default:
-	    FATALTAG( (int) e->tag );
-    }
-    fre_classComponent( e );
-}
-
-/* Recursively free an element 'e' of type 'alternative'
-   and all elements in it.
- */
-static void rfre_alternative( alternative e )
-{
-    if( e == alternativeNIL ){
-	return;
-    }
-    rfre_tmstring( e->label );
-    rfre_classComponent( e->component );
-    fre_alternative( e );
-}
-
-/* Recursively free an element 'e' of type 'field'
-   and all elements in it.
- */
-static void rfre_field( field e )
-{
-    if( e == fieldNIL ){
-	return;
-    }
-    rfre_int( e->level );
-    rfre_tmstring( e->name );
-    rfre_tmstring( e->type );
-    fre_field( e );
-}
-
 /* Recursively free an element 'e' of type 'macro'
    and all elements in it.
  */
@@ -2339,20 +2312,6 @@ void rfre_macro( macro e )
     rfre_tmstring_list( e->fpl );
     rfre_tplelm_list( e->body );
     fre_macro( e );
-}
-
-/* Recursively free an element 'e' of type 'var'
-   and all elements in it.
- */
-static void rfre_var( var e )
-{
-    if( e == varNIL ){
-	return;
-    }
-    rfre_uint( e->lvl );
-    rfre_tmstring( e->name );
-    rfre_tmstring( e->val );
-    fre_var( e );
 }
 
 /* Recursively free an element 'e' of type 'tplelm'
@@ -2454,6 +2413,47 @@ void rfre_tplelm( tplelm e )
 	    FATALTAG( (int) e->tag );
     }
     fre_tplelm( e );
+}
+
+/* Recursively free an element 'e' of type 'alternative'
+   and all elements in it.
+ */
+static void rfre_alternative( alternative e )
+{
+    if( e == alternativeNIL ){
+	return;
+    }
+    rfre_tmstring( e->label );
+    rfre_classComponent( e->component );
+    fre_alternative( e );
+}
+
+/* Recursively free an element 'e' of type 'field'
+   and all elements in it.
+ */
+static void rfre_field( field e )
+{
+    if( e == fieldNIL ){
+	return;
+    }
+    rfre_int( e->level );
+    rfre_tmstring( e->name );
+    rfre_tmstring( e->type );
+    fre_field( e );
+}
+
+/* Recursively free an element 'e' of type 'var'
+   and all elements in it.
+ */
+static void rfre_var( var e )
+{
+    if( e == varNIL ){
+	return;
+    }
+    rfre_uint( e->lvl );
+    rfre_tmstring( e->name );
+    rfre_tmstring( e->val );
+    fre_var( e );
 }
 
 /* Recursively free a list of elements 'e' of type alternative. */
@@ -2657,24 +2657,6 @@ void print_ds_list( TMPRINTSTATE *st, const ds_list l )
     tm_closelist( st );
 }
 
-/* Print a list of elements 'l' of type 'field'
-   using print optimizer.
- */
-static void print_field_list( TMPRINTSTATE *st, const field_list l )
-{
-    unsigned int ix;
-
-    if( l == field_listNIL ){
-	tm_printword( st, "@" );
-	return;
-    }
-    tm_openlist( st );
-    for( ix=0; ix<l->sz; ix++ ){
-	print_field( st, l->arr[ix] );
-    }
-    tm_closelist( st );
-}
-
 /* Print a list of elements 'l' of type 'tmstring'
    using print optimizer.
  */
@@ -2689,6 +2671,24 @@ void print_tmstring_list( TMPRINTSTATE *st, const tmstring_list l )
     tm_openlist( st );
     for( ix=0; ix<l->sz; ix++ ){
 	print_tmstring( st, l->arr[ix] );
+    }
+    tm_closelist( st );
+}
+
+/* Print a list of elements 'l' of type 'field'
+   using print optimizer.
+ */
+static void print_field_list( TMPRINTSTATE *st, const field_list l )
+{
+    unsigned int ix;
+
+    if( l == field_listNIL ){
+	tm_printword( st, "@" );
+	return;
+    }
+    tm_openlist( st );
+    for( ix=0; ix<l->sz; ix++ ){
+	print_field( st, l->arr[ix] );
     }
     tm_closelist( st );
 }
@@ -3004,16 +3004,16 @@ field_list rdup_field_list( const field_list l )
     unsigned int ix;
     field_list nw;
     field *ar;
-    field *or;
+    field *o_r;
 
     if( l == field_listNIL ){
 	return field_listNIL;
     }
     nw = setroom_field_list( new_field_list(), l->sz );
     ar = nw->arr;
-    or = l->arr;
+    o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_field( *or++ );
+	*ar++ = rdup_field( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3029,16 +3029,16 @@ tmstring_list rdup_tmstring_list( const tmstring_list l )
     unsigned int ix;
     tmstring_list nw;
     tmstring *ar;
-    tmstring *or;
+    tmstring *o_r;
 
     if( l == tmstring_listNIL ){
 	return tmstring_listNIL;
     }
     nw = setroom_tmstring_list( new_tmstring_list(), l->sz );
     ar = nw->arr;
-    or = l->arr;
+    o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_tmstring( *or++ );
+	*ar++ = rdup_tmstring( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3054,16 +3054,16 @@ tplelm_list rdup_tplelm_list( const tplelm_list l )
     unsigned int ix;
     tplelm_list nw;
     tplelm *ar;
-    tplelm *or;
+    tplelm *o_r;
 
     if( l == tplelm_listNIL ){
 	return tplelm_listNIL;
     }
     nw = setroom_tplelm_list( new_tplelm_list(), l->sz );
     ar = nw->arr;
-    or = l->arr;
+    o_r = l->arr;
     for( ix=0; ix<l->sz; ix++ ){
-	*ar++ = rdup_tplelm( *or++ );
+	*ar++ = rdup_tplelm( *o_r++ );
     }
     nw->sz = l->sz;
     return nw;
@@ -3540,6 +3540,236 @@ void stat_tm( FILE *f )
 #else
     (void) f; /* to prevent 'f unused' from compiler and lint */
 #endif
+}
+
+/* Return -1 if there is a structure that has freed more than allocated, or
+ * else return 1 if there is a structure that has been freed less than
+ * allocated, or else return 0.
+ */
+int get_balance_tm( void )
+{
+    int res;
+
+    res = 0;
+#ifdef STAT
+    if( newcnt_alternative_list<frecnt_alternative_list ){
+        return -1;
+    }
+    if( newcnt_alternative_list>frecnt_alternative_list ){
+        res = 1;
+    }
+    if( newcnt_classComponent_list<frecnt_classComponent_list ){
+        return -1;
+    }
+    if( newcnt_classComponent_list>frecnt_classComponent_list ){
+        res = 1;
+    }
+    if( newcnt_ds_list<frecnt_ds_list ){
+        return -1;
+    }
+    if( newcnt_ds_list>frecnt_ds_list ){
+        res = 1;
+    }
+    if( newcnt_field_list<frecnt_field_list ){
+        return -1;
+    }
+    if( newcnt_field_list>frecnt_field_list ){
+        res = 1;
+    }
+    if( newcnt_macro_list<frecnt_macro_list ){
+        return -1;
+    }
+    if( newcnt_macro_list>frecnt_macro_list ){
+        res = 1;
+    }
+    if( newcnt_tmstring_list<frecnt_tmstring_list ){
+        return -1;
+    }
+    if( newcnt_tmstring_list>frecnt_tmstring_list ){
+        res = 1;
+    }
+    if( newcnt_tplelm_list<frecnt_tplelm_list ){
+        return -1;
+    }
+    if( newcnt_tplelm_list>frecnt_tplelm_list ){
+        res = 1;
+    }
+    if( newcnt_var_list<frecnt_var_list ){
+        return -1;
+    }
+    if( newcnt_var_list>frecnt_var_list ){
+        res = 1;
+    }
+    if( newcnt_alternative<frecnt_alternative ){
+        return -1;
+    }
+    if( newcnt_alternative>frecnt_alternative ){
+        res = 1;
+    }
+    if( newcnt_CCSuper<frecnt_CCSuper ){
+        return -1;
+    }
+    if( newcnt_CCSuper>frecnt_CCSuper ){
+        res = 1;
+    }
+    if( newcnt_CCFields<frecnt_CCFields ){
+        return -1;
+    }
+    if( newcnt_CCFields>frecnt_CCFields ){
+        res = 1;
+    }
+    if( newcnt_CCAlternatives<frecnt_CCAlternatives ){
+        return -1;
+    }
+    if( newcnt_CCAlternatives>frecnt_CCAlternatives ){
+        res = 1;
+    }
+    if( newcnt_CCSublist<frecnt_CCSublist ){
+        return -1;
+    }
+    if( newcnt_CCSublist>frecnt_CCSublist ){
+        res = 1;
+    }
+    if( newcnt_DsCons<frecnt_DsCons ){
+        return -1;
+    }
+    if( newcnt_DsCons>frecnt_DsCons ){
+        res = 1;
+    }
+    if( newcnt_DsTuple<frecnt_DsTuple ){
+        return -1;
+    }
+    if( newcnt_DsTuple>frecnt_DsTuple ){
+        res = 1;
+    }
+    if( newcnt_DsClass<frecnt_DsClass ){
+        return -1;
+    }
+    if( newcnt_DsClass>frecnt_DsClass ){
+        res = 1;
+    }
+    if( newcnt_DsConstructor<frecnt_DsConstructor ){
+        return -1;
+    }
+    if( newcnt_DsConstructor>frecnt_DsConstructor ){
+        res = 1;
+    }
+    if( newcnt_field<frecnt_field ){
+        return -1;
+    }
+    if( newcnt_field>frecnt_field ){
+        res = 1;
+    }
+    if( newcnt_macro<frecnt_macro ){
+        return -1;
+    }
+    if( newcnt_macro>frecnt_macro ){
+        res = 1;
+    }
+    if( newcnt_Plain<frecnt_Plain ){
+        return -1;
+    }
+    if( newcnt_Plain>frecnt_Plain ){
+        res = 1;
+    }
+    if( newcnt_Foreach<frecnt_Foreach ){
+        return -1;
+    }
+    if( newcnt_Foreach>frecnt_Foreach ){
+        res = 1;
+    }
+    if( newcnt_While<frecnt_While ){
+        return -1;
+    }
+    if( newcnt_While>frecnt_While ){
+        res = 1;
+    }
+    if( newcnt_If<frecnt_If ){
+        return -1;
+    }
+    if( newcnt_If>frecnt_If ){
+        res = 1;
+    }
+    if( newcnt_Set<frecnt_Set ){
+        return -1;
+    }
+    if( newcnt_Set>frecnt_Set ){
+        res = 1;
+    }
+    if( newcnt_GlobalSet<frecnt_GlobalSet ){
+        return -1;
+    }
+    if( newcnt_GlobalSet>frecnt_GlobalSet ){
+        res = 1;
+    }
+    if( newcnt_Append<frecnt_Append ){
+        return -1;
+    }
+    if( newcnt_Append>frecnt_Append ){
+        res = 1;
+    }
+    if( newcnt_GlobalAppend<frecnt_GlobalAppend ){
+        return -1;
+    }
+    if( newcnt_GlobalAppend>frecnt_GlobalAppend ){
+        res = 1;
+    }
+    if( newcnt_Error<frecnt_Error ){
+        return -1;
+    }
+    if( newcnt_Error>frecnt_Error ){
+        res = 1;
+    }
+    if( newcnt_Exit<frecnt_Exit ){
+        return -1;
+    }
+    if( newcnt_Exit>frecnt_Exit ){
+        res = 1;
+    }
+    if( newcnt_Redirect<frecnt_Redirect ){
+        return -1;
+    }
+    if( newcnt_Redirect>frecnt_Redirect ){
+        res = 1;
+    }
+    if( newcnt_Include<frecnt_Include ){
+        return -1;
+    }
+    if( newcnt_Include>frecnt_Include ){
+        res = 1;
+    }
+    if( newcnt_Macro<frecnt_Macro ){
+        return -1;
+    }
+    if( newcnt_Macro>frecnt_Macro ){
+        res = 1;
+    }
+    if( newcnt_Call<frecnt_Call ){
+        return -1;
+    }
+    if( newcnt_Call>frecnt_Call ){
+        res = 1;
+    }
+    if( newcnt_Return<frecnt_Return ){
+        return -1;
+    }
+    if( newcnt_Return>frecnt_Return ){
+        res = 1;
+    }
+    if( newcnt_Insert<frecnt_Insert ){
+        return -1;
+    }
+    if( newcnt_Insert>frecnt_Insert ){
+        res = 1;
+    }
+    if( newcnt_var<frecnt_var ){
+        return -1;
+    }
+    if( newcnt_var>frecnt_var ){
+        res = 1;
+    }
+#endif
+    return res;
 }
 
 /* ---- end of /usr/local/lib/calu.ct ---- */

@@ -50,6 +50,7 @@
 .append wantdefs append_tplelm_list
 ..
 .append wantdefs stat_$(basename)
+.append wantdefs get_balance_$(basename)
 .append wantdefs flush_$(basename)
 ..
 .append wantdefs new_var

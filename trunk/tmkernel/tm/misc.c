@@ -109,26 +109,6 @@ unsigned int find_field_ix( const field_list fl, const char *nm )
     return fl->sz;
 }
 
-#if 0
-/* Given a list of constructors 'cl', search for constructor with name 'nm'.
- * Return the index of that constructor in the list, or cl->sz if not
- * found.
- */ 
-unsigned int find_constructor_ix( const constructor_list cl, const char *nm )
-{
-    constructor c;
-    unsigned int ix;
-
-    for( ix = 0; ix < cl->sz; ix++ ){
-	c = cl->arr[ix];
-	if( strcmp( c->name, nm ) == 0 ){
-	    return ix;
-	}
-    }
-    return cl->sz;
-}
-#endif
-
 /* Search for tmstring 's' in the list 'l' and return TRUE if
    found or FALSE otherwise.
  */

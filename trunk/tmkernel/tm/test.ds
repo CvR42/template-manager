@@ -29,3 +29,4 @@ toplevel ::= ;
 || Unterminated comment
 
 testclass = { a:[[int]], b:int } + subclass: orig;
+
