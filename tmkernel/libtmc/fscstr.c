@@ -52,8 +52,11 @@ int fscan_tmstring_nolognew( FILE *f, tmstring *s )
 	if( tm_fscanescapedchar( f, &c ) ){
 	    return 1;
 	}
-	if( ix+1>sz ){
-	    sz += sz+1;
+	/* Make sure there is room for at least the current character
+	 * and a closing '\0'.
+	 */
+	if( ix+2>sz ){
+	    sz += sz+2;
 	    buf = realloc_tmstring_nolognew( buf, sz );
 	}
 	buf[ix++] = c;
