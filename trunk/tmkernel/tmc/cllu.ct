@@ -1288,3 +1288,4 @@ int get_balance_$(basename)( void )
 
 .endif
 /* ---- end of ${tplfilename} ---- */
+/* Code generation required ${processortime} milliseconds. */
