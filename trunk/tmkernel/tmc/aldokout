@@ -56,6 +56,8 @@
 22)
 )
 ]
+(42)
+(Thing 22)
 [
     TopNone,
     TopNone,
@@ -102,5 +104,7 @@
     ),
     (TopTuple (99, [(Thing 5), (Thing 9)], 22))
 ]
+(42)
+(Thing 22)
 bracket level: 0
 get_balance_ds()=1

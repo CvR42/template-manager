@@ -33,21 +33,17 @@ int main( void )
     int lev;
     label lbl;
     thing t;
+#ifdef CODEtmc
+    expr x;
+#endif
 
     lbl = new_label( 42 );
-    rfre_label( lbl );
     t = new_Thing( 22 );
-    rfre_thing( t );
 #ifdef CODEtmc
-    {
-	expr x;
-
-	x = (expr) new_exprPlus(
-	    (expr) new_exprConst( 42 ),
-	    (expr) new_exprConst( 5 )
-	);
-	rfre_expr( x );
-    }
+    x = (expr) new_exprPlus(
+	(expr) new_exprConst( 42 ),
+	(expr) new_exprConst( 5 )
+    );
 #endif
     ds = new_toplevel_list();
     ds = setroom_toplevel_list( ds, 42 );
@@ -230,11 +226,24 @@ int main( void )
     }
     rfre_toplevel_list( l );
     fprint_toplevel_list( outfile, dscopy );
+    fprint_label( outfile, lbl );
+    fprint_thing( outfile, t );
+#ifdef CODEtmc
+    fprint_expr( outfile, x );
+#endif
     st = tm_setprint( outfile, 4, 78, 8, 0 );
     print_toplevel_list( st, ds );
+    print_label( st, lbl );
+    print_thing( st, t );
+#ifdef CODEtmc
+    print_expr( st, x );
+    rfre_expr( x );
+#endif
     lev = tm_endprint( st );
     fprintf( outfile, "bracket level: %d\n", lev );
     rfre_toplevel_list( ds );
+    rfre_label( lbl );
+    rfre_thing( t );
     fprintf( outfile, "get_balance_ds()=%d\n", get_balance_ds() );
     stat_ds( stderr );
     report_lognew( stderr );
