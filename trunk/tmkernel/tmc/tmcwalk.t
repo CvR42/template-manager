@@ -59,7 +59,6 @@
 .case alias
 .call generate_descent_call "    " e ${alias $t} $t 
 .case atom
-.call generate_empty_walker_body "    " e $t
 .case list
     unsigned int ix;
 
@@ -115,10 +114,10 @@
 .set empty 0
 .endif
 .endforeach
+.endswitch
 .if $(empty)
 .call generate_empty_walker_body "    " e $t
 .endif
-.endswitch
 .call generate_walker_return "    " e $t
 }
 
