@@ -408,13 +408,13 @@ static void test_tmtext( TmPrintState *st )
     print_tmtext( st, t );
     t->destroy();
     t = new tmtext( "Test" );
-    if( t->sz != 4 ){
+    if( t->size() != 4 ){
 	bad( "tmtext::tmtext( char * ) results in text with the wrong size" );
     }
     if( t->curpos != 0 ){
 	bad( "tmtext::tmtext( char * ) does not put curpos on 0" );
     }
-    if( t->room<t->sz ){
+    if( t->capacity()<t->size() ){
 	bad( "tmtext::tmtext( char * ) room smaller than size?" );
     }
     if( t->arr[0] != 'T' || t->arr[1] != 'e' || t->arr[2] != 's' || t->arr[3] != 't' ){
@@ -482,25 +482,25 @@ static void test_tmtext( TmPrintState *st )
     if( cmp_string_tmtext( "ttsits", t ) != 0 ){
 	bad( "tmtext not replaced" );
     }
-    t = delblock_tmtext( t, 0, 1 );
+    t->erase( 0, 1 );
     if( cmp_string_tmtext( "tsits", t ) != 0 ){
-	bad( "tmtext block not deleted" );
+	bad( "tmtext block not erased" );
     }
     nw->destroy();
     nw = new tmtext( "bla" );
-    t = insert_tmtext( t, 0, nw );
+    t->insert( 0, nw );
     if( cmp_string_tmtext( "blatsits", t ) != 0 ){
 	bad( "tmtext badly inserted" );
     }
-    t = insert_tmtext( t, 0, nw );
+    t->insert( 0, nw );
     if( cmp_string_tmtext( "blablatsits", t ) != 0 ){
 	bad( "tmtext badly inserted" );
     }
-    t = insert_tmtext( t, 2, nw );
+    t->insert( 2, nw );
     if( cmp_string_tmtext( "blblaablatsits", t ) != 0 ){
 	bad( "tmtext badly inserted" );
     }
-    t = insert_tmtext( t, 1000, nw );
+    t->insert( 1000, nw );
     if( cmp_string_tmtext( "blblaablatsitsbla", t ) != 0 ){
 	bad( "tmtext badly inserted" );
     }
@@ -656,14 +656,8 @@ static void ftest_tmword( FILE *f )
 /* Test the tmsymbol handling routines. */
 static void test_tmsymbol( void )
 {
-    tmsymbol a;
-    tmsymbol b;
-    tmsymbol t;
-    tmsymbol g1;
-    tmsymbol g2;
-
-    a = add_tmsymbol( "a" );
-    b = add_tmsymbol( "a" );
+    tmsymbol a = add_tmsymbol( "a" );
+    tmsymbol b = add_tmsymbol( "a" );
     if( a != b ){
 	bad( "equal tmsymbols do not compare equal" );
     }
@@ -671,11 +665,11 @@ static void test_tmsymbol( void )
     if( a == b ){
 	bad( "unequal tmsymbols compare equal" );
     }
-    g1 = gen_tmsymbol( "base" );
+    tmsymbol g1 = gen_tmsymbol( "base" );
     if( g1 == a || g1 == b ){
 	bad( "gensym tmsymbol is equal to existing tmsymbol" );
     }
-    t = find_tmsymbol( "a" );
+    tmsymbol t = find_tmsymbol( "a" );
     if( t == tmsymbolNIL ){
 	bad( "tmsymbol not found back" );
     }
@@ -687,24 +681,19 @@ static void test_tmsymbol( void )
 	fprintf( stderr, "tmsymbol '%s'", t->name );
 	bad( "non-existing tmsymbol found" );
     }
-    g2 = gen_tmsymbol( "base" );
+    tmsymbol g2 = gen_tmsymbol( "base" );
     if( g2 == a || g2 == b || g2 == g1 ){
 	bad( "gensym tmsymbol is equal to existing tmsymbol" );
     }
     flush_tmsymbol();
 }
 
-#ifdef __MSDOS__
-long huge idlist[TESTARRAYSIZE];
-#else
 long idlist[TESTARRAYSIZE];
-#endif
 
 int main( void )
 {
     tmstring str;
     tmstring scstr;
-    int lev;
 
     infile = fopen( "testin", "r" );
     if( infile == NULL ){
@@ -747,7 +736,7 @@ int main( void )
     ftest_ulong( outfile );
     ftest_tmstring( outfile );
     ftest_tmword( outfile );
-    lev = st->getLevel();
+    int lev = st->getLevel();
     st->destroy();
     fprintf( stderr, "bracket level: %d\n", lev );
     fprintf( stderr, "get_balance_tmstring(): %d\n", get_balance_tmstring() );

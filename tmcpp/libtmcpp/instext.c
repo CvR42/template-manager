@@ -14,18 +14,16 @@
  * appended. If 'pos' is negative, it is assumed that the
  * text must be inserted at the start of 't'.
  */
-tmtext *insert_tmtext( tmtext *t, const long pos_parm, const tmtext *nw )
+void tmtext::insert( const long pos_parm, const tmtext *nw )
 {
     long pos = pos_parm;
 
     if( pos<0 ){
 	pos = 0;
     }
-    if( pos>t->sz ){
-	pos = t->sz;
+    if( pos>sz ){
+	pos = sz;
     }
-    insblock_tmtext( t, pos, nw->sz );
-    copyblock_tmtext( t->arr+pos, nw->arr, nw->sz );
-    return t;
+    insblock_tmtext( this, pos, nw->sz );
+    copyblock_tmtext( arr+pos, nw->arr, nw->sz );
 }
-

@@ -7,26 +7,24 @@
 #include "config.h"
 #include "tmcpp.h"
 
-/* Given a tmtext 't', a position 'from' and a size 'sz', delete 'sz'
- * characters from the tmtext, starting at position 'from'.
- */
-tmtext *delblock_tmtext( tmtext *t, const long from, const long to )
+// Given a position 'from' and a position 'to',
+// remove all characters starting from 'from' up to, but not including 'to'.
+void tmtext::erase( const long from, const long to )
 {
-    long sz = to-from;
-    if( sz <= 0 ){
-	return t;
+    long gapsz = to-from;
+    if( gapsz <= 0 ){
+	return;
     }
-    long z = t->sz-(from+sz);
+    long z = sz-(from+gapsz);
     if( z<=0 ){
-	/* All chars until the end of the tmtext are to be deleted,
-	 * simply adjust the tmtext size..
-	 */
-	t->sz = from;
-	return t;
+	// All chars until the end of the tmtext are to be deleted,
+	// simply adjust the tmtext size..
+	sz = from;
+	return;
     }
-    char *d = t->arr+from;
-    char *s = t->arr+from+sz;
-    t->sz -= sz;
+    char *d = arr+from;
+    char *s = arr+from+gapsz;
+    sz -= gapsz;
 #if HAVE_MEMMOVE
     memmove( d, s, z );
 #else
@@ -35,5 +33,4 @@ tmtext *delblock_tmtext( tmtext *t, const long from, const long to )
 	z--;
     }
 #endif
-    return t;
 }
