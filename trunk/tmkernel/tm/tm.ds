@@ -11,7 +11,7 @@ ds = { name:tmstring, inherits:[tmstring] } +
     DsTuple: { fields:[field] } |
     DsClass: { fields:[field], virtual:tmbool } |
     DsConstructor: { fields:[field] } |
-    DsAlias: { target:tmstring }
+    DsAlias: {}
     ;
 
 classComponent =
@@ -54,6 +54,7 @@ tplelm = { lno:int } +
     GlobalSet: { line:tmstring } |
     Append: { line:tmstring } |
     GlobalAppend: { line:tmstring } |
+    DeleteType: { line:tmstring } |
     Error: { str:tmstring } |
     Exit: { str:tmstring } |
     Redirect: { fname:tmstring, body:[tplelm] } |

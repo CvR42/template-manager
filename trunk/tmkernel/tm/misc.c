@@ -103,6 +103,21 @@ bool member_tmstring_list( const tmstring s, const tmstring_list l )
     return FALSE;
 }
 
+/* Search for all strings 'sl' in the list 'l' and return TRUE if
+ * any of them occurs in 'l', or FALSE otherwise.
+ */
+bool any_member_tmstring_list( const tmstring_list sl, const tmstring_list l )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<sl->sz; ix++ ){
+	if( member_tmstring_list( sl->arr[ix], l ) ){
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
 field find_field_super( const ds_list types, tmstring_list supers, const char *nm )
 {
     unsigned int ix;

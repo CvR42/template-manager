@@ -1,6 +1,7 @@
 testin: statements outside a case ignored
 testin: variable not found: iserniet
 testin: missing close bracket: ')'
+testin: no case matches, and there is no .default: value 'bla'
 testin: A switch command requires exactly one parameter
 testsub: variable not found: blablabla
 testsub: variable not found: blablabla

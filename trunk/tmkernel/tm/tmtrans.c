@@ -41,6 +41,7 @@ typedef enum en_tmcommands {
     CALL,
     CASE,
     DEFAULT,
+    DELETETYPE,
     ELSE,
     ENDAPPENDFILE,
     ENDFOREACH,
@@ -84,6 +85,7 @@ static struct dotcom dotcomlist[] = {
     { "call", CALL },
     { "case", CASE },
     { "default", DEFAULT },
+    { "deletetype", DELETETYPE },
     { "else", ELSE },
     { "endappendfile", ENDAPPENDFILE },
     { "endforeach", ENDFOREACH },
@@ -233,12 +235,9 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 		break;
 	}
     }
-    if( deflt == tplelm_listNIL ){
-	deflt = new_tplelm_list();
-    }
     /* We know the caller puts an empty case statement at the end, so
      * this block is guaranteed to contain only that. Throw away
-     * without checking.
+     * without checking. Yes, this is not elegant.
      */
     rfre_tplelm_list( block );
     return (tplelm) new_Switch( lno, rdup_tmstring( swval ), cases, deflt );
@@ -453,6 +452,11 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 
 		    case RETURN:
 			te = (tplelm) new_Return( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case DELETETYPE:
+			te = (tplelm) new_DeleteType( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
@@ -948,12 +952,7 @@ static ds rename_ds( ds d, const tmstring old, const tmstring nw )
 	}
 
 	case TAGDsAlias:
-	{
-	    DsAlias dsub = to_DsAlias( d );
-
-	    dsub->target = rename_tmstring( dsub->target, old, nw );
 	    break;
-	}
 
 	case TAGDsConstructor:
 	{
@@ -1086,6 +1085,37 @@ static void doglobalappend( const tplelm tpl )
     fre_tmstring( nm );
 }
 
+/* Given a type list 'types' and a type name 'nm', delete that type from
+ * the list of types.
+ */
+static ds_list delete_type( ds_list types, const tmstring nm )
+{
+    unsigned int ix = find_type_ix( types, nm );
+
+    if( ix>=types->sz ){
+	return types;
+    }
+    return delete_ds_list( types, ix );
+}
+
+/* Handle 'deletetype' command. */
+static void dodeletetype( const DeleteType tpl )
+{
+    char *is;
+    char *os;
+    tmstring_list sl;
+    unsigned int ix;
+
+    is = tpl->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+    for( ix=0; ix<sl->sz; ix++ ){
+	allds = delete_type( allds, sl->arr[ix] );
+    }
+    rfre_tmstring_list( sl );
+}
+
 /* Handle 'if' command. */
 static void doif( const tplelm tpl, FILE *outfile )
 {
@@ -1106,7 +1136,7 @@ static void doif( const tplelm tpl, FILE *outfile )
 }
 
 /* Handle 'switch' command. */
-static void doswitch( const tplelm tpl, FILE *outfile )
+static void doswitch( const Switch tpl, FILE *outfile )
 {
     char *is;
     char *os;
@@ -1115,7 +1145,7 @@ static void doswitch( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     switchcase_list cases;
 
-    is = to_Switch(tpl)->val;
+    is = tpl->val;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1124,7 +1154,7 @@ static void doswitch( const tplelm tpl, FILE *outfile )
 	rfre_tmstring_list( sl );
 	return;
     }
-    cases = to_Switch(tpl)->cases;
+    cases = tpl->cases;
     for( ix=0; ix<cases->sz; ix++ ){
 	char *caseval = cases->arr[ix]->cases;
 	tmstring sentence;
@@ -1141,7 +1171,13 @@ static void doswitch( const tplelm tpl, FILE *outfile )
 	rfre_tmstring_list( words );
     }
     if( !visited ){
-	dotrans( to_Switch(tpl)->deflt, outfile );
+	if( tpl->deflt == tplelm_listNIL ){
+	    sprintf( errarg, "value '%s'", sl->arr[0] );
+	    line_error( "no case matches, and there is no .default" );
+	}
+	else {
+	    dotrans( tpl->deflt, outfile );
+	}
     }
     rfre_tmstring_list( sl );
 }
@@ -1307,7 +1343,7 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 		break;
 
 	    case TAGSwitch:
-		doswitch( e, outfile );
+		doswitch( to_Switch(e), outfile );
 		break;
 
 	    case TAGCase:
@@ -1332,6 +1368,10 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
 	    case TAGReturn:
 		doreturn( e );
+		break;
+
+	    case TAGDeleteType:
+		dodeletetype( to_DeleteType( e ) );
 		break;
 
 	    case TAGGlobalAppend:
