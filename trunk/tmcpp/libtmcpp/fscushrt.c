@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 int fscan_ushrt( FILE *f, ushrt *p )
 {

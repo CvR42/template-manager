@@ -8,6 +8,6 @@
  * Error message buffer for tm.
  */
 
-#include "tmc.h"
+#include "tmcpp.h"
 
 char tm_errmsg[TM_ERRLEN] = "";

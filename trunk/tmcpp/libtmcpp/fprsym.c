@@ -10,7 +10,7 @@
 
 #include "config.h"
 #include <ctype.h>
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* definition of 'print' for a 'tmsymbol' */
 void fprint_tmsymbol( FILE *f, const tmsymbol s )

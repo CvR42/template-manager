@@ -13,7 +13,7 @@
 
 #include "config.h"
 #include <ctype.h>
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Skip all `isspace()' characters, and try to character 'needc'.
    Compose an error message in 'tm_errmsg' and return 1 if this

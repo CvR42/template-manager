@@ -60,7 +60,6 @@ tm_printword().
     Stringintest
     "a"
     "bcdef"
-    @
     "blablablabigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigwordbigword"
     "\""
     "\n"
@@ -80,7 +79,7 @@ tm_printword().
     STOP
 )
 (Textouttest "" "Test")
-(Textintest "a" "bcdef" @ "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
+(Textintest "a" "bcdef" "blablabla" "\"" "\n" "\001" "\n" "\323" "STOP")
 (Tmboolouttest True False True True False)
 fprint_schar: ['a' ' ' '\376' '\201' '\000']
 fprint_uchar: ['a' ' ' '\201' '\000']

@@ -5,7 +5,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 static tmbool gensymworking = TMFALSE;
 static tmbool initdone = TMFALSE;
@@ -47,16 +47,16 @@ static unsigned int hash( const char *s )
     return sum;
 }
 
-/* Make a new storage space for a tmsymbol. */
+/* Make a nw storage space for a tmsymbol. */
 static tmsymbol newtmsymbol( tmsymbol l, tmstring s )
 {
-    tmsymbol new;
+    tmsymbol nw;
 
-    new = TM_MALLOC( tmsymbol, sizeof( *new )  );
-    new->next = l;
-    new->name = s;
-    new->data = (tm_neutralp) 0;
-    return new;
+    nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
+    nw->next = l;
+    nw->name = s;
+    nw->data = (tm_neutralp) 0;
+    return nw;
 }
 
 /* Try to locate string 'name' in the given list 'list'.
@@ -94,8 +94,8 @@ tmsymbol find_tmsymbol( const char *name )
 
 /* Add string 'name' to the symbol table.
    If the name already occurs in the table, a pointer to the old
-   entry is returned, else a new entry is added, and a pointer to this
-   new entry is returned.
+   entry is returned, else a nw entry is added, and a pointer to this
+   nw entry is returned.
 
    This routine must ensure that for all tmsymbols with the same name,
    the same pointer is returned.
@@ -122,14 +122,14 @@ tmsymbol add_tmsymbol( const char *name )
     if( entry != tmsymbolNIL ){
 	return entry;
     }
-    nwstr = new_tmstring_nolognew( name );
+    nwstr = new_tmstring( name );
     entry = newtmsymbol( symtab[hashval], nwstr );
     symtab[hashval] = entry;
     symtabcnt[hashval]++;
     return entry;
 }
 
-/* given a prefix 'pre', generate a new tmsymbol with an unique name.
+/* given a prefix 'pre', generate a nw tmsymbol with an unique name.
 
    This is done by systematically generating names of the form
    <pre><number> until a name is found that doesn't occur in the
@@ -149,8 +149,8 @@ tmsymbol gen_tmsymbol( const char *pre )
     if( !initdone ){
 	init_tmsymbol();
     }
-    name = new_tmstring_nolognew( "" );
-    name = realloc_tmstring_nolognew( name, strlen( pre ) + 30 );
+    name = new_tmstring( "" );
+    name = realloc_tmstring( name, strlen( pre ) + 30 );
     gensymnum = 0;
     for(;;){
 	sprintf( name, "%s%lx", pre, gensymnum++ );
@@ -167,15 +167,12 @@ tmsymbol gen_tmsymbol( const char *pre )
 
 void flush_tmsymbol( void )
 {
-    tmsymbol s;
-    tmsymbol n;
-    int i;
 
-    for( i=0; i<SYMHASHWIDTH; i++ ){
-	s = symtab[i];
+    for( int i=0; i<SYMHASHWIDTH; i++ ){
+	tmsymbol s = symtab[i];
 	while( s != tmsymbolNIL ){
-	    n = s->next;
-	    fre_tmstring_nolognew( (tmstring) s->name );
+	    tmsymbol n = s->next;
+	    fre_tmstring( (tmstring) s->name );
 	    TM_FREE( s );
 	    s = n;
 	}

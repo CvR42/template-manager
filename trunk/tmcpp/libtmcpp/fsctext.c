@@ -11,14 +11,14 @@
 
 #include <ctype.h>
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Try to read a tmtext in the buffer 'buf'. Give an error
    message if this is not successful. A tmtext may contain
    escape sequences with a '\', but no newlines. The '"'
    around the tmtext are stripped.
  */
-int fscan_tmtext_nolognew( FILE *f, tmtext *s )
+int fscan_tmtext( FILE *f, tmtext **s )
 {
     int c;
     int brac;
@@ -34,7 +34,7 @@ int fscan_tmtext_nolognew( FILE *f, tmtext *s )
 	(void) strcpy( tm_errmsg, "tmtext expected" );
 	return 1;
     }
-    *s = new_tmtext_nolognew();
+    *s = new tmtext();
     for(;;){
 	c = fgetc( f );
 	if( c == '\n' ){

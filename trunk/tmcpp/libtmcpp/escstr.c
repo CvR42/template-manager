@@ -12,7 +12,7 @@
 
 /* The header of this library */
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 #define BACKSLASH '\\'
 

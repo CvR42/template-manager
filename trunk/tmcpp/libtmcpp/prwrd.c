@@ -9,7 +9,7 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* definition of 'print' for a 'tmword' */
 void print_tmword( TMPRINTSTATE *st, const tmconstword s )

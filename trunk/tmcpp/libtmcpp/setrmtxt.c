@@ -5,16 +5,13 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
-/* Given a tmtext 't', ensure that it has room for at least 'sz'
- * characters.
- */
-tmtext setroom_tmtext( tmtext t, const long rm )
+// Ensure that this tmtext has room for at least 'sz' characters.
+void tmtext::reserve( const long rm )
 {
-    if( rm>t->room ){
-	t->arr = TM_REALLOC( tmtextptr, t->arr, rm );
-	t->room = rm;
+    if( rm>room ){
+	arr = TM_REALLOC( char *, arr, rm );
+	room = rm;
     }
-    return t;
 }

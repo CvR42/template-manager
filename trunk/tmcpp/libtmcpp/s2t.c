@@ -5,15 +5,12 @@
  */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
-/* Given string 's', construct a new tmtext with that string. */
-tmtext string_to_tmtext_nolognew( const char *s )
+// Construct a text from a string
+tmtext::tmtext( const char *s ): arr(0), curpos(0), sz(0), room(0)
 {
-    tmtext nw;
-
-    nw = new_tmtext_nolognew();
-    nw = puts_tmtext( s, nw );
-    return nw;
+    puts_tmtext( s, this );
+    curpos = 0;
+    newcount++;
 }
-

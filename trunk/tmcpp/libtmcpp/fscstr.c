@@ -12,14 +12,14 @@
 
 #include <ctype.h>
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 /* Try to read a tmstring in the buffer 'buf'. Give an error
    message if this is not successful. A tmstring may contain
    escape sequences with a '\', but no newlines. The '"'
    around the tmstring are stripped.
  */
-int fscan_tmstring_nolognew( FILE *f, tmstring *s )
+int fscan_tmstring( FILE *f, tmstring *s )
 {
     int c;
     int brac;
@@ -37,12 +37,12 @@ int fscan_tmstring_nolognew( FILE *f, tmstring *s )
 	(void) sprintf( tm_errmsg, "tmstring expected, but got ascii code 0x%02x", (c & 0xff) );
 	return 1;
     }
-    buf = create_tmstring_nolognew( sz );
+    buf = create_tmstring( sz );
     for(;;){
 	c = fgetc( f );
 	if( c == '\n' ){
 	    (void) strcpy( tm_errmsg, "newline in tmstring" );
-	    fre_tmstring_nolognew( buf );
+	    fre_tmstring( buf );
 	    return 1;
 	}
 	if( c == '"' ){
@@ -54,7 +54,7 @@ int fscan_tmstring_nolognew( FILE *f, tmstring *s )
 	}
 	if( ix+1>sz ){
 	    sz += sz+1;
-	    buf = realloc_tmstring_nolognew( buf, sz );
+	    buf = realloc_tmstring( buf, sz );
 	}
 	buf[ix++] = c;
     }

@@ -1,15 +1,15 @@
 /* File: fscsym.c */
 
 #include "config.h"
-#include "tmc.h"
+#include "tmcpp.h"
 
 int fscan_tmsymbol( FILE *f, tmsymbol *s )
 {
     tmstring symstr;
 
-    if( fscan_tmstring_nolognew( f, &symstr ) ){
+    if( fscan_tmstring( f, &symstr ) ){
 	*s = add_tmsymbol( "<error>" );
-	fre_tmstring_nolognew( symstr );
+	fre_tmstring( symstr );
 	return 1;
     }
     if( symstr == tmstringNIL ){
@@ -17,6 +17,6 @@ int fscan_tmsymbol( FILE *f, tmsymbol *s )
 	return 0;
     }
     *s = add_tmsymbol( symstr );
-    fre_tmstring_nolognew( symstr );
+    fre_tmstring( symstr );
     return 0;
 }
