@@ -186,10 +186,12 @@ older versions of {\Tm}.
 A few restrictions are enforced on the type definitions:
 \index{data structure!restrictions|(}
 \begin{itemize}
-\item Apart from constructor base types, types cannot be defined twice.
-\item A type cannot inherit (directly or indirectly) from the same type
+\item Except for from constructor base types, a type can not have
+the same name as a previously defined type.
+\item A type can not, directly or indirectly, inherit from itself.
+\item A type can not, directly or indirectly, inherit from the same type
 twice.
-\item A type cannot have two fields with the same name, or inherit
+\item A type can not have two fields with the same name, or inherit
 a field with the same name as one of its own fields.
 \end{itemize}
 \index{data structure!restrictions|)}
