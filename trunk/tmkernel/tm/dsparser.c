@@ -512,14 +512,8 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
     else {
 	yyerror( "')' expected" );
     }
-    if( cktuple( nm, body, inherits ) ){
-	*tp = (ds) new_DsTuple( nm, inherits, tmstring_listNIL, body );
-    }
-    else {
-	rfre_tmstring( nm );
-	rfre_Field_list( body );
-	rfre_tmstring_list( inherits );
-    }
+    cktuple( nm, body, inherits );
+    *tp = (ds) new_DsTuple( nm, inherits, tmstring_listNIL, body );
     return TRUE;
 }
 

@@ -16,7 +16,7 @@
 /* Ensure that there are no double names in tuple with name 'nm'
  * and fields 'fields'.
  */
-bool cktuple( tmstring nm, Field_list fields, tmstring_list inherits )
+void cktuple( tmstring nm, Field_list fields, tmstring_list inherits )
 {
     unsigned int ix;	/* index of currently checked field */
 
@@ -32,16 +32,16 @@ bool cktuple( tmstring nm, Field_list fields, tmstring_list inherits )
 		sprintf( errpos, "in type '%s'", nm );
 		sprintf( errarg, "'%s'", fnm );
 		error( "double use of field name" );
-		return FALSE;
+		return;
 	    }
 	}
     }
     if( member_tmstring_list( nm, inherits ) ){
 	sprintf( errpos, "in type '%s'", nm );
 	error( "Type inherits itself" );
-	return FALSE;
+	return;
     }
-    return TRUE;
+    return;
 }
 
 /* Given a list of datastructure definitions, an index in the list,

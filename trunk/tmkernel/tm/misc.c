@@ -75,7 +75,7 @@ static unsigned int types_hashval( const char *s )
  * Return the index of that type in the list, or types->sz if not
  * found.
  *
- * Since this function is dominant in most Tm templates, the tries to
+ * Since this function is dominant in most Tm templates, it tries to
  * avoid a linear search through the list each time it is called.
  * This is done by hashing the type strings to an index in
  * types_hash[]. This may well match the type we're looking for.
@@ -94,6 +94,9 @@ unsigned int find_type_ix( const ds_list types, const char *t )
 
     if( prev_types_ix<types->sz && ( strcmp( types->arr[prev_types_ix]->name, t ) == 0 ) ){
 	return prev_types_ix;
+    }
+    if( t == NULL ){
+	return types->sz;
     }
     hv = types_hashval( t );
     ix = types_hash[hv];
