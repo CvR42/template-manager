@@ -18,6 +18,7 @@ LOCALBIN = @prefix@/bin
 LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
 LOCALMAN = @prefix@/man
+TMPFILE = @prefix@/tmp4242
 
 # System dependent flags for compilation with debugging
 DBUGFLAGS = -g -DLOGNEW -DSTAT
@@ -134,11 +135,11 @@ tmctestrun: tmctest tmctesti tmcokout tmcokerr
 
 tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t tmcid.t need.t tmc.ct > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmc.ct
-	cat macros.t tmcid.t need.t tmc.ht > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmc.ht
-	rm -f tmp4242
+	cat macros.t tmcid.t need.t tmc.ct > $(TMPFILE)
+	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/tmc.ct
+	cat macros.t tmcid.t need.t tmc.ht > $(TMPFILE)
+	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/tmc.ht
+	rm -f $(TMPFILE)
 	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.t
 
 alutest: $(ALUTESTOBJS)
@@ -151,11 +152,11 @@ alutestrun: alutest alutesti aluokout aluokerr
 
 aluinstall: need.t calu.ct calu.ht aluid.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t aluid.t need.t calu.ct > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/calu.ct
-	cat macros.t aluid.t need.t calu.ht > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/calu.ht
-	rm -f tmp4242
+	cat macros.t aluid.t need.t calu.ct > $(TMPFILE)
+	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/calu.ct
+	cat macros.t aluid.t need.t calu.ht > $(TMPFILE)
+	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/calu.ht
+	rm -f $(TMPFILE)
 
 llutest:     $(LLUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(LLUTESTOBJS) $(LIBS) -o llutest
@@ -167,11 +168,11 @@ llutestrun: llutest llutesti
 
 lluinstall: need.t cllu.ct cllu.ht lluid.t
 	-$(INSTALL) -d $(LOCALLIB)
-	cat macros.t lluid.t need.t cllu.ct > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cllu.ct
-	cat macros.t lluid.t need.t cllu.ht > tmp4242
-	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/cllu.ht
-	rm -f tmp4242
+	cat macros.t lluid.t need.t cllu.ct > $(TMPFILE)
+	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/cllu.ct
+	cat macros.t lluid.t need.t cllu.ht > $(TMPFILE)
+	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/cllu.ht
+	rm -f $(TMPFILE)
 
 install: tmcinstall lluinstall aluinstall
 
