@@ -59,7 +59,7 @@ static ${eval "$(tpl)"};
 .foreach t $l
 .if ${isvirtual $t}
 .if $[${len ${subclasses $t}}<1]
-.error $t is virtual but has no children.
+.error '$t' is virtual but has no children.
 .set bad 1
 .endif
 .endif
