@@ -348,7 +348,7 @@ static bool scansymbol( char *buf )
     c = lexgetc();
     if( !isalpha( c ) ){
 	lexungetc( c );
-	return( FALSE );
+	return FALSE;
     }
     do{
 	*buf++ = c;
@@ -413,7 +413,7 @@ again:
 	for( rwp = rwtab; rwp->tokstr != NULL; rwp++ ){
 	    if( strcmp( rwp->tokstr, yytext ) == 0 ){
 		lexshow(rwp->tokval,rwp->toknm);
-		return( rwp->tokval );
+		return rwp->tokval;
 	    }
 	}
 	yylval.parstring = new_tmstring( yytext );

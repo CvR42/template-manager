@@ -494,14 +494,8 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
     }
 }
 
-/******************************************************
- *                                                    *
- *    VARCHAR expression evaluation                   *
- *                                                    *
- ******************************************************/
-
-/* Given a pointer to an input tmstring 'spi', a pointer to an output tmstring
-   'spo', and a stop character 'sc', copy and evaluate the tmstring to the
+/* Given a pointer to an input string 'spi', a pointer to an output string
+   'spo', and a stop character 'sc', copy and evaluate the string to the
    stop character 'sc'. Update the position of '*spi' to point to the stop
    character or '\0', and return the evaluated tmstring.
  */
@@ -522,10 +516,12 @@ tmstring alevalto( char **spi, const int sc )
     croom = (int) strlen( si );
     six = 0;
     if( sevaltr ){
-	if( sc == '\0' )
+	if( sc == '\0' ){
 	    fprintf( tracestream, "alevalto: '%s'\n", si );
-	else
+	}
+	else {
 	    fprintf( tracestream, "alevalto: '%s' to char '%c'\n", si, sc );
+	}
     }
     while( *si != '\0' && *si != sc ){
 	/* make sure that 1 character will always fit */
@@ -991,7 +987,7 @@ static ds_list rename_ds_list( ds_list dl, const tmstring old, const tmstring nw
     for( ix=0; ix<dl->sz; ix++ ){
 	dl->arr[ix] = rename_ds( dl->arr[ix], old, nw );
     }
-    return dl;
+    return zap_memoized_inheritors( dl );
 }
 
 /* Handle 'rename' command. */

@@ -106,7 +106,7 @@ static ds merge_cons_types( const ds a, const ds b )
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return (ds) new_DsConstructorBase( rdup_tmstring( a->name ), ila, la );
+    return (ds) new_DsConstructorBase( rdup_tmstring( a->name ), ila, tmstring_listNIL, la );
 }
 
 /* Given a type 't', a constructor name 'cnm' and a type name
@@ -313,6 +313,7 @@ static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
 	    new_tmstring_list(),
 	    rdup_tmstring( super )
 	),
+	tmstring_listNIL,
 	fl
     );
     return TRUE;
@@ -339,6 +340,7 @@ static bool parse_constructor_list( const tmstring super, tmstring nm, ds_list *
 			new_tmstring_list(),
 			rdup_tmstring( super )
 		    ),
+		    tmstring_listNIL,
 		    new_Field_list()
 		)
 	    );
@@ -418,7 +420,7 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
     }
     *tp = append_ds_list(
 	new_ds_list(),
-	(ds) new_DsConstructorBase( nm, inherits, members )
+	(ds) new_DsConstructorBase( nm, inherits, tmstring_listNIL, members )
     );
     *tp = concat_ds_list( *tp, cl );
     return ok;
@@ -511,7 +513,7 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
 	yyerror( "')' expected" );
     }
     if( cktuple( nm, body, inherits ) ){
-	*tp = (ds) new_DsTuple( nm, inherits, body );
+	*tp = (ds) new_DsTuple( nm, inherits, tmstring_listNIL, body );
     }
     else {
 	rfre_tmstring( nm );
@@ -669,7 +671,7 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
     update_class_info( nm, &inherits, &fields, &types, comp, &isvirtual );
     types = append_ds_list(
 	types,
-	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, isvirtual )
+	(ds) new_DsClass( rdup_tmstring( nm ), inherits, tmstring_listNIL, fields, isvirtual )
     );
     return types;
 
@@ -742,7 +744,7 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbo
     }
     types = append_ds_list(
 	types,
-	(ds) new_DsClass( rdup_tmstring( nm ), inherits, fields, isvirtual )
+	(ds) new_DsClass( rdup_tmstring( nm ), inherits, tmstring_listNIL, fields, isvirtual )
     );
     return types;
 }
@@ -811,7 +813,7 @@ static bool parse_ds( ds_list *dl )
 	    next_token();
 	    ok = parse_Type( &t );
 	    if( ok ){
-		ds nw = (ds) new_DsAlias( nm, new_tmstring_list(), t );
+		ds nw = (ds) new_DsAlias( nm, new_tmstring_list(), tmstring_listNIL, t );
 
 		*dl = new_ds_list();
 		*dl = append_ds_list( *dl, nw );

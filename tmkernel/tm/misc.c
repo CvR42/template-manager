@@ -46,24 +46,67 @@ void ckfreopen( const char *nm, const char *acc, FILE *f )
  *         DATASTRUCTURE SEARCH ROUTINES              *
  ******************************************************/
 
-/* Given a type 't', return a pointer to its name tmstring. */
-const tmstring get_type_name( const ds t )
+/* NOTE: The remainder of the code assumes TYPES_HASHWIDTH is a power of 2. */
+#define TYPES_HASHBITS 8
+#define TYPES_HASHWIDTH (1<<TYPES_HASHBITS)
+#define TYPES_HASHMASK (TYPES_HASHWIDTH-1)
+
+static unsigned int types_hash[TYPES_HASHWIDTH] = { 0 };
+static unsigned int prev_types_ix = 0;
+
+/* Hash function: map a 'normal' distribution of tmstrings on a
+   evenly distributed number between 0..TYPES_HASHWIDTH-1.
+ */
+static unsigned int types_hashval( const char *s )
 {
-    return t->name;
+    unsigned int v = 0;
+
+    while( *s!= '\0' ){
+	 v = (v ^ *s);
+	 v<<=1;
+	 if( v & TYPES_HASHWIDTH ) v++;
+	 v &= TYPES_HASHMASK;
+	 s++;
+    }
+    return v;
 }
 
 /* Given a list of types 'types', search for type with name 't'.
  * Return the index of that type in the list, or types->sz if not
  * found.
+ *
+ * Since this function is dominant in most Tm templates, the tries to
+ * avoid a linear search through the list each time it is called.
+ * This is done by hashing the type strings to an index in
+ * types_hash[]. This may well match the type we're looking for.
+ *
+ * Also, the result of the last call is remembered in prev_types_ix, since
+ * that may well be the right answer for this call as well.
+ *
+ * Note that these heuristics are insensitive to changes in the type list;
+ * after the change they are more likely to fail, but the result is
+ * still correct.
  */ 
 unsigned int find_type_ix( const ds_list types, const char *t )
 {
     unsigned int ix;
+    unsigned int hv;
 
+    if( prev_types_ix<types->sz && ( strcmp( types->arr[prev_types_ix]->name, t ) == 0 ) ){
+	return prev_types_ix;
+    }
+    hv = types_hashval( t );
+    ix = types_hash[hv];
+    if( ix<types->sz && ( strcmp( types->arr[ix]->name, t ) == 0 ) ){
+	prev_types_ix = ix;
+	return ix;
+    }
     for( ix = 0; ix < types->sz; ix++ ){
 	ds d = types->arr[ix];
 
 	if( strcmp( d->name, t ) == 0 ){
+	    prev_types_ix = ix;
+	    types_hash[hv] = ix;
 	    return ix;
 	}
     }
@@ -243,8 +286,19 @@ void collect_superclasses( tmstring_list *res, const ds_list types, const char *
  */
 void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring type )
 {
+    unsigned int tix;
     unsigned int ix;
+    tmstring_list mine;
 
+    tix = find_type_ix( types, type );
+    if( tix<types->sz && types->arr[tix]->inheritors != tmstring_listNIL ){
+	*res = concat_tmstring_list(
+	    *res,
+	    rdup_tmstring_list( types->arr[tix]->inheritors )
+	);
+	return;
+    }
+    mine = new_tmstring_list();
     for( ix=0; ix<types->sz; ix++ ){
 	const ds d = types->arr[ix];
 	const tmstring_list inherits = d->inherits;
@@ -252,10 +306,31 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring
 	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
 	    const char *nm = d->name;
 
-	    *res = append_tmstring_list( *res, rdup_tmstring( nm ) );
+	    mine = append_tmstring_list( mine, rdup_tmstring( nm ) );
 	}
     }
+    if( tix<types->sz ){
+	types->arr[tix]->inheritors = rdup_tmstring_list( mine );
+    }
+    *res = concat_tmstring_list( *res, mine );
 }
+
+/* Given a list of types, zap all memoized inheritors */
+ds_list zap_memoized_inheritors( ds_list types )
+{
+    unsigned int ix;
+
+    for( ix=0; ix<types->sz; ix++ ){
+	ds d = types->arr[ix];
+
+	if( d->inheritors != tmstring_listNIL ){
+	    rfre_tmstring_list( d->inheritors );
+	    d->inheritors = tmstring_listNIL;
+	}
+    }
+    return types;
+}
+
 
 /* Given a pointer to a string list 'fields', a list of types 'types'
  * and a type name 'type', collect into '*fields' the fields 

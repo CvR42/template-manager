@@ -31,7 +31,7 @@ const dbflag *finddbflag( int c, const dbflag *flagtab )
 	}
 	p++;
     }
-    return( dbflagNIL );
+    return dbflagNIL;
 }
 
 /* Give help information on debugging flags */

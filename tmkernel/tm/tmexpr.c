@@ -115,7 +115,7 @@ static const char *evalprod( const char *x, long *vp )
     s = evalun( x, &v1 );
     if( s == x ){
 	*vp = 0;
-	return( x );
+	return x;
     }
     while( isspace( *s ) ) s++;
     if( *s == '*' ){
@@ -158,7 +158,7 @@ static const char *evalsum( const char *x, long *vp )
     s = evalprod( x, &v1 );
     if( s == x ){
 	*vp = 0;
-	return( x );
+	return x;
     }
     while( isspace( *s ) ) s++;
     if( *s == '+' ){
@@ -186,7 +186,7 @@ static const char *evalcmp( const char *x, long *vp )
     s = evalsum( x, &v1 );
     if( s == x ){
 	*vp = 0;
-	return( x );
+	return x;
     }
     while( isspace( *s ) ) s++;
     if( s[0] == '!' && s[1] == '=' ){
