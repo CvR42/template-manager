@@ -12,25 +12,25 @@ testin(133): 'max' requires at least one parameter
 testin(134): 'min' requires at least one parameter
 testin(149): 'if' requires at least a condition expression
 testin(154): 'index' requires at least one parameter
-testin(155): 'member' requires at least one parameter
+testin(155): 'ismember' requires at least one parameter
 testin(205): not a constructor type: 'orig'
 testin(208): not a constructor type: 'orig'
 testin(205): not a constructor type: 'subtuple'
 testin(208): not a constructor type: 'subtuple'
-testin(216): not a tuple or class type: 'sublevel'
-testin(217): not a tuple or class type: 'sublevel'
-testin(218): not a tuple or class type: 'sublevel'
-testin(223): not a tuple or class type: 'sublevel'
+testin(216): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(217): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(218): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(223): 'memberlist' does not work on a constructor type: type `sublevel'
 testin(205): not a constructor type: 'notuple'
 testin(208): not a constructor type: 'notuple'
-testin(216): not a tuple or class type: 'toplevel'
-testin(217): not a tuple or class type: 'toplevel'
-testin(218): not a tuple or class type: 'toplevel'
-testin(223): not a tuple or class type: 'toplevel'
-testin(216): not a tuple or class type: 'thing'
-testin(217): not a tuple or class type: 'thing'
-testin(218): not a tuple or class type: 'thing'
-testin(223): not a tuple or class type: 'thing'
+testin(216): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(217): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(218): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(223): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(216): 'memberlist' does not work on a constructor type: type `thing'
+testin(217): 'memberlist' does not work on a constructor type: type `thing'
+testin(218): 'memberlist' does not work on a constructor type: type `thing'
+testin(223): 'memberlist' does not work on a constructor type: type `thing'
 testin(205): not a constructor type: 'subclass'
 testin(208): not a constructor type: 'subclass'
 testin(205): not a constructor type: 'testclass'
@@ -40,33 +40,34 @@ testin(232): 'mklist' requires at least one parameter
 testin(235): 'mklist' requires at least one parameter
 testin(238): 'mklist' requires at least one parameter
 testin(240): 'inherits' requires exactly one parameter
-testin(240): no such type: iserniet
+testin(240): unknown type: 'iserniet'
 testin(241): 'conslist' requires a type name
 testin(241): 'conslist' requires a type name
-testin(241): no such type: notatype
-testin(242): 'conslist' requires a type name
-testin(242): 'conslist' requires a type name
-testin(242): no such type: notatype
+testin(241): unknown type: notatype
+testin(242): 'memberlist' requires one or two parameters
+testin(242): 'memberlist' second parameter must be absent or `inherited'
+testin(242): unknown type: bla
+testin(242): unknown type: notatype
 testin(255): bad parameter: reutel
 testin(256): 'ctypellev' requires at least one parameter
 testin(205): not a constructor type: 'orig'
 testin(208): not a constructor type: 'orig'
 testin(205): not a constructor type: 'subtuple'
 testin(208): not a constructor type: 'subtuple'
-testin(216): not a tuple or class type: 'sublevel'
-testin(217): not a tuple or class type: 'sublevel'
-testin(218): not a tuple or class type: 'sublevel'
-testin(223): not a tuple or class type: 'sublevel'
+testin(216): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(217): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(218): 'memberlist' does not work on a constructor type: type `sublevel'
+testin(223): 'memberlist' does not work on a constructor type: type `sublevel'
 testin(205): not a constructor type: 'notuple'
 testin(208): not a constructor type: 'notuple'
-testin(216): not a tuple or class type: 'toplevel'
-testin(217): not a tuple or class type: 'toplevel'
-testin(218): not a tuple or class type: 'toplevel'
-testin(223): not a tuple or class type: 'toplevel'
-testin(216): not a tuple or class type: 'thing'
-testin(217): not a tuple or class type: 'thing'
-testin(218): not a tuple or class type: 'thing'
-testin(223): not a tuple or class type: 'thing'
+testin(216): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(217): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(218): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(223): 'memberlist' does not work on a constructor type: type `toplevel'
+testin(216): 'memberlist' does not work on a constructor type: type `thing'
+testin(217): 'memberlist' does not work on a constructor type: type `thing'
+testin(218): 'memberlist' does not work on a constructor type: type `thing'
+testin(223): 'memberlist' does not work on a constructor type: type `thing'
 testin(205): not a constructor type: 'subclass'
 testin(208): not a constructor type: 'subclass'
 testin(205): not a constructor type: 'testclass'
@@ -76,13 +77,14 @@ testin(232): 'mklist' requires at least one parameter
 testin(235): 'mklist' requires at least one parameter
 testin(238): 'mklist' requires at least one parameter
 testin(240): 'inherits' requires exactly one parameter
-testin(240): no such type: iserniet
+testin(240): unknown type: 'iserniet'
 testin(241): 'conslist' requires a type name
 testin(241): 'conslist' requires a type name
-testin(241): no such type: notatype
-testin(242): 'conslist' requires a type name
-testin(242): 'conslist' requires a type name
-testin(242): no such type: notatype
+testin(241): unknown type: notatype
+testin(242): 'memberlist' requires one or two parameters
+testin(242): 'memberlist' second parameter must be absent or `inherited'
+testin(242): unknown type: bla
+testin(242): unknown type: notatype
 testin(255): bad parameter: reutel
 testin(256): 'ctypellev' requires at least one parameter
 testin(265): empty padding string

@@ -69,22 +69,40 @@ const tmstring get_type_name( const ds t )
     return nm;
 }
 
-/* Given a list of types 'dl', search for type with name 't'.
- * Return the index of that type in the list, or dl->sz if not
+/* Given a list of types 'types', search for type with name 't'.
+ * Return the index of that type in the list, or types->sz if not
  * found.
  */ 
-unsigned int find_type_ix( const ds_list dl, const char *t )
+unsigned int find_type_ix( const ds_list types, const char *t )
 {
     ds d;
     unsigned int ix;
 
-    for( ix = 0; ix < dl->sz; ix++ ){
-	d = dl->arr[ix];
+    for( ix = 0; ix < types->sz; ix++ ){
+	d = types->arr[ix];
 	if( strcmp( get_type_name( d ), t ) == 0 ){
 	    return ix;
 	}
     }
-    return dl->sz;
+    return types->sz;
+}
+
+/* Given a list of fields 'fl', search for field with name 'nm'.
+ * Return the index of that field in the list, or fl->sz if not
+ * found.
+ */ 
+unsigned int find_field_ix( const field_list fl, const char *nm )
+{
+    unsigned int ix;
+
+    for( ix = 0; ix < fl->sz; ix++ ){
+	const field f = fl->arr[ix];
+
+	if( strcmp( f->name, nm ) == 0 ){
+	    return ix;
+	}
+    }
+    return fl->sz;
 }
 
 /* Given a list of constructors 'cl', search for constructor with name 'nm'.
@@ -120,41 +138,152 @@ bool member_tmstring_list( const tmstring s, const tmstring_list l )
     return FALSE;
 }
 
-/* Ensure that there are no double names in each of the constructors of
- * constructor type with name 'nm' and constructors 'cons'.
- */
-void ckconstructor( tmstring nm, constructor_list cons )
+field find_class_field_super( const ds_list types, tmstring_list supers, const char *nm )
 {
-    constructor conx;
-    field_list fields;
-    unsigned int cix;	/* index in constructor list */
-    unsigned int ix;	/* index of currently checked field */
-    unsigned int six;	/* index for searching of fields/constr. */
-    field fx;		/* checked field */
-    field fy;		/* searched field */
-    tmstring fnm;	/* name of currently checked field */
-    tmstring connm;	/* name of current constructor */
+    unsigned int ix;
 
-    for( cix=0; cix<cons->sz; cix++ ){
-	conx = cons->arr[cix];
-	fields = conx->fields;
-	connm = conx->name;
-	for( ix=0; ix<fields->sz; ix++ ){
-	    fx = fields->arr[ix];
-	    fnm = fx->name;
-	    for( six=ix+1; six<fields->sz; six++ ){
-		fy = fields->arr[six];
-		if( strcmp( fy->name, fnm ) == 0 ){
-		    sprintf(
-			errpos,
-			"in type '%s', constructor '%s'",
-			nm,
-			connm
-		    );
-		    sprintf( errarg, "'%s'", fnm );
-		    error( "double use of field name" );
-		}
-	    }
+    for( ix=0; ix<supers->sz; ix++ ){
+	field f;
+
+	f = find_class_field( types, supers->arr[ix], nm );
+	if( f != fieldNIL ){
+	    return f;
 	}
+    }
+    return fieldNIL;
+}
+
+field find_class_field( const ds_list types, const char *type, const char *nm )
+{
+    unsigned int pos;
+    ds t;
+    field_list fl = field_listNIL;
+    tmstring_list inherits = tmstring_listNIL;
+
+    pos = find_type_ix( types, type );
+    if( pos >= types->sz ){
+	return fieldNIL;
+    }
+    t = types->arr[pos];
+    switch( t->tag ){
+	case TAGDsCons:
+	    fl = field_listNIL;
+	    inherits = t->DsCons.inherits;
+	    break;
+
+	case TAGDsTuple:
+	    fl = t->DsTuple.fields;
+	    inherits = t->DsTuple.inherits;
+	    break;
+
+	case TAGDsClass:
+	    fl = t->DsClass.fields;
+	    inherits = t->DsClass.inherits;
+	    break;
+
+    }
+    if( fl != field_listNIL ){
+	pos = find_field_ix( fl, nm );
+	if( pos<fl->sz ){
+	    return fl->arr[pos];
+	}
+    }
+    return find_class_field_super( types, inherits, nm );
+}
+
+const tmstring_list extract_inherits( const ds_list types, const char *type )
+{
+    unsigned int ix;
+    ds d;
+    tmstring_list ans = tmstring_listNIL;
+
+    ix = find_type_ix( types, type );
+    if( ix>=types->sz ){
+	return ans;
+    }
+    d = types->arr[ix];
+    switch( d->tag ){
+	case TAGDsCons:
+	    ans = d->DsCons.inherits;
+	    break;
+
+	case TAGDsTuple:
+	    ans = d->DsTuple.inherits;
+	    break;
+
+	case TAGDsClass:
+	    ans = d->DsClass.inherits;
+	    break;
+
+    }
+    return ans;
+}
+
+/* Given a pointer to a string list 'fields', a list of types 'types'
+ * and a type name 'type', collect into '*fields' the fields 
+ * of this type (but not the fields it inherits).
+ * Constructor types in the inherit tree are considered to have an
+ * empty field list.
+ */
+void collect_fields( tmstring_list *fields, const ds_list types, const char *type )
+{
+    unsigned int ix;
+    field_list el = field_listNIL;
+    ds d;
+
+    ix = find_type_ix( types, type );
+    if( ix>=types->sz ){
+	return;
+    }
+    d = types->arr[ix];
+    switch( d->tag ){
+	case TAGDsTuple:
+	    el = d->DsTuple.fields;
+	    break;
+
+	case TAGDsClass:
+	    el = d->DsClass.fields;
+	    break;
+
+	case TAGDsCons:
+	    /* We simply pretend this is a type with no fields. */
+	    return;
+    }
+    for( ix=0; ix<el->sz; ix++ ){
+	field e = el->arr[ix];
+
+	*fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
+    }
+}
+
+/* Given a pointer to a string list 'fields', a list of types 'types'
+ * and a type name 'type', collect into '*fields' the fields that are
+ * inherited by this type, and the fields of this type, in depth-first order.
+ * Constructor types in the inherit tree are considered to have an
+ * empty field list, but may of course inherit from other classes.
+ */
+void collect_all_fields( tmstring_list *fields, const ds_list types, const char *type )
+{
+    collect_inherited_fields( fields, types, type );
+    collect_fields( fields, types, type );
+}
+
+/* Given a pointer to a string list 'fields', a list of types 'types'
+ * and a type name 'type', collect into '*fields' the fields that are
+ * inherited by this type, in depth-first order.
+ * Constructor types in the inherit tree are considered to have an
+ * empty field list, but may of course inherit from other classes.
+ */
+void collect_inherited_fields( tmstring_list *fields, const ds_list types, const char *type )
+{
+    tmstring_list inherits;
+    unsigned int ix;
+
+    inherits = extract_inherits( types, type );
+    if( inherits == tmstring_listNIL ){
+	return;
+    }
+    for( ix=0; ix<inherits->sz; ix++ ){
+	collect_all_fields( fields, types, inherits->arr[ix] );
     }
 }

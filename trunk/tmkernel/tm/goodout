@@ -131,7 +131,7 @@ if 1: [true] [true] []
 List manipulation:
 ----
 index:   '1' '0' '0' '0'
-member:   '1' '0' '0' '0'
+ismember:'1' '0' '0' '0'
 shift:   'b c d e f' ''
 first:   'a' ''
 seplist: 'a, b, c, d, e, f' 'a' ''
@@ -182,7 +182,7 @@ tpllineno: '190'
 testsub
 ----
 
-Pass one
+Mode `'
 Datastructure access functions:
 ----
 typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
@@ -310,7 +310,7 @@ Testing error handling:
 Type sorting:
 depsort: [int orig subtuple sublevel notuple toplevel thing subclass testclass]
 ----
-Pass two
+Mode `inherited'
 Datastructure access functions:
 ----
 typelist: 'orig subtuple sublevel notuple toplevel thing subclass testclass'
@@ -331,8 +331,14 @@ classtypelist: 'subclass testclass'
     conslist subtuple: ''
     inherits subtuple: 'orig'
     isvirtual subtuple: '0'
-    telmlist subtuple: 'tl tn'
+    telmlist subtuple: 'file line tl tn'
     memberlist subtuple: 'tl tn'
+	ttypeclass subtuple file: 'single'
+	ttypellev subtuple file: 0
+	ttypename subtuple file: 'string'
+	ttypeclass subtuple line: 'single'
+	ttypellev subtuple line: 0
+	ttypename subtuple line: 'int'
 	ttypeclass subtuple tl: 'list'
 	ttypellev subtuple tl: 1
 	ttypename subtuple tl: 'thing'
@@ -354,13 +360,49 @@ classtypelist: 'subclass testclass'
             ctypeclass sublevel SubNamedlistlist thinglistlist: 'list'
 	    ctypellev sublevel SubNamedlistlist thinglistlist: 2
             ctypename sublevel SubNamedlistlist thinglistlist: 'thing'
-    telmlist sublevel: ''
+    telmlist sublevel: 'file line tl tn file line tl tn'
     memberlist sublevel: ''
+	ttypeclass sublevel file: 'single'
+	ttypellev sublevel file: 0
+	ttypename sublevel file: 'string'
+	ttypeclass sublevel line: 'single'
+	ttypellev sublevel line: 0
+	ttypename sublevel line: 'int'
+	ttypeclass sublevel tl: 'list'
+	ttypellev sublevel tl: 1
+	ttypename sublevel tl: 'thing'
+	ttypeclass sublevel tn: 'single'
+	ttypellev sublevel tn: 0
+	ttypename sublevel tn: 'int'
+	ttypeclass sublevel file: 'single'
+	ttypellev sublevel file: 0
+	ttypename sublevel file: 'string'
+	ttypeclass sublevel line: 'single'
+	ttypellev sublevel line: 0
+	ttypename sublevel line: 'int'
+	ttypeclass sublevel tl: 'list'
+	ttypellev sublevel tl: 1
+	ttypename sublevel tl: 'thing'
+	ttypeclass sublevel tn: 'single'
+	ttypellev sublevel tn: 0
+	ttypename sublevel tn: 'int'
     conslist notuple: ''
     inherits notuple: 'subtuple'
     isvirtual notuple: '0'
-    telmlist notuple: ''
+    telmlist notuple: 'file line tl tn'
     memberlist notuple: ''
+	ttypeclass notuple file: 'single'
+	ttypellev notuple file: 0
+	ttypename notuple file: 'string'
+	ttypeclass notuple line: 'single'
+	ttypellev notuple line: 0
+	ttypename notuple line: 'int'
+	ttypeclass notuple tl: 'list'
+	ttypellev notuple tl: 1
+	ttypename notuple tl: 'thing'
+	ttypeclass notuple tn: 'single'
+	ttypellev notuple tn: 0
+	ttypename notuple tn: 'int'
     conslist toplevel: 'Top Toptuple TopNone'
     inherits toplevel: 'subtuple'
     isvirtual toplevel: '0'
@@ -376,8 +418,20 @@ classtypelist: 'subclass testclass'
 	    ctypellev toplevel Toptuple tup: 0
             ctypename toplevel Toptuple tup: 'subtuple'
         celmlist: ''
-    telmlist toplevel: ''
+    telmlist toplevel: 'file line tl tn'
     memberlist toplevel: ''
+	ttypeclass toplevel file: 'single'
+	ttypellev toplevel file: 0
+	ttypename toplevel file: 'string'
+	ttypeclass toplevel line: 'single'
+	ttypellev toplevel line: 0
+	ttypename toplevel line: 'int'
+	ttypeclass toplevel tl: 'list'
+	ttypellev toplevel tl: 1
+	ttypename toplevel tl: 'thing'
+	ttypeclass toplevel tn: 'single'
+	ttypellev toplevel tn: 0
+	ttypename toplevel tn: 'int'
     conslist thing: 'Thing'
     inherits thing: ''
     isvirtual thing: '0'
@@ -387,8 +441,20 @@ classtypelist: 'subclass testclass'
     conslist subclass: ''
     inherits subclass: 'testclass orig'
     isvirtual subclass: '0'
-    telmlist subclass: ''
+    telmlist subclass: 'a b file line'
     memberlist subclass: ''
+	ttypeclass subclass a: 'single'
+	ttypellev subclass a: 0
+	ttypename subclass a: 'int'
+	ttypeclass subclass b: 'single'
+	ttypellev subclass b: 0
+	ttypename subclass b: 'int'
+	ttypeclass subclass file: 'single'
+	ttypellev subclass file: 0
+	ttypename subclass file: 'string'
+	ttypeclass subclass line: 'single'
+	ttypellev subclass line: 0
+	ttypename subclass line: 'int'
     conslist testclass: ''
     inherits testclass: ''
     isvirtual testclass: '0'
