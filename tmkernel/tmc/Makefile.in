@@ -53,7 +53,8 @@ TESTFILES = \
     tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
     aluokerr aluokout alutesti aluspec.t alucode.ct alucode.ht \
     lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht \
-    tmcwalktest.ct tmcanalyzetest.ct tmcwalkin tmcwalkok
+    tmcwalktest.ct tmcanalyzetest.ct tmcwalkin tmcwalkok \
+    tmcanalyzetest.ct tmcanalyzetest.ct tmcanalyzein tmcanalyzeok
 
 FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
