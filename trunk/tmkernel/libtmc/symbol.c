@@ -175,7 +175,7 @@ void flush_tmsymbol( void )
 	s = symtab[i];
 	while( s != tmsymbolNIL ){
 	    n = s->next;
-	    fre_tmstring_nolognew( s->name );
+	    fre_tmstring_nolognew( (tmstring) s->name );
 	    TM_FREE( s );
 	    s = n;
 	}

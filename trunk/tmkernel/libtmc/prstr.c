@@ -14,13 +14,13 @@
 #define BACKSLASH '\\'
 
 /* definition of 'print' for a 'tmstring' */
-void print_tmstring( TMPRINTSTATE *st, const tmstring s )
+void print_tmstring( TMPRINTSTATE *st, tmconststring s )
 {
     char buf[STRBUFSZ+10];
     char *bufp;
     char *bufend;
     unsigned int c;
-    char *sp;
+    const char *sp;
     const char *pp;
 
     if( s == tmstringNIL ){

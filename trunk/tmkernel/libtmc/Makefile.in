@@ -55,7 +55,6 @@ LIBSRCS	 = \
                 cmpstrtx.c \
                 cmptxt.c \
                 cpyblock.c \
-                lncrstr.c \
                 delbtext.c \
                 errmsg.c \
                 escstr.c \
@@ -73,6 +72,7 @@ LIBSRCS	 = \
                 fpruint.c \
                 fprulong.c \
                 fprushrt.c \
+                fprwrd.c \
                 fscbool.c \
                 fsccbrac.c \
                 fsccons.c \
@@ -88,16 +88,19 @@ LIBSRCS	 = \
                 fscstr.c \
                 fscsym.c \
                 fsctext.c \
-                lnfsctxt.c \
                 fscuchar.c \
                 fscuint.c \
                 fscul.c \
                 fscushrt.c \
+                fscwrd.c \
                 insblock.c \
                 instext.c \
+                lncrstr.c \
                 lnfrestr.c \
                 lnfretxt.c \
                 lnfscstr.c \
+                lnfsctxt.c \
+                lnfscwrd.c \
                 lnnewstr.c \
                 lnnewtxt.c \
                 lnreastr.c \
@@ -121,6 +124,7 @@ LIBSRCS	 = \
                 pruint.c \
                 prulong.c \
                 prushrt.c \
+                prwrd.c \
                 putctext.c \
                 putstext.c \
                 rduptxt.c \

@@ -1,12 +1,12 @@
 bracket level: 0
 get_balance_tmstring(): 0
 get_balance_tmtext(): 0
-tmstring            :    332 allocated,    332 freed.
+tmstring            :    349 allocated,    349 freed.
 tmtext              :     37 allocated,     37 freed.
 lognew: pending blocks:
-testprog.c(711)
-testprog.c(715)
-testprog.c(717)
+testprog.c(750)
+testprog.c(754)
+testprog.c(756)
 testlognew(0)
 testlognew(49)
-testprog.c(732): *** fatal error: test of 'tm_fatal'
+testprog.c(771): *** fatal error: test of 'tm_fatal'
