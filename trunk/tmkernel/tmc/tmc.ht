@@ -71,6 +71,27 @@ typedef int tags_$t;
 
 .endforeach
 
+.foreach t $(need_is)
+.switch ${metatype $t}
+.case tuple
+#define is_$t(e) (1)
+.case constructor class constructorbase
+.if ${len ${inherits $t}}
+.set l ${nonvirtual ${inheritsort $t ${subclasses $t}}}
+.if ${== ${len $l} 1}
+#define is_$t(e) ((e)->tag==TAG$l)
+.else
+#define is_$t(e) (((e)->tag>=TAG${first $l})&&((e)->tag<=TAG${first ${rev $l}}))
+.endif
+.else
+#define is_$t(e) (1)
+.endif
+.endswitch
+.endforeach
+.foreach t $(need_is_list)
+#define is_$t_list(e) (1)
+.endforeach
+
 #ifdef __cplusplus
 .foreach t ${inheritsort $(need_ds)}
 .. Structure definitions for all the constructors of the type
