@@ -2,3 +2,4 @@
 .set w bicycle
 ${len $s}, ${tolower $s}, ${toupper $s}, ${capitalize $s}
 ${strindex c $w}, ${strpad $w 15 -=}, ${strpad $w 3 -}
+${tr ae ea creation and reality are no friends}

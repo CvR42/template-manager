@@ -103,6 +103,43 @@ variable contexts.
 Set variable \verb'<var>' to the given list of values.  The new value
 of the variable visible to {\em all} variable contexts.
 \end{desc}
+\subsection{Datastructure modification}
+These commands directly modify the data structures that have been
+read in from the data structure file. There is no way to revert the
+changes.
+\begin{verbatim}
+.rename <old> <new>
+\end{verbatim}
+\begin{desc}
+\index{.rename@\verb+.rename+}
+Rename all occurences of type \verb'<old>' to type \verb'<new>' at
+all places where types occur: in type definitions, inheritances,
+and fields.
+
+It is not allowed to rename a defined type to another defined type,
+nor is it allowed to introduce inheritance cycles.
+\end{desc}
+\begin{verbatim}
+.deletetype <t>..<t>
+\end{verbatim}
+\begin{desc}
+\index{.deletetype@\verb+.deletetype+}
+Delete the definitions of all given types. Deletion requests for
+non-existing types is silently ignored.
+\end{desc}
+For example, these commands can be used to remove alias types from
+data structures. Given the following data structure definition file
+\begin{showfile}
+\verbatiminput{alias.ds}
+\end{showfile}
+The following template
+\begin{showfile}
+\verbatiminput{unalias.xt}
+\end{showfile}
+Will produce the following output.
+\begin{showfile}
+\verbatiminput{unalias.out}
+\end{showfile}
 \subsection{Flow control}
 \begin{verbatim}
 .exit <n>
@@ -121,7 +158,7 @@ Set variable {\tt <var>} to each of the values {\tt <val>} and do a
 translation of all following lines up to the next unbalanced
 {\tt .endforeach} for each of these values of {\tt <var>}.
 The new value of the variable is only visible in the current context.
-See section \ref{s.assignment} for a discussion of contexts.
+See section~\ref{s.assignment} for a discussion of contexts.
 \par
 For example:
 \begin{showfile}
@@ -589,7 +626,15 @@ Return the given words with all upper case characters converted to lower case.
 \\
 {\tt toupper e..e}\index{toupper@{\tt toupper}}
 &
-Return the given words with all lower case characters converted to upper case.
+Return the given words \verb'e' with all lower case characters converted to upper case.
+\\
+{\tt tr o n e..e}\index{tr@{\tt tr}}
+&
+Given a string of old characters \verb'o', a list of new characters \verb'n',
+and a list of words \verb'e',
+return all \verb'e', with all characters occuring in \verb'o' replaced
+with the corresponding character in \verb'n'.
+The strings \verb'o' and \verb'n' must be of the same length.
 \end{desctab}
 For example:
 \begin{showfile}
@@ -711,8 +756,7 @@ will produce:
 \verbatiminput{setfn.out}
 \end{showfile}
 \subsection{Regular expressions}
-\label{s.regex}\nopagebreak
-\par
+\label{s.regex}
 The regular expressions in {\Tm} are based on the regular expressions
 used in {\Unix} shells.  A pattern must match the entire string.
 The following meta-characters are recognized:
@@ -850,9 +894,16 @@ Return the name of the current template file.
 &
 Return the current line number in the current template file.
 \\
+{\tt matchvar pat}\index{matchvar@{\tt machvar}}
+&
+Given a regular expression as defined in section~\ref{s.regex},
+return a list of all variables that match this regular expression.
+In particular, \verb'${matchvar *}' will return a list of all
+variables. The order of the returned list is arbitrary.
+\\
 {\tt matchmacro pat}\index{matchmacro@{\tt machmacro}}
 &
-Given a regular expression as defined in section \ref{s.regex},
+Given a regular expression as defined in section~\ref{s.regex},
 return a list of all macros that match this regular expression.
 In particular, \verb'${matchmacro *}' will return a list of all
 macros. The order of the returned list is arbitrary.
@@ -881,23 +932,26 @@ may produce (depending on the value of the \verb+SHELL+ environment variable):
 &
 Return the list of {\em class} types defined in the data structure file.
 \\
-{\tt conslist t}\index{conslist@{\tt conslist}}
+{\tt conslist t..t}\index{conslist@{\tt conslist}}
 &
-Given a list of types, return the list of constructors of
-that type.  If a type is not a constructor base type, and empty list
+Given a list of types \verb't', return the list of constructors of
+each type.  If a type is not a constructor base type, and empty list
 is returned for that type.
 \\
 {\tt ctypelist}\index{ctypelist@{\tt ctypelist}}
 &
 Return the list of {\em constructor} types defined in the data structure file.
 \\
-{\tt fields t [inherited]}\index{fields@{\tt fields}}
+{\tt fields t..t}\index{fields@{\tt fields}}
 &
-Given a type {\tt t}, return the list of field names of that type.
-\par
-If a second parameter is given, and this parameter is the string
-{\tt inherited}, the fields of the superclasses of this type are also
-listed. The fields are ordered `height first', so that the fields of
+Given a list of types {\tt t}, return the list of field names of each type.
+Fields in superclasses of this type are {\em not} listed.
+\\
+{\tt allfields t..t}\index{allfields@{\tt allfields}}
+&
+Given a list of types {\tt t}, return the list of field names of each type,
+including inherited fields.
+The fields are ordered `height first', so that the fields of
 superclasses are listed before the fields of their inheritors.
 \\
 {\tt isvirtual t}\index{isvirtual@{\tt isvirtual}}
@@ -907,13 +961,14 @@ Given a type {\tt t}, return {\tt 1} if the type is virtual, or
 type, if it is a class type containing a labeled component, or if it
 is a class type defined as virtual (with the \verb'~=' operator).
 \\
-{\tt metatype t}\index{metatype@{\tt metatype}}
+{\tt metatype t..t}\index{metatype@{\tt metatype}}
 &
-Given a type {\tt t}, return its metatype.  If {\tt t} is defined in the
+Given a list of types {\tt t}, return the metatype of each type.
+If {\tt t} is defined in the
 datastructure definition file, return one of the strings {\tt class},
-{\tt tuple}, {\tt constructor}, or {\tt constructorbase}.  If {\tt t}
-has the prefix {\tt listpre} and the suffix {\tt listsuff}, return the
-string {\tt list}; in all other cases return the string {\tt atom}.
+{\tt tuple}, {\tt constructor}, {\tt constructorbase}, or {\tt alias}.
+If {\tt t} has the prefix {\tt listpre} and the suffix {\tt listsuff},
+return the string {\tt list}; in all other cases return the string {\tt atom}.
 \\
 {\tt tuplelist}\index{tuplelist@{\tt tuplelist}}
 &
@@ -938,6 +993,17 @@ Given a list of types, return the proper type names of the fields of
 these types. The types of inherited fields are {\em not} returned.
 The proper type names are constructed as described for the function
 {\tt type}.
+The types are returned in such an order that they match up with the
+field names in the order returned by {\tt fields}.
+\\
+{\tt alltypes t..t}\index{alltypes@{\tt alltypes}}
+&
+Given a list of types, return the proper type names of the fields of
+these types, including those of inherited fields.
+The proper type names are constructed as described for the function
+{\tt type}.
+The types are returned in such an order that they match up with the
+field names in the order returned by {\tt allfields}.
 \\
 {\tt typelevel t e}\index{typelevel@{\tt typelevel}}
 &
@@ -960,13 +1026,39 @@ Field {\tt e} may belong to the given type, or to one of the superclasses
 of the type.
 \\
 \end{desctab}
-For example:
+For example, given the data structure definitions:
 \begin{showfile}
 \verbatiminput{fnds.xt}
 \end{showfile}
-will produce (assuming the data structure definitions of page \pageref{plotds}):
+and the template:
+\begin{showfile}
+\verbatiminput{fnds.xt}
+\end{showfile}
+the following output is produced:
 \begin{showfile}
 \verbatiminput{fnds.out}
+\end{showfile}
+\subsection{Alias functions}
+These functions are used to access alias types.
+\begin{desctab}
+{\tt aliases}\index{aliases@{\tt aliases}}
+&
+Return the list of alias types defined in the data structure file.
+\\
+{\tt alias t..t}\index{alias@{\tt alias}}
+&
+Apply the alias definitions to the given types. For each type, if no alias
+type is defined, return the type itself, else return the alias of the type.
+\\
+\end{desctab}
+For example, given the data structure definitions shown on page
+\pageref{plotds} and the following input file:
+\begin{showfile}
+\verbatiminput{aliasfn.xt}
+\end{showfile}
+the following output is produced:
+\begin{showfile}
+\verbatiminput{aliasfn.out}
 \end{showfile}
 \subsection{Class inquiry functions}
 The functions listed below all access the inheritance information
@@ -1003,6 +1095,113 @@ For example:
 will produce (assuming the data structure definitions of page \pageref{plotds}):
 \begin{showfile}
 \verbatiminput{fnclass.out}
+\end{showfile}
+\subsection{Code generation service functions}
+These functions implement some of the complicated operations that
+are necessary during code generation. 
+\par
+One definition must be introduced:
+A type $t$ {\em depends} on a type $s$ if $s$
+is used in at least one of the elements of $t$,
+or if $t$ has a type in one of its elements that depends on $s$.
+Also,
+a list of a type depends on that type.
+Primitive types depend on nothing.
+\par
+For example:
+in the data structure on page \pageref{plotds} type {\tt plot}
+depends on the single types {\tt xypoint}, {\tt int}, and {\tt num},
+and on the list types {\tt [xypoint]} and {\tt [num]}.
+\par
+Several functions in this group refer to the {\Tm} variables \verb+listpre+
+and \verb+listsuff+ for a prefix and a suffix respectively to construct
+a list name from a single type name.
+If one of these variables is not defined, an empty string is assumed.
+\par
+\begin{desctab}
+{\tt depsort t..t}\index{depsort@{\tt depsort}}
+&
+Given a list of types,
+rearrange them so that all types that contain a certain type
+are placed after the type itself.
+Thus, if a type {\tt ta} uses a type {\tt tb}, {\tt tb} will
+be placed before {\tt ta};
+this is in effect a topological sort.
+The function will complain about circularities.
+\par
+List types are considered to contain their element type.
+\par
+The function does not consider inheritance relations.
+\\
+{\tt inheritsort t..t}\index{inheritsort@{\tt inheritsort}}
+&
+Given a list of types,
+rearrange them so that all types that all types are placed after
+the types they inherit from.
+\\
+{\tt delisttypes t..t}\index{delisttypes@{\tt delisttypes}}
+&
+Given a list of types, return a list of the element types of the list types
+by removing the list prefix {\tt listpre} the list suffix {\tt listsuff}.
+For types that don't have this prefix and suffix nothing is returned.
+\\
+{\tt listtypes t..t}\index{listtypes@{\tt listtypes}}
+&
+Given a list of types, return a list of all types that are prefixed
+by {\tt listpre} and suffixed by {\tt listsuff}.
+\\
+{\tt mklist n e..e}\index{mklist@{\tt mklist}}
+&
+Given a list level {\tt n} and a list of type names {\tt e}, construct
+for each type a list name for the given list level by prefixing each
+type name with {\tt n} copies of \verb+listpre+ and suffixing each type
+name with {\tt n} copies of \verb+listsuff+.
+\\
+{\tt singletypes t..t}\index{singletypes@{\tt singletypes}}
+&
+Given a list of types, return a list of all types that are not prefixed
+by {\tt listpre} or are not suffixed by {\tt listsuff}.
+\\
+{\tt stemname t..t}\index{stemname@{\tt stemname}}
+&
+Given a list of list type names {\tt t},
+return a list of stem names.
+All pairs of list prefixes and suffices are stripped from all
+the type names.
+The list prefix is taken from the variable \verb+listpre+,
+the list suffix is taken from the variable \verb+listsuff+.
+If both are empty the list is returned unchanged, and an error
+is emitted.
+\\
+{\tt virtual t..t}\index{virtual@{\tt virtual}}
+&
+Given a list of types {\tt t}, return all types that are virtual.
+\\
+{\tt nonvirtual t..t}\index{nonvirtual@{\tt nonvirtual}}
+&
+Given a list of types {\tt t}, return all types that are not virtual.
+\\
+{\tt reach t..t}\index{reach@{\tt reach}}
+&
+Given a list of types {\tt t}, return all types that can be reached from
+these types. The \defn{direct reach} of a class, tuple, constructor
+or constructor-base type are the types of its fields and inheritors;
+the direct reach of a list type is its element type, the direct reach
+of an alias type is the target type of the alias, and the direct reach
+of an atomic type is empty.
+\par
+The \defn{reach} of a type is the union of the type itself, the direct reach of
+the type, and the reach of the types in the direct reach of the type.
+Thus, the reach is the transitive closure of the direct reach.
+\\
+\end{desctab}
+For example:
+\begin{showfile}
+\verbatiminput{service.xt}
+\end{showfile}
+will produce (assuming the data structure definitions of page \pageref{plotds}):
+\begin{showfile}
+\verbatiminput{service.out}
 \end{showfile}
 \subsection{Obsolete data structure access functions}
 \par
@@ -1087,91 +1286,6 @@ If {\tt t} is not a constructor base type, an error message is given.
 This function is obsolete; use \verb'${typename c}' instead.
 \\
 \end{desctab}
-\subsection{Code generation service functions}
-These functions implement some of the complicated operations that
-are necessary during code generation. 
-\par
-One definition must be introduced:
-A type $t$ {\em depends} on a type $s$ if $s$
-is used in at least one of the elements of $t$,
-or if $t$ has a type in one of its elements that depends on $s$.
-Also,
-a list of a type depends on that type.
-Primitive types depend on nothing.
-\par
-For example:
-in the data structure on page \pageref{plotds} type {\tt plot}
-depends on the single types {\tt xypoint}, {\tt int}, and {\tt num},
-and on the list types {\tt [xypoint]} and {\tt [num]}.
-\par
-Several functions in this group refer to the {\Tm} variables \verb+listpre+
-and \verb+listsuff+ for a prefix and a suffix respectively to construct
-a list name from a single type name.
-If one of these variables is not defined, an empty string is assumed.
-\par
-\begin{desctab}
-{\tt depsort t..t}\index{depsort@{\tt depsort}}
-&
-Given a list of types,
-rearrange them so that all types that contain a certain type
-are placed after the type itself.
-Thus, if a type {\tt ta} uses a type {\tt tb}, {\tt tb} will
-be placed before {\tt ta};
-this is in effect a topological sort.
-The function will complain about circularities.
-\par
-List types are considered to contain their element type.
-\par
-The function does not consider inheritance relations.
-\\
-{\tt inheritsort t..t}\index{inheritsort@{\tt inheritsort}}
-&
-Given a list of types,
-rearrange them so that all types that all types are placed after
-the types they inherit from.
-\\
-{\tt delisttypes t..t}\index{delisttypes@{\tt delisttypes}}
-&
-Given a list of types, return a list of the element types of the list types
-by removing the list prefix {\tt listpre} the list suffix {\tt listsuff}.
-For types that don't have this prefix and suffix nothing is returned.
-\\
-{\tt listtypes t..t}\index{listtypes@{\tt listtypes}}
-&
-Given a list of types, return a list of all types that are prefixed
-by {\tt listpre} and suffixed by {\tt listsuff}.
-\\
-{\tt mklist n e..e}\index{mklist@{\tt mklist}}
-&
-Given a list level {\tt n} and a list of type names {\tt e}, construct
-for each type a list name for the given list level by prefixing each
-type name with {\tt n} copies of \verb+listpre+ and suffixing each type
-name with {\tt n} copies of \verb+listsuff+.
-\\
-{\tt singletypes t..t}\index{singletypes@{\tt singletypes}}
-&
-Given a list of types, return a list of all types that are not prefixed
-by {\tt listpre} or are not suffixed by {\tt listsuff}.
-\\
-{\tt stemname e..e}\index{stemname@{\tt stemname}}
-&
-Given a list of list type names {\tt e},
-return a list of stem names.
-All pairs of list prefixes and suffices are stripped from all
-the type names.
-The list prefix is taken from the variable \verb+listpre+,
-the list suffix is taken from the variable \verb+listsuff+.
-If both are empty the list is returned unchanged, and an error
-is emitted.
-\end{desctab}
-For example:
-\begin{showfile}
-\verbatiminput{service.xt}
-\end{showfile}
-will produce (assuming the data structure definitions of page \pageref{plotds}):
-\begin{showfile}
-\verbatiminput{service.out}
-\end{showfile}
 \subsection{Deferred evaluation}
 \begin{desctab}
 {\tt call m p1..pn}\index{call@{\tt call}}

@@ -15,14 +15,14 @@ TM = tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
-CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc
+CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c oksubst.clc
 
 EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
   boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
-  linemacro.xt setfn.xt switch.xt
+  linemacro.xt setfn.xt switch.xt unalias.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
-TEXFILES = main.tex tm.tex tmc.tex intro.tex \
+TEXFILES = main.tex tm.tex command.tex tmc.tex intro.tex \
 	   ds.tex titlepage.tex dsgram.tex impl.tex calc.tex \
 	   defs.tex preface.tex flow.tex upgrade.tex
 
@@ -87,7 +87,10 @@ spell: $(SPELLFILES)
 
 $(SPELLFILES): sort
 
-.xt.out:
+unalias.out: unalias.xt alias.ds
+	tm alias.ds unalias.xt > $*.out
+
+.xt.out: plot.ds
 	tm plot.ds $< > $*.out
 
 clean:
