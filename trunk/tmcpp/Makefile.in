@@ -15,7 +15,7 @@ help:
 	@echo "check    Test all sources."
 	@echo "install  Install all compilation results."
 	@echo "clean    Delete intermediate files."
-	@echo "empty    Delete files that can be re-generated. * Use only after a successful install *"
+	@echo "empty    Delete files that can be re-generated."
 	@echo "distlist	Create a list of files to distribute."
 
 check:

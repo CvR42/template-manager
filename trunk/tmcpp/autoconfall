@@ -1,0 +1,6 @@
+#!/bin/sh
+# Run autoconf in all the directories in the list below
+TOP=`pwd`
+DIRS=". libtmcpp tmcpp"
+
+for i in $DIRS; do cd $TOP/$i; autoconf; done

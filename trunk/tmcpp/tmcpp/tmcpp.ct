@@ -15,7 +15,6 @@
 .. The following C pre-processor variables may be defined:
 .. FATAL(msg)    If you want to supply a fatal error handler to print 'msg'.
 ..               A default is provided.
-.. FIRSTROOM     The initial room in lists. Default is 0.
 ..
 //*** WARNING: THIS IS GENERATED CODE. ***
 
@@ -46,10 +45,6 @@
 // datastructure file: ${dsfilename}
 // tm version:         $(tmvers)
 // tm kernel version:  $(kernel-version)
-
-#ifndef FIRSTROOM
-#define FIRSTROOM 0
-#endif
 
 // Counters for allocation and freeing.
 .foreach t $(need_stat_list)
