@@ -38,7 +38,7 @@ typedef struct str_$t *$t;
 
 .foreach t ${comm $(need_ds) "" ${ctypelist}}
 .foreach c ${conslist $t}
-#define $c u.ue_$c
+#define cast_$c(e) (&(e)->u.ue_$c)
 .endforeach
 .endforeach
 
