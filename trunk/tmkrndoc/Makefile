@@ -1,7 +1,7 @@
 # Makefile for tm document.  # For several reasons 'make' cannot handle this
 # very efficiently.
 
-.SUFFIXES: .spl .tex
+.SUFFIXES: .spl .tex .out .xt
 
 MAKEFILE = Makefile
 
@@ -12,6 +12,11 @@ TOPFILE = main
 REDUCT = 2
 
 TM = tm
+
+EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
+  boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
+  linemacro.xt setfn.xt switch.xt
+EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex tmc.tex intro.tex \
 	   ds.tex titlepage.tex dsgram.tex impl.tex \
@@ -26,7 +31,8 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(AUXFILES) $(TOPFILE).bbl $(TOPFILE).lot $(TOPFILE).lof \
        $(TOPFILE).toc dist.lst title.c
 
-DISTFILES = $(TEXFILES) $(MAKEFILE) demo.ct demo.ht democonf.t demospec.t \
+DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
+	    demo.ct demo.ht democonf.t demospec.t \
             goodwords macdemo.t main.bib main.ps plot.ds readin.m xrefdemo.t \
 	    title.ct title.ds
 
@@ -53,7 +59,7 @@ install:
 	@echo "Nothing to install"
 
 # The dependency rules as implemented by latex
-$(TOPFILE).dvi : $(TEXFILES)
+$(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES)
 	latex $(TOPFILE)
 	bibtex $(TOPFILE)
 	makeindex $(TOPFILE)
@@ -78,11 +84,17 @@ spell: $(SPELLFILES)
 
 $(SPELLFILES): sort
 
+.xt.out:
+	tm plot.ds $< > $*.out
+
 clean:
 	rm -f $(JUNK) $(SPELLFILES)
 
-empty:
+distclean:
 	rm -f $(JUNK) $(SPELLFILES) $(TOPFILE).dvi $(TOPFILE).ps
+
+empty:
+	rm -f $(JUNK) $(EXAMPLEOUTFILES) $(SPELLFILES) $(TOPFILE).dvi $(TOPFILE).ps
 
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
