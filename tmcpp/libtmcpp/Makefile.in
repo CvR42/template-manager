@@ -166,7 +166,7 @@ help :
 	@echo "clean		Free disk space."
 	@echo "distfiles	List distribution files."
 	@echo "install		Install relevant files."
-	@echo "test		Run tests."
+	@echo "check		Run tests."
 
 all: $(LIBNAME) testprog
 
@@ -180,6 +180,11 @@ testprog: $(TESTOBJS) $(LIBNAME)
 	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o testprog
 
 test: testprog testin
+	-./testprog
+	diff testout goodout
+	diff testerr gooderr
+
+check: testprog testin
 	-./testprog
 	diff testout goodout
 	diff testerr gooderr

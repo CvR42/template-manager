@@ -80,12 +80,12 @@ help :
 	@echo "empty		Free disk space."
 	@echo "distfiles	List distribution files."
 	@echo "install		Install relevant files."
-	@echo "test		Run tests."
+	@echo "check		Run tests."
 
 #
 all: test walktest
 
-test: tpltestrun walktestrun
+check test: tpltestrun walktestrun
 
 walktest: $(WALKTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(WALKTESTOBJS) $(LIBS) -o walktest

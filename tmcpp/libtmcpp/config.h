@@ -1,3 +1,4 @@
+/* config.h.  Generated automatically by configure.  */
 // File: config.h
 //
 // Some configuration constants.
@@ -6,8 +7,6 @@
 #define HASHSHIFT 2		/* Number of bits to skip in hashing key. */
 #define TEXTGROWSTEP 40		/* The growth step of the text putc routine */
 #define INITIAL_STRINGSIZE 4	/* First size of a growing string buffer. */
-
-//#define LOGNEW
 
 #define SYMHASHWIDTH 1024
 
