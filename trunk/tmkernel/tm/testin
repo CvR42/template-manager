@@ -87,6 +87,7 @@ Bad line
 .case bla
 Case 'bla'
 .default
+.default
 Default of switch
 .endswitch
 --
