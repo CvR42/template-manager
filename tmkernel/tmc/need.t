@@ -27,6 +27,7 @@
 . error ${tplfilename}: at least tm version $(minvers) required.
 . exit 1
 .endif
+.call apply_aliases
 .set bad 0
 .if ${not ${defined basename}}
 . error '${tplfilename}': definition of basename required.
@@ -124,7 +125,7 @@
 .set l ${excl ${uniq $l} "" $(need_$g)}
 .if ${len $l}
 . globalappend need_$g $l
-/* required: ${strpad "" $(reqlevel) "."} ${prefix $g_ $l} */
+/* required: ${strpad "" $(reqlevel) "."}${prefix $g_ $l} */
 .set reqlevel $[$(reqlevel)+1]
 . call req_$g "$l"
 .set reqlevel $[$(reqlevel)-1]
@@ -166,13 +167,10 @@
 ..
 .. ** fscan **
 .macro req_fscan l
-.call require new "$l"
+.call require new "${nonvirtual $l}"
 .call require append "${listtypes $l}"
 .call require fscan "${delisttypes $l} ${types ${singletypes $l}}"
 .call require fscan "${types ${subclasses $l}}"
-.if ${eq $(template) ald}
-.call require null "$l"
-.endif
 .endmacro
 ..
 .. ** print **
@@ -280,6 +278,9 @@
 .macro req_new l
 .call require ds "$l"
 .call require stat "${nonvirtual $l}"
+.if ${neq $(template) tmc}
+.call require new "${subclasses ${virtual $l}}"
+.endif
 .endmacro
 ..
 .. ** stat **
@@ -298,10 +299,12 @@
 .endif
 .endmacro
 ..
-.. For the old templates, infer the desire for constructor new_ functions
-.. from the desire for the constructor base.
+.. From the request for new_<virtual class>, deduce the desire for
+.. its subclasses.
+.. Note that this modifies the *want_new* variable, *not* the need_new
+.. variable that is set in the deductions below.
 .if ${neq $(template) tmc}
-.append want_new ${subclasses ${comm $(want_new) "" ${ctypelist}}}
+.append want_new "${subclasses ${virtual $(want_new)}}"
 .endif
 ..
 .. Reset all need_<group> variables.

@@ -77,6 +77,8 @@ typedef int tags_$t;
 .. That have elements (C does not like empty structures or unions).
 /* Structure for ${metatype $t} '$t'. */
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case constructor constructorbase class
 .if ${len ${inherits $t}}
 class str_$t: ${prefix "public " ${seplist ", " ${prefix "str_" ${inherits $t}}}} {
@@ -113,6 +115,8 @@ struct str_$t {
 .. That have elements (C does not like empty structures or unions).
 /* Structure for ${metatype $t} '$t'. */
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case constructor constructorbase class
 struct str_$t {
 #ifdef LOGNEW

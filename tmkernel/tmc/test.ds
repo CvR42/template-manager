@@ -26,8 +26,10 @@ subtuple == label + ( tl:[thing], tn:int );
 
 sublevel ::= label +
     SubNamed n:int |
-    SubNamedlist thinglist:[thing] ;
+    SubNamedlist thinglist:[listthing] ;
 
 subenum ::= EA | EB | EC;
 
 thing ::= Thing n:int;
+
+listthing -> thing;

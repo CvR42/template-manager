@@ -21,7 +21,7 @@ label = { labelval:int };
 
 subtuple == ( tl:[thing], tn:int );
 
-sublevel ::= label +
+sublevel ::= levellabel +
     SubNamed n:int |
     SubNamedlist thinglist:[thing] ;
 
@@ -40,4 +40,7 @@ internalExpr = expr +
 
 smt = { line:int } +
 	SmtAssign: { lhs:expr, rhs:expr } |
-	SmtIf: { cond:expr, thencode:[smt], elsecode:[smt] } ;
+	SmtIf: { cond:expr, thencode:[smt], elsecode:[elsesmt] } ;
+
+levellabel -> label;
+elsesmt -> smt;
