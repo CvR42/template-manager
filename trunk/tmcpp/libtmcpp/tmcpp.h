@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-/* file: tmc.h
+/* file: tmcpp.h
  *
  * declaration of routines in tm library.
  */
@@ -79,10 +79,10 @@ private:
 public:
     TmPrintState(
 	FILE *f,
-	const int istep,
-	const int width,
-	const int tabwidth,
-	const unsigned int flags
+	const int istep = 4,
+	const int width = 74,
+	const int tabwidth = 8,
+	const unsigned int flags=0
     );
     virtual ~TmPrintState();
     virtual void destroy() { delete this; }
@@ -226,12 +226,6 @@ extern tm_neutralp tm_malloc( size_t sz );
 extern tm_neutralp tm_calloc( size_t n, size_t sz );
 extern tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
 
-#define TM_MALLOC(t,n) (t) tm_malloc(n)
-#define TM_CALLOC(t,sz,n) (t) tm_calloc(sz,n)
-#define TM_REALLOC(t,p,n) (t) tm_realloc(p,n)
-#define TM_FREE free
-
-
 // 'schar' functions.
 typedef signed char schar;
 extern int fscan_schar( FILE *f, schar *c );
@@ -329,26 +323,15 @@ extern void tm_noroom();
 // Storage for a symbol string
 class _tmc_sym {
 public:
-    struct _tmc_sym *next;		/* next in list */
-    tmconststring name;			/* pointer to the string */
-    tm_neutralp data;			/* any info for it. */
+    struct _tmc_sym *next;		// Next in list
+    tmconststring name;			// Pointer to the string
+    tm_neutralp data;			// Any info for it.
 };
 
-// the error message buffer of tm and its length
+// the error message buffer of Tm and its length
 extern char tm_errmsg[];
 #define TM_ERRLEN 100
 extern int tm_lineno;
-
-class TmInt {
-public:
-    int n;
-
-    inline TmInt( int nn ) { n = nn; }
-    inline TmInt( TmInt &c ) { n = c.n; }
-    inline virtual ~TmInt() {}
-    inline TmInt print( TmPrintState * );
-    inline TmInt fprint( FILE * );
-};
 
 #define _TM_TMCDEFS 1
 #endif

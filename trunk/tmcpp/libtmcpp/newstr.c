@@ -17,54 +17,49 @@ static long newcnt_tmstring = 0;
 static long frecnt_tmstring = 0;
 
 
-/* Given a size 'sz', create an empty tmstring with that many characters
- * in it.
- */
+// Given a size 'sz', create an empty tmstring with that many characters
+// in it.
 tmstring create_tmstring( const size_t sz )
 {
-    tmstring adr;
     size_t realsz = sz;
 
     if( realsz==0 ){
-	realsz = 1;	/* Some mallocs/reallocs get upset over sz==0. */
+	realsz = 1;	// Some mallocs/reallocs get upset over sz==0.
     }
-    adr = TM_MALLOC( char *, realsz*sizeof( char ) );
+    tmstring adr = (char *) tm_malloc( realsz*sizeof( char ) );
     adr[0] = '\0';
     newcnt_tmstring++;
     return adr;
 }
 
-/* Allocate space for tmstring 's' and copy the text into it. */
+// Allocate space for tmstring 's' and copy the text into it.
 tmstring new_tmstring( const char *s )
 {
-    size_t len;
-    tmstring adr;
-
     if( s == NULL ){
 	return NULL;
     }
-    len = strlen( s ) + 1;
-    adr = TM_MALLOC( char *, len*sizeof( char ) );
+    size_t len = strlen( s ) + 1;
+    tmstring adr = (char *) tm_malloc( len*sizeof( char ) );
     strcpy( adr, s );
     newcnt_tmstring++;
     return adr;
 }
 
-/* De-allocate space for tmstring 's'. */
+// De-allocate space for tmstring 's'.
 void fre_tmstring( tmstring s )
 {
     if( s==NULL ){
 	return;
     }
     frecnt_tmstring++;
-    TM_FREE( s );
+    free( s );
 }
 
 /***********************************************************
  *   initalizing and statistics                            *
  ***********************************************************/
 
-/* Give statistics */
+// Give statistics
 void stat_tmstring( FILE *f )
 {
     fprintf(
@@ -77,7 +72,7 @@ void stat_tmstring( FILE *f )
     );
 }
 
-/* Return the balance of the string routines. */
+// Return the balance of the string routines
 int get_balance_tmstring( void )
 {
     if( newcnt_tmstring<frecnt_tmstring ){
