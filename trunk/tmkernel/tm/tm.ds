@@ -9,7 +9,7 @@
 ds = { name:tmstring, inherits:[tmstring] } +
     DsConstructorBase: { constructors:[tmstring] } |
     DsTuple: { fields:[field] } |
-    DsClass: { fields:[field], virtual:tmbool } |
+    DsClass: { fields:[field], isvirtual:tmbool } |
     DsConstructor: { fields:[field] } |
     DsAlias: {}
     ;
@@ -23,7 +23,7 @@ classComponent =
 
 alternative == ( label:tmstring, component:classComponent );
 
-field == ( level:int, name:tmstring, type:tmstring );
+field == ( level:uint, name:tmstring, type:tmstring );
 
 || The internal representation of a macro.
 macro == (

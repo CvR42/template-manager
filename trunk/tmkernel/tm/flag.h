@@ -8,9 +8,9 @@
 
 /* structure to describe debugging flags */
 typedef struct _cvr_db_flags {
-    char flagchar;       /* char to switch the flag on */
-    int *flagadr;        /* pointer to the flag */
-    char *flagdescr;     /* description string */
+    const char flagchar;	/* char to switch the flag on */
+    int *flagadr;		/* pointer to the flag */
+    const char *flagdescr;	/* description string */
 } dbflag;
 
 #define dbflagNIL (dbflag *)0

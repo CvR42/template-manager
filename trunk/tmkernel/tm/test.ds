@@ -30,10 +30,11 @@ toplevel ::= ;
 testclass = { a:[[int]], b:int } + subclass: orig;
 
 expr = orig +
-	exprConst: { n:int } |
+	exprConst: { n:number } |
 	exprPlus: {a:expr, b:expr} |
 	exprOrig: (testclass + { lbl:tmstring })
 	;
 
+number -> int;
 aliastype -> aliastype2;
 aliastype2 -> expr;

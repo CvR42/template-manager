@@ -7,7 +7,7 @@
    template file:      /usr/local/lib/tmc.ht
    datastructure file: tm.ds
    tm version:         36
-   tm kernel version:  2.0-beta13
+   tm kernel version:  2.0-beta14
  */
 
 /* data structures */
@@ -25,21 +25,29 @@ typedef struct str_switchcase_list *switchcase_list;
 typedef struct str_tmstring_list *tmstring_list;
 typedef struct str_tplelm_list *tplelm_list;
 typedef struct str_var_list *var_list;
-typedef struct str_Append *Append;
-typedef struct str_Appendfile *Appendfile;
+typedef struct str_field *field;
+typedef struct str_macro *macro;
+typedef struct str_switchcase *switchcase;
+typedef struct str_var *var;
+typedef struct str_classComponent *classComponent;
 typedef struct str_CCAlternatives *CCAlternatives;
 typedef struct str_CCFields *CCFields;
 typedef struct str_CCSublist *CCSublist;
 typedef struct str_CCSuper *CCSuper;
-typedef struct str_Call *Call;
-typedef struct str_Case *Case;
-typedef struct str_Default *Default;
-typedef struct str_DeleteType *DeleteType;
+typedef struct str_alternative *alternative;
+typedef struct str_ds *ds;
 typedef struct str_DsAlias *DsAlias;
 typedef struct str_DsClass *DsClass;
 typedef struct str_DsConstructor *DsConstructor;
 typedef struct str_DsConstructorBase *DsConstructorBase;
 typedef struct str_DsTuple *DsTuple;
+typedef struct str_tplelm *tplelm;
+typedef struct str_Append *Append;
+typedef struct str_Appendfile *Appendfile;
+typedef struct str_Call *Call;
+typedef struct str_Case *Case;
+typedef struct str_Default *Default;
+typedef struct str_DeleteType *DeleteType;
 typedef struct str_Error *Error;
 typedef struct str_Exit *Exit;
 typedef struct str_Foreach *Foreach;
@@ -56,14 +64,6 @@ typedef struct str_Return *Return;
 typedef struct str_Set *Set;
 typedef struct str_Switch *Switch;
 typedef struct str_While *While;
-typedef struct str_field *field;
-typedef struct str_macro *macro;
-typedef struct str_switchcase *switchcase;
-typedef struct str_var *var;
-typedef struct str_classComponent *classComponent;
-typedef struct str_alternative *alternative;
-typedef struct str_ds *ds;
-typedef struct str_tplelm *tplelm;
 
 #define alternative_listNIL (alternative_list)0
 #define classComponent_listNIL (classComponent_list)0
@@ -142,7 +142,7 @@ struct str_field {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-    int level;
+    uint level;
     tmstring name;
     tmstring type;
 };
@@ -231,7 +231,7 @@ public:
 class str_DsClass: public str_ds {
 public:
     field_list fields;
-    tmbool virtual;
+    tmbool isvirtual;
 };
 
 /* Structure for class 'DsConstructor'. */
@@ -403,25 +403,53 @@ public:
 };
 
 #else
-/* Structure for class 'Append'. */
-struct str_Append {
+/* Structure for tuple 'field'. */
+struct str_field {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-    tags_tplelm tag;
-    int lno;
-    tmstring line;
+    uint level;
+    tmstring name;
+    tmstring type;
 };
 
-/* Structure for class 'Appendfile'. */
-struct str_Appendfile {
+/* Structure for tuple 'macro'. */
+struct str_macro {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-    tags_tplelm tag;
-    int lno;
-    tmstring fname;
+    uint lvl;
+    tmstring name;
+    tmstring orgfile;
+    tmstring_list fpl;
     tplelm_list body;
+};
+
+/* Structure for tuple 'switchcase'. */
+struct str_switchcase {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring cases;
+    tplelm_list action;
+};
+
+/* Structure for tuple 'var'. */
+struct str_var {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    uint lvl;
+    tmstring name;
+    tmstring val;
+};
+
+/* Structure for class 'classComponent'. */
+struct str_classComponent {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_classComponent tag;
 };
 
 /* Structure for class 'CCAlternatives'. */
@@ -458,6 +486,110 @@ struct str_CCSuper {
 #endif
     tags_classComponent tag;
     tmstring super;
+};
+
+/* Structure for tuple 'alternative'. */
+struct str_alternative {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tmstring label;
+    classComponent component;
+};
+
+/* Structure for class 'ds'. */
+struct str_ds {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+};
+
+/* Structure for class 'DsAlias'. */
+struct str_DsAlias {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+};
+
+/* Structure for class 'DsClass'. */
+struct str_DsClass {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+    tmbool isvirtual;
+};
+
+/* Structure for class 'DsConstructor'. */
+struct str_DsConstructor {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+};
+
+/* Structure for class 'DsConstructorBase'. */
+struct str_DsConstructorBase {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    tmstring_list constructors;
+};
+
+/* Structure for class 'DsTuple'. */
+struct str_DsTuple {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_ds tag;
+    tmstring name;
+    tmstring_list inherits;
+    field_list fields;
+};
+
+/* Structure for class 'tplelm'. */
+struct str_tplelm {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+};
+
+/* Structure for class 'Append'. */
+struct str_Append {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring line;
+};
+
+/* Structure for class 'Appendfile'. */
+struct str_Appendfile {
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+    tags_tplelm tag;
+    int lno;
+    tmstring fname;
+    tplelm_list body;
 };
 
 /* Structure for class 'Call'. */
@@ -497,61 +629,6 @@ struct str_DeleteType {
     tags_tplelm tag;
     int lno;
     tmstring line;
-};
-
-/* Structure for class 'DsAlias'. */
-struct str_DsAlias {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_ds tag;
-    tmstring name;
-    tmstring_list inherits;
-};
-
-/* Structure for class 'DsClass'. */
-struct str_DsClass {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_ds tag;
-    tmstring name;
-    tmstring_list inherits;
-    field_list fields;
-    tmbool virtual;
-};
-
-/* Structure for class 'DsConstructor'. */
-struct str_DsConstructor {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_ds tag;
-    tmstring name;
-    tmstring_list inherits;
-    field_list fields;
-};
-
-/* Structure for class 'DsConstructorBase'. */
-struct str_DsConstructorBase {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_ds tag;
-    tmstring name;
-    tmstring_list inherits;
-    tmstring_list constructors;
-};
-
-/* Structure for class 'DsTuple'. */
-struct str_DsTuple {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_ds tag;
-    tmstring name;
-    tmstring_list inherits;
-    field_list fields;
 };
 
 /* Structure for class 'Error'. */
@@ -722,83 +799,6 @@ struct str_While {
     tplelm_list body;
 };
 
-/* Structure for tuple 'field'. */
-struct str_field {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    int level;
-    tmstring name;
-    tmstring type;
-};
-
-/* Structure for tuple 'macro'. */
-struct str_macro {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    uint lvl;
-    tmstring name;
-    tmstring orgfile;
-    tmstring_list fpl;
-    tplelm_list body;
-};
-
-/* Structure for tuple 'switchcase'. */
-struct str_switchcase {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tmstring cases;
-    tplelm_list action;
-};
-
-/* Structure for tuple 'var'. */
-struct str_var {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    uint lvl;
-    tmstring name;
-    tmstring val;
-};
-
-/* Structure for class 'classComponent'. */
-struct str_classComponent {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_classComponent tag;
-};
-
-/* Structure for tuple 'alternative'. */
-struct str_alternative {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tmstring label;
-    classComponent component;
-};
-
-/* Structure for class 'ds'. */
-struct str_ds {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_ds tag;
-    tmstring name;
-    tmstring_list inherits;
-};
-
-/* Structure for class 'tplelm'. */
-struct str_tplelm {
-#ifdef LOGNEW
-    long int lognew_id;
-#endif
-    tags_tplelm tag;
-    int lno;
-};
-
 #endif
 
 struct str_alternative_list {
@@ -936,7 +936,7 @@ struct str_var_list {
 #define new_Default(lno) real_new_Default(lno,__FILE__,__LINE__)
 #define new_DeleteType(lno,line) real_new_DeleteType(lno,line,__FILE__,__LINE__)
 #define new_DsAlias(name,inherits) real_new_DsAlias(name,inherits,__FILE__,__LINE__)
-#define new_DsClass(name,inherits,fields,virtual) real_new_DsClass(name,inherits,fields,virtual,__FILE__,__LINE__)
+#define new_DsClass(name,inherits,fields,isvirtual) real_new_DsClass(name,inherits,fields,isvirtual,__FILE__,__LINE__)
 #define new_DsConstructor(name,inherits,fields) real_new_DsConstructor(name,inherits,fields,__FILE__,__LINE__)
 #define new_DsConstructorBase(name,inherits,constructors) real_new_DsConstructorBase(name,inherits,constructors,__FILE__,__LINE__)
 #define new_DsTuple(name,inherits,fields) real_new_DsTuple(name,inherits,fields,__FILE__,__LINE__)
@@ -1010,7 +1010,7 @@ extern Set real_new_Set( int, tmstring, const char *, const int );
 extern Switch real_new_Switch( int, tmstring, switchcase_list, tplelm_list, const char *, const int );
 extern While real_new_While( int, tmstring, tplelm_list, const char *, const int );
 extern alternative real_new_alternative( tmstring, classComponent, const char *, const int );
-extern field real_new_field( int, tmstring, tmstring, const char *, const int );
+extern field real_new_field( uint, tmstring, tmstring, const char *, const int );
 extern macro real_new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list, const char *, const int );
 extern switchcase real_new_switchcase( tmstring, tplelm_list, const char *, const int );
 extern var real_new_var( uint, tmstring, tmstring, const char *, const int );
@@ -1056,7 +1056,7 @@ extern Set new_Set( int, tmstring );
 extern Switch new_Switch( int, tmstring, switchcase_list, tplelm_list );
 extern While new_While( int, tmstring, tplelm_list );
 extern alternative new_alternative( tmstring, classComponent );
-extern field new_field( int, tmstring, tmstring );
+extern field new_field( uint, tmstring, tmstring );
 extern macro new_macro( uint, tmstring, tmstring, tmstring_list, tplelm_list );
 extern switchcase new_switchcase( tmstring, tplelm_list );
 extern var new_var( uint, tmstring, tmstring );

@@ -8,4 +8,4 @@
    Description of exported objects of dsparser.c
  */
 
-extern ds_list parse_ds_file( const tmstring fnm );
+extern ds_list parse_ds_file( const char *fnm );

@@ -505,7 +505,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
    stop character 'sc'. Update the position of '*spi' to point to the stop
    character or '\0', and return the evaluated tmstring.
  */
-tmstring alevalto( char **spi, const char sc )
+tmstring alevalto( char **spi, const int sc )
 {
     tmstring si;
     tmstring cp;		/* pointer to constructed tmstring */
@@ -689,7 +689,7 @@ static void doinsert( const tplelm tpl, FILE *outfile )
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
-    if( fname == CHARNIL ){
+    if( fname == tmstringNIL ){
 	return;
     }
     exfname = search_file( searchpath, fname, PATHSEPSTR, "r" );
@@ -777,12 +777,12 @@ static void doinclude( const tplelm tpl, FILE *outfile )
 	line_error( "file not found" );
 	return;
     }
-    fre_tmstring( fname );
     infile = ckfopen( exfname, "r" );
     oldfname = tplfilename;
     tplfilename = exfname;
     newvarctx();
     setvar( "templatefile", fname );
+    fre_tmstring( fname );
     translate( infile, outfile );
     flushvar();
     fclose( infile );
@@ -1428,15 +1428,15 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
  */
 void translate( FILE *infile, FILE *outfile )
 {
-    tplelm_list template;
+    tplelm_list tpl;
     tmcommand endcom;
 
     tpllineno = 0;
-    template = readtemplate( infile, &endcom );
+    tpl = readtemplate( infile, &endcom );
     if( endcom != EOFLINE ){
 	unbalance( tpllineno, endcom, EOFLINE );
 	return;
     }
-    dotrans( template, outfile );
-    rfre_tplelm_list( template );
+    dotrans( tpl, outfile );
+    rfre_tplelm_list( tpl );
 }
