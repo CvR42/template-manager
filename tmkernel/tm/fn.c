@@ -14,7 +14,6 @@
 /* Standard UNIX libraries and functions */
 #include <stdio.h>
 #include <ctype.h>
-#include <time.h>
 
 /* tm library */
 #include <tmc.h>
@@ -1015,8 +1014,6 @@ static tmstring fndelisttypes( const tmstring_list sl )
     unsigned int ix;
     char *pre;
     char *suff;
-    size_t sufflen;
-    size_t prelen;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1026,8 +1023,6 @@ static tmstring fndelisttypes( const tmstring_list sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    prelen = strlen( pre );
-    sufflen = strlen( suff );
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	tmstring s = sl->arr[ix];
@@ -1084,8 +1079,6 @@ static tmstring fnstemname( const tmstring_list sl )
     unsigned int ix;
     char *pre;
     char *suff;
-    size_t sufflen;
-    size_t prelen;
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -1095,8 +1088,6 @@ static tmstring fnstemname( const tmstring_list sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    prelen = strlen( pre );
-    sufflen = strlen( suff );
     if( pre[0] == '\0' && suff[0] == '\0' ){
 	line_error( "'stemname' cannot function if both '" LISTPRE "' and '" LISTSUFF "' are empty" );
 	ans = flatstrings( sl );
