@@ -99,8 +99,7 @@ inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #define rdup_tmsymbol(s) (s)
 #define rfre_tmsymbol(s)
 #define fre_tmsymbol(s)
-/* #define cmp_tmsymbol(a,b) (((a)==(b)):0?strcmp((a)->name,(b)->name)) */
-#define cmp_tmsymbol(a,b) (strcmp(a->name,b->name))
+#define cmp_tmsymbol(a,b) ((a)==(b)?0:strcmp(a->name,b->name))
 #define isequal_tmsymbol(a,b) ((a)==(b))
 #define null_tmsymbol() tmsymbolNIL
 #endif
