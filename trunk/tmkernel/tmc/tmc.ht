@@ -124,7 +124,7 @@ struct str_$t_list {
 #define to_$t(e) (($t)e)
 .endforeach
 
-/* constructors. */
+/* new_<type> routines */
 #ifdef LOGNEW
 .foreach t $(want_new)
 .if ${isvirtual $t}
@@ -160,6 +160,7 @@ struct str_$t_list {
 #endif
 
 .. new_<type> routines
+#ifdef LOGNEW
 .foreach t $(want_new)
 .if ${isvirtual $t}
 /* No new_$t() since this type is virtual. */
@@ -168,26 +169,32 @@ struct str_$t_list {
 .foreach e ${fields $t inherited}
 .append tl ${type $t $e}
 .endforeach
-#ifdef LOGNEW
 .if ${len $(tl)}
 extern $t real_new_$t( ${seplist ", " $(tl)}, const char *, const int );
 .else
 extern $t real_new_$t( const char *, const int );
 .endif
+.endif
+.endforeach
+.foreach t $(want_new_list)
+extern $t_list real_new_$t_list( const char *file, const int line );
+.endforeach
 #else
+.foreach t $(want_new)
+.if ${isvirtual $t}
+/* No new_$t() since this type is virtual. */
+.else
+.set tl
+.foreach e ${fields $t inherited}
+.append tl ${type $t $e}
+.endforeach
 .if ${len $(tl)}
 extern $t new_$t( ${seplist ", " $(tl)} );
 .else
 extern $t new_$t( void );
 .endif
-#endif
 .endif
 .endforeach
-#ifdef LOGNEW
-.foreach t $(want_new_list)
-extern $t_list real_new_$t_list( const char *file, const int line );
-.endforeach
-#else
 .foreach t $(want_new_list)
 extern $t_list new_$t_list( void );
 .endforeach
@@ -262,6 +269,7 @@ extern void fprint_$t_list( FILE *, const $t_list );
 .endforeach
 ..
 .. slice_<type>() routines
+.if ${len $(want_slice_list)}
 #ifdef LOGNEW
 .foreach t $(want_slice_list)
 extern $t_list real_slice_$t_list(
@@ -277,8 +285,10 @@ extern $t_list real_slice_$t_list(
 extern $t_list slice_$t_list( $t_list, const unsigned int, const unsigned int );
 .endforeach
 #endif
+.endif
 ..
 .. rdup_<type>() routines
+.if ${len $(want_rdup) $(want_rdup_list)}
 #ifdef LOGNEW
 .foreach t $(want_rdup)
 extern $t real_rdup_$t( const $t, const char *_f, const int _l );
@@ -294,8 +304,10 @@ extern $t rdup_$t( const $t );
 extern $t_list rdup_$t_list( const $t_list );
 .endforeach
 #endif
+.endif
 ..
 .. fscan_<type>() routines
+.if ${len $(want_fscan) $(want_fscan_list)}
 #ifdef LOGNEW
 .foreach t $(want_fscan)
 extern int real_fscan_$t( FILE *, $t *, const char *, const int );
@@ -311,6 +323,7 @@ extern int fscan_$t( FILE *, $t * );
 extern int fscan_$t_list( FILE *, $t_list * );
 .endforeach
 #endif
+.endif
 ..
 .. cmp_<type>() routines
 .foreach t $(want_cmp)
