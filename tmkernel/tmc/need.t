@@ -156,9 +156,9 @@
 .macro req_rdup l
 .call require new "${nonvirtual $l}"
 .call require setroom "${listtypes $l}"
-.call require rdup "${delisttypes $l} ${types ${singletypes $l}}"
+.call require rdup "${delisttypes $l} ${types $l}"
 .if ${eq $(template) tmc}
-.call require rdup "${nonvirtual ${subclasses $l}}"
+.call require rdup "${nonvirtual ${reach $l}}"
 .else
 .call require rdup "${types ${nonvirtual ${subclasses $l}}}"
 .call require new "${nonvirtual ${subclasses $l}}"
