@@ -38,7 +38,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
 	    $(CALCDEMO) \
-            goodwords main.bib main.ps plot.ds .cvsignore \
+            goodwords main.bib main.pdf plot.ds .cvsignore \
 	    title.ct title.ds ch.sh cast.t
 
 help:
@@ -53,7 +53,7 @@ help:
 	@echo 'spell   - Run spelling check.'
 	@echo 'sort    - Sort spelling goodwords.'
 
-all: $(TOPFILE).ps
+all: $(TOPFILE).pdf
 
 fast: $(TOPFILE).dvi
 
@@ -65,10 +65,10 @@ install:
 
 # The dependency rules as implemented by latex
 $(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
-	latex $(TOPFILE)
+	pdflatex $(TOPFILE)
 	makeindex $(TOPFILE)
-	latex $(TOPFILE)
-	-fgrep 'get cross-references rig' $(TOPFILE).log && latex $(TOPFILE)
+	pdflatex $(TOPFILE)
+	-fgrep 'get cross-references rig' $(TOPFILE).log && pdflatex $(TOPFILE)
 
 $(TOPFILE).ps: $(TOPFILE).dvi
 	dvips $(TOPFILE)
