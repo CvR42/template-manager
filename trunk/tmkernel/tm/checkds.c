@@ -38,6 +38,7 @@ void cktuple( tmstring nm, field_list fields )
     }
 }
 
+#if 0
 /* Ensure that there are no double names in each of the constructors of
  * constructor type with name 'nm' and constructors 'cons'.
  */
@@ -76,6 +77,7 @@ void ckconstructor( tmstring nm, constructor_list cons )
 	}
     }
 }
+#endif
 
 /* Given a list of datastructure definitions, an index in the list,
  * a list of visited flags and a list of accepted flags, check the
@@ -94,6 +96,9 @@ static void check_ds_inheritance(
     tmstring myname;
 
     assert( theds<dl->sz );
+    if( accepted[theds] ){
+        return;
+    }
     myname = tmstringNIL;
     supers = tmstring_listNIL;
     switch( me->tag ){
@@ -117,9 +122,6 @@ static void check_ds_inheritance(
             myname = me->DsConstructor.name;
             break;
 
-    }
-    if( accepted[theds] ){
-        return;
     }
     if( visited[theds] ){
 	sprintf( errpos, "type '%s'", myname );
