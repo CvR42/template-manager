@@ -4,4 +4,4 @@
 #include "demo.h"
 
 .insert democonf.t
-.include calu.ct
+.include tmc.ct
