@@ -1083,7 +1083,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list **p )
 ///////////////////////////////////////////////////
 
 .foreach t $(need_erase_list)
-// Remove '$t' element at position 'pos'
+// Remove the element at position 'pos'
 void $t_list::erase( const unsigned int pos )
 {
     if( pos >= sz ){
@@ -1095,6 +1095,29 @@ void $t_list::erase( const unsigned int pos )
     sz--;
     for( unsigned int ix=pos; ix<sz; ix++ ){
 	arr[ix] = arr[ix+1];
+    }
+}
+
+// Remove all elements from position 'from' up to, but not including 'to'
+void $t_list::erase( const unsigned int from, const unsigned int to )
+{
+    unsigned int real_to = to;
+
+    if( real_to>sz ){
+	real_to = sz;
+    }
+    if( from>=to ){
+	return;
+    }
+.if ${not ${member $t $(valuetypes)}}
+    for( unsigned int ix=from; ix<to; ix++ ){
+	arr[ix]->destroy();
+    }
+.endif
+    unsigned int dist = to-from;
+    sz -= dist;
+    for( unsigned int ix=from; ix<sz; ix++ ){
+	arr[ix] = arr[ix+dist];
     }
 }
 
