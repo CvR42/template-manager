@@ -811,6 +811,40 @@ int cmp_<type>_list( const_<type>_list a, const_<type>_list b );
 Compare data structures {\tt a} and {\tt b}, and return a code
 according to the table listed previously.
 \end{desc}
+\section{Equality test}
+These functions implement an equality test on structures.
+Given two data structures {\tt a} and {\tt b},
+{\tt TMTRUE} is returned if all the elements of the structure are equal,
+else {\tt TMFALSE} is returned.
+\par
+For the equality test the following rules are applied:
+\begin{itemize}
+\item
+Tuples are equal if and only if all their elements are equal.
+\item
+Constructors are equal if and only if all their elements are equal.
+Different constructor types are always differ from eachother.
+\item
+Lists are equal if and only if they are of the same length, and all their elements are equal.
+\end{itemize}
+\par
+These functions are mainly intended for equality comparison,
+but cannot be used to impose an ordering on the data structures.
+For this the comparison functions in the previous section can be used.
+If another equality test function is required for a data type,
+the generation of the standard function can be suppressed by
+using {\tt notwantdefs}, see section~\ref{s.config}.
+\begin{verbatim}
+tmbool isequal_<type>( const_<type> a, const_<type> b );
+tmbool isequal_<type>_list( const_<type>_list a, const_<type>_list b );
+\end{verbatim}
+\begin{desc}
+\index{isequal_<type>@\verb+isequal_<type>()+}
+\index{isequal_<type>_list@\verb+isequal_<type>_list()+}
+Compare data structures {\tt a} and {\tt b}, and return {\tt TMTRUE}
+if and only if all the elements of the structure are equal.
+Two constructors can only be equal if they are of the same type.
+\end{desc}
 \section{The tree walker}
 \label{s.treewalk}
 \index{tree walking}
@@ -1301,37 +1335,40 @@ In {\tt fscan\_tmbool()}, {\tt fprint\_tmbool()} and {\tt print\_tmbool()}
 use {\tt TMTRUESTR} and {\tt TMFALSESTR} as representation strings.
 \end{desc}
 \begin{verbatim}
-typedef signed char schar;
-int cmp_schar( const schar a, const schar b );
-void fprint_schar( FILE *f, const schar c );
-void fre_schar( schar c );
-int fscan_schar( FILE *f, schar *cp );
-#define scharNIL <something>
-void print_schar( TMPRINSTATE *st, const schar c );
-schar rdup_schar( const schar c );
-void rfre_schar( schar c );
+typedef signed char tmschar;
+int cmp_tmschar( const tmschar a, const tmschar b );
+tmbool isequal_tmschar( const tmschar a, const tmschar b );
+void fprint_tmschar( FILE *f, const tmschar c );
+void fre_tmschar( tmschar c );
+int fscan_tmschar( FILE *f, tmschar *cp );
+#define tmscharNIL <something>
+void print_tmschar( TMPRINSTATE *st, const tmschar c );
+tmschar rdup_tmschar( const tmschar c );
+void rfre_tmschar( tmschar c );
 \end{verbatim}
 \begin{desc}
-\index{schar}
+\index{tmschar}
 Module functions for type `{\tt signed char}'.
 \end{desc}
 \begin{verbatim}
-typedef unsigned char uchar;
-int cmp_uchar( const uchar a, const uchar b );
-void fprint_uchar( FILE *f, const uchar c );
-void fre_uchar( uchar c );
-int fscan_uchar( FILE *f, uchar *cp );
-#define ucharNIL <something>
-void print_uchar( TMPRINSTATE *st, const uchar c );
-uchar rdup_uchar( const uchar c );
-void rfre_uchar( uchar c );
+typedef unsigned char tmuchar;
+int cmp_tmuchar( const tmuchar a, const tmuchar b );
+tmbool isequal_tmuchar( const tmuchar a, const tmuchar b );
+void fprint_tmuchar( FILE *f, const tmuchar c );
+void fre_tmuchar( tmuchar c );
+int fscan_tmuchar( FILE *f, tmuchar *cp );
+#define tmucharNIL <something>
+void print_tmuchar( TMPRINSTATE *st, const tmuchar c );
+tmuchar rdup_tmuchar( const tmuchar c );
+void rfre_tmuchar( tmuchar c );
 \end{verbatim}
 \begin{desc}
-\index{uchar}
+\index{tmuchar}
 Module functions for type `{\tt unsigned char}'.
 \end{desc}
 \begin{verbatim}
 int cmp_int( const int a, const int b );
+tmbool isequal_int( const int a, const int b );
 void fprint_int( FILE *f, const int i );
 void fre_int( int i );
 int fscan_int( FILE *f, int *i );
@@ -1345,22 +1382,24 @@ void rfre_int( int i );
 Module functions for type `{\tt int}'.
 \end{desc}
 \begin{verbatim}
-typedef unsigned int uint;
-int cmp_uint( const uint a, const uint b );
-void fprint_uint( FILE *f, const uint i );
-void fre_uint( uint u );
-int fscan_uint( FILE *f, uint *p );
-void print_uint( TMPRINSTATE *st, const uint i );
-uint rdup_uint( const uint u );
-void rfre_uint( uint u );
-#define uintNIL <something>
+typedef unsigned int tmuint;
+int cmp_tmuint( const tmuint a, const tmuint b );
+tmbool isequal_tmuint( const tmuint a, const tmuint b );
+void fprint_tmuint( FILE *f, const tmuint i );
+void fre_tmuint( tmuint u );
+int fscan_tmuint( FILE *f, tmuint *p );
+void print_tmuint( TMPRINSTATE *st, const tmuint i );
+tmuint rdup_tmuint( const tmuint u );
+void rfre_tmuint( tmuint u );
+#define tmuintNIL <something>
 \end{verbatim}
 \begin{desc}
-\index{uint}
+\index{tmuint}
 Module functions for type `{\tt unsigned int}'.
 \end{desc}
 \begin{verbatim}
 int cmp_long( const long a, const long b );
+tmbool isequal_long( const long a, const long b );
 void fprint_long( FILE *f, const long i );
 void fre_long( long u );
 int fscan_long( FILE *f, long *p );
@@ -1374,22 +1413,56 @@ void rfre_long( long u );
 Module functions for type `{\tt long int}'.
 \end{desc}
 \begin{verbatim}
-typedef unsigned long int ulong;
-int cmp_ulong( const ulong a, const ulong b );
-void fprint_ulong( FILE *f, const ulong i );
-void fre_ulong( ulong u );
-int fscan_ulong( FILE *f, ulong *p );
-void print_ulong( TMPRINSTATE *st, const ulong i );
-ulong rdup_ulong( const ulong u );
-void rfre_ulong( ulong u );
-#define ulongNIL <something>
+typedef unsigned long int tmulong;
+int cmp_tmulong( const tmulong a, const tmulong b );
+tmbool isequal_tmulong( const tmulong a, const tmulong b );
+void fprint_tmulong( FILE *f, const tmulong i );
+void fre_tmulong( tmulong u );
+int fscan_tmulong( FILE *f, tmulong *p );
+void print_tmulong( TMPRINSTATE *st, const tmulong i );
+tmulong rdup_tmulong( const tmulong u );
+void rfre_tmulong( tmulong u );
+#define tmulongNIL <something>
 \end{verbatim}
 \begin{desc}
-\index{ulong}
+\index{tmulong}
 Module functions for type `{\tt unsigned long int}'.
 \end{desc}
 \begin{verbatim}
+typedef short int tmshort;
+int cmp_tmshort( const tmshort a, const tmshort b );
+tmbool isequal_tmshort( const tmshort a, const tmshort b );
+void fprint_tmshort( FILE *f, const tmshort i );
+void fre_tmshort( tmshort u );
+int fscan_tmshort( FILE *f, tmshort *p );
+void print_tmshort( TMPRINSTATE *st, const tmshort i );
+tmshort rdup_tmshort( const tmshort u );
+void rfre_tmshort( tmshort u );
+#define tmshortNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{tmshort}
+Module functions for type `{\tt short int}'.
+\end{desc}
+\begin{verbatim}
+typedef unsigned short int tmushort;
+int cmp_tmushort( const tmushort a, const tmushort b );
+tmbool isequal_tmushort( const tmushort a, const tmushort b );
+void fprint_tmushort( FILE *f, const tmushort i );
+void fre_tmushort( tmushort u );
+int fscan_tmushort( FILE *f, tmushort *p );
+void print_tmushort( TMPRINSTATE *st, const tmushort i );
+tmushort rdup_tmushort( const tmushort u );
+void rfre_tmushort( tmushort u );
+#define tmushortNIL <something>
+\end{verbatim}
+\begin{desc}
+\index{tmushort}
+Module functions for type `{\tt unsigned short int}'.
+\end{desc}
+\begin{verbatim}
 int cmp_double( const double a, const double b );
+tmbool isequal_double( const double a, const double b );
 #define doubleNIL <something>
 void fprint_double( FILE *f, const double d );
 void fre_double( double d );
@@ -1404,6 +1477,7 @@ Module functions for type `{\tt double}'.
 \end{desc}
 \begin{verbatim}
 int cmp_float( float a, float b );
+tmbool isequal_float( float a, float b );
 #define floatNIL <something>
 void fprint_float( FILE *f, float d );
 void fre_float( float d );
@@ -1431,6 +1505,9 @@ Module functions for type `tmsymbol'.
 See section~\ref{s.tmsymbol} for details about type \verb"tmsymbol".
 \end{desc}
 \begin{verbatim}
+typedef char *tmstring;
+typedef const char *const_tmstring;
+
 void fprint_tmstring( FILE *f, const tmstring s );
 void fre_tmstring( tmstring s );
 int fscan_tmstring( FILE *f,  tmstring *s );
@@ -1463,11 +1540,14 @@ Given a desired string size \verb'sz', return a new, empty, {\tt tmstring}
 containing room for \verb'sz' characters.
 \end{desc}
 \begin{verbatim}
-void fprint_tmword( FILE *f, const tmword s );
+typedef char *tmword;
+typedef const char *const_tmword;
+
+void fprint_tmword( FILE *f, const_tmword s );
 void fre_tmword( tmword s );
 int fscan_tmword( FILE *f,  tmword *s );
 tmword new_tmword( const char *s );
-void print_tmword( TMPRINTSTATE *st, const tmword s );
+void print_tmword( TMPRINTSTATE *st, const_tmword s );
 tmword rdup_tmword( const tmword s );
 void rfre_tmword( tmword s );
 #define tmwordNIL <something>
@@ -1487,8 +1567,12 @@ you must use \verb'fre_tmstring', or the alias {\tt fre\_tmword()},
 to deallocate that memory.
 \end{desc}
 \begin{verbatim}
+typedef struct <something> *tmtext;
+typedef const struct <something> *const_tmtext;
+
 void fprint_tmtext( FILE *f, const tmtext s );
 int cmp_tmtext( const tmtext ta, const tmtext tb );
+tmbool isequal_tmtext( const tmtext ta, const tmtext tb );
 void fre_tmtext( tmtext s );
 int fscan_tmtext( FILE *f,  tmtext *s );
 tmtext new_tmtext( const char *s );
@@ -1723,9 +1807,9 @@ typedef struct str_tmtext {
 } *tmtext;
 \end{verbatim}
 \par
-A \verb'tmtext' is a list of \verb'uchar', similar to other
+A \verb'tmtext' is a list of \verb'tmuchar', similar to other
 lists, with some additional functionality. The type \verb'tmtextptr' is a
-pointer to \verb'uchar'.
+pointer to \verb'tmuchar'.
 The main reason this deserves a typedef is that this way it can be declared
 \verb'huge', as is required for MS-DOS and some versions of MS-Windows.
 Next to the standard support functions (see~\ref{s.primtype}),
@@ -1848,7 +1932,7 @@ Given a string \verb's', return a new text consisting of this string.
 \end{desc}
 \begin{verbatim}
 extern void puts_tmtext( const char *s, tmtext t );
-extern void putc_tmtext( uchar c, tmtext t );
+extern void putc_tmtext( tmuchar c, tmtext t );
 \end{verbatim}
 \begin{desc}
 \index{puts_tmtext()@\verb'puts_tmtext()'}
@@ -1876,6 +1960,9 @@ struct _tmc_sym {
    tmstring name;               /* pointer to the string */
    tm_neutralp data;            /* any info for it. */
 };
+
+typedef struct _tmc_sym *tmsymbol;
+typedef const struct _tmc_sym *const_tmsymbol;
 \end{verbatim}
 The tmstring of this symbol is stored in field \verb+name+.
 The name of a tmsymbol \verb+s+ can be printed with
