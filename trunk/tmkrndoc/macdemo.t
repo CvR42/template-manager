@@ -20,8 +20,8 @@
 .  endforeach
 . else
 .  append dtt $t
-.  foreach e ${telmlist $t}
-.   append ut ${ttypename $t $e}
+.  foreach e ${fields $t}
+.   append ut ${typename $t $e}
 .  endforeach
 . endif
 .endforeach

@@ -1423,6 +1423,13 @@ string array,
 see section~\ref{s.malloc}.
 \end{desc}
 \begin{verbatim}
+tmstring create_tmstring( size_t sz );
+\end{verbatim}
+\begin{desc}
+Given a desired string size \verb'sz', return a new, empty, {\tt tmstring}
+containing room for \verb'sz' characters.
+\end{desc}
+\begin{verbatim}
 void fprint_tmtext( FILE *f, const tmtext s );
 int cmp_tmtext( const tmtext ta, const tmtext tb );
 void fre_tmtext( tmtext s );
