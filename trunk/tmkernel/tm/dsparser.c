@@ -28,7 +28,14 @@ static lextok curr_token;
 
 /* Forward declarations. */
 static bool parse_class_components( classComponent_list *clp );
-static void update_class_info( tmstring nm, tmstring_list *inherits, field_list *fields, ds_list *types, const classComponent cc );
+static void update_class_info(
+    tmstring nm,
+    tmstring_list *inherits,
+    field_list *fields,
+    ds_list *types,
+    const classComponent cc,
+    tmbool *virtual
+);
 
 static void yyerror( const char *s )
 {
@@ -647,21 +654,29 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
     tmstring_list inherits;
     field_list fields;
     ds_list types;
+    tmbool virtual = FALSE;
 
     inherits = new_tmstring_list();
     fields = new_field_list();
     types = new_ds_list();
     inherits = append_tmstring_list( inherits, rdup_tmstring( super ) );
-    update_class_info( nm, &inherits, &fields, &types, comp );
+    update_class_info( nm, &inherits, &fields, &types, comp, &virtual );
     types = append_ds_list(
 	types,
-	new_DsClass( rdup_tmstring( nm ), inherits, fields, FALSE )
+	new_DsClass( rdup_tmstring( nm ), inherits, fields, virtual )
     );
     return types;
 
 }
 
-static void update_class_info( tmstring nm, tmstring_list *inherits, field_list *fields, ds_list *types, const classComponent cc )
+static void update_class_info(
+    tmstring nm,
+    tmstring_list *inherits,
+    field_list *fields,
+    ds_list *types,
+    const classComponent cc,
+    tmbool *virtual
+)
 {
     switch( cc->tag ){
 	case TAGCCSuper:
@@ -682,7 +697,7 @@ static void update_class_info( tmstring nm, tmstring_list *inherits, field_list 
 
 	    ccl = to_CCSublist(cc)->components;
 	    for( ix=0; ix<ccl->sz; ix++ ){
-		update_class_info( nm, inherits, fields, types, ccl->arr[ix] );
+		update_class_info( nm, inherits, fields, types, ccl->arr[ix], virtual );
 	    }
 	    break;
 	}
@@ -700,12 +715,13 @@ static void update_class_info( tmstring nm, tmstring_list *inherits, field_list 
 		    *types,
 		    create_subtype( alt->label, nm, alt->component )
 		);
+		*virtual = TRUE;
 	    }
 	}
     }
 }
 
-static ds_list normalize_class( tmstring nm, const classComponent_list ccl, const tmbool virtual )
+static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbool virtual )
 {
     tmstring_list inherits;
     field_list fields;
@@ -716,7 +732,7 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, cons
     fields = new_field_list();
     types = new_ds_list();
     for( ix=0; ix<ccl->sz; ix++ ){
-	update_class_info( nm, &inherits, &fields, &types, ccl->arr[ix] );
+	update_class_info( nm, &inherits, &fields, &types, ccl->arr[ix], &virtual );
     }
     types = append_ds_list(
 	types,
