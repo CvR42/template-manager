@@ -37,7 +37,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(TOPFILE).toc dist.lst title.c
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
-	    $(CALCDEMO) \
+	    $(CALCDEMO) javagrammar.sty pds.pdf \
             goodwords main.bib pdstitle.sty plot.ds .cvsignore \
 	    title.ct title.ds ch.sh cast.t alias.ds
 
