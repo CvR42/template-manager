@@ -1,0 +1,23 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+
+.. File: alucode.ct
+
+/* Standard UNIX libraries */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Standard tm library */
+#include <tmc.h>
+
+/* Local definitions */
+#include "alucode.h"
+
+.insert aluspec.t
+.insert macros.t
+.insert aluid.t
+.insert need.t
+.include calu.ct

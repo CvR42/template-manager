@@ -1,0 +1,26 @@
+[
+ (
+  command
+  "a"
+  (ExprPlus (ExprConst 1) (ExprTimes (ExprConst 2) (ExprConst 3)))
+ ),
+ (command "b" (ExprPlus (ExprConst 1) (ExprNegate (ExprConst 2)))),
+ (command "c" (ExprPlus (ExprNegate (ExprConst 1)) (ExprConst 2))),
+ (command "d" (ExprNegate (ExprPlus (ExprConst 1) (ExprConst 2)))),
+ (
+  command
+  "e"
+  (ExprPlus (ExprPlus (ExprSymbol "c") (ExprConst 3)) (ExprConst 4))
+ ),
+ (command "c" (ExprTimes (ExprSymbol "c") (ExprConst 3))),
+ (
+  command
+  "f"
+  (ExprPlus (ExprSymbol "c") (ExprPlus (ExprConst 3) (ExprConst 4)))
+ ),
+ (
+  command
+  "z"
+  (ExprPlus (ExprPlus (ExprSymbol "x") (ExprSymbol "z")) (ExprSymbol "c"))
+ )
+]

@@ -1,0 +1,14 @@
+Makefile
+config.cache
+config.h
+config.log
+config.status
+configure
+dist.lst
+testerr
+testout
+tm
+tmpath.c
+tmcode.c
+tmcode.h
+version.h

@@ -1,0 +1,149 @@
+# Tm - an interface code generator.
+# Author: C. van Reeuwijk.
+#
+# All rights reserved.
+#
+# To customize this Makefile, run configure.
+#
+# Compilation for MSDOS/MS-Windows with Borland C is done with a
+# makefile. See the file 'README' for details.
+ 
+CXX = @CXX@
+CC = $(CXX)
+LINKER = $(CXX)
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+LOCALBIN = @prefix@/bin
+LOCALLIB = @prefix@/lib
+LOCALINCLUDE = @prefix@/include
+LOCALMAN = @prefix@/man
+
+# System dependent flags for compilation with debugging
+DBUGFLAGS = -g -DLOGNEW -DSTAT
+
+LDFLAGS	= $(DBUGFLAGS)
+
+# C compilation flags
+CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I../libtmcpp -I$(LOCALINCLUDE)
+
+# Some names of programs
+TM  = tm
+
+#TMCLIB = $(LOCALLIB)/libtmcpp.a
+TMCLIB = ../libtmcpp/libtmcpp.a
+
+LIBS = @LIBS@ $(TMCLIB)
+
+MAKEFILE = Makefile
+
+DOC = README
+
+JUNK = tmp core makelog testerr testout config.log \
+       gmon.out log dist.lst distlist \
+       tpltest walktest
+
+TESTFILES = \
+    cltest.ds test.ds \
+    okerr okout testin spec.t cppcode.ct cppcode.ht \
+    walktest.ct walkin walkok
+
+FOREIGNFILES = makefile.tc config.htc config.hts
+
+# Files for configuration
+CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
+
+DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
+	    $(CONFIGUREFILES)
+
+TMMODULES = tmcpp.ct tmcpp.ht need.t cppwalk.t macros.t
+
+TMCTMHDRS = cppcode.h
+
+TMCTMSRCS = cppcode.c
+
+TESTSRCS = tpltest.c cppcode.c
+TESTHDRS = cppcode.h
+TESTOBJS = tpltest.o cppcode.o
+
+WALKTESTSRCS = walktest.c cppcode.c
+WALKTESTOBJS = $(WALKTESTSRCS:.c=.o)
+
+OBJS = $(WALKTESTOBJS) cppcode.o tpltest.o
+
+# These sources are generated from tm templates.
+TMOUT = cppcode.c cppcode.h walktest.c
+
+help :
+	@echo " Possible make targets:"
+	@echo "all		Create local running programs."
+	@echo "clean		Free disk space."
+	@echo "empty		Free disk space."
+	@echo "distfiles	List distribution files."
+	@echo "install		Install relevant files."
+	@echo "check		Run tests."
+
+#
+all: test walktest
+
+check test: tpltestrun walktestrun
+
+walktest: $(WALKTESTOBJS)
+	$(LINKER) $(LDFLAGS) $(WALKTESTOBJS) $(LIBS) -o walktest
+
+walktestrun: walktest walkin walkok
+	./walktest
+	diff testout walkok
+
+tpltest: $(TESTOBJS)
+	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o tpltest
+
+tpltestrun: tpltest testin okout okerr
+	./tpltest
+	diff testout okout
+	diff testerr okerr
+
+tmcinstall: need.t tmcpp.ct tmcpp.ht cppwalk.t
+	-$(INSTALL) -d $(LOCALLIB)
+	cat macros.t need.t tmcpp.ct > tmp4242
+	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmcpp.ct
+	cat macros.t need.t tmcpp.ht > tmp4242
+	$(INSTALL_DATA) tmp4242 $(LOCALLIB)/tmcpp.ht
+	rm -f tmp4242
+	$(INSTALL_DATA) cppwalk.t $(LOCALLIB)/cppwalk.t
+
+install: tmcinstall
+
+clean:
+	rm -f $(JUNK) $(OBJS) $(TMOUT)
+
+distclean:
+	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
+
+empty:
+	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
+
+distfiles:
+	@echo $(DISTFILES) | tr ' ' '\012'
+
+distlist: $(DISTFILES)
+	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+
+depend: $(TMCTMHDRS) $(TMCTMSRCS)
+	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
+
+walktest.c: walktest.ct cltest.ds cppwalk.t
+	$(TM) cltest.ds walktest.ct > walktest.c
+
+cppcode.c: cppcode.ct tmcpp.ct spec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds cppcode.ct > cppcode.c
+
+cppcode.h: cppcode.ht tmcpp.ht spec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds cppcode.ht > cppcode.h
+
+stats:
+	wc -l $(TMMODULES)
+
+###
+cppcode.o: cppcode.h config.h
+tpltest.o: cppcode.h config.h
+walktest.o: cppcode.h config.h
