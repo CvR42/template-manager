@@ -11,7 +11,7 @@ testsub: variable not found: blablabla
  this is a message line
 testin: malformed number: 'a'
 testin: malformed number: 'a'
-testin: 'subtract' requires exactly two parameters
+testin: 'subtract' requires exactly two parameters: not 1
 testin: 'max' requires at least one parameter
 testin: 'min' requires at least one parameter
 testin: 'if' requires at least a condition expression
@@ -26,7 +26,7 @@ testin: empty padding string
 testin: 'tr': no new characters given
 testin: 'tr': no old characters given
 testin: 'tr': the strings of old and new characters must have the same length
-testin: 'isinenv' requires exactly one parameter
+testin: 'isinenv' requires exactly one parameter: not 0
 testin: no separator
 testin: no separator
 testin: bad expression
@@ -48,7 +48,7 @@ testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
-testin: 'matchmacro' requires exactly one parameter
+testin: 'matchmacro' requires exactly one parameter: not 0
 testin: bad regular expression: Unmatched '('
-testin: 'matchvar' requires exactly one parameter
+testin: 'matchvar' requires exactly one parameter: not 0
 errors detected, program aborted

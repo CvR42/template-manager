@@ -204,6 +204,7 @@ static tmstring fnsubtract( const tmstring_list sl )
     int a;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'subtract' requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -232,6 +233,7 @@ static tmstring fndiv( const tmstring_list sl )
     int a;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "division requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -247,6 +249,7 @@ static tmstring fnmod( const tmstring_list sl )
     int a;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "modulus requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -264,6 +267,7 @@ static tmstring fnless( const tmstring_list sl )
     bool b;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -279,6 +283,7 @@ static tmstring fnlesseq( const tmstring_list sl )
     bool b;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -294,6 +299,7 @@ static tmstring fngreater( const tmstring_list sl )
     bool b;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -309,6 +315,7 @@ static tmstring fngreatereq( const tmstring_list sl )
     bool b;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -324,6 +331,7 @@ static tmstring fneq( const tmstring_list sl )
     bool b;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -339,6 +347,7 @@ static tmstring fnneq( const tmstring_list sl )
     bool b;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -354,6 +363,7 @@ static tmstring fnstrcmp( const tmstring_list sl )
     int cmp;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -369,6 +379,7 @@ static tmstring fnstreq( const tmstring_list sl )
     int cmp;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -382,6 +393,7 @@ static tmstring fnstrneq( const tmstring_list sl )
     int cmp;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "comparison requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -408,6 +420,7 @@ static tmstring fnstrpad( const tmstring_list sl )
     tmstring bufp;
 
     if( sl->sz != 3 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'pad' requires exactly three parameters" );
 	return new_tmstring( "" );
     }
@@ -585,6 +598,7 @@ static tmstring fnstrindex( const tmstring_list sl )
     char *ixp;
 
     if( sl->sz != 2 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'strindex' requires exactly two parameters" );
 	return new_tmstring( "" );
     }
@@ -1524,6 +1538,7 @@ static tmstring fnisvirtual( const tmstring_list sl )
 	ans = is_virtual( allds, sl->arr[0] );
     }
     else {
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'isvirtual' requires exactly one parameter" );
     }
     return newboolstr( ans );
@@ -2570,6 +2585,7 @@ static tmstring fnmatchmacro( const tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz != 1 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'matchmacro' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
@@ -2596,6 +2612,7 @@ static tmstring fnmatchvar( const tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz != 1 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'matchvar' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
@@ -2735,6 +2752,7 @@ static tmstring fnisinenv( const tmstring_list sl )
     char *v;
 
     if( sl->sz != 1 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'isinenv' requires exactly one parameter" );
 	return new_tmstring( "0" );
     }
@@ -2748,6 +2766,7 @@ static tmstring fngetenv( const tmstring_list sl )
     const char *v;
 
     if( sl->sz != 1 ){
+	(void) sprintf( errarg, "not %u", sl->sz );
 	line_error( "'getenv' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
