@@ -73,11 +73,13 @@ Available separately are:
 - A small Miranda template (not tested for a long time).
 
 The kernel distribution has been compiled succesfully on many UNIX
-variants, including Linux. We believe it is highly portable. It has als
-been compiled with gcc (many versions), Borland C++ version 5.0 under
-Windows 95, and on an Atari ST using Pure C 1.1.
+variants, including Linux. We believe it is highly portable. It has
+been compiled with gcc, Borland C++ for Windows, MetroWerks CodeWarrior
+compiler for Windows, and Pure C for Atari ST (not all of them recently,
+though).
 
-All Tm-related software is licensed under the GPL or LGPL.
+All Tm-related software is licensed under the Gnu Public License (GPL), or
+the Library Gnu Public License (LGPL).
 
 For further information, see my Tm web site:
 <http://www.pds.twi.tudelft.nl/~reeuwijk/software/Tm>
@@ -86,3 +88,9 @@ Tm is used extensively in our Timber compiler, a static compiler for
 a superset of Java. The Timber compiler has its own website at
 
 <http://www.pds.twi.tudelft.nl/timber>
+
+To give an indication of how intensive Tm is used in the Timber compiler:
+the Spar/Java frontend of the compiler has 47433 lines of code in Tm input
+files, Yacc input files, and non-generated C source and header files. The
+final C source and header files (from Yacc, Tm, or not generated) have
+a total of 136681 lines of code.
