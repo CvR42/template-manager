@@ -213,7 +213,7 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 
 		    case SWS_DEFAULT:
 			if( deflt != tplelm_listNIL ){
-			    line_error( "second .deflt block ignored" );
+			    line_error( "second .default block ignored" );
 			    rfre_tplelm_list( block );
 			}
 			else {
