@@ -241,6 +241,7 @@ void collect_superclasses( tmstring_list *res, const ds_list types, const char *
 	const tmstring t = inherits->arr[ix];
 
 	if( !member_tmstring_list( t, *res ) ){
+	    collect_superclasses( res, types, t );
 	    *res = append_tmstring_list( *res, rdup_tmstring( t ) );
 	}
     }
