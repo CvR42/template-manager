@@ -6,7 +6,7 @@ AC_PREFIX_PROGRAM(gcc)
 
 dnl Checks for programs.
 AC_PROG_CXX
-if test "$GCC" = "yes"; then
+if test "$GXX" = "yes"; then
   CFLAGS="-O2  -Wall -W -Wtraditional -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
 fi
 AC_PROG_LN_S

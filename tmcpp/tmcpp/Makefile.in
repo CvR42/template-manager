@@ -24,7 +24,7 @@ DBUGFLAGS = -g -DLOGNEW -DSTAT
 LDFLAGS	= $(DBUGFLAGS)
 
 # C compilation flags
-CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I../libtmc -I$(LOCALINCLUDE)
+CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I../libtmcpp -I$(LOCALINCLUDE)
 
 # Some names of programs
 TM  = tm
@@ -44,7 +44,7 @@ JUNK = tmp core makelog testerr testout config.log \
 
 TESTFILES = \
     cltest.ds test.ds \
-    tmcokerr tmcokout testin tmcspec.t tmccode.ct tmccode.ht \
+    tmcokerr tmcokout testin tmcspec.t cppcode.ct cppcode.ht \
     walktest.ct walkin walkok
 
 FOREIGNFILES = makefile.tc config.htc config.hts
@@ -55,25 +55,23 @@ CONFIGUREFILES = configure config.hin Makefile.in configure.in
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
 
-TMMODULES     = tmcpp.ct tmcpp.ht \
-                need.t cppwalk.t \
-		macros.t tmcid.t
+TMMODULES = tmcpp.ct tmcpp.ht need.t cppwalk.t macros.t tmcid.t
 
-TMCTMHDRS      = tmccode.h
+TMCTMHDRS = cppcode.h
 
-TMCTMSRCS      = tmccode.c
+TMCTMSRCS = cppcode.c
 
-TESTSRCS   = tpltest.c tmccode.c
-TESTHDRS   = tmccode.h
-TESTOBJS   = tpltest.o tmccode.o
+TESTSRCS = tpltest.c cppcode.c
+TESTHDRS = cppcode.h
+TESTOBJS = tpltest.o cppcode.o
 
-WALKTESTSRCS = walktest.c tmccode.c
+WALKTESTSRCS = walktest.c cppcode.c
 WALKTESTOBJS = $(WALKTESTSRCS:.c=.o)
 
-OBJS = $(WALKTESTOBJS) tmccode.o tpltest.o
+OBJS = $(WALKTESTOBJS) cppcode.o tpltest.o
 
 # These sources are generated from tm templates.
-TMOUT = tmccode.c tmccode.h walktest.c
+TMOUT = cppcode.c cppcode.h walktest.c
 
 help :
 	@echo " Possible make targets:"
@@ -136,16 +134,16 @@ depend: $(TMCTMHDRS) $(TMCTMSRCS)
 walktest.c: walktest.ct cltest.ds cppwalk.t
 	$(TM) cltest.ds walktest.ct > walktest.c
 
-tmccode.c: tmccode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
-	$(TM) cltest.ds tmccode.ct > tmccode.c
+cppcode.c: cppcode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
+	$(TM) cltest.ds cppcode.ct > cppcode.c
 
-tmccode.h: tmccode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
-	$(TM) cltest.ds tmccode.ht > tmccode.h
+cppcode.h: cppcode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
+	$(TM) cltest.ds cppcode.ht > cppcode.h
 
 stats:
 	wc -l $(TMMODULES)
 
 ###
-tmccode.o: tmccode.h config.h
-tpltest.o: tmccode.h config.h
-walktest.o: tmccode.h config.h
+cppcode.o: cppcode.h config.h
+tpltest.o: cppcode.h config.h
+walktest.o: cppcode.h config.h
