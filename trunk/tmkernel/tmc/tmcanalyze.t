@@ -35,13 +35,18 @@
 .set explained 0
 .set ignores
 .set blocking
-.foreach t $(targets)
+.foreach t ${reach $(targets)}
 .if ${not ${defined analyze_action_$t}}
+.if ${member $t $(targets)}
 .error No action defined for type '$t'
 .if ${and ${not $(explained)} ${not ${len ${matchvar analyze_action_*}}}}
 .error To do this you must set variable analyze_action_$t
 .set explained 1
 .endif
+.endif
+.else
+.if $[${len $(analyze_action_$t)}==0]
+.error Action for type '$t' is empty
 .else
 .switch ${first $(analyze_action_$t)}
 .case ignore
@@ -59,6 +64,7 @@
 .if $[${len $(analyze_action_$t)}!=2]
 .error Action for type '$t' must be of the form 'function <functionname>'
 .endif
+.append blocking $t
 .case reduction
 .if $[${len $(analyze_action_$t)}>2]
 .error Action for type '$t' must be of the form 'reduction'
@@ -68,10 +74,9 @@
 .error Unknown action for type '$t': '${first $(analyze_action_$t)}'
 .endswitch
 .endif
+.endif
 .endforeach
 ..
-.. TODO: Optimize by filtering out types that have 'ignore' as action.
-.set res
 .set types ${reach $(starts) "" $(blocking)}
 .set bad ${excl $(targets) "" $(types)}
 .if ${len $(bad)}
@@ -84,11 +89,20 @@
 .endif
 ..
 .set actiontargets ${excl $(targets) "" $(ignores)}
+.set res
 .foreach t $(types)
-.if ${len ${comm $(actiontargets) "" ${reach $t}}}
+.if ${len ${comm $(actiontargets) "" ${reach $t "" $(blocking)}}}
 .append res $t
 .endif
 .endforeach
+.set bad ${excl ${matchmacro analyze_action_*} "" ${prefix analyze_action_ $(res)}}
+.if ${len $(bad)}
+.if $[${len $(bad)}==1]
+.error Warning: action for type '$(bad)' is not used.
+.else
+.error Warning: actions for these types are not used: $(bad)
+.endif
+.endif
 .return $(res)
 .endmacro
 ..
@@ -101,7 +115,7 @@
 .foreach t $(list)
 .set skip 0
 .if ${defined analyze_action_$t}
-.if ${member ${first $(analyze_action_$t)} constant ignore}
+.if ${member ${first $(analyze_action_$t)} constant function ignore}
 .set skip 1
 .endif
 .endif
@@ -123,13 +137,17 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .foreach t $(visit_types)
 .set skip 0
 .if ${defined analyze_action_$t}
-.if ${member ${first $(analyze_action_$t)} constant}
+.if ${member ${first $(analyze_action_$t)} constant function ignore}
 .set skip 1
 .endif
 .endif
 .if ${not $(skip)}
 .set empty 1
-/* Analyzer for ${metatype $t} $t. */
+.if ${defined analyze_action_$t}
+/* Analyzer for ${metatype $t} $t; action: $(analyze_action_$t) */
+.else
+/* Analyzer for ${metatype $t} $t; no action specified. */
+.endif
 static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e $t}
 {
     $(reduction_type) _res;
@@ -138,16 +156,14 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .endif
 .if ${defined analyze_action_$t}
 .set action "$(analyze_action_$t)"
-    /* Action: $(action) */
 .else
-    /* Action: (unspecified, using reduction) */
 .set action reduction
 .endif
 .switch ${metatype $t}
 .case alias
 .switch ${first $(action)}
 .case ignore
-    _res = $(neutral_element);
+    _res = $(neutral_element);	/* alias $t has action ignore */
 .case constant
     _res = ${shift $(action)};
 .case function
@@ -201,7 +217,18 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .else
     _res = $(neutral_element);
 .endif
-.if ${member $(elmtype) $(visit_types)}
+.set skip 0
+.if ${defined analyze_action_$(elmtype)}
+.if ${member ${first $(analyze_action_$(elmtype))} ignore}
+.set skip 1
+.endif
+.else
+.if ${not ${member $(elmtype) $(visit_types)}}
+.set skip 1
+.endif
+.endif
+.if $(skip)
+.else
     {
 	unsigned int ix;
 
@@ -240,8 +267,8 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .case constant
 	    _res = ${shift $(action)};
 .case function
-	    _res = ${shift $(action)}${call generate_actual_parameters _e $(tor) $t};
 .set empty 0
+	    _res = ${shift $(action)}${call generate_actual_parameters _e $(tor) $t};
 .case reduction
 	    _res = $(analysis_name)_$(tor)${call generate_actual_parameters _e $(tor) $t};
 .set empty 0
@@ -255,21 +282,30 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
         case TAG$t:
 .foreach f ${allfields $t}
 .set ft ${type $t $f}
-.if ${member $(ft) $(visit_types)}
 .if ${neq ${first $(analyze_action_$(ft))} ignore}
 .if ${defined analyze_action_$(ft)}
 .set field_action $(analyze_action_$(ft))
+	/* Action for field $f($(ft)): $(field_action) */
 .else
+.if ${member $(ft) $(visit_types)}
+	/* No action specified for field $f($(ft)): do reduction */
 .set field_action reduction
+	/* No action specified for field $f($(ft)): ignore it */
+.set field_action ignore
+.else
+.endif
 .endif
 .if ${eq ${first $(field_action)} constant}
 .set impl "${shift $(field_action)}"
 .else
+.if ${eq ${first $(field_action)} constant}
+.set impl "${shift $(field_action)}${call generate_actual_parameters _e->$f $(ft) $(ft)}"
+.else
 .set impl "$(analysis_name)_$(ft)${call generate_actual_parameters _e->$f $(ft) $(ft)}"
+.endif
 .endif
 	    _res = ${call generate_reduction_operation _res "$(impl)"};
 .set empty 0
-.endif
 .endif
 .endforeach
             break;
@@ -282,7 +318,7 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 
     }
 .else
-    /* No subclasses */
+    /* No subclasses for type $t */
 .if ${defined analyze_action_$t}
 .set action "$(analyze_action_$t)"
 .else
@@ -304,17 +340,27 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .endif
 .foreach f ${allfields $t}
 .set ft ${type $t $f}
-.if ${member $(ft) $(visit_types)}
-.if ${neq ${first $(analyze_action_$(ft))} ignore}
 .if ${defined analyze_action_$(ft)}
 .set field_action $(analyze_action_$(ft))
+    /* Action for field $f($(ft)): $(field_action) */
 .else
+.if ${member $(ft) $(visit_types)}
 .set field_action reduction
+    /* No action specified for field $f($(ft)): do reduction */
+.else
+.set field_action ignore
+    /* No action specified for field $f($(ft)): ignore it */
 .endif
+.endif
+.if ${neq ${first $(field_action)} ignore}
 .if ${eq ${first $(field_action)} constant}
 .set impl "${shift $(field_action)}"
 .else
+.if ${eq ${first $(field_action)} function}
+.set impl "${shift $(field_action)}${call generate_actual_parameters _e->$f $(ft) $(ft)}"
+.else
 .set impl "$(analysis_name)_$(ft)${call generate_actual_parameters _e->$f $(ft) $(ft)}"
+.endif
 .endif
 .if $(first)
     _res = $(impl);
@@ -324,8 +370,10 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .endif
 .set empty 0
 .endif
-.endif
 .endforeach
+.if $(first)
+    _res = $(neutral_element);
+.endif
 .endswitch
 .endif
 .case tuple
@@ -348,20 +396,26 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
     _res = ${shift $(action)};
 .set first 0
 .else
-    _res = $(neutral_element);
 .endif
 .foreach f ${allfields $t}
 .set ft ${type $t $f}
 .if ${member $(ft) $(visit_types)}
 .if ${defined analyze_action_$(ft)}
 .set field_action $(analyze_action_$(ft))
+    /* Action for tuple field $f($(ft)): $(field_action) */
 .else
 .set field_action reduction
+    /* No action tuple specified for field $f($(ft)) */
 .endif
+.if ${neq ${first $(field_action)} ignore}
 .if ${eq ${first $(field_action)} constant}
 .set impl "${shift $(field_action)}"
 .else
+.if ${eq ${first $(field_action)} function}
+.set impl "${shift $(field_action)}${call generate_actual_parameters _e->$f $(ft) $(ft)}"
+.else
 .set impl "$(analysis_name)_$(ft)${call generate_actual_parameters _e->$f $(ft) $(ft)}"
+.endif
 .endif
 .if $(first)
     _res = $(impl);
@@ -371,7 +425,11 @@ static $(reduction_type) $(analysis_name)_$t${call generate_formal_parameters _e
 .endif
 .set empty 0
 .endif
+.endif
 .endforeach
+.if $(first)
+    _res = $(neutral_element);
+.endif
 .endswitch
 .endswitch
 .if $(empty)
