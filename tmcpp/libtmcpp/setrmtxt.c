@@ -11,7 +11,7 @@
 void tmtext::reserve( const long rm )
 {
     if( rm>room ){
-	arr = TM_REALLOC( char *, arr, rm );
+	arr = (char *) tm_realloc( arr, rm );
 	room = rm;
     }
 }

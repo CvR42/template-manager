@@ -75,9 +75,7 @@ static void rfresunit_list( sunit e );
 
 static Sstack newSstack( sunit par_ulist )
 {
-    Sstack nw;
-
-    nw = TM_MALLOC( Sstack, sizeof( *nw ) );
+    Sstack nw = (Sstack) tm_malloc( sizeof( *nw ) );
     nw->next = SstackNIL;
     nw->ulist = par_ulist;
     return nw;
@@ -85,9 +83,7 @@ static Sstack newSstack( sunit par_ulist )
 
 static sunit newSuWord( tmstring par_word )
 {
-    SuWord nw;
-
-    nw = TM_MALLOC( SuWord, sizeof( *nw ) );
+    SuWord nw = (SuWord) tm_malloc( sizeof( *nw ) );
     nw->next = sunitNIL;
     nw->tag = TAGSuWord;
     nw->word = par_word;
@@ -96,9 +92,7 @@ static sunit newSuWord( tmstring par_word )
 
 static sunit newSuCons( sunit par_ulist )
 {
-    SuCons nw;
-
-    nw = TM_MALLOC( SuCons, sizeof( *nw ) );
+    SuCons nw = (SuCons) tm_malloc( sizeof( *nw ) );
     nw->next = sunitNIL;
     nw->tag = TAGSuCons;
     nw->ulist = par_ulist;
@@ -107,9 +101,7 @@ static sunit newSuCons( sunit par_ulist )
 
 static sunit newSuList( sunit par_ulist )
 {
-    SuList nw;
-
-    nw = TM_MALLOC( SuList, sizeof( *nw )  );
+    SuList nw = (SuList) tm_malloc( sizeof( *nw )  );
     nw->next = sunitNIL;
     nw->tag = TAGSuList;
     nw->ulist = par_ulist;
@@ -118,9 +110,7 @@ static sunit newSuList( sunit par_ulist )
 
 static sunit newSuTuple( sunit par_ulist )
 {
-    SuTuple nw;
-
-    nw = TM_MALLOC( SuTuple, sizeof( *nw ) );
+    SuTuple nw = (SuTuple) tm_malloc( sizeof( *nw ) );
     nw->next = sunitNIL;
     nw->tag = TAGSuTuple;
     nw->ulist = par_ulist;
@@ -131,11 +121,11 @@ static sunit newSuTuple( sunit par_ulist )
  *    Freeing routines                                             *
  *******************************************************************/
 
-#define freSstack(e) TM_FREE( e );
-#define freSuWord(e) TM_FREE( e );
-#define freSuCons(e) TM_FREE( e );
-#define freSuList(e) TM_FREE( e );
-#define freSuTuple(e) TM_FREE( e );
+#define freSstack(e) free( e );
+#define freSuWord(e) free( e );
+#define freSuCons(e) free( e );
+#define freSuList(e) free( e );
+#define freSuTuple(e) free( e );
 
 /*******************************************************************
  *    Recursive freeing routines                                   *
@@ -684,10 +674,10 @@ TmPrintState::TmPrintState(
 ): file(f), linebuf(0), istep(p_istep), width(p_width), tabwidth(p_tabwidth),
    flags(p_flags), braclev(0), curlist(sunitNIL), stack(SstackNIL)
 {
-    linebuf = TM_MALLOC( char *, (width+10)*sizeof( char ) );
+    linebuf = (char *) tm_malloc( (width+10)*sizeof( char ) );
 }
 
 TmPrintState::~TmPrintState()
 {
-    TM_FREE( linebuf );
+    free( linebuf );
 }

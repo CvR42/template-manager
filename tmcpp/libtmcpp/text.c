@@ -20,7 +20,7 @@ tmtext::tmtext( const long sz ): room(0), arr(0), curpos(0), sz(0)
 // Destructor
 tmtext::~tmtext()
 {
-    TM_FREE( arr );
+    free( arr );
     freecount++;
 }
 

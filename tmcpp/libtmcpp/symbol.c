@@ -18,7 +18,7 @@ static bool initdone = false;
 tmsymbol symtab[SYMHASHWIDTH];
 static int symtabcnt[SYMHASHWIDTH];
 
-/* initalize tmsymbol routines */
+// initalize tmsymbol routines
 static void init_tmsymbol( void )
 {
     for( int i=0; i<SYMHASHWIDTH; i++ ){
@@ -28,9 +28,8 @@ static void init_tmsymbol( void )
     initdone = true;
 }
 
-/* The hashing function:
-   Return a value in the range 0..SYMHASHWIDTH-1.
- */
+// The hashing function:
+// Return a value in the range 0..SYMHASHWIDTH-1.
 static unsigned int hash( const char *s )
 {
     unsigned int sum = 0;
@@ -43,21 +42,20 @@ static unsigned int hash( const char *s )
     return sum;
 }
 
-// Make a nw storage space for a tmsymbol.
+// Make a new storage space for a tmsymbol.
 static tmsymbol newtmsymbol( tmsymbol l, tmstring s )
 {
-    tmsymbol nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
+    tmsymbol nw = (tmsymbol) tm_malloc( sizeof( *nw )  );
     nw->next = l;
     nw->name = s;
     nw->data = (tm_neutralp) 0;
     return nw;
 }
 
-/* Try to locate string 'name' in the given list 'list'.
-
-   If the name occurs in the list, a pointer to the entry is returned,
-   else tmsymbolNIL is returned.
- */
+// Try to locate string 'name' in the given list 'list'.
+//
+// If the name occurs in the list, a pointer to the entry is returned,
+// else tmsymbolNIL is returned.
 static tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
 {
     while( list != tmsymbolNIL ){
@@ -137,8 +135,7 @@ tmsymbol gen_tmsymbol( const char *pre )
     if( !initdone ){
 	init_tmsymbol();
     }
-    tmstring name = new_tmstring( "" );
-    name = realloc_tmstring( name, strlen( pre ) + 30 );
+    tmstring name = create_tmstring( strlen( pre ) + 30 );
     unsigned long int gensymnum = 0;
     for(;;){
 	sprintf( name, "%s%lx", pre, gensymnum++ );
@@ -160,7 +157,7 @@ void flush_tmsymbol( void )
 	while( s != tmsymbolNIL ){
 	    tmsymbol n = s->next;
 	    fre_tmstring( (tmstring) s->name );
-	    TM_FREE( s );
+	    free( s );
 	    s = n;
 	}
 	symtab[i] = tmsymbolNIL;
