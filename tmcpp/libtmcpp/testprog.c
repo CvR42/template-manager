@@ -262,65 +262,65 @@ static void test_uchar( TmPrintState *st )
     st->closeConstructor();
 }
 
-/* test cmp_double() */
+// test compare(double,double)
 static void test_double( void )
 {
     int res;
     double a = 1.2e3;
 
-    res = cmp_double( (double) 1.0, (double) -1.0 );
+    res = compare( (double) 1.0, (double) -1.0 );
     if( res <= 0 ){
 	fprintf(
 	    stderr,
-	    "*** Error: cmp_double( (double) 1.0, (double) -1.0 ) = %d\n",
+	    "*** Error: compare( (double) 1.0, (double) -1.0 ) = %d\n",
 	    res
 	);
     }
-    res = cmp_double( (double) -42.0, (double) -1.0 );
+    res = compare( (double) -42.0, (double) -1.0 );
     if( res >= 0 ){
 	fprintf(
 	    stderr,
-	    "*** Error: cmp_double( (double) -42.0, (double) -1.0 ) = %d\n",
+	    "*** Error: compare( (double) -42.0, (double) -1.0 ) = %d\n",
 	    res
 	);
     }
-    res = cmp_double( a, a );
+    res = compare( a, a );
     if( res != 0 ){
 	fprintf(
 	    stderr,
-	    "*** Error: cmp_double( a , a ) = %d\n",
+	    "*** Error: compare( a , a ) = %d\n",
 	    res
 	);
     }
 }
 
-/* test cmp_float() */
+/* test compare(float,float) */
 static void test_float( void )
 {
     int res;
     float a = 1.2e3;
 
-    res = cmp_float( (float) 1.0, (float) -1.0 );
+    res = compare( (float) 1.0, (float) -1.0 );
     if( res <= 0 ){
 	fprintf(
 	    stderr,
-	    "*** Error: cmp_float( (float) 1.0, (float) -1.0 ) = %d\n",
+	    "*** Error: compare( (float) 1.0, (float) -1.0 ) = %d\n",
 	    res
 	);
     }
-    res = cmp_float( (float) -42.0, (float) -1.0 );
+    res = compare( (float) -42.0, (float) -1.0 );
     if( res >= 0 ){
 	fprintf(
 	    stderr,
-	    "*** Error: cmp_float( (float) -42.0, (float) -1.0 ) = %d\n",
+	    "*** Error: compare( (float) -42.0, (float) -1.0 ) = %d\n",
 	    res
 	);
     }
-    res = cmp_float( a, a );
+    res = compare( a, a );
     if( res != 0 ){
 	fprintf(
 	    stderr,
-	    "*** Error: cmp_float( a , a ) = %d\n",
+	    "*** Error: compare( a , a ) = %d\n",
 	    res
 	);
     }
@@ -427,7 +427,7 @@ static void test_tmtext( TmPrintState *st )
     }
     rfre_tmstring( s );
     t2 = t->clone();
-    if( cmp_tmtext( t, t2 ) != 0 ){
+    if( compare( *t, *t2 ) != 0 ){
 	bad( "tmtext::clone() failed" );
     }
     t->destroy();
@@ -534,6 +534,9 @@ static void test_tmtext( TmPrintState *st )
     t->replace( 1, 2, nw, 0, 1 );
     if( cmp_string_tmtext( ",aa, z, a, c, z, d, f, blabla", t ) != 0 ){
 	bad( "bad tmtext slice" );
+    }
+    if( strcmp( ",aa, z, a, c, z, d, f, blabla", t->c_str() ) != 0 ){
+	bad( "bad c_str() string" );
     }
     nw->destroy();
     t->destroy();

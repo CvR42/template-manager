@@ -4,30 +4,27 @@
  * All rights reserved.
  */
 
-/* File: cmpdbl.c */
+// File: cmptxt.c
 
 #include "config.h"
 #include "tmcpp.h"
 
-/* Compare two texts. */
-int cmp_tmtext( const tmtext *a, const tmtext *b )
+// Compare two texts.
+int compare( const tmtext &a, const tmtext &b )
 {
-    long sz;
-    long i;
-
-    sz = a->sz;
-    if( b->sz<sz ){
-	sz = b->sz;
+    long sz = a.size();
+    if( b.size()<sz ){
+	sz = b.size();
     }
-    for( i=0; i<sz; i++ ){
-	if( a->arr[i]!=b->arr[i] ){
-	    return (int) (a->arr[i]-b->arr[i]);
+    for( long i=0; i<sz; i++ ){
+	if( a.arr[i]!=b.arr[i] ){
+	    return (int) (a.arr[i]-b.arr[i]);
 	}
     }
-    if( a->sz == b->sz ){
+    if( a.size() == b.size() ){
 	return 0;
     }
-    if( a->sz<b->sz ){
+    if( a.size()<b.size() ){
 	return -1;
     }
     return 1;

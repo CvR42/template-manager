@@ -7,9 +7,8 @@
 #include "tmcpp.h"
 #include "config.h"
 
-/* Given a tmtext 't' return a tmstring .
- * This function assumes the tmtext contains no '\0'.
- */
+// Given a tmtext 't' return a tmstring .
+// This function assumes the tmtext contains no '\0'.
 tmstring tmtext_to_tmstring( const tmtext *t )
 {
 

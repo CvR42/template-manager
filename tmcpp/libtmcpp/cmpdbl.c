@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmcpp.h"
 
-int cmp_double( const double a, const double b )
+int compare( const double a, const double b )
 {
      if( a>b ){
 	 return 1;
