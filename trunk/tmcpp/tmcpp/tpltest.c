@@ -12,10 +12,10 @@
 
 #include "config.h"
 #include <stdio.h>
-#include <tmc.h>
+#include <tmcpp.h>
 #include <stdlib.h>
 
-#include "tmccode.h"
+#include "cppcode.h"
 
 int main( void )
 {

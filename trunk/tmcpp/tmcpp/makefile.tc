@@ -23,12 +23,12 @@
 #		both the 16 bits and the 32 bits version, you
 #		may want a name with '32' in it for one of them.
 # 
-LOCALBIN = c:\bin
-LOCALLIB=c:\lib
-LOCALINC=c:\include
+LOCALBIN=d:\bin
+LOCALLIB=d:\lib
+LOCALINC=d:\include
 CC = BCC32
 LINKER = $(CC)
-SYSCFLAGS = -wall -wstu -4 -O2 -DLOGNEW -DSTAT
+SYSCFLAGS = -P -wall -wstu -4 -O2 -DLOGNEW -DSTAT
 
 LDFLAGS	      = $(SYSCFLAGS)
 
@@ -38,9 +38,9 @@ CFLAGS = $(SYSCFLAGS) -I$(LOCALINC)
 # Some names of programs
 TM  = tm.exe
 
-TMCLIB = $(LOCALLIB)\tmc32.lib
+TMCPPLIB = $(LOCALLIB)\tmcpp32.lib
 
-LIBS = $(TMCLIB)
+LIBS = $(TMCPPLIB)
 
 MAKEFILE = Makefile
 
@@ -48,14 +48,8 @@ DOC	= README
 
 DEMOFILES =
 
-TMCTESTSRCS = tmctest.c tmccode.c
-TMCTESTOBJS = $(TMCTESTSRCS:.c=.obj)
-
-LLUTESTSRCS = llutest.c llucode.c
-LLUTESTOBJS = $(LLUTESTSRCS:.c=.obj)
-
-ALUTESTSRCS   = alutest.c alucode.c
-ALUTESTOBJS = $(ALUTESTSRCS:.c=.obj)
+TESTSRCS = tpltest.c cppcode.c
+TESTOBJS = $(TESTSRCS:.c=.obj)
 
 help :
 	@echo " Possible make targets:"
@@ -66,116 +60,51 @@ help :
 	@echo "test		Run tests."
 
 #
-all: llutest.exe alutest.exe tmctest.exe
+all: tpltest.exe
 
 # Add rules for the programs themselves here.
 
-test : llutestrun alutestrun tmctestrun
+test : tpltestrun
 
-tmctest.exe: $(TMCTESTOBJS)
-	$(LINKER) -etmctest $(LDFLAGS) $(TMCTESTOBJS) $(LIBS)
+tpltest.exe: $(TESTOBJS)
+	$(LINKER) -etpltest $(LDFLAGS) $(TESTOBJS) $(LIBS)
 
-tmctestrun: tmctest.exe tmctesti
-	tmctest.exe
+tpltestrun: tpltest.exe testin
+	tpltest.exe
 	diff testout tmcokout
 	diff testerr tmcokerr
 
-tmcinstall: need.t tmc.ct tmc.ht
-	copy /a macros.t+tmcid.t+need.t+tmc.ct $(LOCALLIB)\tmc.ct
-	copy /a macros.t+tmcid.t+need.t+tmc.ht $(LOCALLIB)\tmc.ht
+tmcinstall: need.t tmcpp.ct tmcpp.ht
+	copy /a macros.t+tmcid.t+need.t+tmcpp.ct $(LOCALLIB)\tmcpp.ct
+	copy /a macros.t+tmcid.t+need.t+tmcpp.ht $(LOCALLIB)\tmcpp.ht
 
-alutest.exe: $(ALUTESTOBJS)
-	$(LINKER) -ealutest $(LDFLAGS) $(ALUTESTOBJS) $(LIBS)
-
-alutestrun: alutest.exe alutesti
-	alutest.exe
-	diff testout aluokout
-	diff testerr aluokerr
-
-aluinstall: need.t calu.ct calu.ht
-	copy /a macros.t+aluid.t+need.t+calu.ct $(LOCALLIB)\calu.ct
-	copy /a macros.t+aluid.t+need.t+calu.ht $(LOCALLIB)\calu.ht
-
-llutest.exe: $(LLUTESTOBJS)
-	$(LINKER) -ellutest $(LDFLAGS) $(LLUTESTOBJS) $(LIBS)
-
-llutestrun: llutest.exe llutesti
-	llutest.exe
-	diff testout lluokout
-	diff testerr lluokerr
-
-lluinstall : need.t cllu.ct cllu.ht
-	copy /a macros.t+lluid.t+need.t+cllu.ct $(LOCALLIB)\cllu.ct
-	copy /a macros.t+lluid.t+need.t+cllu.ht $(LOCALLIB)\cllu.ht
-
-install: lluinstall aluinstall tmcinstall
+install: tmcinstall
 
 clean:
 	del *.obj
-	del alucode.c
-	del alucode.h
-	del alutest.c
-	del alutest.exe
-	del llucode.c
-	del llucode.h
-	del llutest.c
-	del llutest.exe
 	del testerr
 	del testout
-	del tmccode.c
-	del tmccode.h
-	del tmctest.exe
+	del cppcode.c
+	del cppcode.h
+	del tpltest.exe
 
 empty:
 	del *.obj
-	del alucode.c
-	del alucode.h
-	del alutest.c
-	del alutest.exe
-	del llucode.c
-	del llucode.h
-	del llutest.c
-	del llutest.exe
 	del testerr
 	del testout
-	del tmccode.c
-	del tmccode.h
-	del tmctest.exe
+	del cppcode.c
+	del cppcode.h
+	del tpltest.exe
 
-tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t
-	$(TM) cltest.ds tmccode.ct > tmccode.c
+cppcode.c: cppcode.ct tmcpp.ct tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds cppcode.ct > cppcode.c
 
-tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t
-	$(TM) cltest.ds tmccode.ht > tmccode.h
-
-alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t
-	$(TM) test.ds alucode.ct > alucode.c
-
-alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t
-	$(TM) test.ds alucode.ht > alucode.h
-
-llucode.c: llucode.ct cllu.ct lluspec.t test.ds need.t macros.t
-	$(TM) test.ds llucode.ct > llucode.c
-
-llucode.h: llucode.ht cllu.ht lluspec.t test.ds need.t macros.t
-	$(TM) test.ds llucode.ht > llucode.h
-
-tmctest.c: xxtest.c
-	sed -e s/XXX/tmc/ xxtest.c > tmctest.c
-
-alutest.c: xxtest.c
-	sed -e s/XXX/alu/ xxtest.c > alutest.c
-
-llutest.c: xxtest.c
-	sed -e s/XXX/llu/ xxtest.c > llutest.c
+cppcode.h: cppcode.ht tmcpp.ht tmcspec.t cltest.ds need.t macros.t
+	$(TM) cltest.ds cppcode.ht > cppcode.h
 
 .c.obj:
 	$(CC) -c $(CFLAGS) -o$* $<
 
 ###
-tmccode.obj: tmccode.h config.h
-tmctest.obj: tmccode.h config.h
-alucode.obj: alucode.h config.h
-alutest.obj: alucode.h config.h
-llucode.obj: llucode.h config.h
-llutest.obj: llucode.h config.h
+cppcode.obj: cppcode.h config.h
+tpltest.obj: cppcode.h config.h
