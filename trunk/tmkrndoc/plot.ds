@@ -11,3 +11,5 @@ scale = { title:tmstring } +
     LinScale: { from:num, to:num } |
     LogScale: { from:num, to:num }
     ;
+
+num -> int;
