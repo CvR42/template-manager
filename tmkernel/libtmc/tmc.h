@@ -72,7 +72,7 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 #define rfre_tmschar(c)
 #define fre_tmschar(c)
 #define rdup_tmschar(c) (c)
-#define cmp_tmschar(a,b) (a==b?0:(a<b?-1:1))
+#define cmp_tmschar(a,b) ((a)==(b)?0:((a)<(b)?-1:1))
 #define isequal_tmschar(a,b) (a==b)
 
 /* 'tmuchar' functions */
@@ -81,8 +81,8 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 #define rfre_tmuchar(c)
 #define fre_tmuchar(c)
 #define rdup_tmuchar(c) (c)
-#define cmp_tmuchar(a,b) (a==b?0:(a<b?-1:1))
-#define isequal_tmuchar(a,b) (a==b))
+#define cmp_tmuchar(a,b) ((a)==(b)?0:((a)<(b)?-1:1))
+#define isequal_tmuchar(a,b) ((a)==(b))
 
 /* 'tmsymbol' functions */
 #define tmsymbolNIL (tmsymbol)0
@@ -99,8 +99,9 @@ inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #define rdup_tmsymbol(s) (s)
 #define rfre_tmsymbol(s)
 #define fre_tmsymbol(s)
-#define cmp_tmsymbol(a,b) (((a)==(b):0?strcmp((a)->name,(b)->name)))
-#define isequal_tmsymbol(a,b) (a==b)
+/* #define cmp_tmsymbol(a,b) (((a)==(b)):0?strcmp((a)->name,(b)->name)) */
+#define cmp_tmsymbol(a,b) strcmp(a->name,b->name)
+#define isequal_tmsymbol(a,b) ((a)==(b))
 #define null_tmsymbol() tmsymbolNIL
 #endif
 
