@@ -21,6 +21,7 @@
 #include "lex.h"
 #include "misc.h"
 #include "dsparser.h"
+#include "checkds.h"
 #include "srchfile.h"
 
 lextok curr_token;
