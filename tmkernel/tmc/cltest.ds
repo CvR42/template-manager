@@ -35,7 +35,8 @@ expr =
     ;
 
 internalExpr = expr +
-    exprSubtract: { a:expr, b:expr }
+    exprSubtract: { a:expr, b:expr } |
+    exprFold: { x:foldexpr }
     ;
 
 smt = { line:int } +
@@ -44,3 +45,4 @@ smt = { line:int } +
 
 levellabel -> label;
 elsesmt -> smt;
+foldexpr -> expr;

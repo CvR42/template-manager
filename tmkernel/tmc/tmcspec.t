@@ -15,6 +15,7 @@
 .append wantdefs print_label
 .append wantdefs print_thing
 .append wantdefs print_expr
+.append wantdefs fscan_expr
 .append wantdefs rfre_label
 .append wantdefs rfre_thing
 .append wantdefs rfre_expr
