@@ -975,10 +975,6 @@ static tmstring fnstemname( const tmstring_list sl )
 static tmstring fnmklist( const tmstring_list sl )
 {
     tmstring ans;
-    tmstring buf;
-    size_t len;
-    size_t maxlen;
-    int cnt;
     int n;
     tmstring_list nl;
     unsigned int ix;
@@ -993,33 +989,19 @@ static tmstring fnmklist( const tmstring_list sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    buf = new_tmstring( "" );
     if( sl->sz<1 ){
 	line_error( "'mklist' requires at least one parameter" );
-	return buf;
+	return new_tmstring( "" );
     }
     cknumpar( sl->arr[0] );
     n = atoi( sl->arr[0] );
-    maxlen = 0;
-    for( ix=1; ix<sl->sz; ix++ ){
-	len = strlen( sl->arr[ix] );
-	if( len>maxlen ) maxlen = len;
-    }
-    len = 1 + n*( strlen( pre ) + strlen( suff ) ) + maxlen;
-    buf = realloc_tmstring( buf, len );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
-	for( cnt=0; cnt<n; cnt++ ){
-	    strcat( buf, pre );
-	}
-	strcat( buf, sl->arr[ix] );
-	for( cnt=0; cnt<n; cnt++ ){
-	    strcat( buf, suff );
-	}
-	nl = append_tmstring_list( nl, new_tmstring( buf ) );
-	buf[0] = '\0';
+	nl = append_tmstring_list(
+	    nl, 
+	    mklistnm( pre, sl->arr[ix], suff, n )
+	);
     }
-    fre_tmstring( buf );
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
     return ans;
@@ -1083,7 +1065,7 @@ static tmstring fnctypelist( const tmstring_list sl )
 }
 
 /* Construct a list of tuple types. */
-static tmstring fnttypelist( const tmstring_list sl )
+static tmstring fntuplelist( const tmstring_list sl )
 {
     ds d;
     tmstring ans;
@@ -1115,7 +1097,7 @@ static tmstring fnttypelist( const tmstring_list sl )
 }
 
 /* Construct a list of class types. */
-static tmstring fnclasstypelist( const tmstring_list sl )
+static tmstring fnclasslist( const tmstring_list sl )
 {
     ds d;
     tmstring vp;
@@ -1124,7 +1106,7 @@ static tmstring fnclasstypelist( const tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'classtypelist' does not need any parameters" );
+	line_error( "'classlist' does not need any parameters" );
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1226,6 +1208,44 @@ static tmstring fnisvirtual( const tmstring_list sl )
     return newboolstr( ans );
 }
 
+/* Given a type name, return the subclasses (transitive closure of inherits)
+ * of this type.
+ */
+static tmstring fnsubclasses( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list subclasses;
+
+    if( sl->sz != 1 ){
+	line_error( "'subclasses' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    subclasses = new_tmstring_list();
+    collect_subclasses( &subclasses, allds, sl->arr[0] );
+    ans = flatstrings( subclasses );
+    rfre_tmstring_list( subclasses );
+    return ans;
+}
+
+/* Given a type name, return the superclasses (transitive closure of inherits)
+ * of this type.
+ */
+static tmstring fnsuperclasses( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list superclasses;
+
+    if( sl->sz != 1 ){
+	line_error( "'superclasses' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    superclasses = new_tmstring_list();
+    collect_superclasses( &superclasses, allds, sl->arr[0] );
+    ans = flatstrings( superclasses );
+    rfre_tmstring_list( superclasses );
+    return ans;
+}
+
 /* Given a type name, return the inherits of this type.  */
 static tmstring fninherits( const tmstring_list sl )
 {
@@ -1245,6 +1265,25 @@ static tmstring fninherits( const tmstring_list sl )
 	}
 	ans = flatstrings( inherits );
     }
+    return ans;
+}
+
+/* Given a type name, return the inheritors (the types that inherit
+ * from this type).
+ */
+static tmstring fninheritors( const tmstring_list sl )
+{
+    tmstring ans;
+    tmstring_list inheritors;
+
+    if( sl->sz != 1 ){
+	line_error( "'inheritors' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    inheritors = new_tmstring_list();
+    collect_inheritors( &inheritors, allds, sl->arr[0] );
+    ans = flatstrings( inheritors );
+    rfre_tmstring_list( inheritors );
     return ans;
 }
 
@@ -1294,7 +1333,7 @@ static tmstring fnfields( const tmstring_list sl )
 /* Given a tuple type name and element name, return the
    type name of the given element.
  */
-static tmstring fnfieldtypename( const tmstring_list sl )
+static tmstring fntypename( const tmstring_list sl )
 {
     field e;
 
@@ -1316,7 +1355,7 @@ static tmstring fnfieldtypename( const tmstring_list sl )
 
    Possible type classes are: `single' and `list'.
  */
-static tmstring fnfieldtypeclass( const tmstring_list sl )
+static tmstring fnttypeclass( const tmstring_list sl )
 {
     field e;
 
@@ -1336,12 +1375,12 @@ static tmstring fnfieldtypeclass( const tmstring_list sl )
 /* Given a type name and element name, return the
    list level of the given element.
  */
-static tmstring fnfieldtypellev( const tmstring_list sl )
+static tmstring fntypelevel( const tmstring_list sl )
 {
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "'fieldtypellev' requires a type and an element name" );
+	line_error( "'typelevel' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_class_field( allds, sl->arr[0], sl->arr[1] );
@@ -1353,13 +1392,41 @@ static tmstring fnfieldtypellev( const tmstring_list sl )
     return newintstr( e->level );
 }
 
+/* Given a type name and element name, return the
+   type of the given element, constructed from its type name and list level.
+ */
+static tmstring fntype( const tmstring_list sl )
+{
+    field e;
+    char *pre;
+    char *suff;
+
+    if( sl->sz != 2 ){
+	line_error( "'type' requires a type and an element name" );
+	return new_tmstring( "" );
+    }
+    e = find_class_field( allds, sl->arr[0], sl->arr[1] );
+    if( e == fieldNIL ){
+	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
+	line_error( "field not found" );
+	return new_tmstring( "" );
+    }
+    pre = getvar( LISTPRE );
+    if( pre == CHARNIL ){
+	pre = "";
+    }
+    suff = getvar( LISTSUFF );
+    if( suff == CHARNIL ){
+	suff = "";
+    }
+    return mklistnm( pre, e->type, suff, e->level );
+}
+
 /* construct a list of constructors for given type */
 static tmstring fnconslist( const tmstring_list sl )
 {
     ds d;
     constructor_list cl;
-    constructor c;
-    tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1381,9 +1448,9 @@ static tmstring fnconslist( const tmstring_list sl )
     cl = d->DsCons.constructors;
     nl = new_tmstring_list();
     for( ix=0; ix<cl->sz; ix++ ){
-	c = cl->arr[ix];
-	vp = c->name;
-	nl = append_tmstring_list( nl, new_tmstring( vp ) );
+	constructor c = cl->arr[ix];
+
+	nl = append_tmstring_list( nl, new_tmstring( c->name ) );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -1397,8 +1464,6 @@ static tmstring fncelmlist( const tmstring_list sl )
     constructor_list cl;
     constructor c;
     field_list el;
-    field e;
-    tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1421,9 +1486,9 @@ static tmstring fncelmlist( const tmstring_list sl )
     el = c->fields;
     nl = new_tmstring_list();
     for( ix=0; ix<el->sz; ix++ ){
-	e = el->arr[ix];
-	vp = e->name;
-	nl = append_tmstring_list( nl, new_tmstring( vp ) );
+	field e = el->arr[ix];
+
+	nl = append_tmstring_list( nl, new_tmstring( e->name ) );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -1676,7 +1741,7 @@ static tmstring fndeptype( const tmstring_list sl )
 	    if( marked[ix] ){
 		bufin = rdup_tmstring( vp );
 		for( lev=1; lev<=levels[ix]; lev++ ){
-		    bufout = mklistnm( pre, bufin, suff );
+		    bufout = mklistnm( pre, bufin, suff, 1 );
 		    nl = append_tmstring_list( nl, bufin );
 		    bufin = bufout;
 		}
@@ -2011,7 +2076,7 @@ static struct fnentry fntab[] = {
      { "call", fncall },
      { "capitalize", fncapitalize },
      { "celmlist", fncelmlist },
-     { "classtypelist", fnclasstypelist },
+     { "classlist", fnclasslist },
      { "comm", fncomm },
      { "conslist", fnconslist },
      { "ctypeclass", fnctypeclass },
@@ -2025,21 +2090,19 @@ static struct fnentry fntab[] = {
      { "eq", fnstreq },
      { "eval", fneval },
      { "excl", fnexcl },
+     { "fields", fnfields },
      { "filt", fnfilt },
      { "first", fnfirst },
      { "getenv", fngetenv },
      { "if", fnif },
      { "index", fnindex },
+     { "inheritors", fninheritors },
      { "inherits", fninherits },
      { "isinenv", fnisinenv },
-     { "member", fnmember },
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
      { "max", fnmax },
-     { "fields", fnfields },
-     { "fieldtypeclass", fnfieldtypeclass },
-     { "fieldtypellev", fnfieldtypellev },
-     { "fieldtypename", fnfieldtypename },
+     { "member", fnmember },
      { "min", fnmin },
      { "mklist", fnmklist },
      { "neq", fnstrneq },
@@ -2058,18 +2121,24 @@ static struct fnentry fntab[] = {
      { "strindex", fnstrindex },
      { "strlen", fnstrlen },
      { "strpad", fnstrpad },
+     { "subclasses", fnsubclasses },
      { "subs", fnsubs },
      { "suffix", fnsuffix },
+     { "superclasses", fnsuperclasses },
      { "telmlist", fnfields },
      { "tolower", fntolower },
      { "toupper", fntoupper },
      { "tplfilename", fntplfilename },
      { "tpllineno", fntpllineno },
-     { "ttypeclass", fnfieldtypeclass },
-     { "ttypelist", fnttypelist },
-     { "ttypellev", fnfieldtypellev },
-     { "ttypename", fnfieldtypename },
+     { "ttypeclass", fnttypeclass },
+     { "ttypelist", fntuplelist },
+     { "ttypellev", fntypelevel },
+     { "ttypename", fntypename },
+     { "tuplelist", fntuplelist },
+     { "type", fntype },
+     { "typelevel", fntypelevel },
      { "typelist", fntypelist },
+     { "typename", fntypename },
      { "uniq", fnuniq },
      { "", fnplus }
 };

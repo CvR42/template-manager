@@ -33,7 +33,12 @@ static void update_class_info( tmstring nm, tmstring_list *inherits, field_list 
 static void yyerror( const char *s )
 {
     show_parse_context( stderr );
-    (void) sprintf( errpos, "%s(%d)", dsfilename, dslineno );
+    if( noerrorline ){
+	(void) sprintf( errpos, "%s", dsfilename );
+    }
+    else {
+	(void) sprintf( errpos, "%s(%d)", dsfilename, dslineno );
+    }
     error( s );
     fputc( '\n', stderr );
 }

@@ -1,101 +1,91 @@
-testin(19): variable not found: iserniet
-testin(20): missing close bracket: ')'
-testsub(12): variable not found: blablabla
-testsub(12): variable not found: blablabla
+testin: variable not found: iserniet
+testin: missing close bracket: ')'
+testsub: variable not found: blablabla
+testsub: variable not found: blablabla
 
  error message line
  this is a message line
-testin(118): malformed number: 'a'
-testin(119): malformed number: 'a'
-testin(129): 'subtract' requires exactly two parameters
-testin(133): 'max' requires at least one parameter
-testin(134): 'min' requires at least one parameter
-testin(149): 'if' requires at least a condition expression
-testin(154): 'index' requires at least one parameter
-testin(155): 'member' requires at least one parameter
-testin(205): not a constructor type: 'orig'
-testin(208): not a constructor type: 'orig'
-testin(205): not a constructor type: 'subtuple'
-testin(208): not a constructor type: 'subtuple'
-testin(216): 'fields' does not work on a constructor type: type `sublevel'
-testin(217): 'fields' does not work on a constructor type: type `sublevel'
-testin(205): not a constructor type: 'notuple'
-testin(208): not a constructor type: 'notuple'
-testin(216): 'fields' does not work on a constructor type: type `toplevel'
-testin(217): 'fields' does not work on a constructor type: type `toplevel'
-testin(216): 'fields' does not work on a constructor type: type `thing'
-testin(217): 'fields' does not work on a constructor type: type `thing'
-testin(205): not a constructor type: 'subclass'
-testin(208): not a constructor type: 'subclass'
-testin(205): not a constructor type: 'testclass'
-testin(208): not a constructor type: 'testclass'
-testin(223): 'mklist' requires at least one parameter
-testin(226): 'mklist' requires at least one parameter
-testin(229): 'mklist' requires at least one parameter
-testin(232): 'mklist' requires at least one parameter
-testin(234): 'inherits' requires exactly one parameter
-testin(234): unknown type: 'iserniet'
-testin(235): 'conslist' requires a type name
-testin(235): 'conslist' requires a type name
-testin(235): unknown type: notatype
-testin(236): 'fields' requires one or two parameters
-testin(236): 'fields' second parameter must be absent or `inherited'
-testin(236): unknown type: bla
-testin(236): unknown type: notatype
-testin(249): bad parameter: reutel
-testin(250): 'ctypellev' requires at least one parameter
-testin(205): not a constructor type: 'orig'
-testin(208): not a constructor type: 'orig'
-testin(205): not a constructor type: 'subtuple'
-testin(208): not a constructor type: 'subtuple'
-testin(216): 'fields' does not work on a constructor type: type `sublevel'
-testin(217): 'fields' does not work on a constructor type: type `sublevel'
-testin(205): not a constructor type: 'notuple'
-testin(208): not a constructor type: 'notuple'
-testin(216): 'fields' does not work on a constructor type: type `toplevel'
-testin(217): 'fields' does not work on a constructor type: type `toplevel'
-testin(216): 'fields' does not work on a constructor type: type `thing'
-testin(217): 'fields' does not work on a constructor type: type `thing'
-testin(205): not a constructor type: 'subclass'
-testin(208): not a constructor type: 'subclass'
-testin(205): not a constructor type: 'testclass'
-testin(208): not a constructor type: 'testclass'
-testin(223): 'mklist' requires at least one parameter
-testin(226): 'mklist' requires at least one parameter
-testin(229): 'mklist' requires at least one parameter
-testin(232): 'mklist' requires at least one parameter
-testin(234): 'inherits' requires exactly one parameter
-testin(234): unknown type: 'iserniet'
-testin(235): 'conslist' requires a type name
-testin(235): 'conslist' requires a type name
-testin(235): unknown type: notatype
-testin(236): 'fields' requires one or two parameters
-testin(236): 'fields' second parameter must be absent or `inherited'
-testin(236): unknown type: bla
-testin(236): unknown type: notatype
-testin(249): bad parameter: reutel
-testin(250): 'ctypellev' requires at least one parameter
-testin(259): empty padding string
-testin(271): 'isinenv' requires exactly one parameter
-testin(285): no separator
-testin(285): no separator
-testin(312): bad expression
-testin(312): bad expression
-testin(312): missing close bracket: ']'
-testin(313): bad expression
-testin(313): bad expression: a
-testin(366): no such macro: 'submacro'
-testin(367): wrong number of parameters: 1 instead of 2 (macro 'test')
-testin(368): wrong number of parameters: 3 instead of 2 (macro 'test')
-testin(369): no such macro: 'iserniet'
-testin(370): no macro name given
-testin(371): wrong number of parameters: 0 instead of 2 (macro 'test')
-testin(377): wrong number of parameters: 2 instead of 1 (macro 'tv')
-testin(377): no macro name given
-testin(377): wrong number of parameters: 0 instead of 1 (macro 'tv')
-testin(352): no output allowed in expression macro
-testin(349): no output allowed in expression macro
-testin(349): no output allowed in expression macro
-testin(349): no output allowed in expression macro
-testin(356): no output allowed in expression macro
+testin: malformed number: 'a'
+testin: malformed number: 'a'
+testin: 'subtract' requires exactly two parameters
+testin: 'max' requires at least one parameter
+testin: 'min' requires at least one parameter
+testin: 'if' requires at least a condition expression
+testin: 'index' requires at least one parameter
+testin: 'member' requires at least one parameter
+testin: 'mklist' requires at least one parameter
+testin: 'mklist' requires at least one parameter
+testin: 'mklist' requires at least one parameter
+testin: 'mklist' requires at least one parameter
+testin: 'inherits' requires exactly one parameter
+testin: unknown type: 'iserniet'
+testin: 'inheritors' requires exactly one parameter
+testin: 'superclasses' requires exactly one parameter
+testin: 'subclasses' requires exactly one parameter
+testin: 'conslist' requires a type name
+testin: 'conslist' requires a type name
+testin: unknown type: notatype
+testin: 'fields' requires one or two parameters
+testin: 'fields' second parameter must be absent or `inherited'
+testin: unknown type: bla
+testin: unknown type: notatype
+testin: not a constructor type: 'orig'
+testin: not a constructor type: 'orig'
+testin: not a constructor type: 'subtuple'
+testin: not a constructor type: 'subtuple'
+testin: 'fields' does not work on a constructor type: type `sublevel'
+testin: 'fields' does not work on a constructor type: type `sublevel'
+testin: not a constructor type: 'notuple'
+testin: not a constructor type: 'notuple'
+testin: 'fields' does not work on a constructor type: type `toplevel'
+testin: 'fields' does not work on a constructor type: type `toplevel'
+testin: 'fields' does not work on a constructor type: type `thing'
+testin: 'fields' does not work on a constructor type: type `thing'
+testin: not a constructor type: 'subclass'
+testin: not a constructor type: 'subclass'
+testin: not a constructor type: 'testclass'
+testin: not a constructor type: 'testclass'
+testin: bad parameter: reutel
+testin: 'ctypellev' requires at least one parameter
+testin: not a constructor type: 'orig'
+testin: not a constructor type: 'orig'
+testin: not a constructor type: 'subtuple'
+testin: not a constructor type: 'subtuple'
+testin: 'fields' does not work on a constructor type: type `sublevel'
+testin: 'fields' does not work on a constructor type: type `sublevel'
+testin: not a constructor type: 'notuple'
+testin: not a constructor type: 'notuple'
+testin: 'fields' does not work on a constructor type: type `toplevel'
+testin: 'fields' does not work on a constructor type: type `toplevel'
+testin: 'fields' does not work on a constructor type: type `thing'
+testin: 'fields' does not work on a constructor type: type `thing'
+testin: not a constructor type: 'subclass'
+testin: not a constructor type: 'subclass'
+testin: not a constructor type: 'testclass'
+testin: not a constructor type: 'testclass'
+testin: bad parameter: reutel
+testin: 'ctypellev' requires at least one parameter
+testin: empty padding string
+testin: 'isinenv' requires exactly one parameter
+testin: no separator
+testin: no separator
+testin: bad expression
+testin: bad expression
+testin: missing close bracket: ']'
+testin: bad expression
+testin: bad expression: a
+testin: no such macro: 'submacro'
+testin: wrong number of parameters: 1 instead of 2 (macro 'test')
+testin: wrong number of parameters: 3 instead of 2 (macro 'test')
+testin: no such macro: 'iserniet'
+testin: no macro name given
+testin: wrong number of parameters: 0 instead of 2 (macro 'test')
+testin: wrong number of parameters: 2 instead of 1 (macro 'tv')
+testin: no macro name given
+testin: wrong number of parameters: 0 instead of 1 (macro 'tv')
+testin: no output allowed in expression macro
+testin: no output allowed in expression macro
+testin: no output allowed in expression macro
+testin: no output allowed in expression macro
+testin: no output allowed in expression macro
 errors detected, program aborted
