@@ -4,9 +4,9 @@ get_balance_tmtext(): 0
 tmstring            :    357 allocated,    357 freed.
 tmtext              :     37 allocated,     37 freed.
 lognew: pending blocks:
-testprog.c(753) p=0x8073fa0
-testprog.c(757) p=0x8073fd0
-testprog.c(759) p=0x80744f8
+testprog.c(753)
+testprog.c(757)
+testprog.c(759)
 testlognew(0) id=8
 testlognew(49) id=50
 testprog.c(774): *** fatal error: test of 'tm_fatal'
