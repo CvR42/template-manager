@@ -1010,3 +1010,14 @@ Delete all alias types
 Before: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr number aliastype aliastype2
 After: orig Top Toptuple TopNone subtuple SubNamed subNamedlist sublevel SubNamedlistlist notuple toplevel thing Thing subclass testclass exprConst exprPlus exprOrig expr
 
+Test time formatting
+--------------------
+01/01/1970 00:00:01
+01/01/1970 00:00:10
+01/01/1970 00:16:40
+01/01/1970 02:46:40
+01/02/1970 03:46:40
+01/12/1970 13:46:40
+04/26/1970 17:46:40
+03/03/1973 09:46:40
+09/09/2001 01:46:40

@@ -517,3 +517,14 @@ Before: ${typelist}
 .deletetype ${aliases}
 After: ${typelist}
 
+Test time formatting
+--------------------
+${formattime 1 "%m/%d/%Y %H:%M:%S"}
+${formattime 10 "%m/%d/%Y %H:%M:%S"}
+${formattime 1000 "%m/%d/%Y %H:%M:%S"}
+${formattime 10000 "%m/%d/%Y %H:%M:%S"}
+${formattime 100000 "%m/%d/%Y %H:%M:%S"}
+${formattime 1000000 "%m/%d/%Y %H:%M:%S"}
+${formattime 10000000 "%m/%d/%Y %H:%M:%S"}
+${formattime 100000000 "%m/%d/%Y %H:%M:%S"}
+${formattime 1000000000 "%m/%d/%Y %H:%M:%S"}
