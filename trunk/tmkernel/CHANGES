@@ -1,6 +1,15 @@
-New in version 2.0.12 Fri May 23 22:31:32 CEST 2003
+New in version 2.1.0 Tue Feb 22 17:34:14 CET 2005
 
+- Some changes to the Tm macro language:
+  * Added a 'for' command in the Tm macro language.
+  * Changed the '-' and '/' operator in '$[]'
+    expressions to be left binding.  Thus, $[3-2-1] is now equivalent to
+    $[(3-2)-1]. This is more in line with standard mathematical practice.
+  * Division by zero in template expressions is now detected.
+- Fixed a bug in constructor/classname parsing in fscan_<type>
+  support function in libtmc.
 - cmp_tmsymbol() now uses strcmp instead of comparing pointers.
+- Even more bracketing in macros in headers.
 
 
 New in version 2.0.11
