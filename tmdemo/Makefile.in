@@ -20,9 +20,8 @@ PROGS = calcparse calcopt subst
 
 # Files that are listed in the demonstration appendix of the reference
 # manual.
-REFMANFILES = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l \
-    calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct oksubst.clc \
-    subst.c
+REFMANFILES = calc.ct calc.ds calc.ht calcconf.t calclex.l \
+    calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct oksubst.clc
 
 # Where should REFMANFILES be copied to.
 REFMANDIR = ../tmkrndoc

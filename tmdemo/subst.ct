@@ -75,10 +75,10 @@ static tmbool find_command( tmconststring nm, command_list l, unsigned int *pos 
     unsigned int ix;
 
     for( ix=0; ix<l->sz; ix++ ){
-	if( strcmp( l->arr[ix]->lhs, nm ) == 0 ){
-	    *pos = ix;
-	    return TMTRUE;
-	}
+        if( strcmp( l->arr[ix]->lhs, nm ) == 0 ){
+            *pos = ix;
+            return TMTRUE;
+        }
     }
     return TMFALSE;
 }
@@ -90,11 +90,11 @@ static expr subst_ExprSymbol_action( ExprSymbol s, command_list *lets )
 
 .call generate_walker_call "    " s ExprSymbol ExprSymbol
     if( find_command( s->s, *lets, &pos ) ){
-	rfre_expr( (expr) s );
-	res = rdup_expr( (*lets)->arr[pos]->rhs );
+        rfre_expr( (expr) s );
+        res = rdup_expr( (*lets)->arr[pos]->rhs );
     }
     else {
-	res = (expr) s;
+        res = (expr) s;
     }
     return res;
 }
@@ -108,7 +108,7 @@ static command subst_command_action( command c, command_list *lets )
 
 .call generate_walker_call "    " c command command
     if( find_command( c->lhs, *lets, &pos ) ){
-	*lets = delete_command_list( *lets, pos );
+        *lets = delete_command_list( *lets, pos );
     }
     *lets = append_command_list( *lets, rdup_command( c ) );
     return c;
@@ -126,8 +126,8 @@ int main( void )
 
     tm_lineno = 1;
     if( fscan_command_list( stdin, &sl ) ){
-	fprintf( stderr, "calcopt: %d: %s\n", tm_lineno, tm_errmsg );
-	exit( 1 );
+        fprintf( stderr, "calcopt: %d: %s\n", tm_lineno, tm_errmsg );
+        exit( 1 );
     }
     context = new_command_list();
 .call generate_descent_call "    " sl command_list command_list
@@ -136,8 +136,8 @@ int main( void )
     print_command_list( st, sl );
     level = tm_endprint( st );
     if( level != 0 ){
-	fprintf( stderr, "Internal error: bracket level = %d\n", level );
-	exit( 1 );
+        fprintf( stderr, "Internal error: bracket level = %d\n", level );
+        exit( 1 );
     }
     rfre_command_list( sl );
     if( get_balance_calc() != 0 || get_balance_tmstring() != 0 ){
