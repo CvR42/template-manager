@@ -1,4 +1,4 @@
-Subject: [ANN] Version 2.0.9 of Tm, a template preprocessor, avaiable
+Subject: [ANN] Version 2.0.9 of Tm, a template preprocessor, available
 Keywords: template, Tm, abstract syntax tree 
 
 
@@ -62,7 +62,7 @@ The Tm web site provides the Tm kernel distribution, consisting of:
 - All the sources for Tm itself (Tm is written in C)
 - A set of C templates that can generate code for general-purpose
   datastructure manipulation.
-- C templates for tree walking and and analysis.
+- C templates for tree walking and analysis.
 - The sources for a C support library for the templates above.
 
 Available separately are:
@@ -72,7 +72,7 @@ Available separately are:
 - A small Pascal template (not tested for a long time).
 - A small Miranda template (not tested for a long time).
 
-The kernel distribution has been compiled succesfully on many UNIX
+The kernel distribution has been compiled successfully on many UNIX
 variants, including Linux. We believe it is highly portable. It has
 been compiled with gcc, Borland C++ for Windows, MetroWerks CodeWarrior
 compiler for Windows, and Pure C for Atari ST (not all of them recently,
