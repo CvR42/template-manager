@@ -46,7 +46,6 @@ typedef enum en_tmcommands {
     EOFLINE,		/* special line: end of file */
     ERROR,
     EXIT,
-    EXPANDINHERITS,
     FOREACH,
     IF,
     INCLUDE,
@@ -81,7 +80,6 @@ static struct dotcom dotcomlist[] = {
     { "endwhile", ENDWHILE },
     { "error", ERROR },
     { "exit", EXIT },
-    { "expandinherits", EXPANDINHERITS },
     { "foreach", FOREACH },
     { "if", IF },
     { "include", INCLUDE },
@@ -227,11 +225,6 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			*endcom = cp->dotcomtag;
 			TM_FREE( inbuf );
 			return tel;
-			
-		    case EXPANDINHERITS:
-			te = new_ExpandInherits( tpllineno, new_tmstring( p ) );
-			tel = append_tplelm_list( tel, te );
-		        break;
 
 		    case IF:
 			firstlno = tpllineno;
@@ -642,22 +635,6 @@ static void doexit( const tplelm tpl )
     /* freeing is no use */
 }
 
-/* Handle 'expandinherits' command. */
-static void doexpandinherits( const tplelm tpl )
-{
-    char *is;
-    char *os;
-    tmstring_list sl;
-
-    tpllineno = tpl->ExpandInherits.lno;
-    is = tpl->ExpandInherits.types;
-    os = alevalto( &is, '\0' );
-    sl = chopstring( os );
-    expand_inherits( sl );
-    rfre_tmstring_list( sl );
-    rfre_tmstring( os );
-}
-
 /* Handle 'set' command. */
 static void doset( const tplelm tpl )
 {
@@ -926,10 +903,6 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 
 	    case TAGSet:
 		doset( e );
-		break;
-
-	    case TAGExpandInherits:
-		doexpandinherits( e );
 		break;
 
 	    case TAGReturn:

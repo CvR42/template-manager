@@ -49,7 +49,6 @@ tplelm ::=
     Append lno:int appline:tmstring |
     Error lno:int errstr:tmstring |
     Exit lno:int str:tmstring |
-    ExpandInherits lno:int types:tmstring |
     Redirect lno:int fname:tmstring body:[tplelm] |
     Include lno:int fname:tmstring |
     Macro lno:int formpar:tmstring macbody:[tplelm] |
