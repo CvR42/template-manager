@@ -24,7 +24,7 @@ static char escchar_buf[6];
  * The returned pointer points to a static buffer that is overwritten
  * upon the next invocation of the function.
  */
-const char *tm_escapestring( const unsigned int code )
+char *tm_escapestring( const unsigned int code )
 {
     char *p = escchar_buf;
     const unsigned int code1 = code & 0xff;

@@ -4,7 +4,7 @@ AC_INIT(tmc.h)
 dnl Checks for programs.
 AC_PROG_CC
 if test "$GCC" = "yes"; then
-  CFLAGS="-O6 -Wall -W -Wtraditional -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
+  CFLAGS="-O3 -Wall -W -Wtraditional -Wpointer-arith -Wbad-function-cast -Wcast-align -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wstrict-prototypes -ansi -pedantic"
 fi
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
