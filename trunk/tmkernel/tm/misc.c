@@ -138,14 +138,14 @@ bool member_tmstring_list( const tmstring s, const tmstring_list l )
     return FALSE;
 }
 
-field find_class_field_super( const ds_list types, tmstring_list supers, const char *nm )
+field find_field_super( const ds_list types, tmstring_list supers, const char *nm )
 {
     unsigned int ix;
 
     for( ix=0; ix<supers->sz; ix++ ){
 	field f;
 
-	f = find_class_field( types, supers->arr[ix], nm );
+	f = find_field( types, supers->arr[ix], nm );
 	if( f != fieldNIL ){
 	    return f;
 	}
@@ -153,7 +153,7 @@ field find_class_field_super( const ds_list types, tmstring_list supers, const c
     return fieldNIL;
 }
 
-field find_class_field( const ds_list types, const char *type, const char *nm )
+field find_field( const ds_list types, const char *type, const char *nm )
 {
     unsigned int pos;
     ds t;
@@ -188,7 +188,7 @@ field find_class_field( const ds_list types, const char *type, const char *nm )
 	    return fl->arr[pos];
 	}
     }
-    return find_class_field_super( types, inherits, nm );
+    return find_field_super( types, inherits, nm );
 }
 
 static const tmstring_list extract_inherits_type( const ds d )

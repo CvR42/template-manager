@@ -229,10 +229,15 @@ classlist: '${classlist}'
     isvirtual $t: '${isvirtual $t }'
 .foreach c ${conslist $t}
         celmlist: '${celmlist $t $c}'
+        fields $(mode): '${fields $c $(mode)}'
 .foreach e ${celmlist $t $c}
             ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
 	    ctypellev $t $c $e: ${ctypellev $t $c $e}
             ctypename $t $c $e: '${ctypename $t $c $e }'
+	    ttypeclass $c $e: '${ttypeclass $c $e }'
+	    typelevel $c $e: ${typelevel $c $e}
+	    typename $c $e: '${typename $c $e}'
+	    type $c $e: '${type $c $e}'
 .endforeach
 .endforeach
     fields $t $(mode): '${fields $t $(mode)}'

@@ -8,7 +8,7 @@
 # Compilation for Atari ST and MSDOS/MS-Windows is done with a
 # separately. See the file 'README' for details.
 
-VERSION=35
+VERSION=36
 
 MAKEFILE = Makefile
 DEPENDFILE = $(MAKEFILE).d
