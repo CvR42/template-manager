@@ -257,9 +257,7 @@ $(stic_$t)$t new_$t( $(tl) )
 .foreach t $(want_fre)
 .set stic_$t
 .endforeach
-.foreach t $(need_fre)
-.if ${isvirtual $t}
-.else
+.foreach t ${rev ${inheritsort $(need_fre)}}
 /* Free an element 'e' of ${metatype $t} type '$t'. */
 $(stic_$t)void fre_$t( $t e )
 {
@@ -308,7 +306,6 @@ $(stic_$t)void fre_$t( $t e )
 .endswitch
 }
 
-.endif
 .endforeach
 .foreach t $(need_fre_list)
 .set stic_$t "static "
@@ -503,7 +500,7 @@ $(stic_$t)void rfre_$t( $t e )
 	return;
     }
 .foreach e ${fields $t inherited}
-    rfre_${type $t $e}( $t( e )->$e );
+    rfre_${type $t $e}( e->$e );
 .endforeach
     fre_$t( e );
 .case constructor class constructorbase

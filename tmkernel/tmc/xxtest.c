@@ -31,7 +31,24 @@ int main( void )
     FILE *outfile;
     TMPRINTSTATE *st;
     int lev;
+    label lbl;
+    thing t;
 
+    lbl = new_label( 42 );
+    rfre_label( lbl );
+    t = new_Thing( 22 );
+    rfre_thing( t );
+#ifdef CODEtmc
+    {
+	expr x;
+
+	x = new_exprPlus(
+	    new_exprConst( 42 ),
+	    new_exprConst( 5 )
+	);
+	rfre_expr( x );
+    }
+#endif
     ds = new_toplevel_list();
     ds = setroom_toplevel_list( ds, 42 );
 #ifdef CODEald
