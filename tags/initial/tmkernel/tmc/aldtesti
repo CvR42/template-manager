@@ -1,0 +1,34 @@
+[
+    TopNone,
+    TopNone,
+    (
+	Top
+	([
+	    SubNamed -3 12,
+	    (
+		|| Some comment
+		SubNamedlist
+		42
+		|| Some comment
+		[
+		    Thing 42,
+		    Thing 122
+		    || Some comment
+		    ,
+		    Thing -1,
+		    Thing 12345
+		]
+		|| Some comment
+	    ),
+	    || Some comment
+	    SubNamedlist -5 []
+	])
+	[
+	    [
+		SubNamed 4 -144,
+		SubNamedlist 5 [Thing -1, Thing -1, Thing -1]
+	    ]
+	]
+    ),
+    (TopTuple (99, [Thing 5, Thing 9],22))
+]

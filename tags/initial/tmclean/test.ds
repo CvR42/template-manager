@@ -1,0 +1,15 @@
+|| datastructure to test Miranda functions.
+plot ::=
+    TestString s:STRING |
+    TestBool b:BOOL |
+    TestChar c:CHAR |
+    TestInt i:INT |
+    TestList l:[INT] |
+    TestListlist l2:[[INT]] |
+    TestTuple t:xypoint |
+    TestMult n1:INT n2:INT |
+    TestSub st:subtuple ;
+
+xypoint == (x:INT, y:INT);
+
+subtuple == (a:STRING, b:STRING, c:STRING);

@@ -1,0 +1,7 @@
+..File: demo.ht
+..Demonstration of use of standard C modules
+
+typedef int num;
+
+.insert democonf.t
+.include calu.ht
