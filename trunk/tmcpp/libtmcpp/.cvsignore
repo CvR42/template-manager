@@ -2,4 +2,7 @@ configure
 config.log
 config.cache
 config.status
+testout
+testerr
 Makefile
+testprog
