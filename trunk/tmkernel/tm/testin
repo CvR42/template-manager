@@ -378,7 +378,7 @@ tr: '${tr - " " string-list words [a---a]}'
 Miscellaneous functions:
 ----
 .set yes
-${defined yes} ${defined doesnotexist} ${defined}
+${defined yes} ${defined doesnotexist} ${defined} ${defined yes yes}
 isinenv: [${isinenv PATH}] [${isinenv NOT_LIKELY_ENVIRONMENT_VARIABLEX}] [${isinenv}]
 ----
 
@@ -502,6 +502,7 @@ gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
 .call testglobal
 gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
 matchmacro: '${matchmacro *}' '${matchmacro}' '${matchmacro (*}'
+definedmacro: '${definedmacro testglobal}' '${definedmacro iserniet}' '${definedmacro}' '${definedmacro testglobal testglobal}'
 matchvar: '${matchvar *}' '${matchvar}' '${matchvar *e*}'
 ----
 
