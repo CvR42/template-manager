@@ -6,7 +6,7 @@ MAKEFILE = Makefile
 # The Tm directories that may require compilation, testing or installation
 DIRLIST=tmpas pasdoc
 CONFIGUREFILES = Makefile.in configure configure.ac install-sh
-DISTFILES = $(CONFIGUREFILES) README CHANGES gpl.txt .cvsignore autoconfall
+DISTFILES = $(CONFIGUREFILES) README CHANGES .cvsignore autoconfall
 JUNK = distlist
 
 help:
