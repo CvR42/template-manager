@@ -440,34 +440,36 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
  */
 $(stic_$t)$t_list insertlist_$t_list( $t_list la, unsigned int pos, $t_list lb )
 {
-    const unsigned int szb = lb->sz;
 
-    if( la == $t_listNIL || lb == $t_listNIL ){
+    if( la == $t_listNIL ){
 	FATAL( tm_nilptr );
     }
-    la = setroom_$t_list( la, la->sz+szb );
-    if( pos>la->sz ){
-	pos = la->sz;
-    }
-    /* Move up elements */
-    {
-	$t *arr = la->arr;
+    if( lb != $t_listNIL && lb->sz != 0 ){
+	const unsigned int szb = lb->sz;
 	unsigned int ix;
+	$t *arr;
 
+	la = setroom_$t_list( la, la->sz+szb );
+	if( pos>la->sz ){
+	    pos = la->sz;
+	}
+
+	/* Move up elements */
+	arr = la->arr;
 	for( ix=la->sz+szb-1; ix>pos; ix-- ){
 	    arr[ix] = arr[ix-szb];
 	}
-    }
-    la->sz += szb;
-    /* Copy in elements from 'lb' */
-    {
-	unsigned int cnt = szb;
-	$t *sp = lb->arr;
-	$t *dp = &la->arr[pos];
+	la->sz += szb;
+	/* Copy in elements from 'lb' */
+	{
+	    unsigned int cnt = szb;
+	    $t *sp = lb->arr;
+	    $t *dp = &la->arr[pos];
 
-	while( cnt!=0 ){
-	    *dp++ = *sp++;
-	    cnt--;
+	    while( cnt!=0 ){
+		*dp++ = *sp++;
+		cnt--;
+	    }
 	}
     }
     fre_$t_list( lb );
