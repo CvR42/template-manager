@@ -61,6 +61,7 @@ LIBSRCS	 = \
                 errmsg.c \
                 escstr.c \
                 fatal.c \
+                badcast.c \
                 fneedc.c \
                 fprdbl.c \
                 fprint.c \
@@ -247,6 +248,7 @@ cmpdbl.o: tmc.h config.h
 errmsg.o: tmc.h config.h
 escstr.o: tmc.h config.h
 fatal.o: tmc.h config.h
+badcast.o: tmc.h config.h
 fneedc.o: tmc.h config.h
 fprdbl.o: tmc.h config.h
 fprint.o: tmc.h config.h

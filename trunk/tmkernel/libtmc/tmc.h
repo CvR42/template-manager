@@ -421,12 +421,13 @@ extern int tm_fscanclosebrac( FILE *f, const int n );
 extern int tm_fneedc( FILE *f, int c );
 extern int tm_fscancons( FILE *f, char *s, const int sz );
 extern int tm_fscanspace( FILE *f );
-extern const char *tm_escapestring( const unsigned int code );
+extern char *tm_escapestring( const unsigned int code );
 extern int tm_fscanescapedchar( FILE *f, int *code );
 
 extern void tm_fatal( const char *file, const int line, const char *s );
 extern void tm_badtag( const char *file, const int line, const int tag );
 extern void tm_noroom( void );
+extern tm_neutralp tm_badcast( const char *file, const int line );
 
 /* Storage for a tmsymbol string */
 struct _tmc_sym {
