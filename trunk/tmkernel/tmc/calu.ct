@@ -197,7 +197,7 @@ $(stic_$t)${inherits $t} new_$t( $(tl) )
 {
     ${inherits $t} nw;
 
-    nw = TM_MALLOC( $t, sizeof(*nw) );
+    nw = TM_MALLOC( ${inherits $t}, sizeof(*nw) );
     nw->tag = TAG$t;
 .foreach e ${fields $t inherited}
     to_$t(nw)->$e = p_$e;

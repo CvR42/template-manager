@@ -11,7 +11,7 @@
 # makefile. See the file 'README' for details.
  
 CC = @CC@
-LINKER = @CC@
+LINKER = $(CC)
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 LOCALBIN = @prefix@/bin
@@ -29,7 +29,6 @@ CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
 
 # Some names of programs
 TM  = ../tm/tm
-LINKER = @CC@
 
 #TMCLIB = $(LOCALLIB)/libtmc.a
 TMCLIB = ../libtmc/libtmc.a

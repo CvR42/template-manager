@@ -125,7 +125,7 @@ $(stat)${inherits $t} new_$t( $(tl) )
 {
     ${inherits $t} nw;
 
-    nw = TM_MALLOC( $t, sizeof(*nw) );
+    nw = TM_MALLOC( ${inherits $t}, sizeof(*nw) );
 .. Zero all 'next' pointers for all necessary list levels
 .set links ${filt $t(*) next\1 $(need_ds_list)}
 .foreach link $(links)
