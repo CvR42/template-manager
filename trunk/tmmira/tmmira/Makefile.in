@@ -43,6 +43,9 @@ install: miraneed.t mira.mt
 empty:
 	rm -f $(JUNK) config.cache config.log config.status
 
+distclean:
+	rm -f $(JUNK) config.cache config.log config.status
+
 clean:
 	rm -f $(JUNK)
 
