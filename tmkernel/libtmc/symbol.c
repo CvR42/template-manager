@@ -35,9 +35,8 @@ static void init_tmsymbol( void )
  */
 static unsigned int hash( const char *s )
 {
-    unsigned int sum;
+    unsigned int sum = 0;
 
-    sum = 0;
     while( *s != '\0' ){
 	sum = (5*sum)+(*s++);
 	while( sum>=SYMHASHWIDTH ){
@@ -50,9 +49,8 @@ static unsigned int hash( const char *s )
 /* Make a new storage space for a tmsymbol. */
 static tmsymbol newtmsymbol( tmsymbol l, tmstring s )
 {
-    tmsymbol nw;
+    tmsymbol nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
 
-    nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
     nw->next = l;
     nw->name = s;
     nw->data = (tm_neutralp) 0;
