@@ -193,7 +193,7 @@ public:
     virtual inline bool empty() const { return sz == 0; }
 
     virtual void reserve( const size_type rm );
-    virtual inline void resize( size_type new_sz ) { reserve( new_sz ); sz = new_sz; }
+    virtual inline void resize( size_type new_sz ) { $t_list::reserve( new_sz ); sz = new_sz; }
 
     virtual inline iterator begin() { return arr; }
     virtual inline iterator end() { return arr+sz; }
