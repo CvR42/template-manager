@@ -454,7 +454,7 @@ $(stic_$t)$t_list insertlist_$t_list( $t_list la, unsigned int pos, $t_list lb )
 
 	/* Move up elements */
 	arr = la->arr;
-	for( ix=la->sz+szb-1; ix>pos; ix-- ){
+	for( ix=la->sz+szb-1; ix>=(pos+szb); ix-- ){
 	    arr[ix] = arr[ix-szb];
 	}
 	la->sz += szb;
