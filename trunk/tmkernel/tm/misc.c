@@ -279,10 +279,12 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
 	case TAGDsConstructorBase:
 	    return;
     }
-    for( ix=0; ix<el->sz; ix++ ){
-	field e = el->arr[ix];
+    if( el != field_listNIL ){
+	for( ix=0; ix<el->sz; ix++ ){
+	    const field e = el->arr[ix];
 
-	*fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
+	    *fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
+	}
     }
 }
 

@@ -187,10 +187,12 @@ $(DEPENDFILE):
 	touch $(DEPENDFILE)
 
 -include $(DEPENDFILE)
+checkds.o: checkds.c config.h tmdefs.h error.h tmcode.h misc.h \
+ checkds.h
 refex.o: refex.c config.h tmdefs.h refex.h
 tm.o: tm.c config.h tmdefs.h flag.h tmcode.h tmstring.h error.h fn.h \
  lex.h dsparser.h misc.h tmtrans.h var.h global.h tmpath.h srchfile.h \
- version.h
+ version.h checkds.h
 flag.o: flag.c config.h tmdefs.h flag.h
 error.o: error.c config.h tmdefs.h tmcode.h tmstring.h global.h \
  error.h
@@ -200,16 +202,17 @@ fn.o: fn.c config.h tmdefs.h refex.h tmcode.h tmstring.h error.h fn.h \
  global.h tmtrans.h misc.h var.h srchfile.h
 global.o: global.c config.h tmdefs.h tmcode.h tmstring.h global.h
 dsparser.o: dsparser.c config.h tmdefs.h tmcode.h tmstring.h error.h \
- global.h lex.h misc.h dsparser.h srchfile.h
+ global.h lex.h misc.h dsparser.h checkds.h srchfile.h
 lex.o: lex.c config.h tmdefs.h tmcode.h tmstring.h error.h global.h \
  lex.h misc.h
 misc.o: misc.c config.h tmdefs.h tmcode.h misc.h error.h
 tmstring.o: tmstring.c config.h tmdefs.h tmcode.h tmstring.h misc.h \
  error.h
 tmtrans.o: tmtrans.c config.h tmdefs.h tmcode.h tmstring.h fn.h \
- tmexpr.h error.h global.h tmpath.h misc.h tmtrans.h var.h srchfile.h
+ tmexpr.h error.h global.h tmpath.h misc.h tmtrans.h var.h srchfile.h \
+ checkds.h
 var.o: var.c config.h tmdefs.h tmcode.h tmstring.h misc.h error.h \
- var.h global.h
+ var.h global.h refex.h
 srchfile.o: srchfile.c config.h tmdefs.h tmcode.h srchfile.h
 tmcode.o: tmcode.c config.h tmdefs.h tmcode.h tmstring.h global.h \
  misc.h

@@ -509,8 +509,31 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
     else {
 	yyerror( "')' expected" );
     }
-    cktuple( nm, body, inherits );
-    *tp = (ds) new_DsTuple( nm, inherits, body );
+    if( cktuple( nm, body, inherits ) ){
+	*tp = (ds) new_DsTuple( nm, inherits, body );
+    }
+    else {
+	rfre_tmstring( nm );
+	rfre_field_list( body );
+	rfre_tmstring_list( inherits );
+    }
+    return TRUE;
+}
+
+/* Given a type name 'nm', try to parse a alias definition. Return
+ * TRUE if you have a valid alias.
+ */
+static bool parse_alias_type( tmstring nm, ds *tp )
+{
+    tmstring_list inherits;
+
+    if( curr_token != NAME ){
+	yyerror( "name expected" );
+	return FALSE;
+    }
+    inherits = new_tmstring_list();
+    *tp = (ds) new_DsAlias( nm, inherits, yylval.parstring );
+    next_token();
     return TRUE;
 }
 
@@ -793,6 +816,19 @@ static bool parse_ds( ds_list *dl )
 	    ok = parse_constructor_type( nm, &nw );
 	    if( ok ){
 		*dl = nw;
+	    }
+	    break;
+	}
+
+	case ARROW:
+	{
+	    ds nw;
+
+	    next_token();
+	    ok = parse_alias_type( nm, &nw );
+	    if( ok ){
+		*dl = new_ds_list();
+		*dl = append_ds_list( *dl, nw );
 	    }
 	    break;
 	}
