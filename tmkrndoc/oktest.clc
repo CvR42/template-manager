@@ -1,0 +1,20 @@
+[
+ (
+  statement
+  "a"
+  (ExprPlus (ExprConst 1) (ExprTimes (ExprConst 2) (ExprConst 3)))
+ ),
+ (statement "b" (ExprPlus (ExprConst 1) (ExprNegate (ExprConst 2)))),
+ (statement "c" (ExprPlus (ExprNegate (ExprConst 1)) (ExprConst 2))),
+ (statement "d" (ExprNegate (ExprPlus (ExprConst 1) (ExprConst 2)))),
+ (
+  statement
+  "e"
+  (ExprPlus (ExprPlus (ExprSymbol "c") (ExprConst 3)) (ExprConst 4))
+ ),
+ (
+  statement
+  "f"
+  (ExprPlus (ExprSymbol "c") (ExprPlus (ExprConst 3) (ExprConst 4)))
+ )
+]
