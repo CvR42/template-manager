@@ -27,3 +27,5 @@ extern void collect_inheritors( tmstring_list *res, const ds_list types, const t
 void collect_all_fields( tmstring_list *fields, const ds_list types, const char *type );
 void collect_inherited_fields( tmstring_list *fields, const ds_list types, const char *type );
 void collect_fields( tmstring_list *fields, const ds_list types, const char *type );
+
+bool check_double_strings( const char *msg, const tmstring_list l );

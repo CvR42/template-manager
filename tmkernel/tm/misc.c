@@ -360,3 +360,27 @@ void collect_inherited_fields( tmstring_list *fields, const ds_list types, const
 	collect_all_fields( fields, types, inherits->arr[ix] );
     }
 }
+
+/* Given a description 'desc' and a list of tmstrings 'l', check
+ * that the given list of tmstrings does not contain duplicate entries.
+ */
+bool check_double_strings( const char *msg, const tmstring_list l )
+{
+    unsigned int ixa;
+    unsigned int ixb;
+    bool ok = TRUE;
+
+    for( ixa=0; ixa<l->sz; ixa++ ){
+	tmstring sa = l->arr[ixa];
+
+	for( ixb=ixa+1; ixb<l->sz; ixb++ ){
+	    tmstring sb = l->arr[ixb];
+	    if( strcmp( sa, sb ) == 0 ){
+		sprintf( errarg, "'%s'", sa );
+		error( msg );
+		ok = FALSE;
+	    }
+	}
+    }
+    return ok;
+}
