@@ -1,14 +1,10 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
+/* File: $Id$ */
 
 #include "config.h"
 #include "tmc.h"
 
 /* Allocate the given amount of memory and check if
-   it has been done. If not, complain, and stop.
+ * it has been done. If not, complain, and stop.
  */
 tm_neutralp tm_calloc( size_t n, size_t sz )
 {

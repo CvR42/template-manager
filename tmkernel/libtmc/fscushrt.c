@@ -1,7 +1,5 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
+/* File: $Id$
  *
- * All rights reserved.
  */
 
 #include "config.h"

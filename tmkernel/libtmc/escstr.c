@@ -1,14 +1,12 @@
-/* Tm - an interface code generator.
+/* File: $Id$
+ *
+ * Tm - an interface code generator.
  * Author: C. van Reeuwijk.
  *
  * All rights reserved.
  */
 
-/* File: escstr.c
- * Last modified: CvR
- *
- * Convert a character to an escape sequence suitable for use in a string.
- */
+/* Convert a character to an escape sequence suitable for use in a string.  */
 
 /* The header of this library */
 #include "config.h"

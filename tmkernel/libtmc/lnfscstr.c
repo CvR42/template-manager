@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: fscstr.c
+/* File: $Id$
  * 
  * Handle 'fscan_<type>' for type 'tmstring'.
  * Version for use with lognew.
@@ -15,9 +9,9 @@
 #include "tmc.h"
 
 /* Try to read a tmstring in the buffer 'buf'. Give an error
-   message if this is not successful. A tmstring may contain
-   escape sequences with a '\', but no newlines. The '"'
-   around the tmstring are stripped.
+ * message if this is not successful. A tmstring may contain
+ * escape sequences with a '\', but no newlines. The '"'
+ * around the tmstring are stripped.
  */
 int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int line )
 {

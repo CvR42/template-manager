@@ -1,11 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* File: fsccbrac.c
- * Last modified: CvR
+/* File: $Id$
  *
  * Handling of close brackets around constructors and lists.
  */

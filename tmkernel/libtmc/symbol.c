@@ -1,6 +1,6 @@
-/* File: tmsymbol.c
-
-   Symbol table manager.
+/* File: $Id$
+ *
+ * Symbol table manager.
  */
 
 #include "config.h"
@@ -10,9 +10,9 @@ static tmbool gensymworking = TMFALSE;
 static tmbool initdone = TMFALSE;
 
 /* This is the table of symbol strings. Each used symbol string should
-   occur here exactly once, so that a compare on equal names is
-   simplified to comparing the pointers to the strings. This is
-   ensured by the routines 'add_tmsymbol()' and 'gen_tmsymbol()'.
+ * occur here exactly once, so that a compare on equal names is
+ * simplified to comparing the pointers to the strings. This is
+ * ensured by the routines 'add_tmsymbol()' and 'gen_tmsymbol()'.
  */
 static tmsymbol symtab[SYMHASHWIDTH];
 
@@ -22,7 +22,7 @@ static tmsymbol symtab[SYMHASHWIDTH];
  */
 static int gencount[SYMHASHWIDTH];
 
-/* initalize tmsymbol routines */
+/* Initalize tmsymbol routines. */
 static void init_tmsymbol( void )
 {
     int i;
@@ -35,7 +35,7 @@ static void init_tmsymbol( void )
 }
 
 /* The hashing function:
-   Return a value in the range 0..SYMHASHWIDTH-1.
+ * Return a value in the range 0..SYMHASHWIDTH-1.
  */
 static unsigned int hash( const char *s )
 {
@@ -178,6 +178,9 @@ void flush_tmsymbol( void )
 	while( s != tmsymbolNIL ){
 	    tmsymbol n = s->next;
 
+	    /* The cast breaks the `const' declaration of the name, but is
+	     * necessary to delete the string.
+	     */
 	    fre_tmstring_nolognew( (tmstring) s->name );
 	    TM_FREE( s );
 	    s = n;

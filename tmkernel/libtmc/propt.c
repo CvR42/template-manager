@@ -1,10 +1,4 @@
-/* Tm - an interface code generator.
- * Author: C. van Reeuwijk.
- *
- * All rights reserved.
- */
-
-/* file: propt.c
+/* File: $Id$
  *
  * Handler for optimized printing of datastructures.
  *

@@ -13,8 +13,8 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 typedef unsigned int tmuint;
 typedef unsigned long tmulong;
 
