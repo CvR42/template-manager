@@ -1086,7 +1086,6 @@ static tmstring fnctypelist( const tmstring_list sl )
 static tmstring fnttypelist( const tmstring_list sl )
 {
     ds d;
-    tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1099,8 +1098,7 @@ static tmstring fnttypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		vp = d->DsTuple.name;
-		nl = append_tmstring_list( nl, new_tmstring( vp ) );
+		nl = append_tmstring_list( nl, new_tmstring( d->DsClass.name ) );
 		break;
 
 	    case TAGDsCons:
@@ -1251,7 +1249,7 @@ static tmstring fninherits( const tmstring_list sl )
 }
 
 /* Construct a list of fields for the given type.  */
-static tmstring fnmemberlist( const tmstring_list sl )
+static tmstring fnfields( const tmstring_list sl )
 {
     ds d;
     tmstring ans;
@@ -1260,7 +1258,7 @@ static tmstring fnmemberlist( const tmstring_list sl )
 
     inherited = FALSE;
     if( sl->sz != 1 && sl->sz != 2 ){
-	line_error( "'memberlist' requires one or two parameters" );
+	line_error( "'fields' requires one or two parameters" );
 	return new_tmstring( "" );
     }
     if( sl->sz == 2 ){
@@ -1268,7 +1266,7 @@ static tmstring fnmemberlist( const tmstring_list sl )
 	    inherited = TRUE;
 	}
 	else {
-	    line_error( "'memberlist' second parameter must be absent or `inherited'" );
+	    line_error( "'fields' second parameter must be absent or `inherited'" );
 	}
     }
     d = findtype( allds, sl->arr[0] );
@@ -1278,7 +1276,7 @@ static tmstring fnmemberlist( const tmstring_list sl )
     }
     if( d->tag == TAGDsCons ){
 	sprintf( errarg, "type `%s'", sl->arr[0] );
-	line_error( "'memberlist' does not work on a constructor type" );
+	line_error( "'fields' does not work on a constructor type" );
 	/* Fall through, since nothing chokes on a constructor type. */
     }
     nl = new_tmstring_list();
@@ -1296,7 +1294,7 @@ static tmstring fnmemberlist( const tmstring_list sl )
 /* Given a tuple type name and element name, return the
    type name of the given element.
  */
-static tmstring fnttypename( const tmstring_list sl )
+static tmstring fnfieldtypename( const tmstring_list sl )
 {
     field e;
 
@@ -1318,12 +1316,12 @@ static tmstring fnttypename( const tmstring_list sl )
 
    Possible type classes are: `single' and `list'.
  */
-static tmstring fnmembertypeclass( const tmstring_list sl )
+static tmstring fnfieldtypeclass( const tmstring_list sl )
 {
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "'membertypeclass' requires a type and an element name" );
+	line_error( "'fieldtypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_class_field( allds, sl->arr[0], sl->arr[1] );
@@ -1338,12 +1336,12 @@ static tmstring fnmembertypeclass( const tmstring_list sl )
 /* Given a type name and element name, return the
    list level of the given element.
  */
-static tmstring fnttypellev( const tmstring_list sl )
+static tmstring fnfieldtypellev( const tmstring_list sl )
 {
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "'membertypellev' requires a type and an element name" );
+	line_error( "'fieldtypellev' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_class_field( allds, sl->arr[0], sl->arr[1] );
@@ -2038,10 +2036,10 @@ static struct fnentry fntab[] = {
      { "isvirtual", fnisvirtual },
      { "len", fnlen },
      { "max", fnmax },
-     { "memberlist", fnmemberlist },
-     { "membertypeclass", fnmembertypeclass },
-     { "membertypellev", fnttypellev },
-     { "membertypename", fnttypename },
+     { "fields", fnfields },
+     { "fieldtypeclass", fnfieldtypeclass },
+     { "fieldtypellev", fnfieldtypellev },
+     { "fieldtypename", fnfieldtypename },
      { "min", fnmin },
      { "mklist", fnmklist },
      { "neq", fnstrneq },
@@ -2062,15 +2060,15 @@ static struct fnentry fntab[] = {
      { "strpad", fnstrpad },
      { "subs", fnsubs },
      { "suffix", fnsuffix },
-     { "telmlist", fnmemberlist },
+     { "telmlist", fnfields },
      { "tolower", fntolower },
      { "toupper", fntoupper },
      { "tplfilename", fntplfilename },
      { "tpllineno", fntpllineno },
-     { "ttypeclass", fnmembertypeclass },
+     { "ttypeclass", fnfieldtypeclass },
      { "ttypelist", fnttypelist },
-     { "ttypellev", fnttypellev },
-     { "ttypename", fnttypename },
+     { "ttypellev", fnfieldtypellev },
+     { "ttypename", fnfieldtypename },
      { "typelist", fntypelist },
      { "uniq", fnuniq },
      { "", fnplus }
