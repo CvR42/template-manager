@@ -1,0 +1,6 @@
+..File: calc.ct
+#include <tmc.h>
+#include "calc.h"
+
+.insert calcconf.t
+.include tmc.ct
