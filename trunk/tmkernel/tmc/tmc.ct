@@ -1485,12 +1485,10 @@ int get_balance_$(basename)( void )
     int res;
 
     res = 0;
+    /* Check for too many fre()s. */
 .foreach t $(need_stat_list)
     if( newcnt_$t_list<frecnt_$t_list ){
         return -1;
-    }
-    if( newcnt_$t_list>frecnt_$t_list ){
-        res = 1;
     }
 .endforeach
 .foreach t $(need_stat)
@@ -1499,6 +1497,17 @@ int get_balance_$(basename)( void )
     if( newcnt_$t<frecnt_$t ){
         return -1;
     }
+.endif
+.endforeach
+    /* Check for too many fre()s. */
+.foreach t $(need_stat_list)
+    if( newcnt_$t_list>frecnt_$t_list ){
+        res = 1;
+    }
+.endforeach
+.foreach t $(need_stat)
+.if ${isvirtual $t}
+.else
     if( newcnt_$t>frecnt_$t ){
         res = 1;
     }

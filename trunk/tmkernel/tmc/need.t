@@ -104,12 +104,22 @@
 . error Can't handle definition: $(wantdefs)
 . exit 1
 .endif
-.set reqlevel 0
+..
+.. For all wanted new_<t> of virtual types add their inheritors to the
+.. want list.
+.foreach t $(want_ds)
+.if ${isvirtual $t}
+.append want_ds "${subclasses $t}"
+.endif
+.endforeach
+.set want_ds ${uniq $(want_ds)}
 ..
 .. Macros to calculate all need variables.
 ..
 .. The following macro invokes a 'req_*' macro. The extra layer allows
 .. tracing, weeding out of invocations with empty parameterlists, etc
+.if ${defined verbose}
+.set reqlevel 0
 .macro require g l
 .set l ${excl ${uniq $l} "" $(need_$g)}
 .if ${len $l}
@@ -120,9 +130,18 @@
 .set reqlevel $[$(reqlevel)-1]
 .endif
 .endmacro
+.else
+.macro require g l
+.set l ${excl ${uniq $l} "" $(need_$g)}
+.if ${len $l}
+. globalappend need_$g $l
+. call req_$g "$l"
+.endif
+.endmacro
+.endif
 ..
-.. The following macros set the required functions for each requested
-.. function in all of the supported function groups.
+.. The following macros invoke 'require' recursively to ensure that
+.. the functions required by their group functions is available.
 ..
 .. ** slice **
 .macro req_slice l
