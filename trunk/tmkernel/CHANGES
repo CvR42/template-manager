@@ -1,3 +1,7 @@
+New in version 2.0.8
+
+- Added the missing function isequal_tmbool.
+
 New in version 2.0.7
 
 - Fixed a minor bug in the 'append' function of the linked-list library.

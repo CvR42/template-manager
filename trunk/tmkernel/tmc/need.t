@@ -106,7 +106,7 @@
 .set want_ds_list ${filt (*)_list & $(wantdefs)}
 .set wantdefs ${excl $(wantdefs) "" $(want_ds_list)}
 .if ${len $(wantdefs)}
-. error Can't handle definition: $(wantdefs)
+. error Cannot handle definition: $(wantdefs)
 . exit 1
 .endif
 ..
