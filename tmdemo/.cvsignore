@@ -1,0 +1,17 @@
+calc.c
+config.cache
+Makefile
+tokens.h
+calc.h
+calcparse.c
+calclex.c
+calcparse
+calcopt
+subst
+test.clc
+opt.clc
+subst.c
+subst.clc
+config.log
+config.status
+
