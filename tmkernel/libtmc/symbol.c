@@ -1,4 +1,3 @@
-/*LINTLIBRARY*/
 /* File: tmsymbol.c
 
    Symbol table manager.
@@ -15,8 +14,13 @@ static tmbool initdone = TMFALSE;
    simplified to comparing the pointers to the strings. This is
    ensured by the routines 'add_tmsymbol()' and 'gen_tmsymbol()'.
  */
-tmsymbol symtab[SYMHASHWIDTH];
-static int symtabcnt[SYMHASHWIDTH];
+static tmsymbol symtab[SYMHASHWIDTH];
+
+/* For each hash value of a possible gensym prefix, keep track of a
+ * counter. This prevents the gensym counter from having to start
+ * from 0 every time.
+ */
+static int gencount[SYMHASHWIDTH];
 
 /* initalize tmsymbol routines */
 static void init_tmsymbol( void )
@@ -25,7 +29,7 @@ static void init_tmsymbol( void )
 
     for( i=0; i<SYMHASHWIDTH; i++ ){
 	symtab[i] = tmsymbolNIL;
-	symtabcnt[i] = 0;
+	gencount[i] = 0;
     }
     initdone = TMTRUE;
 }
@@ -47,7 +51,7 @@ static unsigned int hash( const char *s )
 }
 
 /* Make a new storage space for a tmsymbol. */
-static tmsymbol newtmsymbol( tmsymbol l, tmstring s )
+static tmsymbol new_tmsymbol( tmsymbol l, tmstring s )
 {
     tmsymbol nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
 
@@ -121,9 +125,8 @@ tmsymbol add_tmsymbol( const char *name )
 	return entry;
     }
     nwstr = new_tmstring_nolognew( name );
-    entry = newtmsymbol( symtab[hashval], nwstr );
+    entry = new_tmsymbol( symtab[hashval], nwstr );
     symtab[hashval] = entry;
-    symtabcnt[hashval]++;
     return entry;
 }
 
@@ -143,13 +146,15 @@ tmsymbol gen_tmsymbol( const char *pre )
     tmstring name;
     tmsymbol entry;
     unsigned long int gensymnum;
+    unsigned int prehash;
 
     if( !initdone ){
 	init_tmsymbol();
     }
     name = new_tmstring_nolognew( "" );
     name = realloc_tmstring_nolognew( name, strlen( pre ) + 30 );
-    gensymnum = 0;
+    prehash = hash( pre );
+    gensymnum = gencount[prehash];
     for(;;){
 	sprintf( name, "%s%lx", pre, gensymnum++ );
 	hashval = hash( name );
@@ -157,9 +162,9 @@ tmsymbol gen_tmsymbol( const char *pre )
 	    break;
 	}
     }
-    entry = newtmsymbol( symtab[hashval], name );
+    entry = new_tmsymbol( symtab[hashval], name );
     symtab[hashval] = entry;
-    symtabcnt[hashval]++;
+    gencount[prehash] = gensymnum;
     return entry;
 }
 
@@ -178,6 +183,7 @@ void flush_tmsymbol( void )
 	    s = n;
 	}
 	symtab[i] = tmsymbolNIL;
+	gencount[i] = 0;
     }
     gensymworking = TMFALSE;
 }
