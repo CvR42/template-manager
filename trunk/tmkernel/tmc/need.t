@@ -166,7 +166,7 @@
 .. ** fscan **
 .macro req_fscan l
 .call require new "$l"
-.call require append "$l"
+.call require append "${listtypes $l}"
 .call require fscan "${delisttypes $l} ${types ${singletypes $l}}"
 .call require fscan "${types ${subclasses ${singletypes $l}}}"
 .if ${eq $(template) ald}
@@ -343,4 +343,12 @@
 . set need_$g ${comm ${singletypes $(need_$g)} "" ${typelist}}
 .endforeach
 .set need_ds ${comm $(need_ds) "" ${typelist}}
+.if ${defined verbose}
+.foreach g $(groups) stat
+/* want_$g: $(want_$g) */
+/* need_$g: $(need_$g) */
+/* want_$g_list: $(want_$g_list) */
+/* need_$g_list: $(need_$g_list) */
+.endforeach
+.endif
 /* Requirement analysis took ${processortime} milliseconds. */

@@ -536,6 +536,8 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 }
 
 .endforeach
+.endif
+.if ${len $(need_concat_list)}
 /**************************************************
  *    Concatenate routines                        *
  **************************************************/
