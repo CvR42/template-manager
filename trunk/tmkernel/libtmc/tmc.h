@@ -79,14 +79,14 @@ typedef struct str_tmprintstate TMPRINTSTATE;
 inline tmsymbol rdup_tmsymbol( tmsymbol s ) { return s; }
 inline void rfre_tmsymbol( tmsymbol ) {}
 inline void fre_tmsymbol( tmsymbol ) { }
-inline int cmp_tmsymbol(tmsymbol a, tmsymbol b) { return (a==b?0:(a<b?-1:1)); }
+inline int cmp_tmsymbol(tmsymbol a, tmsymbol b) { return (a==b)?0:strcmp( a->name, b->name ); }
 inline int isequal_tmsymbol(tmsymbol a, tmsymbol b) { return a==b; }
 inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #else
 #define rdup_tmsymbol(s) (s)
 #define rfre_tmsymbol(s)
 #define fre_tmsymbol(s)
-#define cmp_tmsymbol(a,b) (a==b?0:(a<b?-1:1))
+#define cmp_tmsymbol(a,b) (((a)==(b):0?strcmp((a)->name,(b)->name)))
 #define isequal_tmsymbol(a,b) (a==b)
 #define null_tmsymbol() tmsymbolNIL
 #endif
