@@ -615,6 +615,18 @@ If {\tt pos} is greater than or equal to the length of {\tt l},
 nothing happens.
 \end{desc}
 \begin{verbatim}
+<type>_list deletelist_<type>_list( <type>_list l, unsigned int from, unsigned int to );
+\end{verbatim}
+\begin{desc}
+\index{deletelist_<type>_list@\verb+deletelist_<type>_list()+}
+Delete the element at position {\tt from} up to, but not including, {\tt
+to} in list {\tt l}.  The elements are freed using {\tt rfre\_<type>()}.
+All elements at position {\tt to} and up are moved down (have their index
+in the list decremented).  If {\tt from} is greater than or equal to {\tt
+to}, or if {\tt from} is greater than or equal to the length of {\tt l},
+nothing happens.
+\end{desc}
+\begin{verbatim}
 <type>_list extract_<type>_list(
  <type>_list l,
  unsigned int pos,

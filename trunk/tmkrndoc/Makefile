@@ -55,7 +55,7 @@ help:
 
 all: $(TOPFILE).pdf
 
-fast: $(TOPFILE).dvi
+fast: $(TOPFILE).pdf
 
 test:
 	@echo "Nothing to test"
@@ -64,7 +64,7 @@ install:
 	@echo "Nothing to install"
 
 # The dependency rules as implemented by latex
-$(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
+$(TOPFILE).pdf : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
 	pdflatex $(TOPFILE)
 	makeindex $(TOPFILE)
 	pdflatex $(TOPFILE)
