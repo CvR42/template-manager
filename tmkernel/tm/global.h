@@ -18,6 +18,8 @@ extern FILE *dsfile;
 extern int dslineno;
 extern ds_list allds;
 
+extern clock_t start_time;
+
 /* debugging flags */
 extern int fntr;
 extern int listing;

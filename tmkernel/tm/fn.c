@@ -14,6 +14,7 @@
 /* Standard UNIX libraries and functions */
 #include <stdio.h>
 #include <ctype.h>
+#include <time.h>
 
 /* tm library */
 #include <tmc.h>
@@ -1253,7 +1254,7 @@ static tmstring fntuplelist( const tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'ttypelist' does not need any parameters" );
+	line_error( "'tuplelist' does not need any parameters" );
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1508,11 +1509,6 @@ static tmstring fnfields( const tmstring_list sl )
     if( d == dsNIL ){
 	/* findtype already complained about this. */
 	return new_tmstring( "" );
-    }
-    if( d->tag == TAGDsConstructorBase ){
-	sprintf( errarg, "type `%s'", sl->arr[0] );
-	line_error( "'fields' does not work on a constructor type" );
-	/* Fall through, since nothing chokes on a constructor type. */
     }
     nl = new_tmstring_list();
     if( inherited ){
@@ -2212,6 +2208,23 @@ static tmstring fngetenv( const tmstring_list sl )
     return new_tmstring( v );
 }
 
+/* Return the current amount of processor time consumed by the program.
+ * The time is expressed in milliseconds.
+ */
+static tmstring fnprocessortime( const tmstring_list sl )
+{
+    time_t t_ticks = clock()-start_time;
+    long t_ms = (1000*((long) t_ticks))/CLOCKS_PER_SEC;
+    char buf[30];
+
+    if( sl->sz != 0 ){
+	line_error( "'processortime' does not need any parameters" );
+	return new_tmstring( "0" );
+    }
+    sprintf( buf, "%ld", t_ms );
+    return new_tmstring( buf );
+}
+
 /***************************************************************
  *                                                             *
  *   function table                                            *
@@ -2282,6 +2295,7 @@ static struct fnentry fntab[] = {
      { "not", fnnot },
      { "or", fnor },
      { "prefix", fnprefix },
+     { "processortime", fnprocessortime },
      { "rev", fnrev },
      { "rmlist", fnrmlist },
      { "searchfile", fnsearchfile },
