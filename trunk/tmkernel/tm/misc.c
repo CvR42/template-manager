@@ -53,8 +53,8 @@ const tmstring get_type_name( const ds t )
 
     nm = tmstringNIL;
     switch( t->tag ){
-	case TAGDsCons:
-	    nm = t->DsCons.name;
+	case TAGDsConstructorBase:
+	    nm = t->DsConstructorBase.name;
 	    break;
 
 	case TAGDsTuple:
@@ -152,9 +152,9 @@ field find_field( const ds_list types, const char *type, const char *nm )
     }
     t = types->arr[pos];
     switch( t->tag ){
-	case TAGDsCons:
+	case TAGDsConstructorBase:
 	    fl = field_listNIL;
-	    inherits = t->DsCons.inherits;
+	    inherits = t->DsConstructorBase.inherits;
 	    break;
 
 	case TAGDsTuple:
@@ -187,8 +187,8 @@ static const tmstring_list extract_inherits_type( const ds d )
     tmstring_list ans = tmstring_listNIL;
 
     switch( d->tag ){
-	case TAGDsCons:
-	    ans = d->DsCons.inherits;
+	case TAGDsConstructorBase:
+	    ans = d->DsConstructorBase.inherits;
 	    break;
 
 	case TAGDsTuple:
@@ -317,8 +317,7 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
 	    el = d->DsConstructor.fields;
 	    break;
 
-	case TAGDsCons:
-	    /* We simply pretend this is a type with no fields. */
+	case TAGDsConstructorBase:
 	    return;
     }
     for( ix=0; ix<el->sz; ix++ ){

@@ -7,8 +7,7 @@
 || The Class type is in its canonical form. Before canonization
 || it is represented as a classComponent list.
 ds ::=
-||    DsCons name:tmstring inherits:[tmstring] constructors:[constructor] |
-    DsCons name:tmstring inherits:[tmstring] constructors:[tmstring] |
+    DsConstructorBase name:tmstring inherits:[tmstring] constructors:[tmstring] |
     DsTuple name:tmstring inherits:[tmstring] fields:[field] |
     DsClass name:tmstring inherits:[tmstring] fields:[field] virtual:tmbool |
     DsConstructor name:tmstring inherits:[tmstring] fields:[field];
