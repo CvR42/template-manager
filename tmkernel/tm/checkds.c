@@ -97,11 +97,13 @@ static void check_ds_inheritance(
         if( superix<dl->sz ){
 	    check_ds_inheritance( dl, superix, visited, accepted );
         }
+#if 0
 	else {
 	    sprintf( errpos, "type '%s'", myname );
 	    sprintf( errarg, "'%s'", super );
 	    error( "inheritance from unknown type" );
 	}
+#endif
     }
     rfre_tmstring_list( supers );
     visited[theds] = FALSE;
