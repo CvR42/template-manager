@@ -55,6 +55,7 @@
 .set groups      ds cmp new fre rfre rdup print fprint fscan
 .. These are only useful for lists.
 .set listgroups append concat slice setroom insert delete reverse extract
+.append listgroups extractlist insertlist
 .append groups $(listgroups)
 .set misccode stat_$(basename) get_balance_$(basename) flush_$(basename)
 .if ${eq $(template) ald}
@@ -219,9 +220,21 @@
 .call require ds "$l"
 .endmacro
 ..
+.. ** insertlist **
+.macro req_insertlist l
+.call require setroom "$l"
+.call require fre "$l"
+.endmacro
+..
 .. ** insert **
 .macro req_insert l
 .call require setroom "$l"
+.endmacro
+..
+.. ** extractlist **
+.macro req_extractlist l
+.call require setroom "$l"
+.call require new "$l"
 .endmacro
 ..
 .. ** extract **

@@ -47,11 +47,11 @@ typedef struct str_$t_list *$t_list;
 typedef struct str_$t *$t;
 .endforeach
 
-.foreach t $(need_ds_list)
-#define $t_listNIL ($t_list)0
-.endforeach
 .foreach t $(need_ds)
 #define $tNIL ($t)0
+.endforeach
+.foreach t $(need_ds_list)
+#define $t_listNIL ($t_list)0
 .endforeach
 
 .set tl
@@ -162,7 +162,7 @@ struct str_$t_list {
 #define to_$t(e) (($t)e)
 .endforeach
 
-/* new_<type> routines */
+.. new_<type> routines
 #ifdef LOGNEW
 .foreach t $(want_new)
 .if ${isvirtual $t}
@@ -194,6 +194,11 @@ struct str_$t_list {
 .endforeach
 .foreach t $(want_fscan_list)
 #define fscan_$t_list(f,l) real_fscan_$t_list(f,l,__FILE__,__LINE__)
+.endforeach
+..
+.. extractlist_<type>() routines
+.foreach t $(want_extractlist_list)
+#define extractlist_$t_list(l,b,e,res) real_extractlist_$t_list(l,b,e,res,__FILE__,__LINE__)
 .endforeach
 #endif
 
@@ -259,6 +264,11 @@ extern $t_list reverse_$t_list( $t_list );
 extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
 .endforeach
 ..
+.. insertlist_<type>_list() routines.
+.foreach t $(want_insertlist_list)
+extern $t_list insertlist_$t_list( $t_list, const unsigned int, $t_list  );
+.endforeach
+..
 .. delete_<type>_list() routines.
 .foreach t $(want_delete_list)
 extern $t_list delete_$t_list( $t_list, const unsigned int );
@@ -268,6 +278,17 @@ extern $t_list delete_$t_list( $t_list, const unsigned int );
 .foreach t $(want_extract_list)
 extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
 .endforeach
+..
+.. extractlist_<type>_list() routines.
+#ifdef LOGNEW
+.foreach t $(want_extractlist_list)
+extern $t_list real_extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list *, const char *, const int );
+.endforeach
+#else
+.foreach t $(want_extractlist_list)
+extern $t_list extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list * );
+.endforeach
+#endif
 ..
 .. concat_<type>_list() routines
 .foreach t $(want_concat_list)

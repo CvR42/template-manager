@@ -70,7 +70,7 @@ static char tm_srcfile[] = __FILE__;
 #endif
 
 /* Error strings. */
-.if ${len $(need_delete_list) $(need_extract_list) $(need_insert_list)}
+.if ${len $(need_delete_list) $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
 static char tm_nilptr[] = "NIL pointer";
 .endif
 .if ${len ${comm $(need_fscan) "" ${ctypelist} ${classlist}}}
@@ -239,7 +239,7 @@ $(stic_$t)$t new_$t( $(tl) )
 .foreach t $(want_fre)
 .set stic_$t
 .endforeach
-.foreach t $(need_fre)
+.foreach t ${rev ${inheritsort $(need_fre)}}
 /* Free an element 'e' of ${metatype $t} type '$t'. */
 $(stic_$t)void fre_$t( $t e )
 {
@@ -421,6 +421,59 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 
 .endforeach
 .endif
+.if ${len $(need_insertlist_list)}
+/**************************************************
+ *    insertlist_<type>_list routines                 *
+ **************************************************/
+
+.foreach t $(need_insertlist_list)
+.set stic_$t "static "
+.endforeach
+.foreach t $(want_insertlist_list)
+.set stic_$t
+.endforeach
+.foreach t $(need_insertlist_list)
+/* Insert a $t list 'lb' to into list 'la' at position 'pos'.
+ * The elements of 'lb' are copied into 'la', and the container is destroyed.
+ */
+$(stic_$t)$t_list insertlist_$t_list( $t_list la, unsigned int pos, $t_list lb )
+{
+    const unsigned int szb = lb->sz;
+
+    if( la == $t_listNIL || lb == $t_listNIL ){
+	FATAL( tm_nilptr );
+    }
+    la = setroom_$t_list( la, la->sz+szb );
+    if( pos>la->sz ){
+	pos = la->sz;
+    }
+    /* Move up elements */
+    {
+	$t *arr = la->arr;
+	unsigned int ix;
+
+	for( ix=la->sz+szb-1; ix>pos; ix-- ){
+	    arr[ix] = arr[ix-szb];
+	}
+    }
+    la->sz += szb;
+    /* Copy in elements from 'lb' */
+    {
+	unsigned int cnt = szb;
+	$t *sp = lb->arr;
+	$t *dp = &la->arr[pos];
+
+	while( cnt!=0 ){
+	    *dp++ = *sp++;
+	    cnt--;
+	}
+    }
+    fre_$t_list( lb );
+    return la;
+}
+
+.endforeach
+.endif
 .if ${len $(need_concat_list)}
 /**************************************************
  *    Concatenate routines                        *
@@ -434,8 +487,7 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 .endforeach
 .foreach t $(need_concat_list)
 /* Concatenate $t list 'lb' after $t list 'la'.
-   The list descriptor of list 'lb' is freed,
-   since its contents has been moved to 'la'.
+ * The elements of 'lb' are copied into 'la', and the container is destroyed.
  */
 $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 {
@@ -443,6 +495,9 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
     $t *sp;
     $t *dp;
 
+    if( la == $t_listNIL ){
+	FATAL( tm_nilptr );
+    }
     la = setroom_$t_list( la, la->sz+lb->sz );
     cnt = lb->sz;
     sp = lb->arr;
@@ -802,21 +857,17 @@ $(stic_$t)$t rdup_$t( const $t e )
     return new_$t( ${seplist ", " ${prefix "i_" ${allfields $t}}} );
 .case constructor constructorbase class
 .if ${len ${inheritors $t}}
-    if( e == $tNIL ){
+    if( e == $tNIL ){	/* 3 */
 	return $tNIL;
     }
     switch( e->tag ){
-.if ${isvirtual $t}
-.else
+.if ${not ${isvirtual $t}}
 	case TAG$t:
 	{
 .foreach e ${allfields $t}
 	    ${type $t $e} i_$e;
 .endforeach
 
-	    if( e == $tNIL ){
-		return $tNIL;
-	    }
 .foreach e ${allfields $t}
 	    i_$e = rdup_${type $t $e}( e->$e );
 .endforeach
@@ -1235,8 +1286,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .. First time in loop there should be no 'else' before the if,
 .. in all other cases there should.
 .set els
-.if ${isvirtual $t}
-.else
+.if ${not ${isvirtual $t}}
     $(els)if( strcmp( tm_word, "$t" ) == 0 ){
 .foreach e ${allfields $t}
 	${type $t $e} l_$e;
@@ -1270,7 +1320,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .endforeach
     else {
 	(void) sprintf( tm_errmsg, tm_badcons, "$t", tm_word );
-	return 1;
+	err = 1;
     }
     if( err ){
 	return 1;
@@ -1425,6 +1475,87 @@ $(stic_$t)$t_list extract_$t_list(
     l->sz--;
     for( ix=pos; ix<l->sz; ix++ ){
 	l->arr[ix] = l->arr[ix+1];
+    }
+    return l;
+}
+
+.endforeach
+.endif
+.if ${len $(need_extractlist_list)}
+/**************************************************
+ *    extractlist_<type>_list routines            *
+ **************************************************/
+
+#ifdef LOGNEW
+.foreach t $(need_extractlist_list)
+.if ${member $t $(want_extractlist_list)}
+#undef extractlist_$t_list
+.endif
+#define extractlist_$t_list(l,b,e,res) real_extractlist_$t(l,b,e,res,_f,_l)
+.endforeach
+#endif
+
+.call ansi_static extractlist_list "$$t_list extractlist_$$t_list( $$t_list, const unsigned int, $$t *, int * )"
+.foreach t $(need_extractlist_list)
+.set stic_$t "static "
+.endforeach
+.foreach t $(want_extractlist_list)
+.set stic_$t
+.endforeach
+.foreach t $(need_extractlist_list)
+/* Given a $t list 'l', a range 'from' to 'to' and a pointer to a
+ * $t list 'res', create a new list '*res', and move the elements
+ * from 'from' up to, but not including 'to' to this new list. All
+ * elements beyond the range are moved down to close the gap. If necessary,
+ * the range is silently adjusted to cover only exisiting elements.
+ */
+#ifdef LOGNEW
+$(stic_$t)$t_list real_extractlist_$t_list(
+    $t_list l,
+    unsigned int from,
+    unsigned int to,
+    $t_list *res,
+    const char *_f,
+    const int _l
+)
+#else
+$(stic_$t)$t_list extractlist_$t_list(
+    $t_list l,
+    unsigned int from,
+    unsigned int to,
+    $t_list *res
+)
+#endif
+{
+    unsigned int ix;
+    unsigned int ressz;
+
+    if( l == $t_listNIL ){
+	FATAL( tm_nilptr );
+    }
+    if( to>=l->sz ){
+	to = l->sz;
+    }
+    if( from>to ){
+	from = to;
+    }
+    ressz = to - from;
+    *res = setroom_$t_list( new_$t_list(), ressz );
+    /* Copy in elements into 'res' */
+    {
+	unsigned int cnt = ressz;
+	$t *sp = &l->arr[from];
+	$t *dp = (*res)->arr;
+
+	while( cnt!=0 ){
+	    *dp++ = *sp++;
+	    cnt--;
+	}
+    }
+    (*res)->sz = ressz;
+    l->sz -= ressz;
+    for( ix=from; ix<l->sz; ix++ ){
+	l->arr[ix] = l->arr[ix+ressz];
     }
     return l;
 }

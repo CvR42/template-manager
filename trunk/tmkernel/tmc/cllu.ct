@@ -368,6 +368,7 @@ $(stat)$t_list reverse_$t_list( $t_list l )
 }
 
 .endforeach
+.if ${len $(need_insert_list)}
 /************************************************
  *    insert_<type>_list routines               *
  ************************************************/
@@ -398,6 +399,45 @@ $(stat)$t_list insert_$t_list( $t_list l, const unsigned int p, $t e )
 }
 
 .endforeach
+.endif
+.if ${len $(need_insertlist_list)}
+/************************************************
+ *    insertlist_<type>_list routines           *
+ ************************************************/
+
+.foreach t $(need_insertlist_list)
+.if ${member $t $(want_insertlist_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Insert list 'lb' at position 'p' in list 'la'. */
+$(stat)$t_list insertlist_$t_list( $t_list la, unsigned int p, $t_list lb )
+{
+    $t_list res = la;
+    $t_list *stitch = &res;
+    unsigned int cnt;
+
+    for( cnt=0; cnt<p && (la!=0); cnt++ ){
+	stitch = &la->${call linkname $t};
+	la = *stitch;
+    }
+    /* '*stitch' now points to the place where lb must be linked in. */
+    *stitch = lb;
+    while( lb != 0 ){
+	stitch = &lb->${call linkname $t};
+	lb = *stitch;
+    }
+    /* '*stitch' now points to the place where the tail of la must be
+     * linked in.
+     */
+    *stitch = la;
+    return res;
+}
+
+.endforeach
+.endif
+.if ${len $(need_delete_list)}
 /************************************************
  *    delete_<type>_list routines               *
  ************************************************/
@@ -429,6 +469,8 @@ $(stat)$t_list delete_$t_list( $t_list l, const unsigned int p )
 }
 
 .endforeach
+.endif
+.if ${len $(need_extract_list)}
 /************************************************
  *    extract_<type>_list routines               *
  ************************************************/
@@ -468,6 +510,59 @@ $(stat)$t_list extract_$t_list(
 }
 
 .endforeach
+.endif
+.if ${len $(need_extractlist_list)}
+/************************************************
+ *    extractlist_<type>_list routines               *
+ ************************************************/
+
+.call ansi_static extractlist_list "$$t_list extractlist_$$t_list( $$t_list, unsigned int, unsigned int, $t_list *  )"
+.foreach t $(need_extractlist_list)
+.if ${member $t $(want_extractlist_list)}
+.set stat
+.else
+.set stat "static "
+.endif
+/* Given a list 'l' and a range 'from' to 'to', extract the elements
+ * in the given range to a new list '*e', and stitch up the remaining
+ * elements into a shorter list.
+ *
+ * If part of the specified range is not in the list, it is silently shortened.
+ */
+$(stat)$t_list extractlist_$t_list(
+    $t_list l,
+    unsigned int from,
+    unsigned int to,
+    $t_list *e
+)
+{
+    $t_list res = l;
+    $t_list *stitch = &res;
+    unsigned int cnt;
+    $t_list *lnk = e;
+
+    for( cnt=0; cnt<from && (l != 0); cnt++ ){
+	stitch = &l->${call linkname $t};
+	l = *stitch;
+    }
+    /* '*stitch' now points to the place where the tail must be linked in.
+     * 'l' now points to the first element of the range to be extracted.
+     */
+    *e = l;
+    for( ; cnt<to && (l != 0); cnt++ ){
+	lnk = &l->${call linkname $t};
+	l = *lnk;
+    }
+    /* '*lnk' now points to the place where the extracted list must be
+     * terminated.
+     */
+    *lnk = $t_listNIL;
+    *stitch = l;
+    return res;
+}
+
+.endforeach
+.endif
 /******************************************************
  *    print_<type> and print_<type>_list routines     *
  ******************************************************/

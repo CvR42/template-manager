@@ -24,8 +24,11 @@
 .append wantdefs append_toplevel_list_list_list
 .append wantdefs reverse_toplevel_list
 .append wantdefs insert_toplevel_list
+.append wantdefs insertlist_toplevel_list
+.append wantdefs delete_toplevel_list
 .append wantdefs delete_toplevel_list
 .append wantdefs extract_toplevel_list
+.append wantdefs extractlist_toplevel_list
 .append wantdefs fscan_toplevel_list
 .append wantdefs rfre_toplevel
 .append wantdefs rdup_toplevel_list
