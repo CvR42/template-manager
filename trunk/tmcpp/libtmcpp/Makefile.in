@@ -223,6 +223,15 @@ distlist: $(DISTFILES)
 depend:
 	mkmf -f $(MAKEFILE)
 
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
 ###
 badtag.o: tmcpp.h config.h
 cmpdbl.o: tmcpp.h config.h
