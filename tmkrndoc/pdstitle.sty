@@ -1,0 +1,157 @@
+%%
+%% This is file `pdstitle.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% pdsreport.dtx  (with options: `pdstitle')
+%% 
+%% 
+%% This is a generated file.
+%% 
+%% Copyright 1997 PDS, TWI, TU Delft.
+%% 
+%% MODIFICATION ADVICE:
+%% 
+%% If you want to customize this file, it is best to make a copy of
+%% the source file(s) from which it was produced.  Use a different
+%% name for your copy(ies) and modify the copy(ies); this will ensure
+%% that your modifications do not get overwritten when you install a
+%% new release of the standard system.  You should also ensure that
+%% your modified source file does not generate any modified file with
+%% the same name as a standard file.
+%% 
+%% You can then easily distribute your modifications by distributing
+%% the modified and renamed copy of the source file, taking care to
+%% observe the conditions in legal.txt; this will ensure that other
+%% users can safely use your modifications.
+%% 
+%% You will also need to produce your own, suitably named, .ins file to
+%% control the generation of files from your source file; this file
+%% should contain your own preambles for the files it generates, not
+%% those in the standard .ins files.
+%% 
+%% The names of the source files used are shown above.
+%% 
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{pdstitle}[1997/10/22 v1.1 PDS style file]
+\newif\if@pds@pdf
+\DeclareOption{pdf}{%
+    %\def\@pds@path{$PDS_LATEX_BASE/}
+    % CvR: hacked to allow the stuff to work without the environment
+    % variable PDS_LATEX_BASE.
+    \def\@pds@path{./}
+    \PassOptionsToPackage{pdftex}{graphicx}
+    \@pds@pdftrue
+}
+\ExecuteOptions{}
+\ProcessOptions\relax
+\RequirePackage{graphicx}
+\renewcommand\maketitle{%
+  \begin{titlepage}%
+  \setcounter{page}{0}%
+  \null
+  \m@kepdspage
+  \null
+  \end{titlepage}%
+  \setcounter{page}{1}%
+  \setcounter{footnote}{0}%
+  \global\let\thanks\relax
+  \global\let\maketitle\relax
+  \global\let\@thanks\@empty
+  \global\let\@author\@empty
+  \global\let\@date\@empty
+  \global\let\@title\@empty
+  \global\let\title\relax
+  \global\let\author\relax
+  \global\let\date\relax
+  \global\let\and\relax
+}
+\def\pdsnumber{\@ifnextchar[{\pds@repyear}{\gdef\pds@number}}
+\def\pds@repyear[#1]{%
+    \pdsyear{#1}%
+    \gdef\pds@number
+}
+\def\pdstitle{\gdef\pds@title}
+\def\pdsauthor{\gdef\pds@authors}
+\def\pdsyear{\gdef\pds@year}
+\def\pds@issn{1387-2109}
+\def\pds@title{\@title}
+\def\pds@authors{\@author}
+\def\pds@year{\the\year}
+\def\pds@number{xxx}
+\def\m@kepdspage{
+    \thispagestyle{empty}
+    \makeatletter
+    \begin{center}
+    \bfseries
+    \Large
+    Delft University of Technology \\
+    Parallel and Distributed Systems Report Series \\[2\baselineskip]
+    \pds@title \\[\baselineskip]
+    \bgroup
+      \begin{tabular}[t]{c}%
+        \pds@authors
+      \end{tabular}%
+      \\[2\baselineskip]
+    \egroup
+    report number  PDS-\pds@year-\pds@number \\
+    \vfill
+    \begin{figure}[htbp]
+      \begin{center}
+      \if@pds@pdf
+          \mbox{\includegraphics[width=2.5cm]{\@pds@path pds.pdf}}
+      \else
+          \mbox{\includegraphics[width=2.5cm]{pds.eps}}
+      \fi
+      \end{center}
+    \end{figure}
+    \vfill
+    ISSN \pds@issn
+    \end{center}
+    \pagebreak
+    \thispagestyle{empty}
+    \noindent
+    Published and produced by: \\
+    Parallel and Distributed Systems Section \\
+    Faculty of Information Technology and Systems
+    Department of Technical Mathematics and Informatics \\
+    Delft University of Technology \\
+    Zuidplantsoen 4 \\
+    2628 BZ  Delft \\
+    The Netherlands
+    \medskip\par\noindent
+    Information about Parallel and Distributed Systems Report Series: \\
+    \texttt{reports@pds.twi.tudelft.nl}
+    \medskip\par\noindent
+    Information about Parallel and Distributed Systems Section: \\
+    \texttt{http://pds.twi.tudelft.nl/}
+    \vfill
+    \noindent
+    \copyright\ \pds@year\ Parallel and Distributed Systems Section,
+    Faculty of Information Technology and Systems,
+    Department of Technical Mathematics and Informatics,
+    Delft University of Technology.
+    All rights reserved.  No part of this series may be
+    reproduced in any form or by any means without prior written
+    permission of the publisher.
+    \makeatother
+}
+\endinput
+%%
+%% End of file `pdstitle.sty'.
