@@ -55,6 +55,7 @@ LIBSRCS	 = \
                 cmpstrtx.c \
                 cmptxt.c \
                 cpyblock.c \
+                lncrstr.c \
                 delbtext.c \
                 errmsg.c \
                 escstr.c \
@@ -195,6 +196,11 @@ tags: $(LIBSRCS) $(TESTSRCS)
 
 clean:
 	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+
+distclean:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+	rm -f $(LIBNAME) testprog
+	rm -f cconfig.log config.status config.cache
 
 empty:
 	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
