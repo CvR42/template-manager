@@ -1,0 +1,37 @@
+\chapter{Syntax of Tm data-structure descriptions}
+\label{s.dsgram}
+The data-structure description must have the following syntax:
+\begin{grammar}
+\nonterm{dslist} & \produces & \emptystring \bar \nonterm{ds} \nonterm{dslist}  \\
+\\
+\nonterm{ds} & \produces & \nonterm{name} \term{::=} \nonterm{inherits} \nonterm{constructorlist} \term{{\tt ;}} \\
+ & \bar & \nonterm{name} \term{==} \nonterm{inherits} \term{(} \nonterm{tuple} \term{)} \term{;} \\
+ & \bar & \term{\%include} \nonterm{string} \term{;} \\
+\\
+\nonterm{inherits} & \produces & \emptystring \bar \nonterm{name} \term{+} \nonterm{inherits} \\
+\\
+\nonterm{tuple} & \produces & \nonterm{element}  \\
+& \bar & \nonterm{element} \term{,} \nonterm{tuple} \\
+\\
+\nonterm{constructorlist} & \produces & \nonterm{constructor}  \\
+& \bar & \nonterm{constructor} \term{|} \nonterm{constructorlist}  \\
+\\
+\nonterm{constructor} & \produces & \nonterm{name} \nonterm{elementlist} \\
+\\
+\nonterm{elementlist} & \produces & \emptystring \\
+& \bar & \nonterm{element} \nonterm{elementlist}  \\
+\\
+\nonterm{element} & \produces & \nonterm{name} \term{:} \nonterm{type} \\
+\\
+\nonterm{type} & \produces & \nonterm{name} \\
+& \bar & \term{[} \nonterm{type} \term{]} \\
+\end{grammar}
+Characters in typewriter font ({\tt like this}) are tokens,
+{\emptystring} stands for an empty token list,
+\nonterm{name} stands for a token with the regular expression
+\verb![a-zA-Z][a-zA-Z0-9]*!,
+and \nonterm{string} stands for a string of arbitrary characters
+surrounded by double quotes \verb+"+.
+\par
+If a type is defined repeatedly, the constructor or element lists
+are concatenated. Redefinition of constructors is not allowed.
