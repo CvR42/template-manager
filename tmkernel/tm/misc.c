@@ -58,12 +58,12 @@ const tmstring get_type_name( const ds t )
  */ 
 unsigned int find_type_ix( const ds_list types, const char *t )
 {
-    ds d;
     unsigned int ix;
 
     for( ix = 0; ix < types->sz; ix++ ){
-	d = types->arr[ix];
-	if( strcmp( get_type_name( d ), t ) == 0 ){
+	ds d = types->arr[ix];
+
+	if( strcmp( d->name, t ) == 0 ){
 	    return ix;
 	}
     }
@@ -241,7 +241,6 @@ void collect_superclasses( tmstring_list *res, const ds_list types, const char *
 	const tmstring t = inherits->arr[ix];
 
 	if( !member_tmstring_list( t, *res ) ){
-	    collect_superclasses( res, types, t );
 	    *res = append_tmstring_list( *res, rdup_tmstring( t ) );
 	}
     }
@@ -260,7 +259,7 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring
 	const tmstring_list inherits = extract_inherits_type( d );
 
 	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
-	    const char *nm = get_type_name( d );
+	    const char *nm = d->name;
 
 	    *res = append_tmstring_list( *res, rdup_tmstring( nm ) );
 	}
