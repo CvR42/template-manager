@@ -12,7 +12,7 @@ testin(133): 'max' requires at least one parameter
 testin(134): 'min' requires at least one parameter
 testin(149): 'if' requires at least a condition expression
 testin(154): 'index' requires at least one parameter
-testin(155): 'ismember' requires at least one parameter
+testin(155): 'member' requires at least one parameter
 testin(205): not a constructor type: 'orig'
 testin(208): not a constructor type: 'orig'
 testin(205): not a constructor type: 'subtuple'
