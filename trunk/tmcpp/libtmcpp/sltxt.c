@@ -22,7 +22,7 @@ tmtext *tmtext::slice( const size_type from_parm, const size_type to_parm ) cons
 	to = sz;
     }
     if( to<from ){
-	return new tmtext( 0 );
+	return new tmtext( (tmtext::size_type) 0 );
     }
     size_type sl_sz = to-from;
     tmtext *nw = new tmtext( sl_sz );
