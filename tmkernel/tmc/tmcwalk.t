@@ -22,6 +22,15 @@
 .macro calc_treewalk starts targets
 .set res
 .set types ${reach $(starts)}
+.set bad ${excl $(targets) "" $(types)}
+.if ${len $(bad)}
+.if ${== ${len $(bad)} 1}
+.error Target type '$(bad)' cannot be reached.
+.else
+.error The following target types cannot be reached: [$(bad)].
+.endif
+.exit 1
+.endif
 .foreach t $(types)
 .if ${len ${comm $(targets) "" ${reach $t}}}
 .append res $t
