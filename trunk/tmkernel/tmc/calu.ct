@@ -162,6 +162,8 @@ $(stic_$t)$t_list new_$t_list( void )
 .endforeach
 .foreach t ${nonvirtual $(need_new)}
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple class
 /* Allocate a new instance of ${metatype $t} '$t'. */
 #ifdef LOGNEW
@@ -234,6 +236,8 @@ $(stic_$t)void fre_$t( $t e )
 	return;
     }
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
 .if ${member $t $(need_stat)}
     frecnt_$t++;
@@ -454,6 +458,8 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 $(stic_$t)void rfre_$t( $t e )
 {
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
     if( e == $tNIL ){
 	return;
@@ -533,6 +539,8 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 	return;
     }
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
     tm_opentuple( st );
 .foreach e ${allfields $t}
@@ -616,6 +624,8 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
     }
     putc( '(', f );
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
 .set first 1
 .foreach e ${allfields $t}
@@ -717,6 +727,8 @@ $(stic_$t)$t rdup_$t( const $t e )
 #endif
 {
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
 .foreach e ${allfields $t}
     ${type $t $e} i_$e;
@@ -879,6 +891,8 @@ $(stic_$t)$t_list slice_$t_list(
 $(stat)int cmp_$t( const $t a, const $t b )
 {
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
     int res;
 
@@ -1051,6 +1065,8 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 #endif
 {
 .switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
 .case tuple
     int err;
     int c;

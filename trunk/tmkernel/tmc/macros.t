@@ -99,3 +99,17 @@ static ${eval "$(tpl)"};
 .endif
 .return $t
 .endmacro
+..
+.. Apply all aliases, and delete the alias types.
+.macro apply_aliases
+.foreach t ${aliases}
+.set nt ${alias $t}
+.. They must be deleted, since they would cause circular definitions
+.. complaints. After all, after application each alias
+..    told -> tnew;
+.. would read:
+..    tnew -> tnew;
+.deletetype $t
+.rename $t $(nt)
+.endforeach
+.endmacro
