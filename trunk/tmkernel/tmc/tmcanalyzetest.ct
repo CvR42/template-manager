@@ -27,9 +27,6 @@ $(indent)(void) $(var);
 $(indent)(void) n;
 .endmacro
 ..
-.. For which types are there actions defines?
-.set actors int foldexpr
-..
 .. Actions for all visited types
 .set analyze_action_int function add_int_action
 .set analyze_action_exprConst reduction
@@ -46,8 +43,7 @@ $(indent)(void) n;
 ..
 /* File: tmcanalyzetest.c
  *
- * A test tree walker that adds the given parameter 'n' to all ints in
- * expr tree.
+ * A test analyzer that return the sum of all ints in an expr tree.
  */
 
 #include <tmc.h>
