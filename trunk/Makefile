@@ -3,8 +3,8 @@
 # The version numbers below reflect release versions for the various
 # packages.
 # The _DOS version number does not contain dots.
-TMKERNEL_VERSION = 1.2-beta3
-TMKERNEL_VERSION_DOS = 12b3
+TMKERNEL_VERSION = 1.2-beta4
+TMKERNEL_VERSION_DOS = 12b4
 TMPAS_VERSION = 1.0.2
 TMPAS_VERSION_DOS = 102
 TMMIRA_VERSION = 1.0.2
@@ -14,18 +14,23 @@ SHELL=/bin/sh
 FTPDIR=/home/gargamel/ftp/pub/software/Tm
 
 JUNK = tmkernel_distlist tmkernel_distlist_dos tmpas_distlist \
-    tmpas_distlist_dos tmmira_distlist
+    tmpas_distlist_dos tmmira_distlist tmkerneldoc_distlist \
+    tmkerneldoc_distlist_dos
 
 PACKAGES = \
     tmkernel-$(TMKERNEL_VERSION).tar.gz \
     tmk$(TMKERNEL_VERSION_DOS).zip \
+    tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
+    tmd$(TMKERNEL_VERSION_DOS).zip \
     tmpas-$(TMPAS_VERSION).tar.gz \
     tmp$(TMPAS_VERSION_DOS).zip \
     tmmira-$(TMMIRA_VERSION).tar.gz
 
 FTPFILES= \
+    $(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
     $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz \
     $(FTPDIR)/tmk$(TMKERNEL_VERSION_DOS).zip \
+    $(FTPDIR)/tmd$(TMKERNEL_VERSION_DOS).zip \
     $(FTPDIR)/tmpas-$(TMPAS_VERSION).tar.gz \
     $(FTPDIR)/tmp$(TMPAS_VERSION_DOS).zip \
     $(FTPDIR)/tmmira-$(TMMIRA_VERSION).tar.gz \
@@ -65,15 +70,41 @@ tmpas_distlist_dos: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
 	cd tmpas; $(MAKE) distlist
 	sed -e "s/^/tmp$(TMPAS_VERSION_DOS)\//" tmpas/distlist >> tmpas_distlist_dos
 
-tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc tmkernel/tmusrdoc
+tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc
 	cp /dev/null tmkernel_distlist
 	cd tmkernel; $(MAKE) distlist
 	sed -e "s/^/tmkernel-$(TMKERNEL_VERSION)\//" tmkernel/dist.lst >> tmkernel_distlist
 
-tmkernel_distlist_dos: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc tmkernel/tmusrdoc
+tmkernel_distlist_dos: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc
 	cp /dev/null tmkernel_distlist_dos
 	cd tmkernel; $(MAKE) distlist
 	sed -e "s/^/tmk$(TMKERNEL_VERSION_DOS)\//" tmkernel/dist.lst >> tmkernel_distlist_dos
+
+tmkerneldoc_distlist: $(MAKEFILE) tmkrndoc
+	cp /dev/null tmkerneldoc_distlist
+	cd tmkrndoc; $(MAKE) distlist
+	sed -e "s/^/tmkerneldoc-$(TMKERNEL_VERSION)\//" tmkrndoc/dist.lst >> tmkerneldoc_distlist
+
+tmkerneldoc_distlist_dos: $(MAKEFILE) tmkrndoc
+	cp /dev/null tmkerneldoc_distlist_dos
+	cd tmkrndoc; $(MAKE) distlist
+	sed -e "s/^/tmd$(TMKERNEL_VERSION_DOS)\//" tmkrndoc/dist.lst >> tmkerneldoc_distlist_dos
+
+tmkerneldoc-$(TMKERNEL_VERSION).tar.gz: tmkerneldoc_distlist
+	-mkdir tmkerneldoc-$(TMKERNEL_VERSION)
+	cvs -d $(CVSDIR) export -r HEAD -d tmkerneldoc-$(TMKERNEL_VERSION) tm/tmkrndoc
+	cd tmkerneldoc-$(TMKERNEL_VERSION); make main.ps
+	tar cf tmkerneldoc-$(TMKERNEL_VERSION).tar `cat tmkerneldoc_distlist`
+	gzip --best -f tmkerneldoc-$(TMKERNEL_VERSION).tar
+	rm -rf tmkerneldoc-$(TMKERNEL_VERSION)
+
+tmd$(TMKERNEL_VERSION_DOS).zip: tmkerneldoc_distlist_dos
+	-rm -f tmd$(TMKERNEL_VERSION_DOS).zip
+	-mkdir tmd$(TMKERNEL_VERSION_DOS)
+	cvs -d $(CVSDIR) export -r HEAD -d tmd$(TMKERNEL_VERSION_DOS) tm/tmkrndoc
+	cd tmd$(TMKERNEL_VERSION_DOS); make main.ps
+	zip -q -9 tmd$(TMKERNEL_VERSION_DOS).zip `cat tmkerneldoc_distlist_dos`
+	rm -rf tmd$(TMKERNEL_VERSION_DOS)
 
 tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel_distlist
 	-mkdir tmkernel-$(TMKERNEL_VERSION)
@@ -82,7 +113,6 @@ tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel_distlist
 	cd tmkernel-$(TMKERNEL_VERSION)/libtmc; autoconf
 	cd tmkernel-$(TMKERNEL_VERSION)/tm; autoconf
 	cd tmkernel-$(TMKERNEL_VERSION)/tmc; autoconf
-	cd tmkernel-$(TMKERNEL_VERSION)/tmusrdoc; make main.ps
 	tar cf tmkernel-$(TMKERNEL_VERSION).tar `cat tmkernel_distlist`
 	gzip --best -f tmkernel-$(TMKERNEL_VERSION).tar
 	rm -rf tmkernel-$(TMKERNEL_VERSION)
@@ -95,7 +125,6 @@ tmk$(TMKERNEL_VERSION_DOS).zip: tmkernel_distlist_dos
 	cd tmk$(TMKERNEL_VERSION_DOS)/libtmc; autoconf
 	cd tmk$(TMKERNEL_VERSION_DOS)/tm; autoconf
 	cd tmk$(TMKERNEL_VERSION_DOS)/tmc; autoconf
-	cd tmk$(TMKERNEL_VERSION_DOS)/tmusrdoc; make main.ps
 	zip -q -9 tmk$(TMKERNEL_VERSION_DOS).zip `cat tmkernel_distlist_dos`
 	rm -rf tmk$(TMKERNEL_VERSION_DOS)
 
