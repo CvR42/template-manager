@@ -7,7 +7,7 @@
 #include "tmcpp.h"
 #include "config.h"
 
-void print_sshrt( TMPRINTSTATE *st, const sshrt i )
+void print_sshrt( TmPrintState *st, const sshrt i )
 {
     char buf[sizeof(int)*8];
 
@@ -17,5 +17,5 @@ void print_sshrt( TMPRINTSTATE *st, const sshrt i )
     else {
 	sprintf( buf, "%hd", i );
     }
-    tm_printword( st, buf );
+    st->printWord( buf );
 }

@@ -4,13 +4,9 @@
  * All rights reserved.
  */
 
-/* file: propt.c
- *
- * Handler for optimized printing of datastructures.
- *
- * Note that this file uses the version of the string manipulation routines
- * without lognew administration, since this is trusted code.
- */
+// file: propt.c
+//
+// Handler for optimized printing of datastructures.
 
 #include "config.h"
 #include <ctype.h>
@@ -26,7 +22,7 @@
 #define FALSE 0
 #endif
 
-/* datastructures */
+// datastructures
 typedef struct str_Sstack *Sstack;
 typedef struct str_sunit *sunit;
 typedef struct str_SuWord *SuWord;
@@ -40,7 +36,7 @@ typedef struct str_SuTuple *SuTuple;
 #define SuConsNIL (SuCons)0
 #define SuListNIL (SuList)0
 
-/* possible tags for sunit: */
+// possible tags for sunit:
 #define TAGSuWord 1
 #define TAGSuCons 2
 #define TAGSuList 3
@@ -70,9 +66,8 @@ struct str_SuTuple {
     sunit ulist;
 };
 
-/* Forwared declaraties. */
+// Forward declarations.
 static void rfresunit_list( sunit e );
-static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev );
 
 /*******************************************************************
  *    Allocation routines                                          *
@@ -209,7 +204,7 @@ static void rfresunit( sunit e )
     }
 }
 
-/* recursively free a list of elements of type sunit */
+// recursively free a list of elements of type sunit.
 static void rfresunit_list( sunit e )
 {
     sunit n;
@@ -241,17 +236,18 @@ static sunit appsunitlist( sunit a, sunit b )
    return a;
 }
 
-static void doindent( TMPRINTSTATE *st, int n )
+void TmPrintState::doIndent( const int n )
 {
-    if( st->tabwidth>0 ){
-	while( n >= st->tabwidth ){
-	    fputc( '\t', st->file );
-	    n -= st->tabwidth;
+    int pos = 0;
+    if( tabwidth>0 ){
+	while( (n-pos) >= tabwidth ){
+	    fputc( '\t', file );
+	    pos += tabwidth;
 	}
     }
-    while( n > 0 ){
-	fputc( ' ', st->file );
-	n--;
+    while( pos<n ){
+	fputc( ' ', file );
+	pos++;
     }
 }
 
@@ -360,103 +356,99 @@ static int lentuple( sunit l )
  *            HORIZONTAL PRINTING ROUTINE             *
  ******************************************************/
 
-/* Print constructor 'c' in vertical mode. */
-static void vertprintcons( TMPRINTSTATE *st, SuCons c, int lev )
+// Print constructor 'c' in vertical mode.
+void TmPrintState::vertPrintConstructor( const sunit c, const int lev )
 {
     sunit l;
 
-    l = c->ulist;
+    l = ((SuCons)c)->ulist;
     if( l != sunitNIL && l->next == sunitNIL ){
-	vertprintsunit( st, l, lev );
+	vertPrintSunit( l, lev );
 	return;
     }
-    doindent( st, st->istep * lev );
-    fputs( "(\n", st->file );
+    doIndent( istep * lev );
+    fputs( "(\n", file );
     while( l != sunitNIL ){
-	vertprintsunit( st, l, (lev+1) );
+	vertPrintSunit( l, (lev+1) );
 	l = l->next;
-	fputc( '\n', st->file );
+	fputc( '\n', file );
     }
-    doindent( st, st->istep * lev );
-    fputc( ')', st->file );
+    doIndent( istep * lev );
+    fputc( ')', file );
     return;
 }
 
-/* Print list 'lst' in vertical mode. */
-static void vertprintlist( TMPRINTSTATE *st, SuList lst, int lev )
+// Print list 'lst' in vertical mode.
+void TmPrintState::vertPrintList( const sunit lst, const int lev )
 {
-    sunit l;
-
-    l = lst->ulist;
+    sunit l = ((SuList) lst)->ulist;
     if( l == sunitNIL ){
-	doindent( st, st->istep * lev );
-	fputs( "[]", st->file );
+	doIndent( istep * lev );
+	fputs( "[]", file );
 	return;
     }
-    doindent( st, st->istep * lev );
-    fputs( "[\n", st->file );
+    doIndent( istep * lev );
+    fputs( "[\n", file );
     while( l != sunitNIL ){
-	vertprintsunit( st, l, (lev+1) );
+	vertPrintSunit( l, (lev+1) );
 	l = l->next;
 	if( l != sunitNIL ){
-	    fputc( ',', st->file );
+	    fputc( ',', file );
 	}
-	fputc( '\n', st->file );
+	fputc( '\n', file );
     }
-    doindent( st, st->istep * lev );
-    fputc( ']', st->file );
+    doIndent( istep * lev );
+    fputc( ']', file );
     return;
 }
 
-/* Print tuple 'tpl' in vertical mode. */
-static void vertprinttuple( TMPRINTSTATE *st, SuTuple lst, int lev )
+// Print tuple 'tpl' in vertical mode.
+void TmPrintState::vertPrintTuple( const sunit lst, const int lev )
 {
-    sunit l;
-
-    l = lst->ulist;
+    sunit l = ((SuTuple)lst)->ulist;
     if( l == sunitNIL ){
-	doindent( st, st->istep * lev );
-	fputs( "()", st->file );
+	doIndent( istep * lev );
+	fputs( "()", file );
 	return;
     }
-    doindent( st, st->istep * lev );
-    fputs( "(\n", st->file );
+    doIndent( istep * lev );
+    fputs( "(\n", file );
     while( l != sunitNIL ){
-	vertprintsunit( st, l, (lev+1) );
+	vertPrintSunit( l, (lev+1) );
 	l = l->next;
-	if( l != sunitNIL ) fputc( ',', st->file );
-	fputc( '\n', st->file );
+	if( l != sunitNIL ) fputc( ',', file );
+	fputc( '\n', file );
     }
-    doindent( st, st->istep * lev );
-    fputc( ')', st->file );
+    doIndent( istep * lev );
+    fputc( ')', file );
     return;
 }
 
 /* Given a unit 'l' and a indent level 'lev', print given
-   unit to 'st->file'. When neccary delegate printing to
+   unit to 'file'. When neccary delegate printing to
    specialized routines 'vertprint{list,tuple,cons}()'.
 
    NOTE: no return is printed after the last line, so
    that a comma can be appended when necessary.
  */
-static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev )
+void TmPrintState::vertPrintSunit( sunit l, const int lev )
 {
     switch( l->tag ){
 	case TAGSuWord:
-	    doindent( st, st->istep * lev );
-	    fputs( ((SuWord)l)->word, st->file );
+	    doIndent( istep * lev );
+	    fputs( ((SuWord)l)->word, file );
 	    break;
 
 	case TAGSuCons:
-	    vertprintcons( st, (SuCons) l, lev );
+	    vertPrintConstructor( l, lev );
 	    break;
 
 	case TAGSuList:
-	    vertprintlist( st, (SuList) l, lev );
+	    vertPrintList( l, lev );
 	    break;
 
 	case TAGSuTuple:
-	    vertprinttuple( st, (SuTuple) l, lev );
+	    vertPrintTuple( l, lev );
 	    break;
     }
 }
@@ -464,7 +456,7 @@ static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev )
 /* Print list consisting of sunits in 'l' in
    horizontal mode, and return a nw tmstring for it.
  */
-static tmstring horprintlist( TMPRINTSTATE *st, sunit l )
+tmstring TmPrintState::horPrintList( sunit l )
 {
     char *bufp;
     char *v;
@@ -472,7 +464,7 @@ static tmstring horprintlist( TMPRINTSTATE *st, sunit l )
     if( l == sunitNIL ){
 	return new_tmstring( "[]" );
     }
-    bufp = st->linebuf;
+    bufp = linebuf;
     *bufp++ = '[';
     while( l != sunitNIL ){
 	v = ((SuWord)l)->word;
@@ -487,24 +479,21 @@ static tmstring horprintlist( TMPRINTSTATE *st, sunit l )
     }
     *bufp++ = ']';
     *bufp = '\0';
-    return new_tmstring( st->linebuf );
+    return new_tmstring( linebuf );
 }
 
 /* Print tuple consisting of sunits in 'l' in
    horizontal mode, and return a nw tmstring for it.
  */
-static tmstring horprinttuple( TMPRINTSTATE *st, sunit l )
+tmstring TmPrintState::horPrintTuple( sunit l )
 {
-    char *bufp;
-    char *v;
-
     if( l == sunitNIL ){
 	return new_tmstring( "()" );
     }
-    bufp = st->linebuf;
+    char *bufp = linebuf;
     *bufp++ = '(';
     while( l != sunitNIL ){
-	v = ((SuWord)l)->word;
+	char *v = ((SuWord)l)->word;
 	while( *v ){
 	    *bufp++ = *v++;
 	}
@@ -516,15 +505,14 @@ static tmstring horprinttuple( TMPRINTSTATE *st, sunit l )
     }
     *bufp++ = ')';
     *bufp = '\0';
-    return new_tmstring( st->linebuf );
+    return new_tmstring( linebuf );
 }
 
 /* Print constructor consisting of sunits in 'l' in
    horizontal mode, and return a nw tmstring for it.
  */
-static tmstring horprintcons( TMPRINTSTATE *st, sunit l )
+tmstring TmPrintState::horPrintConstructor( sunit l )
 {
-    char *bufp;
     char *v;
 
     if( l == sunitNIL ){
@@ -533,7 +521,7 @@ static tmstring horprintcons( TMPRINTSTATE *st, sunit l )
     if( l->next == sunitNIL ){
 	return new_tmstring( ((SuWord)l)->word );
     }
-    bufp = st->linebuf;
+    char *bufp = linebuf;
     *bufp++ = '(';
     while( l != sunitNIL ){
 	v = ((SuWord)l)->word;
@@ -547,31 +535,29 @@ static tmstring horprintcons( TMPRINTSTATE *st, sunit l )
     }
     *bufp++ = ')';
     *bufp = '\0';
-    return new_tmstring( st->linebuf );
+    return new_tmstring( linebuf );
 }
 
 /******************************************************
  *            STACK MANAGEMENT ROUTINES               *
  ******************************************************/
 
-/* push current level on st->stack */
-static void pushlev( TMPRINTSTATE *st )
+// push current level on stack
+void TmPrintState::pushLevel()
 {
-    Sstack nw;
-
-    nw = newSstack( st->curlist );
-    nw->next = st->stack;
-    st->stack = nw;
+    Sstack nw = newSstack( curlist );
+    nw->next = stack;
+    stack = nw;
 }
 
-static void poplev( TMPRINTSTATE *st )
+void TmPrintState::popLevel()
 {
-    Sstack e;
-
-    if( st->stack == SstackNIL ) FATAL( "pop of empty printst->stack" );
-    e = (Sstack) st->stack;
-    st->curlist = e->ulist;
-    st->stack = e->next;
+    if( stack == SstackNIL ){
+	FATAL( "pop of empty printstack" );
+    }
+    Sstack e = (Sstack) stack;
+    curlist = e->ulist;
+    stack = e->next;
     freSstack( (Sstack) e );
 }
 
@@ -579,150 +565,129 @@ static void poplev( TMPRINTSTATE *st )
  *            TOP LEVEL ROUTINES                      *
  ******************************************************/
 
-/* start a nw constructor */
-void tm_opencons( TMPRINTSTATE *st )
+// start a new constructor */
+void TmPrintState::openConstructor()
 {
-    pushlev( st );
-    st->braclev++;
-    st->curlist = sunitNIL;
+    pushLevel();
+    braclev++;
+    curlist = sunitNIL;
 }
 
-/* terminate current constructor */
-void tm_closecons( TMPRINTSTATE *st )
+// terminate current constructor */
+void TmPrintState::closeConstructor()
 {
     sunit nw;
-    int len;
 
-    st->braclev--;
-    len = lencons( st->curlist );
-    if( len != 0 && (len + (st->braclev * st->istep)) < st->width ){
-	nw = newSuWord( horprintcons( st, st->curlist ) );
-	rfresunit_list( st->curlist );
+    braclev--;
+    int len = lencons( curlist );
+    if( len != 0 && (len + (braclev * istep)) < width ){
+	nw = newSuWord( horPrintConstructor( curlist ) );
+	rfresunit_list( curlist );
     }
     else {
-	nw = newSuCons( st->curlist );
+	nw = newSuCons( curlist );
     }
-    poplev( st );
-    if( st->braclev<1 ){
-	vertprintsunit( st, nw, 0 );
-	fputc( '\n', st->file );
+    popLevel();
+    if( braclev<1 ){
+	vertPrintSunit( nw, 0 );
+	fputc( '\n', file );
 	rfresunit( nw );
 	return;
     }
-    st->curlist = appsunitlist( st->curlist, nw );
+    curlist = appsunitlist( curlist, nw );
 }
 
 /* start a nw list */
-void tm_openlist( TMPRINTSTATE *st )
+void TmPrintState::openList()
 {
-    pushlev( st );
-    st->braclev++;
-    st->curlist = sunitNIL;
+    pushLevel();
+    braclev++;
+    curlist = sunitNIL;
 }
 
 /* terminate current list */
-void tm_closelist( TMPRINTSTATE *st )
+void TmPrintState::closeList()
 {
     sunit nw;
     int len;
 
-    st->braclev--;
-    len = lenlist( st->curlist );
-    if( len != 0 && (len + (st->braclev * st->istep)) < st->width ){
-	nw = newSuWord( horprintlist( st, st->curlist ) );
-	rfresunit_list( st->curlist );
+    braclev--;
+    len = lenlist( curlist );
+    if( len != 0 && (len + (braclev * istep)) < width ){
+	nw = newSuWord( horPrintList( curlist ) );
+	rfresunit_list( curlist );
     }
     else {
-	nw = newSuList( st->curlist );
+	nw = newSuList( curlist );
     }
-    poplev( st );
-    if( st->braclev<1 ){
-	vertprintsunit( st, nw, 0 );
-	fputc( '\n', st->file );
+    popLevel();
+    if( braclev<1 ){
+	vertPrintSunit( nw, 0 );
+	fputc( '\n', file );
 	rfresunit( nw );
 	return;
     }
-    st->curlist = appsunitlist( st->curlist, nw );
+    curlist = appsunitlist( curlist, nw );
 }
 
-/* start a nw tuple */
-void tm_opentuple( TMPRINTSTATE *st )
+// start a new tuple
+void TmPrintState::openTuple()
 {
-    pushlev( st );
-    st->braclev++;
-    st->curlist = sunitNIL;
+    pushLevel();
+    braclev++;
+    curlist = sunitNIL;
 }
 
-/* terminate current tuple */
-void tm_closetuple( TMPRINTSTATE *st )
+// terminate current tuple
+void TmPrintState::closeTuple()
 {
     sunit nw;
-    int len;
 
-    st->braclev--;
-    len = lentuple( st->curlist );
-    if( len != 0 && (len + (st->braclev * st->istep)) < st->width ){
-	nw = newSuWord( horprinttuple( st, st->curlist ) );
-	rfresunit_list( st->curlist );
+    braclev--;
+    int len = lentuple( curlist );
+    if( len != 0 && (len + (braclev * istep)) < width ){
+	nw = newSuWord( horPrintTuple( curlist ) );
+	rfresunit_list( curlist );
     }
     else {
-	nw = newSuTuple( st->curlist );
+	nw = newSuTuple( curlist );
     }
-    poplev( st );
-    if( st->braclev<1 ){
-	vertprintsunit( st, nw, 0 );
-	fputc( '\n', st->file );
+    popLevel();
+    if( braclev<1 ){
+	vertPrintSunit( nw, 0 );
+	fputc( '\n', file );
 	rfresunit( nw );
 	return;
     }
-    st->curlist = appsunitlist( st->curlist, nw );
+    curlist = appsunitlist( curlist, nw );
 }
 
-/* Add word 'w' to the current unit list, or print it
-   directly if no brackets are opened.
- */
-void tm_printword( TMPRINTSTATE *st, const char *w )
+// Add word 'w' to the current unit list, or print it
+// directly if no brackets are opened.
+void TmPrintState::printWord( const char *w )
 {
-    sunit nw;
-
-    if( st->braclev<1 ){
-	fputs( w, st->file );
-	fputc( '\n', st->file );
+    if( braclev<1 ){
+	fputs( w, file );
+	fputc( '\n', file );
 	return;
     }
-    nw = newSuWord( new_tmstring( w ) );
-    st->curlist = appsunitlist( st->curlist, nw );
+    sunit nw = newSuWord( new_tmstring( w ) );
+    curlist = appsunitlist( curlist, nw );
 }
 
-TMPRINTSTATE *tm_setprint(
+TmPrintState::TmPrintState(
     FILE *f,
-    const int istep,
-    const int width,
-    const int tabwidth,
-    const unsigned int flags
-)
+    const int p_istep,
+    const int p_width,
+    const int p_tabwidth,
+    const unsigned int p_flags
+): file(f), linebuf(0), istep(p_istep), width(p_width), tabwidth(p_tabwidth),
+   flags(p_flags), braclev(0), curlist(sunitNIL), stack(SstackNIL)
 {
-    TMPRINTSTATE *st;
-
-    st = TM_MALLOC( TMPRINTSTATE *, sizeof( *st ) );
-    st->file = f;
-    st->istep = istep;
-    st->width = width;
-    st->tabwidth = tabwidth;
-    st->flags = flags;
-    st->braclev = 0;
-    st->curlist = sunitNIL;
-    st->stack = SstackNIL;
-    st->linebuf = TM_MALLOC( char *, (width+10)*sizeof( char ) );
-    return st;
+    linebuf = TM_MALLOC( char *, (width+10)*sizeof( char ) );
 }
 
-int tm_endprint( TMPRINTSTATE *st )
+TmPrintState::~TmPrintState()
 {
-    int braclev = st->braclev;
-
-    TM_FREE( st->linebuf );
-    TM_FREE( st );
-    return braclev;
+    TM_FREE( linebuf );
 }
-

@@ -7,7 +7,7 @@
 #include "tmcpp.h"
 #include "config.h"
 
-void print_int( TMPRINTSTATE *st, const int i )
+void print_int( TmPrintState *st, const int i )
 {
     char buf[sizeof(int)*8];
 
@@ -17,5 +17,5 @@ void print_int( TMPRINTSTATE *st, const int i )
     else {
 	sprintf( buf, "%d", i );
     }
-    tm_printword( st, buf );
+    st->printWord( buf );
 }

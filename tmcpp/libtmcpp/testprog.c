@@ -24,59 +24,59 @@ static void bad( const char *msg )
    exit( 1 );
 }
 
-/* test_printopt: test printopt routines */
-static void test_printopt( TMPRINTSTATE *st )
+// test_printopt: test printopt routines
+static void test_printopt( TmPrintState *st )
 {
     int k;
     int i;
     int j;
 
-    tm_openlist( st );
-    tm_closelist( st );
-    tm_opentuple( st );
-    tm_printword( st, "tuple1" );
-    tm_printword( st, "24" );
-    tm_closetuple( st );
-    tm_opencons( st );
-    tm_printword( st, "Cons1" );
-    tm_closecons( st );
+    st->openList();
+    st->closeList();
+    st->openTuple();
+    st->printWord( "tuple1" );
+    st->printWord( "24" );
+    st->closeTuple();
+    st->openConstructor();
+    st->printWord( "Cons1" );
+    st->closeConstructor();
     for( k=0; k<12; k+=3 ){
-	tm_opencons( st );
-	tm_printword( st, "Cons2" );
-	tm_opencons( st );
-	tm_printword( st, "Cons3" );
+	st->openConstructor();
+	st->printWord( "Cons2" );
+	st->openConstructor();
+	st->printWord( "Cons3" );
 	for( i=1; i<k; i++ ){
-	    tm_openlist( st );
+	    st->openList();
 	    for( j=0; j<i; j++ ){
-		tm_printword( st, "42" );
+		st->printWord( "42" );
 	    }
-	    tm_closelist( st );
+	    st->closeList();
 	}
-	tm_closecons( st );
-	tm_opentuple( st );
-	tm_printword( st, "tuple" );
+	st->closeConstructor();
+	st->openTuple();
+	st->printWord( "tuple" );
 	for( i=1; i<k; i++ ){
-	    tm_openlist( st );
+	    st->openList();
 	    for( j=0; j<i; j++ ){
-		tm_printword( st, "42" );
+		st->printWord( "42" );
 	    }
-	    tm_closelist( st );
+	    st->closeList();
 	}
-	tm_closetuple( st );
-	tm_closecons( st );
+	st->closeTuple();
+	st->closeConstructor();
     }
-    tm_printword( st, "Top" );
-    tm_printword( st, "level" );
-    tm_printword( st, "tm_printword()." );
+    st->printWord( "Top" );
+    st->printWord( "level" );
+    st->printWord( "tm_printword()." );
 }
 
 /* Test of tm_fscanopenbrac() and tm_fscanclosebrac().
  * Read open brackets and match with close brackets until
  * a group of 0 pairs is encountered. Write the brackets
- * to the output file with the tm_opencons( st ) and tm_closecons( st )
+ * to the output file with the st->openConstructor() and st->closeConstructor()
  * functions.
  */
-static void test_brac( TMPRINTSTATE *st )
+static void test_brac( TmPrintState *st )
 {
     int bracs;
     int i;
@@ -84,15 +84,15 @@ static void test_brac( TMPRINTSTATE *st )
     do{
 	bracs = tm_fscanopenbrac( infile );
 	for( i=0; i<bracs; i++ ){
-	    tm_opencons( st );
-	    tm_printword( st, "Bractest" );
-	    tm_printword( st, "42" );
+	    st->openConstructor();
+	    st->printWord( "Bractest" );
+	    st->printWord( "42" );
 	}
 	if( tm_fscanclosebrac( infile, bracs ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	for( i=0; i<bracs; i++ ){
-	    tm_closecons( st );
+	    st->closeConstructor();
 	}
     } while( bracs != 0 );
 }
@@ -100,166 +100,166 @@ static void test_brac( TMPRINTSTATE *st )
 /* Test of tm_fscancons(). Read and write constructors until one
    with name "StopFscanCons" is encountered.
  */
-static void test_cons( TMPRINTSTATE *st )
+static void test_cons( TmPrintState *st )
 {
     char buf[1000];
 
-    tm_opencons( st );
-    tm_printword( st, "Constest" );
-    tm_openlist( st );
+    st->openConstructor();
+    st->printWord( "Constest" );
+    st->openList();
     do{
 	if( tm_fscancons( infile, buf, 1000 ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
             exit( 1 );
 	}
-	tm_printword( st, buf );
+	st->printWord( buf );
     } while( strcmp( buf, "StopFscanCons" ) != 0 );
-    tm_closelist( st );
-    tm_closecons( st );
+    st->closeList();
+    st->closeConstructor();
 }
 
 /* Test of print_ulong() and fscan_ulong(): read and write
    long's until one with value 42 is encountered.
  */
-static void test_ulong( TMPRINTSTATE *st )
+static void test_ulong( TmPrintState *st )
 {
     ulong ul;
 
-    tm_opencons( st );
-    tm_printword( st, "Ulongtest" );
+    st->openConstructor();
+    st->printWord( "Ulongtest" );
     do {
 	if( fscan_ulong( infile, &ul ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_ulong( st, ul );
     } while( ul != 42 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_long() and fscan_long(): read and write
    long's until one with value 42 is encountered.
  */
-static void test_long( TMPRINTSTATE *st )
+static void test_long( TmPrintState *st )
 {
     long l;
 
-    tm_opencons( st );
-    tm_printword( st, "Longtest" );
+    st->openConstructor();
+    st->printWord( "Longtest" );
     do {
 	if( fscan_long( infile, &l ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_long( st, l );
     } while( l != 42 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_sshrt() and fscan_sshrt(): read and write sshrt's until
    one with value -1 is encountered.
  */
-static void test_sshrt( TMPRINTSTATE *st )
+static void test_sshrt( TmPrintState *st )
 {
     sshrt i;
 
-    tm_opencons( st );
-    tm_printword( st, "Sshrttest" );
+    st->openConstructor();
+    st->printWord( "Sshrttest" );
     do {
 	if( fscan_sshrt( infile, &i ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_sshrt( st, i );
     } while( i != -1 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_ushrt() and fscan_ushrt(): read and write
    unsigned's until one with value 42 is encountered.
  */
-static void test_ushrt( TMPRINTSTATE *st )
+static void test_ushrt( TmPrintState *st )
 {
     ushrt u;
 
-    tm_opencons( st );
-    tm_printword( st, "Ushrttest" );
+    st->openConstructor();
+    st->printWord( "Ushrttest" );
     do {
 	if( fscan_ushrt( infile, &u ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_ushrt( st, u );
     } while( u != 42 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_int() and fscan_int(): read and write int's until
    one with value -1 is encountered.
  */
-static void test_int( TMPRINTSTATE *st )
+static void test_int( TmPrintState *st )
 {
     int i;
 
-    tm_opencons( st );
-    tm_printword( st, "Inttest" );
+    st->openConstructor();
+    st->printWord( "Inttest" );
     do {
 	if( fscan_int( infile, &i ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_int( st, i );
     } while( i != -1 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_uint() and fscan_uint(): read and write
    unsigned's until one with value 42 is encountered.
  */
-static void test_uint( TMPRINTSTATE *st )
+static void test_uint( TmPrintState *st )
 {
     uint u;
 
-    tm_opencons( st );
-    tm_printword( st, "Unsignedtest" );
+    st->openConstructor();
+    st->printWord( "Unsignedtest" );
     do {
 	if( fscan_uint( infile, &u ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_uint( st, u );
     } while( u != 42 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_schar() and fscan_schar(): read and write schar's until
    one with value 'q' is encountered.
  */
-static void test_schar( TMPRINTSTATE *st )
+static void test_schar( TmPrintState *st )
 {
     schar c;
 
-    tm_opencons( st );
-    tm_printword( st, "Schartest" );
+    st->openConstructor();
+    st->printWord( "Schartest" );
     do {
 	if( fscan_schar( infile, &c ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_schar( st, c );
     } while( c != 'q' );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of print_uchar() and fscan_uchar(): read and write uchar's until
    one with value 'q' is encountered.
  */
-static void test_uchar( TMPRINTSTATE *st )
+static void test_uchar( TmPrintState *st )
 {
     uchar c;
 
-    tm_opencons( st );
-    tm_printword( st, "Uchartest" );
+    st->openConstructor();
+    st->printWord( "Uchartest" );
     do {
 	if( fscan_uchar( infile, &c ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
 	print_uchar( st, c );
     } while( c != 'q' );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* test cmp_double() */
@@ -326,7 +326,7 @@ static void test_float( void )
     }
 }
 
-static void test_tmstring( TMPRINTSTATE *st )
+static void test_tmstring( TmPrintState *st )
 {
     tmstring s;
     int stop;
@@ -339,13 +339,13 @@ static void test_tmstring( TMPRINTSTATE *st )
     for( i=0; i<10; i++ ){
 	fre_tmstring( sbuf[i] );
     }
-    tm_opencons( st );
-    tm_printword( st, "Stringouttest" );
+    st->openConstructor();
+    st->printWord( "Stringouttest" );
     print_tmstring( st, "" );
     print_tmstring( st, "Test" );
-    tm_closecons( st );
-    tm_opencons( st );
-    tm_printword( st, "Stringintest" );
+    st->closeConstructor();
+    st->openConstructor();
+    st->printWord( "Stringintest" );
     stop = 0;
     do {
 	if( fscan_tmstring( infile, &s ) ){
@@ -358,20 +358,20 @@ static void test_tmstring( TMPRINTSTATE *st )
 	}
 	fre_tmstring( s );
     } while( stop == 0 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
-static void test_tmword( TMPRINTSTATE *st )
+static void test_tmword( TmPrintState *st )
 {
     tmword s;
     int stop;
 
-    tm_opencons( st );
-    tm_printword( st, "Wordouttest" );
+    st->openConstructor();
+    st->printWord( "Wordouttest" );
     print_tmword( st, "Test" );
-    tm_closecons( st );
-    tm_opencons( st );
-    tm_printword( st, "Wordintest" );
+    st->closeConstructor();
+    st->openConstructor();
+    st->printWord( "Wordintest" );
     stop = 0;
     do {
 	if( fscan_tmword( infile, &s ) ){
@@ -384,11 +384,11 @@ static void test_tmword( TMPRINTSTATE *st )
 	}
 	fre_tmword( s );
     } while( stop == 0 );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test the tmtext routines. */
-static void test_tmtext( TMPRINTSTATE *st )
+static void test_tmtext( TmPrintState *st )
 {
     tmtext *t;
     tmtext *t2;
@@ -402,8 +402,8 @@ static void test_tmtext( TMPRINTSTATE *st )
     for( int i=0; i<10; i++ ){
 	sbuf[i]->destroy();
     }
-    tm_opencons( st );
-    tm_printword( st, "Textouttest" );
+    st->openConstructor();
+    st->printWord( "Textouttest" );
     t = new tmtext();
     print_tmtext( st, t );
     t->destroy();
@@ -433,10 +433,10 @@ static void test_tmtext( TMPRINTSTATE *st )
     t->destroy();
     t = t2;
     print_tmtext( st, t );
-    tm_closecons( st );
+    st->closeConstructor();
     t->destroy();
-    tm_opencons( st );
-    tm_printword( st, "Textintest" );
+    st->openConstructor();
+    st->printWord( "Textintest" );
     stop = 0;
     do {
 	if( fscan_tmtext( infile, &t ) ){
@@ -449,7 +449,7 @@ static void test_tmtext( TMPRINTSTATE *st )
 	}
 	t->destroy();
     } while( stop == 0 );
-    tm_closecons( st );
+    st->closeConstructor();
     t = new tmtext();
     t = puts_tmtext( "testing", t );
     if( cmp_string_tmtext( "testing", t ) != 0 ){
@@ -510,12 +510,12 @@ static void test_tmtext( TMPRINTSTATE *st )
     t->destroy();
 }
 
-static void test_tmbool( TMPRINTSTATE *st )
+static void test_tmbool( TmPrintState *st )
 {
     tmbool b;
 
-    tm_opencons( st );
-    tm_printword( st, "Tmboolouttest" );
+    st->openConstructor();
+    st->printWord( "Tmboolouttest" );
     print_tmbool( st, TMTRUE );
     print_tmbool( st, TMFALSE );
     do {
@@ -524,7 +524,7 @@ static void test_tmbool( TMPRINTSTATE *st )
 	}
 	print_tmbool( st, b );
     } while( b );
-    tm_closecons( st );
+    st->closeConstructor();
 }
 
 /* Test of fprint_uchar() */
@@ -704,7 +704,6 @@ int main( void )
 {
     tmstring str;
     tmstring scstr;
-    TMPRINTSTATE *st;
     int lev;
 
     infile = fopen( "testin", "r" );
@@ -720,7 +719,7 @@ int main( void )
     }
     test_tmsymbol();
     tm_lineno = 1;
-    st = tm_setprint( outfile, 4, 80, 8, 0 );
+    TmPrintState *st = new TmPrintState( outfile, 4, 80, 8, 0 );
     test_printopt( st );
     test_brac( st );
     test_cons( st );
@@ -748,7 +747,8 @@ int main( void )
     ftest_ulong( outfile );
     ftest_tmstring( outfile );
     ftest_tmword( outfile );
-    lev = tm_endprint( st );
+    lev = st->getLevel();
+    st->destroy();
     fprintf( stderr, "bracket level: %d\n", lev );
     fprintf( stderr, "get_balance_tmstring(): %d\n", get_balance_tmstring() );
     fprintf( stderr, "tmtext::get_balance(): %d\n", tmtext::get_balance() );

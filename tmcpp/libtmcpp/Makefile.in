@@ -95,8 +95,6 @@ LIBSRCS	 = \
                 fscwrd.c \
                 insblock.c \
                 instext.c \
-                lognew.c \
-                lrduptxt.c \
                 newstr.c \
                 noroom.c \
                 prdbl.c \

@@ -12,14 +12,14 @@
 #include "tmcpp.h"
 
 // definition of 'print' for a 'tmstring'
-void print_tmstring( TMPRINTSTATE *st, tmconststring s )
+void print_tmstring( TmPrintState *st, tmconststring s )
 {
     tmstring buf;
     const char *sp;
     unsigned int ix = 0;
 
     if( s == tmstringNIL ){
-	tm_printword( st, "@" );
+	st->printWord( "@" );
 	return;
     }
     unsigned int sz = strlen( s )+20;
@@ -47,6 +47,6 @@ void print_tmstring( TMPRINTSTATE *st, tmconststring s )
      */
     buf[ix++] = '"';
     buf[ix] = '\0';
-    tm_printword( st, buf );
+    st->printWord( buf );
     fre_tmstring( buf );
 }

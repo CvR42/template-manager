@@ -12,12 +12,12 @@
 #include "tmcpp.h"
 
 /* definition of 'print' for a 'tmtext' */
-void print_tmtext( TMPRINTSTATE *st, const tmtext *t )
+void print_tmtext( TmPrintState *st, const tmtext *t )
 {
     tmstring str_fmt;
 
     if( t == tmtextNIL ){
-	tm_printword( st, "@" );
+	st->printWord( "@" );
 	return;
     }
     tmtext *fmt = new tmtext();
@@ -30,6 +30,6 @@ void print_tmtext( TMPRINTSTATE *st, const tmtext *t )
     putc_tmtext( '"', fmt );
     str_fmt = tmtext_to_tmstring( fmt );
     fmt->destroy();
-    tm_printword( st, str_fmt );
+    st->printWord( str_fmt );
     fre_tmstring( str_fmt );
 }
