@@ -2,10 +2,10 @@
 
 # The version numbers below reflect release versions for the various
 # packages.
-TMKERNEL_VERSION = 2.0.7
+TMKERNEL_VERSION = 2.0.8
 TMPAS_VERSION = 1.0.2
 TMMIRA_VERSION = 1.0.2
-TMDEMO_VERSION = 1.0-beta4
+TMDEMO_VERSION = 1.0
 CVSDIR = $(HOME)/Cvs
 
 SHELL=/bin/sh
@@ -90,7 +90,7 @@ tmkerneldoc_distlist: $(MAKEFILE) tmkrndoc
 tmkerneldoc-$(TMKERNEL_VERSION).tar.gz tmkerneldoc-$(TMKERNEL_VERSION).zip: tmkerneldoc_distlist
 	-mkdir tmkerneldoc-$(TMKERNEL_VERSION)
 	cvs -d $(CVSDIR) export -r HEAD -d tmkerneldoc-$(TMKERNEL_VERSION) tm/tmkrndoc
-	cd tmkerneldoc-$(TMKERNEL_VERSION); make main.ps
+	cd tmkerneldoc-$(TMKERNEL_VERSION); make all
 	tar cf tmkerneldoc-$(TMKERNEL_VERSION).tar `cat tmkerneldoc_distlist`
 	gzip --best -f tmkerneldoc-$(TMKERNEL_VERSION).tar
 	zip -q -9 tmkerneldoc-$(TMKERNEL_VERSION).zip `cat tmkerneldoc_distlist`
@@ -106,6 +106,7 @@ tmkernel-$(TMKERNEL_VERSION).tar.gz tmkernel-$(TMKERNEL_VERSION).zip: tmkernel_d
 	cd tmkernel-$(TMKERNEL_VERSION)/tm; tm tm.ds tmcode.ct > tmcode.c
 	cd tmkernel-$(TMKERNEL_VERSION)/tm; tm tm.ds tmcode.ht > tmcode.h
 	cd tmkernel-$(TMKERNEL_VERSION)/tmc; autoconf
+	cd tmkernel-$(TMKERNEL_VERSION); autoconf
 	tar cf tmkernel-$(TMKERNEL_VERSION).tar `cat tmkernel_distlist`
 	gzip --best -f tmkernel-$(TMKERNEL_VERSION).tar
 	zip -q -9 tmkernel-$(TMKERNEL_VERSION).zip `cat tmkernel_distlist`
