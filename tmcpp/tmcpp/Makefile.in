@@ -143,6 +143,15 @@ cppcode.h: cppcode.ht tmcpp.ht spec.t cltest.ds need.t macros.t
 stats:
 	wc -l $(TMMODULES)
 
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
 ###
 cppcode.o: cppcode.h config.h
 tpltest.o: cppcode.h config.h
