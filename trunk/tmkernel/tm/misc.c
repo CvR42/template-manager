@@ -54,19 +54,19 @@ const tmstring get_type_name( const ds t )
     nm = tmstringNIL;
     switch( t->tag ){
 	case TAGDsConstructorBase:
-	    nm = t->DsConstructorBase.name;
+	    nm = to_DsConstructorBase(t)->name;
 	    break;
 
 	case TAGDsTuple:
-	    nm = t->DsTuple.name;
+	    nm = to_DsTuple(t)->name;
 	    break;
 
 	case TAGDsClass:
-	    nm = t->DsClass.name;
+	    nm = to_DsClass(t)->name;
 	    break;
 
 	case TAGDsConstructor:
-	    nm = t->DsConstructor.name;
+	    nm = to_DsConstructor(t)->name;
 	    break;
 
     }
@@ -154,22 +154,22 @@ field find_field( const ds_list types, const char *type, const char *nm )
     switch( t->tag ){
 	case TAGDsConstructorBase:
 	    fl = field_listNIL;
-	    inherits = t->DsConstructorBase.inherits;
+	    inherits = to_DsConstructorBase(t)->inherits;
 	    break;
 
 	case TAGDsTuple:
-	    fl = t->DsTuple.fields;
-	    inherits = t->DsTuple.inherits;
+	    fl = to_DsTuple(t)->fields;
+	    inherits = to_DsTuple(t)->inherits;
 	    break;
 
 	case TAGDsClass:
-	    fl = t->DsClass.fields;
-	    inherits = t->DsClass.inherits;
+	    fl = to_DsClass(t)->fields;
+	    inherits = to_DsClass(t)->inherits;
 	    break;
 
 	case TAGDsConstructor:
-	    fl = t->DsConstructor.fields;
-	    inherits = t->DsConstructor.inherits;
+	    fl = to_DsConstructor(t)->fields;
+	    inherits = to_DsConstructor(t)->inherits;
 	    break;
 
     }
@@ -188,19 +188,19 @@ static const tmstring_list extract_inherits_type( const ds d )
 
     switch( d->tag ){
 	case TAGDsConstructorBase:
-	    ans = d->DsConstructorBase.inherits;
+	    ans = to_DsConstructorBase(d)->inherits;
 	    break;
 
 	case TAGDsTuple:
-	    ans = d->DsTuple.inherits;
+	    ans = to_DsTuple(d)->inherits;
 	    break;
 
 	case TAGDsClass:
-	    ans = d->DsClass.inherits;
+	    ans = to_DsClass(d)->inherits;
 	    break;
 
 	case TAGDsConstructor:
-	    ans = d->DsConstructor.inherits;
+	    ans = to_DsConstructor(d)->inherits;
 	    break;
 
     }
@@ -306,15 +306,15 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
     d = types->arr[ix];
     switch( d->tag ){
 	case TAGDsTuple:
-	    el = d->DsTuple.fields;
+	    el = to_DsTuple(d)->fields;
 	    break;
 
 	case TAGDsClass:
-	    el = d->DsClass.fields;
+	    el = to_DsClass(d)->fields;
 	    break;
 
 	case TAGDsConstructor:
-	    el = d->DsConstructor.fields;
+	    el = to_DsConstructor(d)->fields;
 	    break;
 
 	case TAGDsConstructorBase:

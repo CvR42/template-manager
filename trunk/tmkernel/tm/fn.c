@@ -1203,7 +1203,7 @@ static tmstring fnconstructorlist( const tmstring_list sl )
 		break;
 
 	    case TAGDsConstructor:
-		nl = append_tmstring_list( nl, new_tmstring( d->DsConstructor.name ) );
+		nl = append_tmstring_list( nl, new_tmstring( to_DsConstructor(d)->name ) );
 		break;
 	}
     }
@@ -1227,7 +1227,7 @@ static tmstring fnctypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
-		nl = append_tmstring_list( nl, new_tmstring( d->DsConstructorBase.name ) );
+		nl = append_tmstring_list( nl, new_tmstring( to_DsConstructor(d)->name ) );
 		break;
 
 	    case TAGDsTuple:
@@ -1261,7 +1261,7 @@ static tmstring fntuplelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		nl = append_tmstring_list( nl, new_tmstring( d->DsClass.name ) );
+		nl = append_tmstring_list( nl, new_tmstring( to_DsClass(d)->name ) );
 		break;
 
 	    case TAGDsConstructorBase:
@@ -1298,7 +1298,7 @@ static tmstring fnclasslist( const tmstring_list sl )
 		break;
 
 	    case TAGDsClass:
-		vp = d->DsClass.name;
+		vp = to_DsClass(d)->name;
 		nl = append_tmstring_list( nl, new_tmstring( vp ) );
 		break;
 
@@ -1350,7 +1350,7 @@ static tmstring fnisvirtual( const tmstring_list sl )
 		break;
 
 	    case TAGDsClass:
-		ans = d->DsClass.virtual;
+		ans = to_DsClass(d)->virtual;
 		break;
 
 	}
@@ -1618,15 +1618,15 @@ static tmstring fntypes( const tmstring_list tl )
 		    break;
 
 		case TAGDsTuple:
-		    fl = d->DsTuple.fields;
+		    fl = to_DsTuple(d)->fields;
 		    break;
 
 		case TAGDsClass:
-		    fl = d->DsClass.fields;
+		    fl = to_DsClass(d)->fields;
 		    break;
 
 		case TAGDsConstructor:
-		    fl = d->DsConstructor.fields;
+		    fl = to_DsConstructor(d)->fields;
 		    break;
 
 	    }
@@ -1696,7 +1696,7 @@ static tmstring fnconslist( const tmstring_list tl )
 	    if( d->tag == TAGDsConstructorBase ){
 		nl = concat_tmstring_list(
 		    nl,
-		    rdup_tmstring_list( d->DsConstructorBase.constructors )
+		    rdup_tmstring_list( to_DsConstructorBase(d)->constructors )
 		);
 	    }
 	}
@@ -1734,7 +1734,7 @@ static tmstring fncelmlist( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsConstructorBase.constructors;
+    cl = to_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1774,7 +1774,7 @@ static tmstring fnctypename( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsConstructorBase.constructors;
+    cl = to_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1812,7 +1812,7 @@ static tmstring fnctypeclass( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsConstructorBase.constructors;
+    cl = to_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1847,7 +1847,7 @@ static tmstring fnctypellev( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsConstructorBase.constructors;
+    cl = to_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -1900,7 +1900,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsTuple:
 	{
-	    field_list fl = d->DsTuple.fields;
+	    field_list fl = to_DsTuple(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		field e = fl->arr[ix];
@@ -1913,7 +1913,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsClass:
 	{
-	    field_list fl = d->DsClass.fields;
+	    field_list fl = to_DsClass(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		field e = fl->arr[ix];
@@ -1926,7 +1926,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsConstructor:
 	{
-	    field_list fl = d->DsConstructor.fields;
+	    field_list fl = to_DsConstructor(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		field e = fl->arr[ix];
