@@ -598,6 +598,9 @@ If {\tt p} is greater than or equal to the length of {\tt l},
 the elements are appended after {\tt la}.
 All elements in {\tt lb} are now `owned' by list {\tt la}, and the
 list container of {\tt lb} is destroyed.
+\par
+If {\tt la} is \verb'<type>_listNIL', an error is generated.
+If {\tt lb} is \verb'<type>_listNIL', {\tt la} is returned unchanged.
 \end{desc}
 \begin{verbatim}
 <type>_list delete_<type>_list( <type>_list l, unsigned int pos );
