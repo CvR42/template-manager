@@ -5,6 +5,8 @@
 
 MAKEFILE = Makefile
 
+WEBDIR = $(HOME)/website/software/Tm
+
 # Top level LaTeX file containing the \include commands.
 TOPFILE = main
 
@@ -124,6 +126,21 @@ title.c: title.ct title.ds
 
 t: $(CALCDEMO) $(EXAMPLEOUTFILES)
 	echo $(CALCDEMO) $(EXAMPLEOUTFILES)
+
+%.ps: %.dvi
+	dvips $<
+
+tm-manual.ps: $(TOPFILE).ps
+	cp $(TOPFILE).ps tm-manual.ps
+
+%.ps.gz: %.ps
+	cp $< __tmp.ps
+	gzip -9 __tmp.ps
+	mv __tmp.ps.gz $*.ps.gz
+
+docinstall: tm-manual.ps tm-manual.ps.gz
+	cp tm-manual.ps $(WEBDIR)
+	cp tm-manual.ps.gz $(WEBDIR)
 
 main.dvi: $(CALCDEMO)
 main.dvi: title.c
