@@ -190,7 +190,7 @@ public:
 
     inline size_type size() const { return sz; }
     inline size_type capacity() const { return room; }
-    bool empty() const { return sz == 0; }
+    inline bool empty() const { return sz == 0; }
 
     void reserve( const size_type rm );
     inline void resize( size_type new_sz ) { reserve( new_sz ); sz = new_sz; }
