@@ -24,7 +24,7 @@ EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex tmc.tex intro.tex \
 	   ds.tex titlepage.tex dsgram.tex impl.tex calc.tex \
-	   demoh.tex democ.tex defs.tex preface.tex flow.tex upgrade.tex
+	   defs.tex preface.tex flow.tex upgrade.tex
 
 AUXFILES = $(TEXFILES:.tex=.aux)
 
@@ -128,6 +128,9 @@ calcpars.c tokens.h: calcpars.y
 calclex.c: calclex.l
 	$(LEX) $<
 	mv lex.yy.c $*.c
+
+t:
+	@echo $(CALCDEMO)
 
 calcpars.o: calc.h
 calclex.o: tokens.h
