@@ -19,6 +19,7 @@ LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
 LOCALMAN = @prefix@/man
 TMPFILE = @prefix@/tmp4242
+UNINSTALL_DATA = rm -f
 
 # System dependent flags for compilation with debugging
 DBUGFLAGS = -g -DLOGNEW -DSTAT
@@ -158,6 +159,12 @@ tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t tmcanalyze.t
 	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.t
 	$(INSTALL_DATA) tmcanalyze.t $(LOCALLIB)/tmcanalyze.t
 
+tmcuninstall: 
+	$(UNINSTALL_DATA) $(LOCALLIB)/tmc.ct
+	$(UNINSTALL_DATA) $(LOCALLIB)/tmc.ht
+	$(UNINSTALL_DATA) $(LOCALLIB)/tmcwalk.t
+	$(UNINSTALL_DATA) $(LOCALLIB)/tmcanalyze.t
+
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
 
@@ -173,6 +180,10 @@ aluinstall: need.t calu.ct calu.ht aluid.t
 	cat macros.t aluid.t need.t calu.ht > $(TMPFILE)
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/calu.ht
 	rm -f $(TMPFILE)
+
+aluuninstall: 
+	$(UNINSTALL_DATA) $(LOCALLIB)/calu.ct
+	$(UNINSTALL_DATA) $(LOCALLIB)/calu.ht
 
 llutest:     $(LLUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(LLUTESTOBJS) $(LIBS) -o llutest
@@ -190,7 +201,13 @@ lluinstall: need.t cllu.ct cllu.ht lluid.t
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/cllu.ht
 	rm -f $(TMPFILE)
 
+lluuninstall: 
+	$(UNINSTALL_DATA) $(LOCALLIB)/cllu.ct
+	$(UNINSTALL_DATA) $(LOCALLIB)/cllu.ht
+
 install: tmcinstall lluinstall aluinstall
+
+uninstall: tmcuninstall lluuninstall aluuninstall
 
 clean:
 	rm -f $(JUNK)
