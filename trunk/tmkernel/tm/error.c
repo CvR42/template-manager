@@ -91,10 +91,20 @@ void sys_error( int no )
 void line_error( const char *msg )
 {
     if( tplfilename == CHARNIL ){
-	(void) sprintf( errpos, "(%d)", tpllineno );
+	if( noerrorline ){
+	    errpos[0] = '\0';
+	}
+	else {
+	    (void) sprintf( errpos, "(%d)", tpllineno );
+	}
     }
     else {
-	(void) sprintf( errpos, "%s(%d)", tplfilename, tpllineno );
+	if( noerrorline ){
+	    (void) sprintf( errpos, "%s", tplfilename );
+	}
+	else {
+	    (void) sprintf( errpos, "%s(%d)", tplfilename, tpllineno );
+	}
     }
     error( msg );
 }

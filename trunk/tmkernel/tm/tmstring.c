@@ -255,14 +255,21 @@ bool istruestr( const tmstring s )
  * 'suff', return a new tmstring containing the list name constructed
  * from these ingredients.
  */
-tmstring mklistnm( const char *pre, const tmstring tnm, const char *suff )
+tmstring mklistnm( const char *pre, const tmstring tnm, const char *suff, unsigned int level )
 {
     size_t sz;
     tmstring res;
+    unsigned int n;
 
-    sz = strlen( pre ) + strlen( tnm ) + strlen( suff ) + 1;
+    sz = level*strlen( pre ) + strlen( tnm ) + level*strlen( suff ) + 1;
     res = new_tmstring( "" );
     res = realloc_tmstring( res, sz );
-    sprintf( res, "%s%s%s", pre, tnm, suff );
+    for( n=0; n<level; n++ ){
+	strcat( res, pre );
+    }
+    strcat( res, tnm );
+    for( n=0; n<level; n++ ){
+	strcat( res, suff );
+    }
     return res;
 }

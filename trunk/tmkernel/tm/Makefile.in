@@ -159,7 +159,7 @@ version.h: ../version.h
 	cp ../version.h version.h
 
 test: testin sub.ds test.ds testsub goodout gooderr $(TM)
-	-./tm -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
+	-./tm -dn -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
 	diff testout goodout
 	diff testerr gooderr
 	diff testrdir goodrdir

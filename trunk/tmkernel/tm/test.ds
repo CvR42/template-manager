@@ -28,4 +28,4 @@ toplevel ::= ;
 %include "sub.ds";
 || Unterminated comment
 
-testclass = { a:int, b:int } + subclass: orig;
+testclass = { a:[[int]], b:int } + subclass: orig;
