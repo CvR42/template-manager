@@ -10,6 +10,9 @@ The template is useful for small analysis operations such as determining
 the estimated code size of a function, or deciding wether an expression
 is constant.
 
+* The -, /, and % operators in $[] expressions are now left-binding.
+* Division and modulus by zero in $[] expressions now cause an error.
+
 Also, the Tm function 'reach' has been extended to accept a list of
 blocking nodes.
 
