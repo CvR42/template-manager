@@ -164,7 +164,7 @@ $t::~$t()
 .endforeach
 .foreach t $(need_ds_list)
 // Normal constructor
-$t_list::$t_list( const unsigned int rm ): sz(0), room(0), arr(0)
+$t_list::$t_list( const size_type rm ): sz(0), room(0), arr(0)
 {
     reserve( rm );
 .if ${member $t $(need_stat_list)}
@@ -176,7 +176,7 @@ $t_list::$t_list( const unsigned int rm ): sz(0), room(0), arr(0)
 $t_list::$t_list( const $t_list &l ): sz(0), room(0), arr(0)
 {
     reserve( l.room );
-    for( unsigned int ix=0; ix<l.sz; ix++ ){
+    for( size_type ix=0; ix<l.sz; ix++ ){
 .if ${member $t $(valuetypes)}
 	arr[ix] = l.arr[ix];
 .else
@@ -215,24 +215,16 @@ $t_list::~$t_list()
 .endforeach
 .foreach t $(need_ds_list)
 // Announce that you will need room for 'rm' elements in this list.
-void $t_list::reserve( const unsigned int rm )
+void $t_list::reserve( const size_type rm )
 {
     if( room>=rm ){
 	return;
     }
     if( room==0 ){
-.if ${member $t $(valuetypes)}
-	arr = TM_MALLOC( $t *, rm * sizeof(*(arr)) );
-.else
-	arr = TM_MALLOC( $t **, rm * sizeof(*(arr)) );
-.endif
+	arr = TM_MALLOC( value_type *, rm * sizeof(*(arr)) );
     }
     else {
-.if ${member $t $(valuetypes)}
-	arr = TM_REALLOC( $t *, arr, rm * sizeof(*(arr)) );
-.else
-	arr = TM_REALLOC( $t **, arr, rm * sizeof(*(arr)) );
-.endif
+	arr = TM_REALLOC( value_type *, arr, rm * sizeof(*(arr)) );
     }
     room = rm;
 }
@@ -246,11 +238,7 @@ void $t_list::reserve( const unsigned int rm )
 
 .foreach t $(need_append_list)
 // Append a $t element 'e'.
-.if ${member $t $(valuetypes)}
-void $t_list::append( $t e )
-.else
-void $t_list::append( $t *e )
-.endif
+void $t_list::append( value_type e )
 {
     if( sz >= room ){
 	reserve( 1+sz+sz );
@@ -270,19 +258,11 @@ void $t_list::append( $t *e )
 // Reverse the elements in the list.
 void $t_list::reverse()
 {
-    unsigned int ix = 0;
-    unsigned int other = sz-1;
-.if ${member $t $(valuetypes)}
-    $t *p = arr;
-.else
-    $t **p = arr;
-.endif
+    size_type ix = 0;
+    size_type other = sz-1;
+    value_type *p = arr;
     while( ix<other ){
-.if ${member $t $(valuetypes)}
-	$t h = p[ix];
-.else
-	$t *h = p[ix];
-.endif
+	value_type h = p[ix];
 	p[ix] = p[other];
 	p[other] = h;
 	ix++;
@@ -299,13 +279,9 @@ void $t_list::reverse()
 
 .foreach t $(need_insert_list)
 // Insert a $t element 'e' at position 'pos'.
-.if ${member $t $(valuetypes)}
-void $t_list::insert( const unsigned int pos, $t e )
-.else
-void $t_list::insert( const unsigned int pos, $t *e )
-.endif
+void $t_list::insert( const size_type pos, value_type e )
 {
-    unsigned int the_pos = pos;
+    size_type the_pos = pos;
 
     if( sz >= room ){
 	reserve( 1+sz+sz );
@@ -313,7 +289,7 @@ void $t_list::insert( const unsigned int pos, $t *e )
     if( the_pos>sz ){
 	the_pos = sz;
     }
-    for( unsigned int ix=sz; ix>the_pos; ix-- ){
+    for( size_type ix=sz; ix>the_pos; ix-- ){
 	arr[ix] = arr[ix-1];
     }
     sz++;
@@ -331,9 +307,9 @@ void $t_list::insert( const unsigned int pos, $t *e )
 // Insert a $t list 'lb' to into this at position 'pos'.
 // The elements of 'lb' are copied into this list, and the
 // container is destroyed.
-void $t_list::insertlist( unsigned int pos, $t_list *lb )
+void $t_list::insertlist( size_type pos, $t_list &lb )
 {
-    const unsigned int szb = lb->sz;
+    const size_type szb = lb.sz;
 
     reserve( sz+szb );
     if( pos>sz ){
@@ -341,28 +317,23 @@ void $t_list::insertlist( unsigned int pos, $t_list *lb )
     }
     // Move up elements
     {
-	for( unsigned int ix=sz+szb-1; ix>pos; ix-- ){
+	for( size_type ix=sz+szb-1; ix>pos; ix-- ){
 	    arr[ix] = arr[ix-szb];
 	}
     }
     sz += szb;
     // Copy in elements from 'lb'
     {
-	unsigned int cnt = szb;
-.if ${member $t $(valuetypes)}
-	$t *sp = lb->arr;
-	$t *dp = &arr[pos];
-.else
-	$t **sp = lb->arr;
-	$t **dp = &arr[pos];
-.endif
+	size_type cnt = szb;
+	value_type *sp = lb.arr;
+	value_type *dp = &arr[pos];
 
 	while( cnt!=0 ){
 	    *dp++ = *sp++;
 	    cnt--;
 	}
     }
-    delete lb;
+    delete &lb;
 }
 
 .endforeach
@@ -377,16 +348,11 @@ void $t_list::insertlist( unsigned int pos, $t_list *lb )
 // copied into this list', and the container is destroyed.
 void $t_list::concat( $t_list *lb )
 {
-.if ${member $t $(valuetypes)}
-    $t *sp;
-    $t *dp;
-.else
-    $t **sp;
-    $t **dp;
-.endif
+    value_type *sp;
+    value_type *dp;
 
     reserve( sz+lb->size() );
-    unsigned int cnt = lb->size();
+    size_type cnt = lb->size();
     sp = lb->arr;
     dp = &arr[sz];
     while( cnt!=0 ){
@@ -429,7 +395,7 @@ void $t::destroy()
 void $t_list::destroy()
 {
 .if ${not ${member $t $(valuetypes)}}
-    for( unsigned int ix=0; ix<sz; ix++ ){
+    for( size_type ix=0; ix<sz; ix++ ){
 	if( arr[ix] != $tNIL ){
 	    arr[ix]->destroy();
 	}
@@ -513,7 +479,7 @@ $(stic_$t)void print_$t( TmPrintState *st, const $t *t )
 void print_$t_list( TmPrintState *st, const $t_list *l )
 {
     st->openList();
-    for( unsigned int ix=0; ix<l->sz; ix++ ){
+    for( $t_list::size_type ix=0; ix<l->sz; ix++ ){
 	print_$t( st, l->arr[ix] );
     }
     st->closeList();
@@ -615,7 +581,7 @@ $(stic_$t)void fprint_$t_list( FILE *f, const $t_list *l )
 	return;
     }
     putc( '[', f );
-    for( unsigned int ix=0; ix<l->size(); ix++ ){
+    for( $t_list::size_type ix=0; ix<l->size(); ix++ ){
 	if( ix!=0 ){
 	    fputc( ',', f );
 	}
@@ -658,14 +624,9 @@ $t *$t::clone() const
 $t_list *$t_list::clone() const
 {
     $t_list *nw = new $t_list( sz );
-.if ${member $t $(valuetypes)}
-    $t *ar = nw->arr;
-    $t *o_r = arr;
-.else
-    $t **ar = nw->arr;
-    $t **o_r = arr;
-.endif
-    for( unsigned int ix=0; ix<sz; ix++ ){
+    value_type *ar = nw->arr;
+    value_type *o_r = arr;
+    for( size_type ix=0; ix<sz; ix++ ){
 .if ${member $t $(valuetypes)}
 	*ar++ = *o_r++;
 .else
@@ -689,9 +650,9 @@ $t_list *$t_list::clone() const
 // Recursively duplicate elements,
 // starting at element 'b', and ending at element
 // 'e'. Element 'e' is not copied.
-$t_list *$t_list::slice( const unsigned int b, const unsigned int parm_e ) const
+$t_list *$t_list::slice( const size_type b, const size_type parm_e ) const
 {
-    unsigned int e = parm_e;
+    size_type e = parm_e;
 
     if( e>sz ){
 	e = sz;
@@ -700,7 +661,7 @@ $t_list *$t_list::slice( const unsigned int b, const unsigned int parm_e ) const
 	FATAL( tm_badslice );
     }
     $t_list *nw = new $t_list( e-b );
-    for( unsigned int ix=b; ix<e; ix++ ){
+    for( size_type ix=b; ix<e; ix++ ){
 .if ${member $t $(valuetypes)}
 	nw->append( arr[ix] );
 .else
@@ -712,38 +673,30 @@ $t_list *$t_list::slice( const unsigned int b, const unsigned int parm_e ) const
 
 .endforeach
 .endif
-.if ${len $(need_cmp) $(need_cmp_list)}
+.if ${len $(need_compare) $(need_compare_list)}
 ///////////////////////////////////////////////////
 //    Comparison routines
 ///////////////////////////////////////////////////
 
 .. Forward declarations
-.call ansi_static cmp_list "int cmp_$$t_list( const $$t_list *, const $$t_list * )"
-.call ansi_static cmp "int cmp_$$t( const $$t *, const $$t * )"
-.foreach t $(need_cmp)
-.if ${member $t $(want_cmp)}
+.call ansi_static compare_list "int compare( const $$t_list &, const $$t_list & )"
+.call ansi_static compare "int compare( const $$t &, const $$t & )"
+.foreach t $(need_compare)
+.if ${member $t $(want_compare)}
 .set stat
 .else
 .set stat "static "
 .endif
-// Compare two $t ${metatype $t}.
-$(stat)int cmp_$t( const $t *a, const $t *b )
+// Compare two $t ${metatype $t}s.
+$(stat)int compare( const $t &a, const $t &b )
 {
 .switch ${metatype $t}
 .case alias
 .error Internal error: alias $t still present.
 .case tuple
-    int res = 0;
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return res;
-    }
-    if( a == $tNIL ){
-	return -1;
-    }
-    if( b == $tNIL ){
-	return 1;
-    }
+.if ${len ${allfields $t}}
+    int res;
+
 .set first 1
 .foreach e ${allfields $t}
 .if $(first)
@@ -753,28 +706,25 @@ $(stat)int cmp_$t( const $t *a, const $t *b )
 	return res;
     }
 .endif
-    res = cmp_${type $t $e}( a->$e, b->$e );
+.if ${member ${type $t $e} $(valuetypes)}
+    res = compare( a.$e, b.$e );
+.else
+    res = compare( *(a.$e), *(b.$e) );
+.endif
 .endforeach
     return res;
+.else
+    (void) a;
+    (void) b;
+    return 0;
+.endif
 .case constructor constructorbase class
-    int res;
-
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return 0;
-    }
-    if( a == $tNIL ){
-	return -1;
-    }
-    if( b == $tNIL ){
-	return 1;
-    }
-    res = ((int) a->tag - (int) b->tag);
+    int res = ((int) a.tag - (int) b.tag);
     if( res != 0 ){
 	return res;
     }
 .if ${len ${nonvirtual ${subclasses $t}}}
-    switch( a->tag )
+    switch( a.tag )
     {
 .if ${not ${isvirtual $t}}
 	case TAG$t:
@@ -787,19 +737,23 @@ $(stat)int cmp_$t( const $t *a, const $t *b )
 		return res;
 	    }
 .endif
-	    res = cmp_${type $t $e}( a->$e, b->$e );
+.if ${member ${type $t $e} $(valuetypes)}
+	    res = compare( a.$e, b.$e );
+.else
+	    res = compare( *(a.$e), *(b.$e) );
+.endif
 .endforeach
 	    break;
 
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    res = cmp_$c( (const $c *) a, (const $c *) b );
+	    res = compare( (const $c &) a, (const $c &) b );
 	    break;
 
 .endforeach
 	default:
-	    FATALTAG( a->tag );
+	    FATALTAG( a.tag );
 	    break;
     }
 .else
@@ -815,7 +769,11 @@ $(stat)int cmp_$t( const $t *a, const $t *b )
 	return res;
     }
 .endif
-    res = cmp_${type $t $e}( a->$e, b->$e );
+.if ${member ${type $t $e} $(valuetypes)}
+    res = compare( a.$e, b.$e );
+.else
+    res = compare( *(a.$e), *(b.$e) );
+.endif
 .endforeach
 .endif
 .endif
@@ -824,37 +782,29 @@ $(stat)int cmp_$t( const $t *a, const $t *b )
 }
 
 .endforeach
-.foreach t $(need_cmp_list)
-.if ${member $t $(want_cmp_list)}
+.foreach t $(need_compare_list)
+.if ${member $t $(want_compare_list)}
 .set stat
 .else
 .set stat "static "
 .endif
 // Compare two $t lists.
-$(stat)int cmp_$t_list( const $t_list *a, const $t_list *b )
+$(stat)int compare( const $t_list &a, const $t_list &b )
 {
     int res;
-    unsigned int ix;
-
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return 0;
-    }
-    if( a == $t_listNIL ){
-	return -1;
-    }
-    if( b == $t_listNIL ){
-	return 1;
-    }
-    ix = 0;
-    while( ix<a->sz || ix<b->sz ){
-	if( ix>=a->sz ){
+    $t_list::size_type ix = 0;
+    while( ix<a.size() || ix<b.size() ){
+	if( ix>=a.size() ){
 	    return -1;
 	}
-	if( ix>=b->sz ){
+	if( ix>=b.size() ){
 	    return 1;
 	}
-	res = cmp_$t( a->arr[ix], b->arr[ix] );
+.if ${member $t $(valuetypes)}
+	res = compare( a.arr[ix], b.arr[ix] );
+.else
+	res = compare( *(a.arr[ix]), *(b.arr[ix]) );
+.endif
 	if( res != 0 ){
 	    return res;
 	}
@@ -1020,11 +970,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t **p )
 // point to that structure.
 $(stic_$t)int fscan_$t_list( FILE *f, $t_list **p )
 {
-.if ${member $t $(valuetypes)}
-    $t nw;
-.else
-    $t *nw;
-.endif
+    $t_list::value_type nw;
     int err = 0;
 
     *p = $t_listNIL;
@@ -1084,7 +1030,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list **p )
 
 .foreach t $(need_erase_list)
 // Remove the element at position 'pos'
-void $t_list::erase( const unsigned int pos )
+void $t_list::erase( const size_type pos )
 {
     if( pos >= sz ){
 	return;
@@ -1093,15 +1039,15 @@ void $t_list::erase( const unsigned int pos )
     arr[pos]->destroy();
 .endif
     sz--;
-    for( unsigned int ix=pos; ix<sz; ix++ ){
+    for( size_type ix=pos; ix<sz; ix++ ){
 	arr[ix] = arr[ix+1];
     }
 }
 
 // Remove all elements from position 'from' up to, but not including 'to'
-void $t_list::erase( const unsigned int from, const unsigned int to )
+void $t_list::erase( const size_type from, const size_type to )
 {
-    unsigned int real_to = to;
+    size_type real_to = to;
 
     if( real_to>sz ){
 	real_to = sz;
@@ -1110,13 +1056,13 @@ void $t_list::erase( const unsigned int from, const unsigned int to )
 	return;
     }
 .if ${not ${member $t $(valuetypes)}}
-    for( unsigned int ix=from; ix<real_to; ix++ ){
+    for( size_type ix=from; ix<real_to; ix++ ){
 	arr[ix]->destroy();
     }
 .endif
-    unsigned int dist = real_to-from;
+    size_type dist = real_to-from;
     sz -= dist;
-    for( unsigned int ix=from; ix<sz; ix++ ){
+    for( size_type ix=from; ix<sz; ix++ ){
 	arr[ix] = arr[ix+dist];
     }
 }
@@ -1131,12 +1077,8 @@ void $t_list::erase( const unsigned int from, const unsigned int to )
 .foreach t $(need_extract_list)
 // Extract '$t' element at position 'pos'.
 bool $t_list::extract(
-    const unsigned int pos,
-.if ${member $t $(valuetypes)}
-    $t *e
-.else
-    $t **e
-.endif
+    const size_type pos,
+    value_type *e
 )
 {
     if( pos >= sz ){
@@ -1144,7 +1086,7 @@ bool $t_list::extract(
     }
     *e = arr[pos];
     sz--;
-    for( unsigned int ix=pos; ix<sz; ix++ ){
+    for( size_type ix=pos; ix<sz; ix++ ){
 	arr[ix] = arr[ix+1];
     }
     return 1;
@@ -1163,7 +1105,7 @@ bool $t_list::extract(
 // 'to' to this new list. All elements beyond the range are moved down
 // to close the gap. If necessary, the range is silently adjusted to
 // cover only existing elements.
-$t_list *$t_list::extractlist( unsigned int from, unsigned int to )
+$t_list *$t_list::extractlist( size_type from, size_type to )
 {
     if( to>=sz ){
 	to = sz;
@@ -1171,18 +1113,13 @@ $t_list *$t_list::extractlist( unsigned int from, unsigned int to )
     if( from>to ){
 	from = to;
     }
-    unsigned int ressz = to - from;
+    size_type ressz = to - from;
     $t_list *res = new $t_list( ressz );
     // Copy in elements into 'res'.
     {
-	unsigned int cnt = ressz;
-.if ${member $t $(valuetypes)}
-	$t *sp = &arr[from];
-	$t *dp = res->arr;
-.else
-	$t **sp = &arr[from];
-	$t **dp = res->arr;
-.endif
+	size_type cnt = ressz;
+	value_type *sp = &arr[from];
+	value_type *dp = res->arr;
 
 	while( cnt!=0 ){
 	    *dp++ = *sp++;
@@ -1191,7 +1128,7 @@ $t_list *$t_list::extractlist( unsigned int from, unsigned int to )
     }
     res->sz = ressz;
     sz -= ressz;
-    for( unsigned int ix=from; ix<sz; ix++ ){
+    for( size_type ix=from; ix<sz; ix++ ){
 	arr[ix] = arr[ix+ressz];
     }
     return res;

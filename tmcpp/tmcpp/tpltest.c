@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <tmcpp.h>
 #include <stdlib.h>
+#include <algorithm>
 
 #include "cppcode.h"
 
@@ -98,7 +99,7 @@ static void test_valuetype_list( FILE *infile, FILE *outfile )
 	int ref[] = { 2, 3, 7, 0 };
 	check_int_list( __LINE__, lc, ref );
     }
-    if( cmp_int_list( l, lc ) != 0 ){
+    if( compare( *l, *lc ) != 0 ){
 	fprintf( stderr, "Duplicate of int list is not the same\n" );
         fprintf( stderr, "Original: " );
 	fprint_int_list( stderr, l );
@@ -201,22 +202,22 @@ int main( void )
     toplevel_list *dscopy = ds->clone();
     dscopy->destroy();
     dscopy = ds->clone();
-    if( cmp_toplevel_list( ds, dscopy ) != 0 ){
+    if( compare( *ds, *dscopy ) != 0 ){
 	fprintf( stderr, "Copy not equal to original??\n" );
 	exit( 1 );
     }
     dscopy->reverse();
-    if( cmp_toplevel_list( ds, dscopy ) == 0 ){
+    if( compare( *ds, *dscopy ) == 0 ){
 	fprintf( stderr, "Reversed copy equal to original??\n" );
 	exit( 1 );
     }
     dscopy->reverse();
-    if( cmp_toplevel_list( ds, dscopy ) != 0 ){
+    if( compare( *ds, *dscopy ) != 0 ){
 	fprintf( stderr, "Doubly reversed copy not equal to original??\n" );
 	exit( 1 );
     }
     ds->insert( (unsigned int) 0, ds->arr[0]->clone() );
-    if( cmp_toplevel_list( ds, dscopy ) == 0 ){
+    if( compare( *ds, *dscopy ) == 0 ){
 	fprintf( stderr, "Insertion does not change comparison??\n" );
 	exit( 1 );
     }
@@ -237,7 +238,7 @@ int main( void )
 	exit( 1 );
     }
     e->destroy();
-    if( cmp_toplevel_list( ds, dscopy ) != 0 ){
+    if( compare( *ds, *dscopy ) != 0 ){
 	fprintf( stderr, "Deletions and extractions do not restore old ds??\n" );
 	exit( 1 );
     }
@@ -246,24 +247,24 @@ int main( void )
 	fprintf( stderr, "Extraction from beyond the list size?\n" );
 	exit( 1 );
     }
-    if( cmp_toplevel_list( ds, dscopy ) != 0 ){
+    if( compare( *ds, *dscopy ) != 0 ){
 	fprintf( stderr, "Out of bounds extraction affects datastructure?\n" );
 	exit( 1 );
     }
     ds->erase( 10000 );
-    if( cmp_toplevel_list( ds, dscopy ) != 0 ){
+    if( compare( *ds, *dscopy ) != 0 ){
 	fprintf( stderr, "Out of bounds erase affects datastructure?\n" );
 	exit( 1 );
     }
     ds->append( ds->arr[0]->clone() );
-    if( cmp_toplevel_list( ds, dscopy ) == 0 ){
+    if( compare( *ds, *dscopy ) == 0 ){
 	fprintf( stderr, "Append does not change comparison??\n" );
 	exit( 1 );
     }
     ds->append( ds->arr[0]->clone() );
     ds->concat( dscopy );
     dscopy = ds->extractlist( 2, 5 );
-    ds->insertlist( 2, dscopy );
+    ds->insertlist( 2, *dscopy );
     // 'dscopy' is not freed to test lognew routines.
     dscopy = ds->slice( 1, 1000 );
     l = ds->clone();
