@@ -12,11 +12,11 @@
 #include "tmcpp.h"
 
 /* definition of 'print' for a 'tmword' */
-void print_tmword( TMPRINTSTATE *st, const tmconstword s )
+void print_tmword( TmPrintState *st, const tmconstword s )
 {
     if( s == 0 ){
-	tm_printword( st, "@" );
+	st->printWord( "@" );
 	return;
     }
-    tm_printword( st, s );
+    st->printWord( s );
 }

@@ -7,10 +7,10 @@
 #include "tmcpp.h"
 #include "config.h"
 
-void print_ushrt( TMPRINTSTATE *st, const ushrt i )
+void print_ushrt( TmPrintState *st, const ushrt i )
 {
     char buf[sizeof(ushrt)*8];
 
     sprintf( buf, "%hu", i );
-    tm_printword( st, buf );
+    st->printWord( buf );
 }
