@@ -29,7 +29,8 @@
 LOCALBIN = c:\bin
 LOCALLIB=c:\lib
 LOCALINC=c:\include
-TPLPATH = c:\\\\lib
+TPLPATH = c:\\lib
+TPLPATHNAME = c:\\\\lib
 CC = BCC32
 SYSCFLAGS = -wall -wstu -4 -O2
 #PROGBASE = tm32
@@ -108,13 +109,13 @@ clean:
 	$(CC) -c $(CFLAGS) -o$* $<
 
 tmcode.h: tmcode.ht tm.ds tmspec.t
-	tm tm.ds tmcode.ht > tmcode.h
+	tm -I$(TPLPATH) tm.ds tmcode.ht > tmcode.h
 
 tmcode.c: tmcode.ct tm.ds tmspec.t
-	tm tm.ds tmcode.ct > tmcode.c
+	tm -I$(TPLPATH) tm.ds tmcode.ct > tmcode.c
 
 tmpath.c: $(MAKEFILE)
-	echo char libpath[]="$(TPLPATH)"; > tmpath.c
+	echo char libpath[]="$(TPLPATHNAME)"; > tmpath.c
 
 version.h: ..\\version.h
 	cp ..\\version.h version.h
