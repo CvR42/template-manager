@@ -20,7 +20,7 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(AUXFILES) $(TOPFILE).bbl $(TOPFILE).lot $(TOPFILE).lof \
        $(TOPFILE).toc distlist
 
-DISTFILES = $(TEXFILES) $(MAKEFILE) goodwords $(TOPFILE).ps plot.ds pasdemo.pt
+DISTFILES = $(TEXFILES) $(MAKEFILE) goodwords plot.ds pasdemo.pt
 
 help:
 	@echo Possible targets:
@@ -69,5 +69,5 @@ empty:
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(MAKEFILE) $(TOPFILE).ps
+distlist: $(MAKEFILE)
 	echo $(DISTFILES) | tr ' ' '\012' > distlist
