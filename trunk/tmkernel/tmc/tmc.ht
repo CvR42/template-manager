@@ -196,8 +196,8 @@ struct str_$t_list {
 #ifdef TMC_CHECKED_CAST
 .foreach t $(need_ds)
 .if ${member $t $(taggedtypes)}
-#define to_$t(e) ((e)->tag==TAG$t?(($t)e):($t)0)
-#define to_const_$t(e) ((e)->tag==TAG$t?((const_$t)e):(const_$t)0)
+#define to_$t(e) ((e)->tag==TAG$t?(($t)e):($t)tm_badcast(__FILE__,__LINE__))
+#define to_const_$t(e) ((e)->tag==TAG$t?((const_$t)e):(const_$t)tm_badcast(__FILE__,__LINE__))
 .else
 #define to_$t(e) (($t)e)
 #define to_const_$t(e) ((const_$t)e)
