@@ -1,0 +1,107 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. file: pascode.ht
+..
+.. External declarations for tm Pascal code templates.
+{ ---- start of ${tplfilename} ---- }
+
+{ template file:      ${tplfilename}
+  datastructure file: ${dsfilename}
+  tm version:         $(tmvers) }
+
+{ New<type> and New<cons> functions }
+.foreach t $(want_New)
+.if ${len ${telmlist $t}}
+procedure New$t(
+.foreach sname ${telmlist $t}
+.if ${eq list ${ttypeclass $t $(sname)}}
+ Tmp$(sname): ${ttypename $t $(sname)}list;
+.else
+ Tmp$(sname): ${ttypename $t $(sname)};
+.endif
+.endforeach
+ var nw: $t
+);
+external;
+.else
+.foreach c ${conslist $t}
+procedure New$c(
+.foreach sname ${celmlist $t $c}
+.if ${eq list ${ctypeclass $t $c $(sname)}}
+ Tmp$(sname): ${ctypename $t $c $(sname)}list;
+.else
+ Tmp$(sname): ${ctypename $t $c $(sname)};
+.endif
+.endforeach
+ var nw: $t
+);
+external;
+.endforeach
+.endif
+.endforeach
+
+{ Free<type> and Free<type>list routines }
+.foreach t $(want_Free)
+procedure Free$t( var e: $t  ); external;
+.endforeach
+.foreach t $(want_Free_list)
+procedure Free$tlist( var l: $tlist ); external;
+.endforeach
+
+{ Rfre<type> and Rfre<type>list routines }
+.foreach t $(want_Rfre)
+procedure Rfre$t( var e: $t ); external;
+.endforeach
+.foreach t $(want_Rfre_list)
+procedure Rfre$tlist( var l: $tlist ); external;
+.endforeach
+
+{ App<type> functions }
+.foreach t $(want_App)
+function App$t( var list: $tlist; element: $t ): $tlist; external;
+.endforeach
+
+{ Write<type> and Write<type>list routines }
+.foreach t $(want_Write)
+procedure Write$t( var f: text; t: $t ); external;
+.endforeach
+.foreach t $(want_Write_list)
+procedure Write$tlist( var f: text; l: $tlist ); external;
+.endforeach
+
+{ Copy<type> and Copy<type>list routines }
+.foreach t $(want_Copy)
+function Copy$t( i: $t ): $t; external;
+.endforeach
+.foreach t $(want_Copy_list)
+function Copy$tlist( i: $tlist ): $tlist; external;
+.endforeach
+
+{ Read<type> and Read<type>list routines }
+.foreach t $(want_Read)
+function Read$t( var f, rf: text; var p: $t ): boolean; external;
+.endforeach
+.foreach t $(want_Read_list)
+function Read$tlist( var f, rf: text; var p: $tlist ): boolean; external;
+.endforeach
+
+{ Cmp<type> and Cmp<type>list routines }
+.foreach t $(want_Cmp)
+function Cmp$t( a, b: $t ): integer; external;
+.endforeach
+.foreach t $(want_Cmp_list)
+function Cmp$tlist( a, b: $tlist ): integer; external;
+.endforeach
+{ Initalizations for $(basename) }
+procedure Init$(basename); external;
+
+{ Statistics printing routine }
+.if ${index Stat$(basename) $(want_misc)}
+procedure Stat$(basename)( var f: text ); external;
+.endif
+{ ---- end of ${tplfilename} ---- }

@@ -1,0 +1,628 @@
+.. Tm - an interface code generator.
+.. Copyright (C) 1991, Delft University of Technology and C. van Reeuwijk.
+..
+.. This software is distributed under the terms of the GNU General Public
+.. Licence as published by the Free Software Foundation. See the file 'LICENCE'
+.. in the root directory of this distribution for details.
+..
+.. file: paslib.pt
+..
+.. Library of utility functions for the tm pascal code.
+
+{ ---- start of ${tplfilename} ---- }
+
+.if ${index tmgetc $(need_misc)}
+{ Read a character from file 'f' in the global variable 'tmcurchar'.
+  The eoln condition is automagically converted to a special
+  'tmeolnchar' character.  During eof 'tmeofchar' is put
+  into 'tmcurchar'.
+}
+procedure tmgetc( var f: text );
+begin
+    if eof( f ) then
+	tmcurchar := tmeofchar
+    else if eoln( f ) then begin
+	readln( f );
+	tmcurchar := tmeolnchar
+    end
+    else
+	read( f, tmcurchar );
+end; { tmgetc }
+
+.endif
+.if ${index tmreadc $(need_misc)}
+{ Read a character from file 'f' without skipping
+  preceding spaces. Handle octal and character backslash escapes.
+}
+procedure tmreadc( var f: text; var c: char );
+var
+    val: integer;
+    digits : set of char;
+
+begin
+    digits := ['0'..'7'];
+    if tmcurchar = '\' then begin
+	tmgetc( f );
+	if tmcurchar in ['b','f','n','r','t','v'] then begin
+	    case tmcurchar of
+		'b': c := chr( 8 );
+		'f': c := chr( 12 );
+		'n': c := chr( 10 );
+		'r': c := chr( 13 );
+		't': c := chr( 9 );
+		'v': c := chr( 11 );
+	    end;
+	    tmgetc( f )
+	end
+	else begin
+	    if tmcurchar in digits then begin
+		val := ord( tmcurchar ) - ord( '0' );
+		tmgetc( f );
+		if tmcurchar in digits then begin
+		    val := val*8 + ord( tmcurchar ) - ord( '0' );
+		    tmgetc( f );
+		    if tmcurchar in digits then begin
+			val := val*8 + ord( tmcurchar ) - ord( '0' );
+			tmgetc( f );
+		    end
+		end;
+		{ Characters are restricted to [chr(0)..chr(127)] }
+		if val<127 then
+		    c := chr( val )
+		else
+		    c := chr( 127 );
+	    end
+	    else begin
+		c := tmcurchar;
+		tmgetc( f );
+	    end;
+	end;
+    end
+    else begin
+	c := tmcurchar;
+	tmgetc( f );
+    end;
+end; { tmreadc }
+
+.endif
+.if ${index tmreadspc $(need_misc)}
+{ Skip all space characters and Miranda style comment.
+  For implementation reasons it is assumed that a single
+  '|' starts comment instead of '||'.
+  After the call 'tmcurchar' contains the next character.
+}
+procedure tmreadspc( var f: text );
+var
+    busy: boolean;
+    spaceset: set of char;
+
+begin
+    spaceset := [' ', chr(9), chr(10), tmeolnchar, chr(11), chr(13)];
+    busy := true;
+    while busy do begin
+	busy := false;
+	if (tmcurchar in spaceset) then begin
+	    tmgetc( f );
+	    busy := true
+	end;
+	if (tmcurchar = '|') then begin
+	    repeat
+		tmgetc( f );
+	    until tmcurchar in [tmeolnchar,tmeofchar];
+	    busy := true
+	end;
+    end;
+end; { tmreadspc }
+
+.endif
+.if ${index tmneedc $(need_misc)}
+{ Do 'tmreadspc' and try to character 'needc'. Write an
+  error message and return true if this is not possible, else
+  return false.
+}
+function tmneedc( var f, rf: text; needc: char ): boolean;
+var
+    err: boolean;
+
+begin
+    err := false;
+    tmreadspc( f );
+    if tmcurchar = tmeofchar then begin
+	writeln( rf, 'Expected "', needc, '" but got EOF' );
+	err := true
+    end
+    else if tmcurchar <> needc then begin
+	writeln( rf, 'Expected "', needc, '" but got "', tmcurchar, '"' );
+	err := true
+    end
+    else
+	tmgetc( f );
+    tmneedc := err
+end; { tmneedc }
+
+.endif
+.if ${index tmreadobrac $(need_misc)}
+{ Skip all space characters, and count the open brackets (`(')
+  that you encounter up to the first other character. Set 'n'
+  to the number of open brackets found.
+}
+procedure tmreadobrac( var f: text; var n: integer );
+var
+    done: boolean;
+
+begin
+    n := 0;
+    done := false;
+    repeat
+	tmreadspc( f );
+	if tmcurchar = '(' then begin
+	    tmgetc( f );
+	    n := n+1;
+	end
+	else
+	    done := true
+    until done;
+end; { tmreadobrac }
+
+.endif
+.if ${index tmreadcbrac $(need_misc)}
+{ Skip all space characters, and try to read `n' close
+  brackets. Give an error if this is not possible.
+}
+function tmreadcbrac( var f, rf:text; n: integer ): boolean;
+var
+    err: boolean;
+
+begin
+    err := false;
+    while (n>0) and (not err) do begin
+        err := tmneedc( f, rf, ')' );
+	n := n-1
+    end;
+    tmreadcbrac := err
+end;
+
+.endif
+.if ${index tmwritec $(need_misc)}
+{ Write a character to file 'f'. Use an escape sequence if
+  necessary }
+procedure tmwritec( var f: text; c: char );
+var
+    ccode: integer;
+
+    { Write the digits of an octal number 'n' to file 'f' }
+    procedure writeoct( var f: text; n: integer );
+    begin
+	if( n<8 ) then begin
+	    write( f, chr( ord('0')+n ) );
+	end
+	else begin
+	    writeoct( f, n div 8 );
+	    write( f, chr( ord('0')+(n mod 8) ) );
+	end;
+    end; { writeoct }
+
+begin
+    ccode := ord( c );
+    if ccode in [8, 12, 10, 13, 9, 11] then begin
+	case ccode of
+	    8 : write( f, '\b' );
+	    12: write( f, '\f' );
+	    10: write( f, '\n' );
+	    13: write( f, '\r' );
+	    9 : write( f, '\t' );
+	    11: write( f, '\v' );
+	end;
+    end
+    else if c in ['''', '"', '\'] then begin
+	write( f, '\', c );
+    end
+    else if (ccode>=ord(' ')) and (ccode<=ord('~')) then begin
+	write( f, c );
+    end
+    else begin
+	write( f, '\' );
+	writeoct( f, ccode );
+    end;
+end; { tmwritec }
+
+.endif
+.if ${index Readinteger $(need_misc)}
+{ Read<type> function for Pascal type `integer' }
+function Readinteger( var f, rf: text; var n: integer ): boolean;
+var
+    braccnt: integer;
+    done: boolean;
+    err: boolean;
+    gotadig: boolean;
+    neg: boolean;
+
+begin
+    n := 0;
+    neg := false;
+    err := false;
+    tmreadobrac( f, braccnt );
+    tmreadspc( f );
+    if (tmcurchar in ['-','+']) then begin
+	neg := (tmcurchar = '-');
+	tmgetc( f )
+    end;
+    gotadig := false;
+    repeat
+	done := true;
+	if (tmcurchar in ['0'..'9']) then begin
+	    n:=n*10 + (ord(tmcurchar)-ord('0'));
+	    tmgetc( f );
+	    done := false;
+	    gotadig := true
+	end;
+    until done;
+    if not gotadig then begin
+	write( rf, 'expected integer but got ' );
+	if tmcurchar = tmeofchar then
+	    writeln( rf, 'EOF' )
+	else
+	    writeln( rf, 'char with code ', ord( tmcurchar ):3 );
+	err := true 
+    end;
+    if neg then
+	n := -n;
+    if not err then err := tmreadcbrac( f, rf, braccnt );
+    Readinteger := err;
+end; { Readinteger }
+
+.endif
+.if ${index Writeinteger $(need_misc)}
+{ Write an integer to file 'f'. Negative numbers are surrounded
+  by () or else the Miranda parser will get angry. }
+procedure Writeinteger( var f: text; n: integer );
+begin
+    if n>=0 then
+	writeln( f, n:1 )
+    else
+	writeln( f, '(', n:1, ')' )
+end; { Writeinteger }
+
+.endif
+.if ${index Cmpinteger $(need_misc)}
+{ Compare two integers }
+function Cmpinteger( a, b: integer ): integer;
+begin
+    Cmpinteger := a-b
+end; { Cmpinteger }
+
+.endif
+.if ${index Rfreinteger $(need_misc)}
+procedure Rfreinteger( var i: integer );
+begin
+    i := 0;
+end;
+
+.endif
+.if ${index Copyinteger $(need_misc)}
+function Copyinteger( i: integer ): integer;
+begin
+    Copyinteger := i;
+end; { Copyinteger }
+
+.endif
+.if ${index Readreal $(need_misc)}
+{ read<type> function for Pascal type `real' }
+{ I STRONGLY disapprove of this method of converting a
+  string of chars to a real number, because precision will be lost,
+  but for the moment this is the best I can do in Pascal (CvR).
+}
+function Readreal( var f, rf: text; var r: real ): boolean;
+var
+    busy: boolean;
+    done: boolean;
+    gotadig: boolean;
+    braccnt: integer;	{ number of open brackets }
+    err: boolean;
+    stopit : boolean;	{ true if number must have been completed }
+    neg: boolean;	{ mantissa sign }
+    xneg: boolean;	{ exponent sign }
+    mantissa: real;	{ mantissa }
+    fracdiv: real;	{ divisor for construction of fraction part }
+    xp: integer;	{ exponent }
+
+    { calculate 10^n recursively. Assumes n>=0 }
+    function pow10( n: integer ): real;
+    var
+	i: real;
+
+    begin
+	if n<1 then
+	    pow10 := 1
+	else begin
+	    i := pow10( n div 2 );
+	    if odd( n ) then
+		pow10 := 10 * i * i
+	    else
+		pow10 := i * i
+	end;
+    end; { pow10 }
+
+begin 
+    stopit := false;
+    mantissa := 0;
+    err := false;
+    tmreadobrac( f, braccnt );
+    tmreadspc( f );
+    if tmcurchar = tmeofchar then begin
+	writeln( rf, 'Expected integer but got EOF' );
+	err := true;
+    end;
+    neg := false;
+    if (not err) and (tmcurchar in ['-','+']) then begin
+	neg := (tmcurchar = '-');
+	tmgetc( f )
+    end;
+    if not err then begin
+	busy := true;
+	gotadig := false;
+	while busy do begin
+	    busy := false;
+	    if (tmcurchar in ['0'..'9']) then begin
+		mantissa:=mantissa*10 + (ord(tmcurchar)-ord('0'));
+		tmgetc( f );
+		busy := true;
+		gotadig := true
+	    end;
+	end;
+	if not gotadig then begin
+	    write( rf, 'expected digits but got ' );
+	    if tmcurchar = tmeofchar then
+		writeln( rf, 'EOF' )
+	    else
+		writeln( rf, 'char with code ', ord( tmcurchar ):3 );
+	    err := true 
+	end;
+    end;
+    fracdiv := 0.1;
+    if (not err) and (tmcurchar = '.') then begin
+	tmgetc( f );
+	done := false;
+	repeat
+	    if tmcurchar in ['0'..'9'] then begin
+		mantissa := mantissa + (ord(tmcurchar)-ord('0'))*fracdiv;
+		tmgetc( f );
+		fracdiv := fracdiv/10;
+	    end
+	    else
+		done := true;
+	until done;
+    end;
+    xp := 0;
+    xneg := false;
+    if (not err) and (tmcurchar in ['e', 'E']) then begin
+	tmgetc( f );
+	if (tmcurchar in ['-','+']) then begin
+	    xneg := (tmcurchar = '-');
+	    tmgetc( f )
+	end;
+	gotadig := false;
+	repeat
+	    done := true;
+	    if (tmcurchar in ['0'..'9']) then begin
+		xp:=xp*10 + (ord(tmcurchar)-ord('0'));
+		tmgetc( f );
+		done := false;
+		gotadig := true
+	    end;
+	until done;
+	if not gotadig then begin
+	    write( rf, 'expected exponent but got ' );
+	    if tmcurchar = tmeofchar then
+		writeln( rf, 'EOF' )
+	    else
+		writeln( rf, 'char with code ', ord( tmcurchar ):3 );
+	    err := true 
+	end;
+    end;
+    if xneg then
+	r := mantissa/pow10( xp )
+    else
+	r := mantissa * pow10( xp );
+    if neg then
+	r := -r;
+    if not err then err := tmreadcbrac( f, rf, braccnt );
+    Readreal := err
+end; { Readreal }
+
+.endif
+.if ${index Writereal $(need_misc)}
+{ Write a real to file 'f'. Negative numbers are surrounded
+  by () or else the Miranda parser will get angry. }
+procedure Writereal( var f: text; r: real );
+begin
+    if r>=0 then
+	writeln( f, r )
+    else
+	writeln( f, '(', r, ')' )
+end; { Writereal }
+
+.endif
+.if ${index Cmpreal $(need_misc)}
+{ Compare two reals }
+function Cmpreal( a, b: real ): integer;
+begin
+    if( a>b ) then
+	Cmpreal := 1
+    else if ( a<b ) then
+	Cmpreal := -1
+    else
+	Cmpreal := 0;
+end; { Cmpreal }
+
+.endif
+.if ${index Rfrereal $(need_misc)}
+procedure Rfrereal( var i: real );
+begin
+    i := 0.0;
+end;
+
+.endif
+.if ${index Copyreal $(need_misc)}
+function Copyreal( i: real ): real;
+begin
+    Copyreal := i;
+end; { Copyreal }
+
+.endif
+.if ${index Readboolean $(need_misc)}
+{ Read a boolean from file 'f' into boolean 'b'.
+  A boolean in represented by the constructors 'True' or
+  'False' with the obvious interpretation.
+}
+function Readboolean( var f, rf: text; var b: boolean ): boolean;
+const
+    maxlen = 5;
+
+type
+    consnm = packed array [1..maxlen] of char;
+
+var
+    braccnt: integer;
+    word: consnm;
+    err: boolean;
+    ix: integer;
+    busy: boolean;
+    alnumset: set of char;
+
+begin
+    b := false;
+    alnumset := ['F', 'T', 'a', 'e', 'l', 'r', 's', 'u'];
+    word := '     ';
+    ix := 1;
+    err := false;
+    tmreadobrac( f, braccnt );
+    tmreadspc( f );
+    if not (tmcurchar in alnumset) then begin
+	write( rf, 'expected boolean but got ' );
+	if tmcurchar = tmeofchar then
+	    writeln( rf, 'EOF' )
+	else
+	    writeln( rf, 'char with code ', ord( tmcurchar ):3 );
+	err := true
+    end;
+    busy := true;
+    while (not err) and busy and (tmcurchar in alnumset) do begin
+	if ix>maxlen then begin
+	    writeln( rf, 'name too long for boolean: "', word, tmcurchar,'"' );
+	    err := true
+	end
+	else begin
+	    word[ix] := tmcurchar;
+	    tmgetc( f );
+	    ix := ix+1
+	end;
+	if not (tmcurchar in alnumset) then
+	    busy := false;
+    end;
+    if not err then begin
+        if word = 'True ' then begin
+                b := true
+        end
+        else if word = 'False' then begin
+                b := false
+        end
+        else begin
+            writeln( rf, 'bad constructor for boolean: "', word, '"' );
+            err:=true
+        end;
+    end;
+    if not err then err := tmreadcbrac( f, rf, braccnt );
+    Readboolean := err;
+end; { Readboolean }
+
+.endif
+.if ${index Writeboolean $(need_misc)}
+{ Write a boolean to file 'f'. A boolean in represented by the
+  constructors 'True' or 'False' with the obvious interpretation.
+}
+procedure Writeboolean( var f: text; b: boolean );
+begin
+    if b then
+	write( f, 'True' )
+    else
+	write( f, 'False' );
+end; { Writeboolean }
+
+.endif
+.if ${index Cmpboolean $(need_misc)}
+{ Compare two booleans }
+function Cmpboolean( a, b: boolean ): integer;
+begin
+    Cmpboolean := ord( a ) - ord( b )
+end; { Cmpboolean }
+
+.endif
+.if ${index Rfreboolean $(need_misc)}
+procedure Rfreboolean( var i: boolean );
+begin
+    i := false;
+end;
+
+.endif
+.if ${index Copyboolean $(need_misc)}
+function Copyboolean( i: boolean ): boolean;
+begin
+    Copyboolean := i;
+end; { Copyboolean }
+
+.endif
+.if ${index Readchar $(need_misc)}
+{ Read a char from file 'f' into char 'c'. }
+function Readchar( var f, rf: text; var c: char ): boolean;
+var
+    braccnt: integer;
+    err: boolean;
+
+begin
+    tmreadobrac( f, braccnt );
+    err := tmneedc( f, rf, '''' );
+    if not err then begin
+	tmreadc( f, c );
+	err := tmneedc( f, rf, '''' );
+    end;
+    if not err then err := tmreadcbrac( f, rf, braccnt );
+    Readchar := err;
+end; { Readchar }
+
+.endif
+.if ${index Writechar $(need_misc)}
+{ Write a char to file 'f'. A char in represented by the
+  constructors 'True' or 'False' with the obvious interpretation.
+}
+procedure Writechar( var f: text; c: char );
+begin
+    write( f, '''' );
+    tmwritec( f, c );
+    writeln( f, '''' );
+end; { Writechar }
+
+.endif
+.if ${index Cmpchar $(need_misc)}
+{ Compare two chars }
+function Cmpchar( a, b: char ): integer;
+begin
+    Cmpchar := ord( a ) - ord( b )
+end; { Cmpchar }
+
+.endif
+.if ${index Rfrechar $(need_misc)}
+procedure Rfrechar( var i: char );
+begin
+    i := tmeofchar;
+end;
+
+.endif
+.if ${index Copychar $(need_misc)}
+function Copychar( i: char ): char;
+begin
+    Copychar := i;
+end; { Copychar }
+
+.endif
+{ ---- end of ${tplfilename} ---- }

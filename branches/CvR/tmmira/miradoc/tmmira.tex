@@ -1,0 +1,358 @@
+\documentclass{article}
+\usepackage{makeidx}
+\usepackage{a4wide}
+\usepackage{verbatim}
+\def\Tm{{\sf Tm}}
+\def\coil{{\bf Coil}}
+\def\C{{\sf C}}
+\def\Unix{{\bf Unix}}
+\def\Miranda{Miranda}
+\makeindex
+\newenvironment{listing}{\small\begin{flushleft}}{\end{flushleft}}
+\newenvironment{example}{\par}{}
+\newcommand{\dfn}[1]{{\em {#1}}\index{#1}}
+% Description environment: Don't add any space after previous item,
+% indent left margin.
+\newenvironment{desc}{\nopagebreak\vspace{-\bigskipamount}\vspace{-\parskip}\begin{list}{}{\setlength{\topsep}{0pt}\setlength{\rightmargin}{0pt}}\item[]}{\end{list}}
+\newlength{\descwidth}
+\setlength{\descwidth}{\textwidth}
+\addtolength{\descwidth}{-3.4cm}
+\newenvironment{desctab}{\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}p{\descwidth}}}{\end{tabular*}}
+\raggedbottom
+\begin{document}
+\title{The Tm Miranda template}
+\author{Kees van Reeuwijk}
+\maketitle
+\section{Introduction}
+\begin{figure}[h]
+\verbatiminput{plot.ds}
+\caption{\label{f.ds}An example of a data structure description file.}
+\end{figure}
+This section provides the necessary information to use {\Tm} for {\Miranda}.
+In section \ref{sec:miraquickintro} a 'cookbook' introduction to the use
+of the library is given, in section \ref{sec:miralib} the support
+library is described in detail.
+\par
+The {\Miranda} support is provided by one file: {\tt mira.mt}.
+The support library can generate the following code:
+\begin{itemize}
+\item
+Data structure definitions.
+\item
+Input (scan) functions.
+\item
+Output (show) functions.
+\end{itemize}
+\par
+Support is also provided for some primitive types.
+\section{Usage}
+\label{sec:miraquickintro}
+You can use the following steps to obtain code from {\Tm}.
+The steps are illustrated by an example.
+\begin{enumerate}
+\item
+Design the data structure for your problem,
+and encode it in a data structure description file.
+For the example it is assumed that the file {\tt plot.ds} contains
+the data structure definitions of Fig.~\ref{f.ds}.
+\item
+Create a configuration file that sets the following {\Tm} variables:
+\begin{itemize}
+\item
+The variable {\tt wantdefs}: the names of the functions that you
+will use in your program.
+If these functions require other functions,
+this will be deduced, and the necessary functions will be generated but
+not mentioned in {\tt \%export} in the generated {\Miranda} source file.
+\item
+\begin{sloppypar}
+The variable {\tt notwantdefs}:
+in the rare case that {\Tm} deduces that a definition must be generated
+while this is not desirable,
+the name of this definition can be appended to the list of
+{\Tm} variable {\tt notwantdefs}.
+\end{sloppypar}
+\item
+The variable
+{\tt also\_export}:
+if next to the defined types and the requested functions other definitions
+must be exported, list them in this variable.
+See section \ref{sec:export} for details.
+\end{itemize}
+For the running example a file {\tt miraspec.t} is used with the
+following contents:
+\begin{listing}
+\verbatiminput{miraspec.t}
+\end{listing}
+\item
+Create a {\Tm} header file for the generated {\Miranda} source file.
+This file should at least contain
+\begin{itemize}
+\item
+An {\tt .insert} of the configuration file.
+In this example {\tt miraspec.t}.
+\item
+An {\tt .include} of the library file {\tt mira.mt}.
+\end{itemize}
+The header file may also contain other stuff,
+like definitions for primitive types.
+For the example the header file is:
+\begin{listing}
+\verbatiminput{mirademo.t}
+\end{listing}
+\item
+Add make rules to your makefile to generate the code:
+\begin{listing}
+\begin{verbatim}
+mirademo.m : plot.ds mirademo.t miraspec.t
+        tm plot.ds mirademo.t > mirademo.m
+\end{verbatim}
+\end{listing}
+\end{enumerate}
+\par
+The file {\tt mirademo.m} that is generated from our
+example configuration is listed
+in appendix \ref{sec:democode}.
+\section{The Miranda library}
+\label{sec:miralib}
+The {\Miranda} support library consists of one file: {\tt mira.mt}.
+Note that you must set {\tt alldefs} or {\tt wantdefs} (and perhaps
+{\tt notwantdefs}) to ensure that code is generated.
+\subsection{Data structures}
+{\Miranda} data structure definitions are generated from the {\Tm}
+data structure definitions by leaving out the element names.
+\subsection{Input}
+Since the standard textual representation of {\Tm} data structures is
+for a large number of data types equivalent with the representation used
+in {\Miranda},
+it is possible to use the {\Miranda} compiler itself to read the
+standard data structures.
+This can be done with the following trick:
+Suppose there is a file {\tt data.tm} containing a data structure in the
+internal representation,
+and a file {\tt plot.m} containing {\Miranda} data type definitions
+for the data to read,
+the following {\Miranda} script will make the variable {\tt data}
+equal to this data:
+\begin{listing}
+\verbatiminput{readin.m}
+\end{listing}
+\par
+One problem with this trick is that any negative {\tt num} values
+must be surrounded by brackets,
+or else the {\Miranda} compiler will complain\footnote{
+In all supported languages, the routines that are provided for writing
+numbers will provide the brackets.
+}.
+\par
+Alternatively a collection of scan functions can be generated to parse
+a string into instances of the data structures.
+These functions can be used to prevent repeated re-compilation of the
+{\Miranda} scripts,
+or if special data types are used in the data structure.
+\begin{verbatim}
+scan_<type> :: [char]->(<type>,[char])
+\end{verbatim}
+\begin{desc}
+\index{scan_<type>@\verb+scan_<type>+}
+Given a string to scan,
+skip all leading spaces, tabs and comment from the given string,
+scan one element of {\tt <type>} in the string,
+and return a tuple consisting of that element and the remaining characters
+in the scanned string.
+If an error occurs during reading, {\tt error} is used.
+\end{desc}
+\subsection{Output}
+{\Miranda} provides a {\tt show} function that should be capable of generating
+the textual representation of {\Tm}.
+However,
+there are a few situation where it is impossible to use this
+{\tt show} function:
+\begin{itemize}
+\item If special data types are used in the data structure.
+\item If the generated output line is too long.
+      Since {\tt show} will generate one very long output line,
+      this might cause problems with some other software.
+\end{itemize}
+Therefore, alternative functions are provided.
+\begin{verbatim}
+show_<type> :: <type>->[char]
+\end{verbatim}
+\begin{desc}
+\index{show_<type>@\verb+show_<type>+}
+Given an element of {\tt <type>},
+generate the textual representation for it.
+\end{desc}
+\subsection{{\Tm} and {\Miranda} configuration variables}
+\label{sec:miraconfig}
+The library uses a few {\Tm} variables to modify the contents
+of the generated code.
+Unless stated otherwise,
+it is not necessary to set them;
+a reasonable default will be chosen.
+\par
+\begin{desctab}
+{\tt also\_export}\index{also_export@{\verb+also_export+}}
+&
+If set,
+this variable lists additional functions that must be mentioned
+in {\tt \%export}.
+This is useful to {\tt \%export} functions that are defined in the input
+file for {\Tm}.
+It is also useful if local definitions of the generated file
+must be made visible, see section \ref{sec:export}.
+\\
+{\tt wantdefs}\index{wantdefs@{\verb+wantdefs+}}
+&
+If set,
+this variable contains the names of the type and function definitions that
+must be generated.
+If these functions require the definition of other functions,
+the necessary functions will be generated,
+but will not be mentioned in {\tt \%export}.
+If {\tt alldefs} is set all possible definitions are generated.
+\\
+{\tt notwantdefs}\index{notwantdefs@{\verb+notwantdefs+}}
+&
+If set,
+this variable contains the names of the type and function definitions for
+which under all conditions {\tt no} code must be generated.
+\\
+{\tt alldefs}\index{alldefs@{\tt alldefs}}
+&
+If set,
+this variable indicates that all possible type and function definitions must
+be generated.
+\\
+\end{desctab}
+\par
+At least one of the variables {\tt wantdefs} and {\tt alldefs} must be set.
+\subsection{Library functions for some special types}
+For a few frequently used types the {\Miranda} support library can generate
+the necessary code.
+You can request generation by adding the required functions to the contents
+of the {\Tm} variable {\tt wantdefs} or by setting {\tt alldefs}.
+Note that if you set {\tt wantdefs}, {\Tm} will {\em not} deduce that
+one of these functions is needed, you must request them.
+The type specifications of the available functions are:
+\begin{verbatim}
+scan_bool :: [char]->(bool,[char])
+scan_char :: [char]->(char,[char])
+scan_num :: [char]->(num,[char])
+scan_string :: [char]->([char],[char])
+show_bool :: bool->[char]
+show_char :: char->[char]
+show_num :: num->[char]
+show_string :: [char]->[char]
+\end{verbatim}
+\index{scan_bool@\verb+scan_bool+}
+\index{scan_char@\verb+scan_char+}
+\index{scan_num@\verb+scan_num+}
+\index{scan_string@\verb+scan_string+}
+\index{show_bool@\verb+show_bool+}
+\index{show_char@\verb+show_char+}
+\index{show_num@\verb+show_num+}
+\index{show_string@\verb+show_string+}
+It is assumed that
+\begin{verbatim}
+string == [char]
+\end{verbatim}
+But you must define this yourself (for example in the input file for {\Tm}).
+\par
+Note that the string representation used in {\Miranda} differs from the normal
+representation: `\verb!\ddd!' with {\tt d} a digit is interpreted as
+a {\em decimal} number in {\Miranda}, and as a {\em octal} number in
+{\C} and several {\Unix} programs.
+In the {\Tm} textual representation `\verb!\ddd!' is interpreted as
+an {\em octal} number.
+\subsection{Support for {\tt \%export}}
+\label{sec:export}
+\index{\%export@\verb+%%export+}
+Without intervention the generated {\Miranda} file will contain a
+{\tt \%export} directive for all requested functions and all required
+data structures.
+You can add your own definitions to this by listing them in {\Tm} variable
+{\tt also\_export}.
+This is useful to add functions that are defined in the input file
+for {\Tm} to the {\tt \%export} list,
+or to make local functions visible to other files.
+\par
+The following functions are guaranteed to be available,
+exporting other local functions may be non-portable or may cause errors in
+future versions of the {\Miranda} library.
+\par
+\begin{verbatim}
+needcbrac :: num->[char]->[char]
+\end{verbatim}
+\begin{desc}
+\index{needcbrac@\verb+needcbrac+}
+Given a number {\tt n} and a string to scan,
+ensure that there are {\tt n} close brackets possibly preceded by
+spaces and comment.
+Give an error if not all the brackets are found.
+This function is intended to check that the brackets that have been
+scanned by {\tt scanobrac} are balanced.
+\end{desc}
+\begin{verbatim}
+scanconstr :: [char]->([char],[char])
+\end{verbatim}
+\begin{desc}
+\index{scanconstr@\verb+scanconstr+}
+Skip all leading spaces and comment,
+and then match a string of letters or digits.
+The matched string may be empty.
+This is used to scan constructor names.
+\end{desc}
+\begin{verbatim}
+scanlist :: ([char]->(*,[char]))->[char]->([*],[char])
+\end{verbatim}
+\begin{desc}
+\index{scanlist@\verb+scanlist+}
+Given a function to scan single element of a certain type and a string
+to scan,
+scan a list of elements of that type.
+\end{desc}
+\begin{verbatim}
+scanobrac :: [char]->(num,[char])
+\end{verbatim}
+\begin{desc}
+\index{scanobrac@\verb+scanobrac+}
+Match any number of open brackets and preceding spaces and comments.
+Return a tuple containing the number of matched brackets and the remaining
+string.
+To check that there is a matching number of close brackets the function
+{\tt needcbrac} can be used.
+\end{desc}
+\begin{verbatim}
+skipuntil :: char->[char]->[char]
+\end{verbatim}
+\begin{desc}
+\index{skipuntil@\verb+skipuntil+}
+Drop all elements from list {\tt x} up to and including element {\tt e}.
+If {\tt x} does not contain {\tt e},
+give an error message.
+\end{desc}
+\begin{verbatim}
+stripspace :: [char]->[char]
+\end{verbatim}
+\begin{desc}
+\index{stripspace@\verb+stripspace+}
+Remove all leading comment, tabs, spaces and returns from the
+given string.
+\end{desc}
+\begin{verbatim}
+showlist :: (*->[char])->[*]->[char]
+\end{verbatim}
+\begin{desc}
+\index{showlist@\verb+showlist+}
+Given a function to show single element of a certain type and a list
+of that type, show the list.
+\end{desc}
+\appendix
+\section{Listing of the file `mirademo.m'}
+\label{sec:democode}
+\begin{listing}
+\verbatiminput{mirademo.m}
+\end{listing}
+\printindex
+\end{document}

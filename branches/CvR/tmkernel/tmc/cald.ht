@@ -1,0 +1,368 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+..
+.. file: cald.ht
+.. Tm C support. Variant: array lists, direct representation.
+/*** WARNING: THIS IS GENERATED CODE. ***/
+
+/* ---- start of ${tplfilename} ---- */
+/* Definition C datastructures (Version for array list).
+
+   template file:      ${tplfilename}
+   datastructure file: ${dsfilename}
+   tm version:         $(tmvers)
+   tm kernel version:  $(kernel-version)
+ */
+
+#if defined( __TOS__ ) && defined( __PUREC__ ) && !defined( const )
+/* Pure C on Atari ST cannot cope with const and passed structures. */
+#define const
+#define TM_CONST_HIDDEN
+#endif
+
+.. Definition of all list types.
+.foreach t $(need_ds_list)
+typedef struct str_$t_list {
+    unsigned int sz;
+    unsigned int room;
+.. If it is a type known to tm, use its internal name.
+.if ${member $t ${typelist}}
+    struct str_$t *arr;
+.else
+    $t *arr;
+.endif
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+} $t_list;
+
+.endforeach
+
+.. Forward reference typedefs for all constructors.
+.. C does not like the use of undefined types, but does not
+.. mind the use of pointers to (yet) undefined types.
+.foreach t ${comm ${ctypelist} "" $(need_ds)}
+.foreach c ${conslist $t}
+.if ${len ${celmlist $t $c}}
+typedef struct str_C_$c *C_$c;
+.endif
+.endforeach
+.endforeach
+
+.foreach t ${comm $(need_ds) "" ${ctypelist}}
+.foreach c ${conslist $t}
+#define $c(ds) (*((ds).u.ue_$c))
+.endforeach
+
+.if ${len ${conslist $t}}
+typedef enum en_tags_$t {
+    ${seplist ", " ${prefix TAG ${conslist $t}}}
+} tags_$t;
+.else
+typedef int tags_$t;
+.endif
+
+.endforeach
+
+.foreach t ${depsort $(need_ds)}
+.. Definitions for all the constructor and tuple types.
+.. For constructor types, set 'makeunion' to true if one of the constructor
+.. will contain elements, because otherwise a union is not necessary,
+.. and will upset C.
+.set makeunion 0
+.if ${member $t ${ctypelist}}
+.. Constructor type
+.foreach c ${conslist $t}
+.if ${len ${celmlist $t $c}}
+.set makeunion 1
+.endif
+.endforeach
+typedef struct str_$t {
+    tags_$t tag;
+.if $(makeunion)
+    union uni_$t {
+.foreach c ${conslist $t}
+.if ${len ${celmlist $t $c}}
+	C_$c ue_$c;
+.endif
+.endforeach
+    } u;
+.endif
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+} $t;
+
+.else
+typedef struct str_$t {
+.foreach e ${telmlist $t}
+    ${mklist ${ttypellev $t $e} ${ttypename $t $e}} $e;
+.endforeach
+.if ${not ${len ${telmlist $t}}}
+    int _dummy_field;
+.endif
+#ifdef LOGNEW
+    long int lognew_id;
+#endif
+} $t;
+
+.endif
+.endforeach
+.. Structure definitions for all the constructors of the type
+.. that have elements (C does not like empty structures or unions).
+.foreach t ${comm ${ctypelist} "" $(need_ds)}
+.foreach c ${conslist $t}
+.if ${len ${celmlist $t $c}}
+/* Structure for constructor $c */
+struct str_C_$c {
+.foreach e ${celmlist $t $c}
+    ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}} $e;
+.endforeach
+};
+
+.endif
+.endforeach
+.endforeach
+
+#ifdef LOGNEW
+.foreach t $(want_new)
+.if ${member $t ${ttypelist}}
+#define new_$t(${seplist , ${telmlist $t}}) real_new_$t(${seplist , ${telmlist $t} __FILE__ __LINE__})
+.else
+.foreach c ${conslist $t}
+#define new_$c(${seplist , ${celmlist $t $c}}) real_new_$c(${seplist , ${celmlist $t $c} __FILE__ __LINE__})
+.endforeach
+.endif
+.endforeach
+.foreach t $(want_new_list)
+#define new_$t_list() real_new_$t_list(__FILE__,__LINE__)
+.endforeach
+..
+.. slice_<type>() routines
+.foreach t $(want_slice_list)
+#define slice_$t_list(l,b,e) real_slice_$t_list(l,b,e,__FILE__,__LINE__)
+.endforeach
+..
+.. rdup_<type>() routines
+.foreach t $(want_rdup)
+#define rdup_$t(e) real_rdup_$t(e,__FILE__,__LINE__)
+.endforeach
+.foreach t $(want_rdup_list)
+#define rdup_$t_list(e) real_rdup_$t_list(e,__FILE__,__LINE__)
+.endforeach
+..
+.. fscan_<type>() routines
+.foreach t $(want_fscan)
+#define fscan_$t(f,e) real_fscan_$t(f,e,__FILE__,__LINE__)
+.endforeach
+.foreach t $(want_fscan_list)
+#define fscan_$t_list(f,l) real_fscan_$t_list(f,l,__FILE__,__LINE__)
+.endforeach
+#endif
+
+.. new_<cons> and new_<type> routines
+.foreach t $(want_new)
+.if ${member $t ${ttypelist}}
+.set tl
+.foreach e ${telmlist $t}
+.append tl ${mklist ${ttypellev $t $e} ${ttypename $t $e}}
+.endforeach
+#ifdef LOGNEW
+.if ${== ${len $(tl)} 0}
+extern $t real_new_$t( const char *, const int );
+.else
+extern $t real_new_$t( ${seplist ", " $(tl)}, const char *, const int );
+.endif
+#else
+.if ${== ${len $(tl)} 0}
+extern $t new_$t( void );
+.else
+extern $t new_$t( ${seplist ", " $(tl)} );
+.endif
+#endif
+.else
+.foreach c ${conslist $t}
+.set tl
+.foreach e ${celmlist $t $c}
+.append tl ${mklist ${ctypellev $t $c $e} ${ctypename $t $c $e}}
+.endforeach
+#ifdef LOGNEW
+.if ${== ${len $(tl)} 0}
+extern $t real_new_$c( const char *, const int );
+.else
+extern $t real_new_$c( ${seplist ", " $(tl)}, const char *, const int );
+.endif
+#else
+.if ${== ${len $(tl)} 0}
+extern $t new_$c( void );
+.else
+extern $t new_$c( ${seplist ", " $(tl)} );
+.endif
+#endif
+.endforeach
+.endif
+.endforeach
+#ifdef LOGNEW
+.foreach t $(want_new_list)
+extern $t_list real_new_$t_list( const char *file, const int line );
+.endforeach
+#else
+.foreach t $(want_new_list)
+extern $t_list new_$t_list( void );
+.endforeach
+#endif
+..
+.. setroom_<type>_list() routines
+.foreach t $(want_setroom_list)
+extern $t_list setroom_$t_list( $t_list, const unsigned int );
+.endforeach
+..
+.. null_<type>() and null_<type>_list() routines
+.foreach t $(want_null)
+extern $t null_$t( void );
+.endforeach
+.foreach t $(want_null_list)
+extern $t_list null_$t_list( void );
+.endforeach
+..
+.. append_<type>_list() routines
+.foreach t $(want_append_list)
+extern $t_list append_$t_list( $t_list, $t );
+.endforeach
+..
+.. reverse_<type>_list() routines
+.foreach t $(want_reverse_list)
+extern $t_list reverse_$t_list( $t_list  );
+.endforeach
+..
+.. insert_<type>_list() routines
+.foreach t $(want_insert_list)
+extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
+.endforeach
+..
+.. delete_<type>_list() routines
+.foreach t $(want_delete_list)
+extern $t_list delete_$t_list( $t_list, const unsigned int );
+.endforeach
+..
+.. extract_<type>_list() routines
+.foreach t $(want_extract_list)
+extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
+.endforeach
+..
+.. concat_<type>_list() routines
+.foreach t $(want_concat_list)
+extern $t_list concat_$t_list( $t_list, $t_list );
+.endforeach
+..
+.. fre_<type>_list() routines
+.foreach t $(want_fre_list)
+extern void fre_$t_list( $t_list );
+.endforeach
+.foreach t $(want_fre)
+extern void fre_$t( $t );
+.endforeach
+..
+.. rfre_<type>_list() routines
+.foreach t $(want_rfre_list)
+extern void rfre_$t_list( $t_list );
+.endforeach
+.foreach t $(want_rfre)
+extern void rfre_$t( $t );
+.endforeach
+..
+.. print_<type>() routines
+.foreach t $(want_print)
+extern void print_$t( TMPRINTSTATE *st, const $t );
+.endforeach
+.foreach t $(want_print_list)
+extern void print_$t_list( TMPRINTSTATE *st, const $t_list );
+.endforeach
+..
+.. fprint_<type>() routines
+.foreach t $(want_fprint)
+extern void fprint_$t( FILE *, const $t );
+.endforeach
+.foreach t $(want_fprint_list)
+extern void fprint_$t_list( FILE *, const $t_list );
+.endforeach
+..
+.. slice_<type>() routines
+#ifdef LOGNEW
+extern $t_list real_slice_$t_list(
+ const $t_list,
+ const unsigned int,
+ const unsigned int,
+ const char *,
+ const int
+);
+#else
+.foreach t $(want_slice_list)
+extern $t_list slice_$t_list(
+ const $t_list,
+ const unsigned int,
+ const unsigned int
+);
+.endforeach
+#endif
+..
+.. rdup_<type>() routines
+#ifdef LOGNEW
+.foreach t $(want_rdup)
+extern $t real_rdup_$t( const $t, const char *, const int );
+.endforeach
+.foreach t $(want_rdup_list)
+extern $t_list real_rdup_$t_list( const $t_list, const char *, const int );
+.endforeach
+#else
+.foreach t $(want_rdup)
+extern $t rdup_$t( const $t );
+.endforeach
+.foreach t $(want_rdup_list)
+extern $t_list rdup_$t_list( const $t_list );
+.endforeach
+#endif
+..
+.. fscan_<type>() routines
+#ifdef LOGNEW
+.foreach t $(want_fscan)
+extern int real_fscan_$t( FILE *, $t *, const char *, const int );
+.endforeach
+.foreach t $(want_fscan_list)
+extern int real_fscan_$t_list( FILE *, $t_list *, const char *, const int );
+.endforeach
+#else
+.foreach t $(want_fscan)
+extern int fscan_$t( FILE *, $t * );
+.endforeach
+.foreach t $(want_fscan_list)
+extern int fscan_$t_list( FILE *, $t_list * );
+.endforeach
+#endif
+..
+.. cmp_<type>() routines
+.foreach t $(want_cmp)
+extern int cmp_$t( const $t a, const $t b );
+.endforeach
+.foreach t $(want_cmp_list)
+extern int cmp_$t_list( const $t_list a, const $t_list b );
+.endforeach
+..
+.. misc. functions
+.if ${member flush_$(basename) $(want_misc)}
+#define flush_$(basename)()
+.endif
+.if ${member stat_$(basename) $(want_misc)}
+extern void stat_$(basename)( FILE * );
+.endif
+.if ${member get_balance_$(basename) $(want_misc)}
+extern int get_balance_$(basename)( void );
+.endif
+
+#ifdef TM_CONST_HIDDEN
+#undef const
+#endif
+
+/* ---- end of ${tplfilename} ---- */

@@ -1,0 +1,378 @@
+.. Tm - an interface code generator.
+.. Author: C. van Reeuwijk.
+..
+.. All rights reserved.
+
+.. File: testin
+..
+.. test command file for tm.
+.. Attempts an exhausive test of all functions and commands.
+
+VARIABLES:
+----
+.set a 12
+.set av z y x
+.set z GOOD!
+'$a'
+'$(a)'
+'$(${first $(av)})'
+'$(iserniet)'
+'$(a'
+.set a
+'$a'
+'$(a)'
+'$$' '$.' '$"'
+.append av $(av)
+.append unknownvariable bla bla bla
+unknownvariable: '$(unknownvariable)'
+'$(av)'
+----
+Special variables:
+dollar: '$$'
+dot: '$.'
+double quote: '$"'
+
+COMMANDS:
+---------
+
+if:
+----
+.if 1
+if 1 done
+.else
+if 1 not done
+.endif
+----
+.if 0
+if 0 done
+.else
+if 0 not done
+.endif
+----
+.if ""
+if "" done
+.else
+if "" not done
+.endif
+----
+
+insert:
+----
+.set var ladidah
+var = `$(var)'
+.insert testsub
+var = `$(var)'
+----
+
+include:
+----
+.set var ladidah
+var = `$(var)'
+.include testsub
+var = `$(var)'
+----
+
+redirect:
+----
+.redirect testrdir
+Dit moet in de redirect file te komen
+.endredirect
+----
+
+error:
+----
+.error
+.error error message line
+.set msg "this is a message line"
+.error $(msg)
+----
+
+foreach:
+----
+.foreach i a b c d
+$i
+.endforeach
+----
+.foreach i
+$i
+.endforeach
+----
+
+while:
+----
+.set l 1 2 3 4 5 6 7
+.while ${len $l}
+$l
+.set l ${shift $l}
+.endwhile
+----
+
+FUNCTIONS:
+----------
+
+Comparison functions:
+----
+eq : '${eq a a }' '${eq 0 00}' '${eq a aaaaaa}'
+neq: '${neq a a}' '${neq 0 00}' '${neq a aaaaa}'
+strcmp: '${strcmp a a}' '${strcmp 0 00}' '${strcmp 00 0}' '${strcmp a aaaaa}'
+== : '${== 3 3 }' '${== 3 5}' '${== 3 -3}' '${== 3 a}'
+!= : '${!= 3 3 }' '${!= 3 5}' '${!= 3 -3}' '${!= 3 a}'
+<  : '${< 4 5}' '${< 4 4}' '${< 2 1}'
+<= : '${<= 4 5}' '${<= 4 4}' '${<= 2 1}'
+>  : '${> 4 5}' '${> 4 4}' '${> 2 1}'
+>= : '${>= 4 5}' '${>= 4 4}' '${>= 2 1}'
+----
+
+Aritmetic functions:
+----
++: '${+ 1 2 3 4 5}' '${+ 3}' '${+}'
+-: '${- 5 1}' '${- 1 5}' '${- 1}'
+*: '${* 1 2 3 4 5}' '${* 3}' '${*}'
+/: '${/ 12 3}' '${/ 11 3}' '${/ 13 3}' '${/ 3 13}'
+%: '${% 12 3}' '${% 11 3}' '${% 13 3}' '${% 3 13}'
+max: '${max -1 1 2 3 4 5}' '${max 3}' '${max}'
+min: '${min -1 1 2 3 4 5}' '${min 3}' '${min}'
+----
+
+Boolean:
+----
+and: '${and 1 1 1}' '${and 0 1 1}' '${and}'
+not: '${not 1}' '${not 0}' '${not ""}' '${not}'
+or:  '${or 0 0 0 0}' '${or 1 0 0}' '${or}'
+----
+
+List manipulation:
+----
+.set lst a b c d e f
+index:   '${index a $(lst)}' '${index z $(lst)}' '${index z}' '${index}'
+member:   '${member a $(lst)}' '${member z $(lst)}' '${member z}' '${member}'
+shift:   '${shift $(lst)}' '${shift}'
+first:   '${first $(lst)}' '${first}'
+seplist: '${seplist ", " $(lst)}' '${seplist a a}' '${seplist a}'
+prefix:  '${prefix pfx_ $(lst)}' '${prefix pfx_ a}' '${prefix pfx_}'
+suffix:  '${suffix _sfx $(lst)}' '${suffix _sfx a}' '${suffix _sfx}'
+len:     '${len $(lst)}' '${len a}' '${len}'
+sort:    '${sort $(lst) $(lst)}' '${sort 1 2 12 -1}' '${sort }'
+uniq:    '${uniq $(lst) $(lst)}' '${uniq 1 2 12 -1}' '${uniq }'
+rev:     '${rev $(lst)}' '${rev}'
+----
+
+Regular expressions:
+----
+.set wildstring foobar fobar foo bar blabar a b barf foofoo barbar ian
+.foreach fn subs filt
+funtion: $(fn)
+.foreach pats "* [&]" "foo* 1" "foo* &&" "(foo)* &\1" "(foo)(*) \2\1"
+$(pats): [${$(fn) $(pats) $(wildstring)}]
+.endforeach
+.foreach pats "[a-e]* !&" "(?)(*)(?) \3\2\1"
+$(pats): [${$(fn) $(pats) $(wildstring)}]
+.endforeach
+
+.endforeach
+funtion: rmlist
+.foreach pats "foo*" "foo*" "(foo)*"  "foo(*)" "(foo)(*)" "[a-e]*" "(?)(*)(?)"
+$(pats): [${rmlist $(pats) $(wildstring)}]
+.endforeach
+----
+
+Filename access functions:
+----
+dsfilename: '${ dsfilename }'
+tplfilename: '${ tplfilename }'
+tpllineno: '${ tpllineno }'
+.set path ${searchpath}
+${eq ${first $(path)} $(libpath)} ${shift $(path)}
+${searchfile testsub}
+----
+
+.foreach pass one two three
+Pass $(pass)
+Datastructure access functions:
+----
+typelist: '${typelist}'
+ttypelist: '${ttypelist}'
+ctypelist: '${ctypelist}'
+.foreach t ${typelist}
+    conslist $t: '${conslist $t }'
+    inherits $t: '${inherits $t }'
+.foreach c ${conslist $t}
+        celmlist: '${celmlist $t $c }'
+.foreach e ${celmlist $t $c }
+            ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
+	    ctypellev $t $c $e: ${ctypellev $t $c $e}
+            ctypename $t $c $e: '${ctypename $t $c $e }'
+.endforeach
+.endforeach
+    telmlist $t: '${telmlist $t }'
+.foreach e ${telmlist $t }
+	ttypeclass $t $e: '${ttypeclass $t $e }'
+	ttypellev $t $e: ${ttypellev $t $e}
+	ttypename $t $e: '${ttypename $t $e }'
+.endforeach
+.endforeach
+mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
+stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+.set listpre [
+mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
+stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+.set listsuff ]
+mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
+stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+.set listpre
+mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}
+stemname: ${stemname a b] [c [d] [e]] a[f] [[g]]}
+inherits: ${inherits} ${inherits iserniet}
+conslist: ${conslist} ${conslist bla bla} ${conslist notatype}
+telmlist: ${conslist} ${conslist bla bla} ${conslist notatype}
+----
+
+Datastructure dependency
+----
+.set listpre
+.set listsuff _list
+.foreach t ${typelist}
+single types dependent on $t: '${deptype single $t}'
+list types dependent on $t: '${deptype list $t}'
+.endforeach
+Testing error handling:
+'${deptype list}'
+'${deptype reutel ${first ${typelist}}}'
+'${deptype}'
+Type sorting:
+depsort: [${depsort int ${typelist}}]
+----
+.expandinherits ${typelist}
+.endforeach
+
+String manipulation functions:
+----
+strpad: '${strpad bla 6 " "}' '${strpad abcdef 3 !}' '${strpad bla 11 wow}'
+strpad: '${strpad "" 5 0}' '${strpad zwoing 10 ""}'
+strlen: '${strlen <word> }' '${strlen ""}' '${strlen}'
+strindex: '${strindex c abcdef}' '${strindex z abcdef}'
+toupper: '${toupper bla}' '${toupper BLA bla Bla}' '${toupper}'
+tolower: '${tolower bla}' '${tolower BLA bla Bla}' '${tolower}'
+capitalize: '${capitalize bla}' '${capitalize BLA bla Bla}' '${capitalize}'
+----
+
+Miscellaneous functions:
+----
+.set yes
+${defined yes} ${defined doesnotexist} ${defined}
+isinenv: [${isinenv PATH}] [${isinenv NOT_LIKELY_ENVIRONMENT_VARIABLEX}] [${isinenv}]
+----
+
+verbose flag and other command line settings:
+----
+verbose = '$(verbose)'
+test1 = '$(test1)'
+test2 = '$(test2)'
+----
+
+.foreach fn comm excl
+$(fn):
+----
+'${$(fn) a b c d e f a b c d e f "" a e g h a}'
+'${$(fn) a b c d}'
+'${$(fn) a b c d ""}'
+'${$(fn) "" a b c d}'
+----
+
+.endforeach
+
+Integer expressions
+-------------------
+
+'$[-12]' '$[--12]'
+'$[12+-12]' '$[1+2+3+4+5+6+7]'
+'$[12*12+13*13]' '$[1*2*3*4*5*6*7]' '$[12/12]' '$[42%13]'
+.foreach op < <= > >= != ==
+$(op): '$[1$(op)2]' '$[-1$(op)-2]' '$[-1$(op)2]' '$[1$(op)-2]' '$[-42$(op)-42]'
+.endforeach
+.foreach op | & == != < <= >= >
+ $(op)
+-------
+.foreach a 0 1
+.foreach b 0 1
+$a $b | $[$a$(op)$b]
+.endforeach
+.endforeach
+
+.endforeach
+$[((12))]
+'$[]' '$[12+]' '$[12'
+'$[a]' '$[12/0]' '$[12%0]'
+
+Buffer size test.
+Create a list with 2k worth elements.
+.set l 0123456789
+.while $[${len $l}<200]
+.set l $l $l
+${len $l}
+.endwhile
+
+Macros
+------
+.. Test macro faciliteiten
+..
+.macro test a b
+.set v $a $b
+[Start macro]
+a:[$a]
+b:[$b]
+v:[$v]
+[end macro]
+.endmacro
+..
+.set v toplevelv
+v:[$v]
+.call test 12 34
+v:[$v]
+.call test a b
+v:[$v]
+.call test "1 2 3 4 5 6 7" "a b c d e"
+v:[$v]
+..
+.macro test a b
+.set v $a $b
+..
+.macro submacro nm l
+$(nm):[$l] (done by macro 'submacro')
+.endmacro
+..
+[Start new macro]
+.call submacro a "$a"
+.call submacro b "$b"
+.call submacro v "$v"
+[end new macro]
+.endmacro
+..
+v:[$v]
+.call test 12 34
+v:[$v]
+.call test a b
+v:[$v]
+.call test "1 2 3 4 5 6 7" "a b c d e"
+v:[$v]
+.call submacro l "a b c"
+.call test a
+.call test a b c
+.call iserniet
+.call
+.call test
+.macro tv a
+.return 42
+.return ${sort $a}
+.endmacro
+[${call tv "1 4 1 2 3 -1 4 5 -9 12 2343"}]
+${call tv 1 2} ${call} ${call tv}
+[${call test a b}]
+[${call tv ""}]
+----
+
+Eval
+----
+.set x "$$[1+2]"
+[$x] [${eval $x}]
+----
