@@ -49,7 +49,6 @@ testin(242): 'conslist' requires a type name
 testin(242): no such type: notatype
 testin(255): bad parameter: reutel
 testin(256): 'ctypellev' requires at least one parameter
-Expansion does not allow inheritance from a constructor type: 'toplevel'
 testin(205): not a constructor type: 'orig'
 testin(208): not a constructor type: 'orig'
 testin(205): not a constructor type: 'subtuple'
@@ -86,63 +85,27 @@ testin(242): 'conslist' requires a type name
 testin(242): no such type: notatype
 testin(255): bad parameter: reutel
 testin(256): 'ctypellev' requires at least one parameter
-testin(205): not a constructor type: 'orig'
-testin(208): not a constructor type: 'orig'
-testin(205): not a constructor type: 'subtuple'
-testin(208): not a constructor type: 'subtuple'
-testin(216): not a tuple or class type: 'sublevel'
-testin(217): not a tuple or class type: 'sublevel'
-testin(218): not a tuple or class type: 'sublevel'
-testin(223): not a tuple or class type: 'sublevel'
-testin(205): not a constructor type: 'notuple'
-testin(208): not a constructor type: 'notuple'
-testin(216): not a tuple or class type: 'toplevel'
-testin(217): not a tuple or class type: 'toplevel'
-testin(218): not a tuple or class type: 'toplevel'
-testin(223): not a tuple or class type: 'toplevel'
-testin(216): not a tuple or class type: 'thing'
-testin(217): not a tuple or class type: 'thing'
-testin(218): not a tuple or class type: 'thing'
-testin(223): not a tuple or class type: 'thing'
-testin(205): not a constructor type: 'subclass'
-testin(208): not a constructor type: 'subclass'
-testin(205): not a constructor type: 'testclass'
-testin(208): not a constructor type: 'testclass'
-testin(229): 'mklist' requires at least one parameter
-testin(232): 'mklist' requires at least one parameter
-testin(235): 'mklist' requires at least one parameter
-testin(238): 'mklist' requires at least one parameter
-testin(240): 'inherits' requires exactly one parameter
-testin(240): no such type: iserniet
-testin(241): 'conslist' requires a type name
-testin(241): 'conslist' requires a type name
-testin(241): no such type: notatype
-testin(242): 'conslist' requires a type name
-testin(242): 'conslist' requires a type name
-testin(242): no such type: notatype
-testin(255): bad parameter: reutel
-testin(256): 'ctypellev' requires at least one parameter
-testin(266): empty padding string
-testin(278): 'isinenv' requires exactly one parameter
-testin(292): no separator
-testin(292): no separator
+testin(265): empty padding string
+testin(277): 'isinenv' requires exactly one parameter
+testin(291): no separator
+testin(291): no separator
+testin(318): bad expression
+testin(318): bad expression
+testin(318): missing close bracket: ']'
 testin(319): bad expression
-testin(319): bad expression
-testin(319): missing close bracket: ']'
-testin(320): bad expression
-testin(320): bad expression: a
-testin(373): no such macro: 'submacro'
-testin(374): wrong number of parameters: 1 instead of 2 (macro 'test')
-testin(375): wrong number of parameters: 3 instead of 2 (macro 'test')
-testin(376): no such macro: 'iserniet'
-testin(377): no macro name given
-testin(378): wrong number of parameters: 0 instead of 2 (macro 'test')
-testin(384): wrong number of parameters: 2 instead of 1 (macro 'tv')
-testin(384): no macro name given
-testin(384): wrong number of parameters: 0 instead of 1 (macro 'tv')
-testin(359): no output allowed in expression macro
-testin(356): no output allowed in expression macro
-testin(356): no output allowed in expression macro
-testin(356): no output allowed in expression macro
-testin(363): no output allowed in expression macro
+testin(319): bad expression: a
+testin(372): no such macro: 'submacro'
+testin(373): wrong number of parameters: 1 instead of 2 (macro 'test')
+testin(374): wrong number of parameters: 3 instead of 2 (macro 'test')
+testin(375): no such macro: 'iserniet'
+testin(376): no macro name given
+testin(377): wrong number of parameters: 0 instead of 2 (macro 'test')
+testin(383): wrong number of parameters: 2 instead of 1 (macro 'tv')
+testin(383): no macro name given
+testin(383): wrong number of parameters: 0 instead of 1 (macro 'tv')
+testin(358): no output allowed in expression macro
+testin(355): no output allowed in expression macro
+testin(355): no output allowed in expression macro
+testin(355): no output allowed in expression macro
+testin(362): no output allowed in expression macro
 errors detected, program aborted
