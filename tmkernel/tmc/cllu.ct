@@ -71,7 +71,7 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 .if ${member $t $(want_new)}
 #undef new_$t
 .endif
-#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} _f _l})
+#define new_$t(${seplist , ${allfields $t}}) real_new_$t(${seplist , ${allfields $t} _f _l})
 .endforeach
 #endif
 
@@ -88,10 +88,10 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 .switch ${metatype $t}
 .case tuple class constructorbase
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}"}
 $(stat)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${fields $t inherited}"}
+.set tl ${call ansi_nproto $t "${allfields $t}"}
 $(stat)$t new_$t( $(tl) )
 #endif
 {
@@ -103,7 +103,7 @@ $(stat)$t new_$t( $(tl) )
 .foreach link $(links)
     nw->$(link) = ${subs next(*) $t\1 $(link)}_listNIL;
 .endforeach
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     nw->$e = p_$e;
 .endforeach
 .if ${member $t $(need_stat)}
@@ -116,10 +116,10 @@ $(stat)$t new_$t( $(tl) )
 }
 .case constructor
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}"}
 $(stat)${inherits $t} real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${fields $t inherited}"}
+.set tl ${call ansi_nproto $t "${allfields $t}"}
 $(stat)${inherits $t} new_$t( $(tl) )
 #endif
 {
@@ -131,7 +131,7 @@ $(stat)${inherits $t} new_$t( $(tl) )
 .foreach link $(links)
     nw->$(link) = ${subs next(*) $t\1 $(link)}_listNIL;
 .endforeach
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     to_$t(nw)->$e = p_$e;
 .endforeach
     nw->tag = TAG$t;
@@ -244,7 +244,7 @@ $(stat)void rfre_$t( $t e )
 	return;
     }
 .if ${member $t ${tuplelist}}
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     rfre_${type $t $e}( e->$e );
 .endforeach
 .else
@@ -252,7 +252,7 @@ $(stat)void rfre_$t( $t e )
     switch( e->tag ){
 .foreach c ${subclasses $t}
 	case TAG$c:
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    rfre_${type $c $e}( to_$c(e)->$e );
 .endforeach
 	    break;
@@ -494,7 +494,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .switch ${metatype $t}
 .case tuple
     tm_opentuple( st );
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     print_${type $t $e}( st, t->$e );
 .endforeach
     tm_closetuple( st );
@@ -505,7 +505,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
 	    tm_printword( st, "$c" );
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    print_${type $c $e}( st, to_$c(t)->$e );
 .endforeach
 	    break;
@@ -566,7 +566,7 @@ $(stat)void fprint_$t( FILE *f, const $t t )
 .if ${member $t ${tuplelist}}
     putc( '(', f );
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .if $(first)
 .set first 0
 .else
@@ -582,7 +582,7 @@ $(stat)void fprint_$t( FILE *f, const $t t )
 .foreach c ${subclasses $t}
 	case TAG$c:
 	    fputs( "$c", f );
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    putc( ' ', f );
 	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
@@ -661,17 +661,17 @@ $(stat)$t rdup_$t( const $t e )
 #endif
 {
 .if ${member $t ${tuplelist}}
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} i_$e;
 .endforeach
 
     if( e == $tNIL ){
 	return $tNIL;
     }
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     i_$e = rdup_${type $t $e}( e->$e );
 .endforeach
-    return new_$t( ${seplist ", " ${prefix "i_" ${fields $t inherited}}} );
+    return new_$t( ${seplist ", " ${prefix "i_" ${allfields $t}}} );
 .else
     if( e == $tNIL ){
 	return $tNIL;
@@ -681,14 +681,14 @@ $(stat)$t rdup_$t( const $t e )
 .foreach c ${subclasses $t}
 	case TAG$c:
 	{
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    ${type $c $e} i_$e;
 .endforeach
 
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    i_$e = rdup_${type $c $e}( to_$c(e)->$e );
 .endforeach
-	    return new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
+	    return new_$c( ${seplist ", " ${prefix "i_" ${allfields $c}}} );
 	}
 
 .endforeach
@@ -828,7 +828,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 	return 1;
     }
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .if $(first)
 .set first 0
 .else
@@ -868,7 +868,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 .foreach c ${subclasses $t}
 	case TAG$c:
 .set first 1
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 .if $(first)
 .set first 0
 .else
@@ -965,13 +965,13 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 {
 .switch ${metatype $t}
 .case tuple
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} l_$e;
 .endforeach
     int c;
     int err;
 
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     l_$e = ${type $t $e}NIL;
 .endforeach
     *p = $tNIL;
@@ -988,7 +988,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 	return 1;
     }
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .if $(first)
 .set first 0
 .else
@@ -1000,7 +1000,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 	err = fscan_${type $t $e}( f, &l_$e );
     }
 .endforeach
-    *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
     if( err ){
 	return 1;
     }
@@ -1043,33 +1043,33 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 .if ${isvirtual $t}
 .else
     $(els)if( strcmp( tm_word, "$t" ) == 0 ){
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 	${type $t $e} l_$e;
 .endforeach
 
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 	l_$e = ${type $t $e}NIL;
 	if( !err ){
 	    err = fscan_${type $t $e}( f, &l_$e );
 	}
 .endforeach
-	*p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
+	*p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
     }
 .set els "else "
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
     $(els)if( strcmp( tm_word, "$c" ) == 0 ){
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	${type $c $e} l_$e;
 .endforeach
 
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	l_$e = ${type $c $e}NIL;
 	if( !err ){
 	    err = fscan_${type $c $e}( f, &l_$e );
 	}
 .endforeach
-	*p = new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
+	*p = new_$c( ${seplist ", " ${prefix " l_" ${allfields $c}}} );
     }
 .set els "else "
 .endforeach

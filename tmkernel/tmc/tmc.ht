@@ -119,7 +119,7 @@ struct str_$t {
     long int lognew_id;
 #endif
     tags_${call rootclass $t} tag;
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} $e;
 .endforeach
 };
@@ -128,10 +128,10 @@ struct str_$t {
 #ifdef LOGNEW
     long int lognew_id;
 #endif
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} $e;
 .endforeach
-.if ${not ${len ${fields $t inherited}}}
+.if ${not ${len ${allfields $t}}}
 #ifndef LOGNEW
     int _dummy_field;
 #endif
@@ -164,7 +164,7 @@ struct str_$t_list {
 .if ${isvirtual $t}
 /* No new_$t() since this type is virtual. */
 .else
-#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} __FILE__ __LINE__})
+#define new_$t(${seplist , ${allfields $t}}) real_new_$t(${seplist , ${allfields $t} __FILE__ __LINE__})
 .endif
 .endforeach
 .foreach t $(want_new_list)
@@ -200,7 +200,7 @@ struct str_$t_list {
 /* No new_$t() since this type is virtual. */
 .else
 .set tl
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .append tl ${type $t $e}
 .endforeach
 .if ${len $(tl)}
@@ -219,7 +219,7 @@ extern $t_list real_new_$t_list( const char *file, const int line );
 /* No new_$t() since this type is virtual. */
 .else
 .set tl
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .append tl ${type $t $e}
 .endforeach
 .if ${len $(tl)}

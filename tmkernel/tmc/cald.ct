@@ -93,8 +93,8 @@ $(stic_$t)$t null_$t( void )
     nw.lognew_id = -1;
 #endif
 .if ${member $t ${tuplelist} ${classlist}}
-.if ${len ${fields $t inherited}}
-.foreach e ${fields $t inherited}
+.if ${len ${allfields $t}}
+.foreach e ${allfields $t}
     nw.$e = null_${type $t $e}();
 .endforeach
 .else
@@ -106,7 +106,7 @@ $(stic_$t)$t null_$t( void )
 .. settle for the first constructor
 .set acons ${first ${conslist $t}}
 .foreach c ${conslist $t}
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
 .set acons $c
 .endif
 .endforeach
@@ -179,7 +179,7 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 .if ${member $t $(want_new)}
 #undef new_$t
 .endif
-#define new_$t(${seplist , ${fields $t inherited}}) real_new_$t(${seplist , ${fields $t inherited} _f _l})
+#define new_$t(${seplist , ${allfields $t}}) real_new_$t(${seplist , ${allfields $t} _f _l})
 .endif
 .if ${member $t ${ctypelist}}
 .if ${member $t $(want_new)}
@@ -188,7 +188,7 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 .endforeach
 .endif
 .foreach c ${conslist $t}
-#define new_$c(${seplist , ${fields $c inherited}}) real_new_$c(${seplist , ${fields $c inherited} _f _l})
+#define new_$c(${seplist , ${allfields $c}}) real_new_$c(${seplist , ${allfields $c} _f _l})
 .endforeach
 .endif
 .endforeach
@@ -243,16 +243,16 @@ $(stic_$t)$t_list new_$t_list( void )
 .if ${member $t ${tuplelist} ${classlist}}
 .. new_<tuple>
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${fields $t inherited}"}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}"}
 $(stic_$t)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${fields $t inherited}"}
+.set tl ${call ansi_nproto $t "${allfields $t}"}
 $(stic_$t)$t new_$t( $(tl) )
 #endif
 {
     $t nw;
 
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     to_$t(nw)->$e = p_$e;
 .endforeach
 .if $(statcode)
@@ -269,21 +269,21 @@ $(stic_$t)$t new_$t( $(tl) )
 .. new_<cons>
 .foreach c ${conslist $t}
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $c "${fields $c inherited}"}
+.set tl ${call ansi_nproto_lognew $c "${allfields $c}"}
 $(stic_$t)$t real_new_$c( $(tl) )
 #else
-.set tl ${call ansi_nproto $c "${fields $c inherited}"}
+.set tl ${call ansi_nproto $c "${allfields $c}"}
 $(stic_$t)$t new_$c( $(tl) )
 #endif
 {
     $t nw;
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
     C_$c newc;
 .endif 
 
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
     newc = TM_MALLOC( C_$c, sizeof(struct str_C_$c) );
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
     newc->$e = p_$e;
 .endforeach
     nw.u.ue_$c = newc;
@@ -340,7 +340,7 @@ $(stic_$t)void fre_$t( $t e )
 .if $(statcode)
 	    frecnt_$c++;
 .endif
-.if ${len ${fields $c inherited}}
+.if ${len ${allfields $c}}
 	    TM_FREE( e.u.ue_$c );
 .endif
 	    break;
@@ -532,7 +532,7 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 .if ${member $t ${tuplelist} ${classlist}}
 $(stic_$t)void rfre_$t( $t e )
 {
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     rfre_${type $t $e}( to_$t(e)->$e );
 .endforeach
     fre_$t( e );
@@ -546,7 +546,7 @@ $(stic_$t)void rfre_$t( $t e )
     switch( e.tag ){
 .foreach c ${conslist $t}
 	case TAG$c:
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    rfre_${type $c $e}( to_$c(e)->$e );
 .endforeach
 	    break;
@@ -600,11 +600,11 @@ $(stic_$t)void rfre_$t_list( $t_list e )
 $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 {
 .if ${member $t ${tuplelist} ${classlist}}
-.if ${not ${len ${fields $t inherited}}}
+.if ${not ${len ${allfields $t}}}
     (void) t;
 .endif
     tm_opentuple( st );
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     print_${type $t $e}( st, to_$t(t)->$e );
 .endforeach
     tm_closetuple( st );
@@ -615,7 +615,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .foreach c ${conslist $t}
 	case TAG$c:
 	    tm_printword( st, "$c" );
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    print_${type $c $e}( st, to_$c(t)->$e );
 .endforeach
 	    break;
@@ -673,11 +673,11 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 {
     putc( '(', f );
 .if ${member $t ${tuplelist} ${classlist}}
-.if ${not ${len ${fields $t inherited}}}
+.if ${not ${len ${allfields $t}}}
     (void) t;
 .endif
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .if $(first)
 .set first 0
 .else
@@ -691,7 +691,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .foreach c ${conslist $t}
 	case TAG$c:
 	    fputs( "$c", f );
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    putc( ' ', f );
 	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
@@ -771,17 +771,17 @@ $(stic_$t)$t rdup_$t( const $t e )
 #endif
 {
 .if ${member $t ${tuplelist} ${classlist}}
-.if ${not ${len ${fields $t inherited}}}
+.if ${not ${len ${allfields $t}}}
     (void) e;
 .endif
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} i_$e;
 .endforeach
 
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     i_$e = rdup_${type $t $e}( to_$t(e)->$e );
 .endforeach
-    return new_$t( ${seplist ", " ${prefix "i_" ${fields $t inherited}}} );
+    return new_$t( ${seplist ", " ${prefix "i_" ${allfields $t}}} );
 .else
     $t nw;
 
@@ -791,14 +791,14 @@ $(stic_$t)$t rdup_$t( const $t e )
 .foreach c ${conslist $t}
 	case TAG$c:
 	{
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    ${type $c $e} i_$e;
 .endforeach
 
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	    i_$e = rdup_${type $c $e}( to_$c(e)->$e );
 .endforeach
-	    return new_$c( ${seplist ", " ${prefix "i_" ${fields $c inherited}}} );
+	    return new_$c( ${seplist ", " ${prefix "i_" ${allfields $c}}} );
 	}
 
 .endforeach
@@ -928,7 +928,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
     int res;
 
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .set tn ${type $t $e}
 .if $(first)
 .set first 0
@@ -964,7 +964,7 @@ $(stat)int cmp_$t( const $t a, const $t b )
 .foreach c ${conslist $t}
 	case TAG$c:
 .set first 1
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 .if $(first)
 .set first 0
 .else
@@ -1065,7 +1065,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 #endif
 {
     int err;
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} l_$e;
 .endforeach
 
@@ -1078,7 +1078,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	return 1;
     }
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .set tn ${type $t $e}
 .if $(first)
 .set first 0
@@ -1091,7 +1091,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	err = fscan_$(tn)( f, &l_$e );
     }
 .endforeach
-    *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
     if( err ){
 	return 1;
     }
@@ -1112,7 +1112,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 #endif
 {
     int err;
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
     ${type $t $e} l_$e;
 .endforeach
 
@@ -1125,7 +1125,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	return 1;
     }
 .set first 1
-.foreach e ${fields $t inherited}
+.foreach e ${allfields $t}
 .set tn ${type $t $e}
 .if $(first)
 .set first 0
@@ -1138,7 +1138,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 	err = fscan_$(tn)( f, &l_$e );
     }
 .endforeach
-    *p = new_$t( ${seplist ", " ${prefix " l_" ${fields $t inherited}}} );
+    *p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
     if( err ){
 	return 1;
     }
@@ -1191,17 +1191,17 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .set els
 .foreach c ${conslist $t}
     $(els)if( strcmp( tm_word, "$c" ) == 0 ){
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 	${type $c $e} l_$e;
 .endforeach
 
-.foreach e ${fields $c inherited}
+.foreach e ${allfields $c}
 .set tn ${type $c $e}
 	if( !err ){
 	    err = fscan_$(tn)( f, &l_$e );
 	}
 .endforeach
-	*p = new_$c( ${seplist ", " ${prefix " l_" ${fields $c inherited}}} );
+	*p = new_$c( ${seplist ", " ${prefix " l_" ${allfields $c}}} );
     }
 .set els "else "
 .endforeach
