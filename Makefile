@@ -144,14 +144,14 @@ $(FTPDIR)/tmmira-$(TMMIRA_VERSION).tar.gz: tmmira-$(TMMIRA_VERSION).tar.gz
 $(FTPDIR)/README: README.ftp
 	cp README.ftp $(FTPDIR)/README
 
-$(FTPDIR)/CHANGES.tmpas: tmpas-$(TMPAS_VERSION)/CHANGES
-	cp tmpas-$(TMPAS_VERSION)/CHANGES $(FTPDIR)/CHANGES.tmpas
+$(FTPDIR)/CHANGES.tmpas: tmpas/CHANGES
+	cp tmpas/CHANGES $(FTPDIR)/CHANGES.tmpas
 
-$(FTPDIR)/CHANGES.tmmira: tmmira-$(TMMIRA_VERSION)/CHANGES
-	cp tmmira-$(TMMIRA_VERSION)/CHANGES $(FTPDIR)/CHANGES.tmmira
+$(FTPDIR)/CHANGES.tmmira: tmmira/CHANGES
+	cp tmmira/CHANGES $(FTPDIR)/CHANGES.tmmira
 
-$(FTPDIR)/CHANGES.tmkernel: tmkernel-$(TMKERNEL_VERSION)/CHANGES
-	cp tmkernel-$(TMKERNEL_VERSION)/CHANGES $(FTPDIR)/CHANGES.tmkernel
+$(FTPDIR)/CHANGES.tmkernel: tmkernel/CHANGES
+	cp tmkernel/CHANGES $(FTPDIR)/CHANGES.tmkernel
 
 ftp: $(FTPFILES)
 	touch ftp
