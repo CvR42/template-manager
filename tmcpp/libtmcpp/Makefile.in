@@ -24,7 +24,7 @@ RANLIB=@RANLIB@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
 
-DBUGFLAGS = -g -DLOGNEW -DSTAT
+DBUGFLAGS = -g
 
 # Name of archive of this library
 LIBNAME = libtmcpp.a
@@ -50,6 +50,14 @@ HDRS = tmcpp.h
 
 
 LIBSRCS	 = \
+		lncrstr.c \
+		lnfrestr.c \
+		lnfscstr.c \
+		lnnewstr.c \
+		lnreastr.c \
+		lnt2s.c \
+		lognew.c \
+                allocid.c \
                 apptext.c \
                 badtag.c \
                 cmpdbl.c \
@@ -116,18 +124,12 @@ LIBSRCS	 = \
                 putstext.c \
                 rduptxt.c \
                 reastr.c \
+                repalid.c \
                 repltext.c \
                 setrmtxt.c \
                 sltxt.c \
                 symbol.c \
                 t2s.c \
-		lncrstr.c \
-		lnfrestr.c \
-		lnfscstr.c \
-		lnnewstr.c \
-		lnreastr.c \
-		lnt2s.c \
-		lognew.c \
                 text.c \
                 tmcalloc.c \
                 tmmalloc.c \

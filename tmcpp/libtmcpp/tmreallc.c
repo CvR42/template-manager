@@ -18,7 +18,12 @@ tm_neutralp tm_realloc( tm_neutralp old, size_t sz )
 	sz = 1;
     }
     for(;;){
-	adr = (tm_neutralp) realloc( old, sz );
+	if( old == 0 ){
+	    adr = (tm_neutralp) malloc( sz );
+	}
+	else {
+	    adr = (tm_neutralp) realloc( old, sz );
+	}
 	if( adr != (tm_neutralp)0 ){
 	    break;
 	}
