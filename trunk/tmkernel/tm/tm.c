@@ -281,7 +281,7 @@ int main( int argc, char **argv )
 	ckfreopen( errfilename, "w", stderr );
     }
     allds = parse_ds_file( dsfilename );
-    check_ds_list( allds );
+    (void) check_ds_list( allds );
     errcheck();
     if( tplfilename != tmstringNIL ){
 	tplfile = ckfopen( tplfilename, "r" );
