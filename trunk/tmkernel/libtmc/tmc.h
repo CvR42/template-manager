@@ -155,13 +155,13 @@ inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 #define null_long() longNIL
 
 /* 'tmulong' functions */
-#define rdup_ulong(i) (i)
-#define fre_ulong(i)
-#define rfre_ulong(i)
-#define cmp_ulong(a,b) ((a)>(b)?1:((a)<(b)?(-1):0))
-#define isequal_ulong(a,b) ((a)==(b))
-#define ulongNIL (0)
-#define null_ulong() ulongNIL
+#define rdup_tmulong(i) (i)
+#define fre_tmulong(i)
+#define rfre_tmulong(i)
+#define cmp_tmulong(a,b) ((a)>(b)?1:((a)<(b)?(-1):0))
+#define isequal_tmulong(a,b) ((a)==(b))
+#define tmulongNIL (0)
+#define null_tmulong() tmulongNIL
 
 /* 'tmword' functions */
 #define cmp_tmword(a,b) strcmp(a,b)
