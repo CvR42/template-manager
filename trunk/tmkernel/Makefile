@@ -6,7 +6,7 @@ MAKEFILE = Makefile
 
 # The Tm directories that may require compilation, testing or installation
 #DIRLIST=libtmc tm tmc tmpas tmmira
-DIRLIST=libtmc tm tmc tmusrdoc
+DIRLIST=libtmc tm tmc
 CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat
 DISTFILES = $(CONFIGUREFILES) README CHANGES LICENCE version.h
 JUNK = dist.lst
