@@ -171,7 +171,7 @@
 ..
 .. ** fscan **
 .macro req_fscan l
-.call require new "${nonvirtual $l}"
+.call require new "${nonvirtual $l ${subclasses $l}}"
 .call require append "${listtypes $l}"
 .call require fscan "${delisttypes $l} ${types ${singletypes $l}}"
 .call require fscan "${types ${subclasses $l}}"
@@ -370,6 +370,9 @@
 .. ** derived definitions **
 .set statcode ${or ${member stat_$(basename) $(need_misc)} ${member isbalanced_$(basename) $(need_misc)}}
 .if ${not $(statcode)}
+.if ${defined verbose}
+/* No statistics code needed. */
+.endif
 . set need_stat
 . set want_stat
 .endif
