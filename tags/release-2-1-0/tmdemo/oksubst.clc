@@ -1,0 +1,14 @@
+[
+ (command "a" (ExprConst 7)),
+ (command "b" (ExprConst (-1))),
+ (command "c" (ExprConst 1)),
+ (command "d" (ExprConst (-3))),
+ (command "e" (ExprConst 8)),
+ (command "c" (ExprConst 3)),
+ (command "f" (ExprConst 10)),
+ (
+  command
+  "z"
+  (ExprPlus (ExprPlus (ExprSymbol "x") (ExprSymbol "z")) (ExprConst 3))
+ )
+]

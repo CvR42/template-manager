@@ -1,0 +1,145 @@
+..file: clean.ict
+.. Generate Clean datastructure description.
+
+IMPORT tmlib, deltaS, deltaM;
+
+.. Given the number of list levels 'n', a list function 'lf' and an element
+.. Scan or Show function
+.. 'f', generate a function expression that Scans or Shows a nested list
+.. of the desired level
+.macro genlistfn n lf f
+.set res $f
+.while $[$n>0]
+.set res $(lf) ($(res))
+.set n $[$n-1]
+.endwhile
+.return $(res)
+.endmacro
+== THIS IS GENERATED CODE  for the IMPLEMENTATION MODULE. ==
+
+== Definition of Clean datastructures and code
+==
+== template file:      ${tplfilename}
+== datastructure file: ${dsfilename}
+== tm version:         $(tmvers) ($(tmdate))
+
+== This is a gross hack to work around a Clean limitation:
+== This macro does absolutely nothing
+RULE
+:: Id t -> t;
+   Id x -> x;
+
+========================================================
+== Scanning functions
+========================================================
+
+.foreach t $(need_Scan)
+.if ${len ${telmlist $t}}
+== Match a datastructure of type ${capitalize $t}.
+RULE
+:: Scan_${capitalize $t} [CHAR] -> (${capitalize $t},[CHAR]);
+   Scan_${capitalize $t} s
+   -> ((${seplist ", " ${prefix e_ ${telmlist $t}}}), remstr ),
+      rembrac: Stripspace (Skipuntil '(' s),
+.set prevs rembrac
+.set first 1
+.foreach e ${telmlist $t}
+.if $(first)
+.set first 0
+.else
+        c_$e: Skipuntil ',' $(prevs),
+.set prevs c_$e
+.endif
+.set scll ${call genlistfn ${ttypellev $t $e} Scanlist Scan_${capitalize ${ttypename $t $e}}}
+        (e_$e,r_$e): $(scll) $(prevs),
+.set prevs r_$e
+.endforeach
+        remstr: Skipuntil ')' $(prevs);
+.else
+.foreach c ${conslist $t}
+== Helper function for Scan_${capitalize $t}.
+== Scan the elements of a $c constructor.
+RULE
+:: Scan_$c [CHAR] -> (${capitalize $t},[CHAR]);
+   Scan_$c s
+    -> ($c ${prefix e_ ${celmlist $t $c}}, cremstr),
+.set prevs s
+.foreach e ${celmlist $t $c}
+.set scll ${call genlistfn ${ctypellev $t $c $e} Scanlist Scan_${capitalize ${ctypename $t $c $e}}}
+       (e_$e,r_$e): $(scll) $(prevs),
+.set prevs r_$e
+.endforeach
+       cremstr: Id $(prevs);
+
+.endforeach
+== Helper function for Scan_${capitalize $t}.
+== Given a constructor name, parse the remainder of the appropriate
+== constructor.
+RULE
+:: Decode_consname_${capitalize $t} STRING [CHAR] -> (${capitalize $t},[CHAR]);
+.foreach c ${conslist $t}
+   Decode_consname_${capitalize $t} "$c" r -> Scan_$c r;
+.endforeach
+   Decode_consname_${capitalize $t} c r -> ABORT (+S "Not a constructor of type ${capitalize $t}: " c);
+
+== Match a datastructure of type ${capitalize $t}.
+RULE
+:: Scan_${capitalize $t} [CHAR] -> (${capitalize $t},[CHAR]);
+   Scan_${capitalize $t} s
+      -> (v,remstr),
+        (bracs,rembrac): Scanobrac s,
+        (constr,remcon): Scanconstr rembrac,
+        (v,remall): Decode_consname_${capitalize $t} constr remcon,
+        remstr: Needcbrac bracs remall;
+
+.endif
+.endforeach
+
+========================================================
+== Showing functions
+========================================================
+
+.foreach t $(need_Show)
+== Show a datastructure of type ${capitalize $t}
+RULE
+:: Show_${capitalize $t} ${capitalize $t} -> STRING;
+.if ${len ${telmlist $t}}
+   Show_${capitalize $t} (${seplist ", " ${telmlist $t}})
+   -> +S "("
+.set first 1
+.set brac 
+.set ind
+.foreach e ${telmlist $t}
+.if $(first)
+.set first 0
+.else
+      $(ind)(+S
+      $(ind)","
+.set brac $(brac))
+.set ind "$(ind) "
+.endif
+.set scll ${call genlistfn ${ttypellev $t $e} Showlist Show_${capitalize ${ttypename $t $e}}}
+      $(ind)(+S ($(scll) $e)
+.set brac $(brac))
+.set ind "$(ind) "
+.endforeach
+      $(ind)")\n"$(brac);
+.else
+.foreach c ${conslist $t}
+   Show_${capitalize $t} ($c ${celmlist $t $c})
+   -> +S
+       "($c "
+.set ind " "
+.set brac 
+.foreach e ${celmlist $t $c}
+.set scll ${call genlistfn ${ctypellev $t $c $e} Showlist Show_${capitalize ${ctypename $t $c $e}}}
+      $(ind)(+S
+.set ind "$(ind) "
+.set brac $(brac))
+      $(ind)($(scll) $e)
+.endforeach
+      $(ind)")\n"$(brac);
+.endforeach
+.endif
+
+.endforeach

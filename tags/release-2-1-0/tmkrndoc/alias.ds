@@ -1,0 +1,7 @@
+Expr = { file:String, line:Number } +
+    ConstExpr: { n:Number } |
+    AddExpr: { left:Expr, right:Expr }
+    ;
+
+String -> tmstring;
+Number -> int;

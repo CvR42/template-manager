@@ -1,0 +1,15 @@
+|| representation of plot data
+plot = { xscale:scale, yscale:scale, curves:[curve] };
+
+curve ::=
+    XYCurve color:int points:[xypoint] |
+    YCurve color:int xstart:num xend:num points:[num] ;
+
+xypoint == ( x:num, y:num );
+
+scale = { title:tmstring } +
+    LinScale: { from:num, to:num } |
+    LogScale: { from:num, to:num }
+    ;
+
+num -> int;

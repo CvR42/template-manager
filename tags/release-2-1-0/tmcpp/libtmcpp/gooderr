@@ -1,0 +1,10 @@
+      2000       2001       2090       2091       2092       2093 
+      2094       2095       2096       2097       2098       2099 
+      2000       2001       2090       2091       2092       2093 
+      2094       2095       2096       2097       2098       2099 
+bracket level: 0
+get_balance_tmstring(): 0
+tmtext::get_balance(): 0
+tmstring            :    355 allocated,    355 freed.
+tmtext              :     38 allocated,     38 freed.
+testprog.c(799): *** fatal error: test of 'tm_fatal'

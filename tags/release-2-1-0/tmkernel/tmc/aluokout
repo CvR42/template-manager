@@ -1,0 +1,98 @@
+[(TopNone)
+,(Top [(SubNamed 122 12)
+,(SubNamedlist 12 [(Thing 42)
+,(Thing 122)
+,(Thing (-1))
+,@ ]
+)
+,(SubNamedlist (-3) @ )
+]
+ [[(SubNamed 122 (-144))
+,(SubNamedlist 122 [(Thing (-1))
+,(Thing (-1))
+,(Thing (-1))
+]
+)
+]
+]
+)
+,(TopTuple (59,
+[(Thing 5)
+,(Thing 9)
+]
+,
+22)
+)
+,(TopNone)
+,(TopNone)
+,(TopNone)
+,(TopNone)
+,(Top [(SubNamed 122 12)
+,(SubNamedlist 12 [(Thing 42)
+,(Thing 122)
+,(Thing (-1))
+,@ ]
+)
+,(SubNamedlist (-3) @ )
+]
+ [[(SubNamed 122 (-144))
+,(SubNamedlist 122 [(Thing (-1))
+,(Thing (-1))
+,(Thing (-1))
+]
+)
+]
+]
+)
+,(TopTuple (59,
+[(Thing 5)
+,(Thing 9)
+]
+,
+22)
+)
+]
+(42)
+(Thing 22)
+[
+    TopNone,
+    TopNone,
+    (
+	Top
+	[
+	    (SubNamed 122 12),
+	    (SubNamedlist 12 [(Thing 42), (Thing 122), (Thing (-1)), @]),
+	    (SubNamedlist (-3) @)
+	]
+	[
+	    [
+		(SubNamed 122 (-144)),
+		(SubNamedlist 122 [(Thing (-1)), (Thing (-1)), (Thing (-1))])
+	    ]
+	]
+    ),
+    (TopTuple (59, [(Thing 5), (Thing 9)], 22)),
+    TopNone,
+    TopNone,
+    TopNone,
+    TopNone,
+    (
+	Top
+	[
+	    (SubNamed 122 12),
+	    (SubNamedlist 12 [(Thing 42), (Thing 122), (Thing (-1)), @]),
+	    (SubNamedlist (-3) @)
+	]
+	[
+	    [
+		(SubNamed 122 (-144)),
+		(SubNamedlist 122 [(Thing (-1)), (Thing (-1)), (Thing (-1))])
+	    ]
+	]
+    ),
+    (TopTuple (59, [(Thing 5), (Thing 9)], 22))
+]
+(42)
+(Thing 22)
+bracket level: 0
+get_balance_ds()=1

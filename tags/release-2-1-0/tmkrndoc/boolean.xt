@@ -1,0 +1,7 @@
+.foreach a 0 1
+.foreach b 0 1
+.foreach c 0 1
+$a $b $c | ${and $a $b $c} | ${or $a $b $c} | ${not $c} | ${if $c Y N}
+.endforeach
+.endforeach
+.endforeach

@@ -1,0 +1,61 @@
+# Makefile for the root of the Tm distribution
+
+SHELL=/bin/sh
+MAKEFILE = Makefile
+
+# The Tm directories that may require compilation, testing or installation
+DIRLIST=libtmcpp tmcpp
+CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat
+DISTFILES = $(CONFIGUREFILES) README CHANGES LICENCE version.h
+JUNK = dist.lst
+
+help:
+	@echo "possible targets:"
+	@echo "all      Compile, test and install all sources."
+	@echo "check    Test all sources."
+	@echo "install  Install all compilation results."
+	@echo "clean    Delete intermediate files."
+	@echo "empty    Delete files that can be re-generated."
+	@echo "distlist	Create a list of files to distribute."
+
+check:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) check; cd ..; done
+
+test:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done
+
+all:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
+
+install:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done
+
+uninstall:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) uninstall; cd ..; done
+
+distclean:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
+	rm -f $(JUNK)
+
+clean:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) clean; cd ..; done
+	rm -f $(JUNK)
+
+empty:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) empty; cd ..; done
+	rm -f $(JUNK)
+	rm -f config.status config.log config.cache
+
+distlist:
+	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+	for i in $(DIRLIST); do cd $$i; $(MAKE) distlist; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
