@@ -510,7 +510,11 @@ static void test_tmtext( TmPrintState *st )
     }
     t->append( "reutel" );
     if( cmp_string_tmtext( "blblaablatsitsblablareutel", t ) != 0 ){
-	bad( "tmtext badly appended" );
+	bad( "string badly appended" );
+    }
+    t->insert( 1, "reutel" );
+    if( cmp_string_tmtext( "breutellblaablatsitsblablareutel", t ) != 0 ){
+	bad( "string badly inserted" );
     }
     nw->destroy();
     t->destroy();
