@@ -2,7 +2,7 @@
 
 # The version numbers below reflect release versions for the various
 # packages.
-TMKERNEL_VERSION = 2.0.8
+TMKERNEL_VERSION = 2.0.9
 TMPAS_VERSION = 1.0.2
 TMMIRA_VERSION = 1.0.2
 TMDEMO_VERSION = 1.0
@@ -90,7 +90,6 @@ tmkerneldoc_distlist: $(MAKEFILE) tmkrndoc
 tmkerneldoc-$(TMKERNEL_VERSION).tar.gz tmkerneldoc-$(TMKERNEL_VERSION).zip: tmkerneldoc_distlist
 	-mkdir tmkerneldoc-$(TMKERNEL_VERSION)
 	cvs -d $(CVSDIR) export -r HEAD -d tmkerneldoc-$(TMKERNEL_VERSION) tm/tmkrndoc
-	cd tmkerneldoc-$(TMKERNEL_VERSION); make all
 	tar cf tmkerneldoc-$(TMKERNEL_VERSION).tar `cat tmkerneldoc_distlist`
 	gzip --best -f tmkerneldoc-$(TMKERNEL_VERSION).tar
 	zip -q -9 tmkerneldoc-$(TMKERNEL_VERSION).zip `cat tmkerneldoc_distlist`
