@@ -24,7 +24,7 @@ static ${eval "$(tpl)"};
 . set sep
 . foreach e $(el)
 .  set et ${type $t $e}
-.  if ${member $(et) $(valuetypes)}
+.  if ${member $(et) $(valuetypes) $(legacytypes)}
 .   set tl "$(tl)$(sep)$(et) p_$e"
 .  else
 .   set tl "$(tl)$(sep)$(et) *p_$e"
@@ -42,7 +42,7 @@ static ${eval "$(tpl)"};
 . set sep
 . foreach e $(el)
 .  set et ${type $t $e}
-.  if ${member $(et) $(valuetypes)}
+.  if ${member $(et) $(valuetypes) $(legacytypes)}
 .   set tl "$(tl)$(sep)${type $t $e} p_$e"
 .  else
 .   set tl "$(tl)$(sep)${type $t $e} *p_$e"

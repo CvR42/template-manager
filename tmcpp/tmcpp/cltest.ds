@@ -31,6 +31,7 @@ subenum ::= EA | EB | EC;
 thing ::= Thing n:int;
 
 expr =
+    exprString: { s:tmstring } |
     exprConst: { n:int } |
     exprPlus: { a:expr, b:expr }
     ;
