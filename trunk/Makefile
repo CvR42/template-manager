@@ -3,11 +3,12 @@
 # The version numbers below reflect release versions for the various
 # packages.
 # The _DOS version number does not contain dots.
-TMKERNEL_VERSION = 1.2
-TMKERNEL_VERSION_DOS = 12
-TMPAS_VERSION = 1.0.1
-TMPAS_VERSION_DOS = 101
-TMMIRA_VERSION = 1.0.1
+TMKERNEL_VERSION = 1.2-beta3
+TMKERNEL_VERSION_DOS = 12b3
+TMPAS_VERSION = 1.0.2
+TMPAS_VERSION_DOS = 102
+TMMIRA_VERSION = 1.0.2
+CVSDIR = /home/gargamel/reeuwijk/Cvs
 
 SHELL=/bin/sh
 FTPDIR=/home/gargamel/ftp/pub/software/Tm
@@ -49,52 +50,81 @@ clean:
 empty:
 	rm -f $(JUNK) $(PACKAGES)
 
-tmmira_distlist: $(MAKEFILE) tmmira-$(TMMIRA_VERSION) tmmira-$(TMMIRA_VERSION)/tmmira tmmira-$(TMMIRA_VERSION)/miradoc
+tmmira_distlist: $(MAKEFILE) tmmira tmmira/tmmira tmmira/miradoc
 	cp /dev/null tmmira_distlist
-	cd tmmira-$(TMPAS_VERSION); $(MAKE) distlist
-	sed -e "s/^/tmmira-$(TMMIRA_VERSION)\//" tmmira-$(TMMIRA_VERSION)/distlist >> tmmira_distlist
+	cd tmmira; $(MAKE) distlist
+	sed -e "s/^/tmmira\//" tmmira/distlist >> tmmira_distlist
 
-tmpas_distlist: $(MAKEFILE) tmpas-$(TMPAS_VERSION) tmpas-$(TMPAS_VERSION)/tmpas tmpas-$(TMPAS_VERSION)/pasdoc
+tmpas_distlist: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
 	cp /dev/null tmpas_distlist
-	cd tmpas-$(TMPAS_VERSION); $(MAKE) distlist
-	sed -e "s/^/tmpas-$(TMPAS_VERSION)\//" tmpas-$(TMPAS_VERSION)/distlist >> tmpas_distlist
+	cd tmpas; $(MAKE) distlist
+	sed -e "s/^/tmpas-$(TMPAS_VERSION)\//" tmpas/distlist >> tmpas_distlist
 
-tmpas_distlist_dos: $(MAKEFILE) tmpas-$(TMPAS_VERSION) tmpas-$(TMPAS_VERSION)/tmpas tmpas-$(TMPAS_VERSION)/pasdoc
+tmpas_distlist_dos: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
 	cp /dev/null tmpas_distlist_dos
-	cd tmpas-$(TMPAS_VERSION); $(MAKE) distlist
-	sed -e "s/^/tmp$(TMPAS_VERSION_DOS)\//" tmpas-$(TMPAS_VERSION)/distlist >> tmpas_distlist_dos
+	cd tmpas; $(MAKE) distlist
+	sed -e "s/^/tmp$(TMPAS_VERSION_DOS)\//" tmpas/distlist >> tmpas_distlist_dos
 
-tmkernel_distlist: $(MAKEFILE) tmkernel-$(TMKERNEL_VERSION) tmkernel-$(TMKERNEL_VERSION)/tm tmkernel-$(TMKERNEL_VERSION)/tmc tmkernel-$(TMKERNEL_VERSION)/libtmc tmkernel-$(TMKERNEL_VERSION)/tmusrdoc
+tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc tmkernel/tmusrdoc
 	cp /dev/null tmkernel_distlist
-	cd tmkernel-$(TMKERNEL_VERSION); $(MAKE) distlist
-	sed -e "s/^/tmkernel-$(TMKERNEL_VERSION)\//" tmkernel-$(TMKERNEL_VERSION)/dist.lst >> tmkernel_distlist
+	cd tmkernel; $(MAKE) distlist
+	sed -e "s/^/tmkernel-$(TMKERNEL_VERSION)\//" tmkernel/dist.lst >> tmkernel_distlist
 
-tmkernel_distlist_dos: $(MAKEFILE) tmkernel-$(TMKERNEL_VERSION) tmkernel-$(TMKERNEL_VERSION)/tm tmkernel-$(TMKERNEL_VERSION)/tmc tmkernel-$(TMKERNEL_VERSION)/libtmc tmkernel-$(TMKERNEL_VERSION)/tmusrdoc
+tmkernel_distlist_dos: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc tmkernel/tmusrdoc
 	cp /dev/null tmkernel_distlist_dos
-	cd tmkernel-$(TMKERNEL_VERSION); $(MAKE) distlist
-	sed -e "s/^/tmk$(TMKERNEL_VERSION_DOS)\//" tmkernel-$(TMKERNEL_VERSION)/dist.lst >> tmkernel_distlist_dos
+	cd tmkernel; $(MAKE) distlist
+	sed -e "s/^/tmk$(TMKERNEL_VERSION_DOS)\//" tmkernel/dist.lst >> tmkernel_distlist_dos
 
 tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel_distlist
+	-mkdir tmkernel-$(TMKERNEL_VERSION)
+	cvs -d $(CVSDIR) export -r HEAD -d tmkernel-$(TMKERNEL_VERSION) tm/tmkernel
+	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmkernel-$(TMKERNEL_VERSION)/version.h
+	cd tmkernel-$(TMKERNEL_VERSION)/libtmc; autoconf
+	cd tmkernel-$(TMKERNEL_VERSION)/tm; autoconf
+	cd tmkernel-$(TMKERNEL_VERSION)/tmc; autoconf
+	cd tmkernel-$(TMKERNEL_VERSION)/tmusrdoc; make main.ps
 	tar cf tmkernel-$(TMKERNEL_VERSION).tar `cat tmkernel_distlist`
 	gzip --best -f tmkernel-$(TMKERNEL_VERSION).tar
+	rm -rf tmkernel-$(TMKERNEL_VERSION)
 
 tmk$(TMKERNEL_VERSION_DOS).zip: tmkernel_distlist_dos
-	rm -f tmk$(TMKERNEL_VERSION_DOS) tmk$(TMKERNEL_VERSION_DOS).zip
-	ln -s tmkernel-$(TMKERNEL_VERSION) tmk$(TMKERNEL_VERSION_DOS)
+	-rm -f tmk$(TMKERNEL_VERSION_DOS).zip
+	-mkdir tmk$(TMKERNEL_VERSION_DOS)
+	cvs -d $(CVSDIR) export -r HEAD -d tmk$(TMKERNEL_VERSION_DOS) tm/tmkernel
+	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmk$(TMKERNEL_VERSION_DOS)/version.h
+	cd tmk$(TMKERNEL_VERSION_DOS)/libtmc; autoconf
+	cd tmk$(TMKERNEL_VERSION_DOS)/tm; autoconf
+	cd tmk$(TMKERNEL_VERSION_DOS)/tmc; autoconf
+	cd tmk$(TMKERNEL_VERSION_DOS)/tmusrdoc; make main.ps
 	zip -q -9 tmk$(TMKERNEL_VERSION_DOS).zip `cat tmkernel_distlist_dos`
+	rm -rf tmk$(TMKERNEL_VERSION_DOS)
 
 tmpas-$(TMPAS_VERSION).tar.gz: tmpas_distlist
+	-mkdir tmpas-$(TMPAS_VERSION)
+	cvs -d $(CVSDIR) export -r HEAD -d tmpas-$(TMPAS_VERSION) tm/tmpas
+	cd tmpas-$(TMPAS_VERSION); autoconf
+	cd tmpas-$(TMPAS_VERSION)/tmpas; autoconf
 	tar cf tmpas-$(TMPAS_VERSION).tar `cat tmpas_distlist`
 	gzip --best -f tmpas-$(TMPAS_VERSION).tar
+	rm -rf tmpas-$(TMPAS_VERSION)
 
 tmp$(TMPAS_VERSION_DOS).zip: tmpas_distlist_dos
-	rm -f tmp$(TMPAS_VERSION_DOS) tmp$(TMPAS_VERSION_DOS).zip
-	ln -s tmpas-$(TMPAS_VERSION) tmp$(TMPAS_VERSION_DOS)
+	-rm -f tmp$(TMPAS_VERSION_DOS).zip
+	-mkdir tmp$(TMPAS_VERSION_DOS)
+	cvs -d $(CVSDIR) export -r HEAD -d tmp$(TMPAS_VERSION_DOS) tm/tmpas
+	cd tmp$(TMPAS_VERSION_DOS); autoconf
+	cd tmp$(TMPAS_VERSION_DOS)/tmpas; autoconf
 	zip -q -9 tmp$(TMPAS_VERSION_DOS).zip `cat tmpas_distlist_dos`
+	rm -rf tmp$(TMPAS_VERSION_DOS)
 
 tmmira-$(TMMIRA_VERSION).tar.gz: tmmira_distlist
+	-mkdir tmmira-$(TMMIRA_VERSION)
+	cvs -d $(CVSDIR) export -r HEAD -d tmmira-$(TMMIRA_VERSION) tm/tmmira
+	cd tmmira-$(TMMIRA_VERSION); autoconf
+	cd tmmira-$(TMMIRA_VERSION)/tmmira; autoconf
 	tar cf tmmira-$(TMMIRA_VERSION).tar `cat tmmira_distlist`
 	gzip --best -f tmmira-$(TMMIRA_VERSION).tar
+	rm -rf tmmira-$(TMMIRA_VERSION)
 
 $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel-$(TMKERNEL_VERSION).tar.gz
 	cp tmkernel-$(TMKERNEL_VERSION).tar.gz $(FTPDIR)
