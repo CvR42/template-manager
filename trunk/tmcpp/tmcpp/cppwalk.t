@@ -2,7 +2,7 @@
 .. the list of types that must be visited to reach all targets
 .set listpre
 .set listsuff _list
-.append valuetypes int long char uint ulong tmstring tmtext
+.append valuetypes int long char uint ulong tmstring
 .set err 0
 .foreach m generate_walker_declaration generate_walker_signature generate_descent_call
 .if ${not ${len ${matchmacro $m}}}

@@ -25,9 +25,9 @@ static ${eval "$(tpl)"};
 . foreach e $(el)
 .  set et ${type $t $e}
 .  if ${member $(et) $(valuetypes)}
-.   set tl "$(tl)$(sep)${type $t $e} p_$e"
+.   set tl "$(tl)$(sep)$(et) p_$e"
 .  else
-.   set tl "$(tl)$(sep)${type $t $e} *p_$e"
+.   set tl "$(tl)$(sep)$(et) *p_$e"
 .  endif
 .  set sep ", "
 . endforeach
