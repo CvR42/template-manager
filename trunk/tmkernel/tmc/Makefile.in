@@ -28,10 +28,11 @@ LDFLAGS	= $(DBUGFLAGS)
 CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
 
 # Some names of programs
-TM  = tm
+TM  = ../tm/tm
 LINKER = @CC@
 
-TMCLIB = $(LOCALLIB)/libtmc.a
+#TMCLIB = $(LOCALLIB)/libtmc.a
+TMCLIB = ../libtmc/libtmc.a
 
 LIBS = @LIBS@ $(TMCLIB)
 
