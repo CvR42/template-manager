@@ -61,10 +61,10 @@ in the rare case that {\Tm} deduces that a definition must be generated
 while this is not what you want,
 this definition can be appended to the list of variable {\tt notwantdefs}.
 \end{itemize}
-For the running example a file {\tt democonf.t} is used with the
+For the running example a file {\tt pasconf.t} is used with the
 following contents:
 \begin{listing}
-\verbatiminput{democonf.t}
+\verbatiminput{pasconf.t}
 \end{listing}
 \item
 Create a {\Tm} skeleton file containing the required {\Pascal} environment.
@@ -72,7 +72,7 @@ This file should at least contain
 \begin{itemize}
 \item
 An {\tt .insert} of the configuration file, in this example
-{\tt democonf.t}.
+{\tt pasconf.t}.
 \item
 An {\tt .include} of the necessary template files (see
 section \ref{s.templates}).
@@ -91,7 +91,7 @@ For the example the file is:
 \item
 Add a make rule to your makefile to generate the code:
 \begin{verbatim}
-pasdemo.p : plot.ds pasdemo.pt democonf.t
+pasdemo.p : plot.ds pasdemo.pt pasconf.t
         tm plot.ds pasdemo.pt > pasdemo.p
 \end{verbatim}
 \end{enumerate}
