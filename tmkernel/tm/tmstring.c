@@ -182,10 +182,10 @@ tmstring_list chopstring( const char *p )
 tmstring sepstrings( const tmstring_list sl, const tmstring sep )
 {
     char *cp;		/* pointer in copied tmstrings  */
-    char *cs;			/* tmstring under construction */
-    char *bufp;	/* pointer in tmstring under construction */
+    char *cs;		/* tmstring under construction */
+    char *bufp;		/* pointer in tmstring under construction */
     unsigned int ix;	/* index in tmstring array */
-    unsigned int len;		/* calculated length of tmstring */
+    unsigned int len;	/* calculated length of tmstring */
 
     len = 0;
     if( sl->sz!=0 ){

@@ -129,7 +129,7 @@ void tm_logfre( const tm_neutralp p )
 /* Maintain a table of pending tm blocks. The tm code should
  * register all allocated blocks to id_lognew(); They will
  * receive a unique long int to identify the block. When the
- * block is destroyed, this id is passed to id_logfre() to
+ * block is destroyed, this id is passed to tm_fre_logid() to
  * indicate its destruction.
  */
 
@@ -176,11 +176,11 @@ void tm_fre_logid( const long int i )
        return;
    }
    if( i<0l || i>idsz ){
-	sprintf( buf, "Id out of range in id_logfre(): %ld", i );
+	sprintf( buf, "Id out of range in tm_fre_logid(): %ld", i );
         tm_fatal( "", 0, buf );
    }
    if( idlist[i].line<0l ){
-	sprintf( buf, "Free id in id_logfre(): %ld", i );
+	sprintf( buf, "Free id in tm_fre_logid(): %ld", i );
         tm_fatal( "", 0, buf );
    }
    idcnt--;
