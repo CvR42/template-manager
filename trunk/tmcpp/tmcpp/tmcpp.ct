@@ -1106,15 +1106,15 @@ void $t_list::erase( const unsigned int from, const unsigned int to )
     if( real_to>sz ){
 	real_to = sz;
     }
-    if( from>=to ){
+    if( from>=real_to ){
 	return;
     }
 .if ${not ${member $t $(valuetypes)}}
-    for( unsigned int ix=from; ix<to; ix++ ){
+    for( unsigned int ix=from; ix<real_to; ix++ ){
 	arr[ix]->destroy();
     }
 .endif
-    unsigned int dist = to-from;
+    unsigned int dist = real_to-from;
     sz -= dist;
     for( unsigned int ix=from; ix<sz; ix++ ){
 	arr[ix] = arr[ix+dist];
