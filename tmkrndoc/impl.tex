@@ -57,7 +57,7 @@ character & variable & description \\
 \texttt{m} & \texttt{maintr} & tracing of main actions \\
 \texttt{s} & \texttt{stat} & statistics \\
 \texttt{v} & \texttt{vartr} & variable tracing \\
-\texttt{x} & \texttt{lextr} & tracing of lexical analyzer \\
+\texttt{x} & \texttt{lextr} & tracing of lexical analyser \\
 \texttt{y} & \texttt{yydebug} & tracing of YACC parser \\
 \end{tabular}
 \par
@@ -88,7 +88,7 @@ but there is no easy way around this.
 \subsection{flow of control}
 Globally, {\Tm} executes the following steps:
 \begin{itemize}
-\item Initialization.
+\item Initialisation.
 \item Command line parsing.
 \item Data structure file parsing.
 \item Template file parsing.
@@ -113,16 +113,16 @@ This can be done through the command line option \texttt{-dy}.
 \par
 Lexical analysis, as required by \texttt{yacc} is done by functions in the file
 \texttt{tmlex.c}.
-This is a general lexical analyzer with tables filled with specific
+This is a general lexical analyser with tables filled with specific
 information for this program:
 \begin{itemize}
-\item The initialized array \texttt{toktab[]} contains a list of special
+\item The initialised array \texttt{toktab[]} contains a list of special
 character combinations like `\verb!::=!'.
-\item The initialized array \texttt{rwtab[]} contains a list of reserved words
+\item The initialised array \texttt{rwtab[]} contains a list of reserved words
       (in this case empty).
 \end{itemize}
 It is possible to print the tokens found by
-the lexical analyzer by setting the variable \texttt{lextr} to \texttt{TRUE}.
+the lexical analyser by setting the variable \texttt{lextr} to \texttt{TRUE}.
 This can be done through the command line option \texttt{-dx}.
 \par
 The parse tree of the data structures can be printed by setting the
