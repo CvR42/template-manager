@@ -6,7 +6,8 @@ TMKERNEL_VERSION = 2.1.0
 TMPAS_VERSION = 1.0.3
 TMMIRA_VERSION = 1.0.2
 TMDEMO_VERSION = 1.0
-CVSDIR = $(HOME)/Cvs
+#CVSDIR = $(HOME)/Cvs
+CVSDIR = fs0.das2.cs.vu.nl:/home1/reeuwijk/Cvs
 
 SHELL=/bin/sh
 FTPDIR=$(HOME)/website/software/Tm

@@ -1,5 +1,7 @@
 New in version 2.1.0 Tue Feb 22 17:34:14 CET 2005
 
+- In libtmc, made cmp_tmsymbol() use strcmp(), since ordering based on
+  pointer value is non-portable.
 - Some changes to the Tm macro language:
   * Added a 'for' command in the Tm macro language.
   * Changed the '-' and '/' operator in '$[]'

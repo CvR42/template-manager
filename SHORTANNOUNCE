@@ -10,9 +10,5 @@ The main change is that it now available from a new website:
 
 
 Also, there are some bugfixes and some new functionality, in particular
-in the Tm template language:
-
-* There is a new .for command.
-* The -, /, and % operators in $[] expressions are now left-binding.
-* Division and modulus by zero in $[] expressions now cause an error.
+in the Tm template language.
 
