@@ -657,7 +657,7 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const const_$t t )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    print_$c( st, ($c) t );
+	    print_$c( st, to_const_$c( t ) );
 	    break;
 
 .endforeach
@@ -757,7 +757,7 @@ $(stic_$t)void fprint_$t( FILE *f, const const_$t t )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    fprint_$c( f, ($c) t );
+	    fprint_$c( f, to_const_$c( t ) );
 	    break;
 
 .endforeach
@@ -880,7 +880,7 @@ $(stic_$t)$t rdup_$t( const const_$t e )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    return ($t) rdup_$c( ($c) e );
+	    return ($t) rdup_$c( to_const_$c(e) );
 
 .endforeach
 	default:
@@ -1094,7 +1094,7 @@ $(stat)int cmp_$t( const const_$t a, const const_$t b )
 .endif
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    res = cmp_$c( ($c) a, ($c) b );
+	    res = cmp_$c( to_const_$c(a), to_const_$c(b) );
 	    break;
 
 .endforeach
