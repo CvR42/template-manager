@@ -43,6 +43,8 @@ testin: bad expression
 testin: missing close bracket: ']'
 testin: bad expression
 testin: bad expression: a
+testin: division by zero
+testin: modulus by zero
 testin: no such macro: 'submacro'
 testin: wrong number of parameters: 1 instead of 2 (macro 'test')
 testin: wrong number of parameters: 3 instead of 2 (macro 'test')

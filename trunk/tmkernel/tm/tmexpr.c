@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-/* File: tmexpr.c
+/* File: $Id$
  *
  * Handle expressions.
  */
@@ -117,31 +117,34 @@ static const char *evalprod( const char *x, long *vp )
 	*vp = 0;
 	return x;
     }
+again:
     while( isspace( *s ) ) s++;
     if( *s == '*' ){
-	s = evalprod( s+1, &v2 );
-	*vp = v1*v2;
-	return s;
+	s = evalun( s+1, &v2 );
+	v1 = v1*v2;
+	goto again;
     }
     if( *s == '/' ){
-	s = evalprod( s+1, &v2 );
+	s = evalun( s+1, &v2 );
 	if( v2 == 0 ){
-	    *vp = ~(-1);
+	    line_error( "division by zero" );
+	    v1 = 1;
 	}
 	else {
-	    *vp = v1/v2;
+	    v1 = v1/v2;
 	}
-	return s;
+	goto again;
     }
     if( *s == '%' ){
-	s = evalprod( s+1, &v2 );
+	s = evalun( s+1, &v2 );
 	if( v2 == 0 ){
-	    *vp = ~(-1);
+	    line_error( "modulus by zero" );
+	    v1 = 1;
 	}
 	else {
-	    *vp = v1%v2;
+	    v1 = v1%v2;
 	}
-	return s;
+	goto again;
     }
     *vp = v1;
     return s;
@@ -160,16 +163,17 @@ static const char *evalsum( const char *x, long *vp )
 	*vp = 0;
 	return x;
     }
+again:
     while( isspace( *s ) ) s++;
     if( *s == '+' ){
-	s = evalsum( s+1, &v2 );
-	*vp = v1+v2;
-	return s;
+	s = evalprod( s+1, &v2 );
+	v1 = v1 + v2;
+	goto again;
     }
     if( *s == '-' ){
-	s = evalsum( s+1, &v2 );
-	*vp = v1-v2;
-	return s;
+	s = evalprod( s+1, &v2 );
+	v1 = v1 - v2;
+	goto again;
     }
     *vp = v1;
     return s;
