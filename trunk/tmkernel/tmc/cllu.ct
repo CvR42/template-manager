@@ -308,6 +308,7 @@ $(stat)$t_list append_$t_list( $t_list a, $t b )
     }
     tl = a;
     while( tl->${call linkname $t} != $tNIL ) tl = tl->${call linkname $t};
+    b->${call linkname $t} = $tNIL;
     tl->${call linkname $t} = b;
     return a;
 }
