@@ -9,10 +9,9 @@
 
 int fscan_double( FILE *f, double *p )
 {
-    int brac;
+    int brac = tm_fscanopenbrac( f );
 
     *p = (double) 0;
-    brac = tm_fscanopenbrac( f );
     if( fscanf( f, "%lf", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "double expected" );
 	return 1;

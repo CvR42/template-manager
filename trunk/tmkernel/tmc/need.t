@@ -52,7 +52,7 @@
 .set listsuff _list
 ..
 .. Define the list of definition classes
-.set groups      ds cmp new fre rfre rdup print fprint fscan
+.set groups      ds cmp isequal new fre rfre rdup print fprint fscan
 .. These are only useful for lists.
 .set listgroups append concat slice setroom insert delete reverse extract
 .append listgroups extractlist insertlist
@@ -204,6 +204,16 @@
 .call require cmp "${types ${singletypes $l} ${subclasses $l}}"
 .if ${eq $(template) tmc}
 .call require cmp "${nonvirtual ${subclasses $l}}"
+.endif
+.endmacro
+..
+.. ** isequal **
+.macro req_isequal l
+.call require ds "$l"
+.call require isequal "${delisttypes $l}"
+.call require isequal "${types ${singletypes $l} ${subclasses $l}}"
+.if ${eq $(template) tmc}
+.call require isequal "${nonvirtual ${subclasses $l}}"
 .endif
 .endmacro
 ..

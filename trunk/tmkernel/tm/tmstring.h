@@ -14,7 +14,7 @@ extern void cknopar( const char *s );
 extern void cknumpar( const char *n );
 extern char *newboolstr( bool b );
 extern char *newintstr( int n );
-extern char *newuintstr( uint n );
+extern char *newuintstr( tmuint n );
 extern tmstring_list chopstring( const char *p );
 extern tmstring sepstrings( const tmstring_list sl, const char *sep );
 extern tmstring flatstrings( const tmstring_list sl );

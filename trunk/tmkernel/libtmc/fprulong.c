@@ -7,7 +7,7 @@
 #include "config.h"
 #include "tmc.h"
 
-void fprint_ulong( FILE *f, const ulong u )
+void fprint_tmulong( FILE *f, const tmulong u )
 {
     fprintf( f, "%lu", u );
 }

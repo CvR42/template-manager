@@ -44,6 +44,8 @@ TESTFILES = testin goodout gooderr $(TESTSRCS)
 JUNK  = testprog testerr testout tmp core mon.out gmon.out \
 	tags makelog log dist.lst config.log
 
+PRECIOUSJUNK = 
+
 SRCS	= $(LIBSRCS) $(TESTSRCS)
 
 HDRS = tmc.h
@@ -93,6 +95,7 @@ LIBSRCS	 = \
                 fscul.c \
                 fscushrt.c \
                 fscwrd.c \
+                ietxt.c \
                 insblock.c \
                 instext.c \
                 lncrstr.c \
@@ -209,7 +212,7 @@ distclean:
 empty:
 	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
 	rm -f $(LIBNAME) testprog
-	rm -f cconfig.log config.status config.cache
+	rm -f $(PRECIOUSJUNK)
 
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -222,6 +225,21 @@ distlist: $(DISTFILES)
 
 depend:
 	mkmf -f $(MAKEFILE)
+
+
+# Configure-related rules.
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
+JUNK += config.log config.cache
+PRECIOUSJUNK += config.status configure
 
 ###
 badtag.o: tmc.h config.h
@@ -265,5 +283,7 @@ testprog.o: tmc.h config.h
 tmcalloc.o: tmc.h config.h
 tmmalloc.o: tmc.h config.h
 tmreallc.o: tmc.h config.h
+cmptxt.o: tmc.h config.h
+ietxt.o: tmc.h config.h
 t2s.o: tmc.h config.h
 lnt2s.o: tmc.h config.h

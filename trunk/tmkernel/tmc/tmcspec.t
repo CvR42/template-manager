@@ -43,6 +43,7 @@
 .append wantdefs rfre_toplevel_list
 .append wantdefs print_toplevel_list
 .append wantdefs cmp_toplevel_list
+.append wantdefs isequal_toplevel_list
 .append wantdefs stat_$(basename)
 .append wantdefs get_balance_$(basename)
 .append wantdefs flush_$(basename)

@@ -9,10 +9,9 @@
 
 int fscan_int( FILE *f, int *p )
 {
-    int brac;
+    int brac = tm_fscanopenbrac( f );
 
     *p = 0;
-    brac = tm_fscanopenbrac( f );
     if( fscanf( f, "%d", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "int expected" );
 	return 1;

@@ -150,7 +150,7 @@ char *newintstr( int n )
 }
 
 /* Return a new tmstring reflecting the value of uint 'n'. */
-char *newuintstr( uint n )
+char *newuintstr( tmuint n )
 {
     char buf[NUMBUFSIZE];
 

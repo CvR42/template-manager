@@ -9,10 +9,9 @@
 
 int fscan_float( FILE *f, float *p )
 {
-    int brac;
+    int brac = tm_fscanopenbrac( f );
 
     *p = (float) 0;
-    brac = tm_fscanopenbrac( f );
     if( fscanf( f, "%f", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "float expected" );
 	return 1;

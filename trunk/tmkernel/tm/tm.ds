@@ -26,13 +26,13 @@ classComponent =
 
 alternative == ( label:tmstring, component:classComponent );
 
-Type == ( level:uint, basetype:tmstring );
+Type == ( level:tmuint, basetype:tmstring );
 
 Field == ( name:tmstring, type:Type );
 
 || The internal representation of a macro.
 macro == (
-    lvl:uint,		|| The context level
+    lvl:tmuint,		|| The context level
     name:tmstring,	|| The name of the macro
     orgfile:tmstring,	|| In which file was it defined
     fpl:[tmstring],	|| List of formal parameters
@@ -41,7 +41,7 @@ macro == (
 
 || The internal representation of a variable.
 var == (
-    lvl:uint,		|| The context level
+    lvl:tmuint,		|| The context level
     name:tmstring,	|| The name of the variable
     val:tmstring	|| The value of the variable
 );

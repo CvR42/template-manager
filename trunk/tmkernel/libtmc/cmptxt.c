@@ -4,13 +4,13 @@
  * All rights reserved.
  */
 
-/* File: cmpdbl.c */
+/* File: cmptxt.c */
 
 #include "config.h"
 #include "tmc.h"
 
 /* Compare two texts. */
-int cmp_tmtext( const tmtext a, const tmtext b )
+int cmp_tmtext( const const_tmtext a, const const_tmtext b )
 {
     long sz;
     long i;

@@ -85,6 +85,10 @@ int main( void )
     rfre_toplevel_list( dscopy );	/* put something in caches */
     dscopy = rdup_toplevel_list( ds );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
+	fprintf( stderr, "cmp of copy and original does not yield 0??\n" );
+	exit( 1 );
+    }
+    if( !isequal_toplevel_list( ds, dscopy ) ){
 	fprintf( stderr, "Copy not equal to original??\n" );
 	exit( 1 );
     }
