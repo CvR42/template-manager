@@ -170,14 +170,14 @@ tmsymbol gen_tmsymbol( const char *pre )
 
 void flush_tmsymbol( void )
 {
-    tmsymbol s;
-    tmsymbol n;
     int i;
 
     for( i=0; i<SYMHASHWIDTH; i++ ){
-	s = symtab[i];
+	tmsymbol s = symtab[i];
+
 	while( s != tmsymbolNIL ){
-	    n = s->next;
+	    tmsymbol n = s->next;
+
 	    fre_tmstring_nolognew( (tmstring) s->name );
 	    TM_FREE( s );
 	    s = n;

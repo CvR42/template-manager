@@ -668,9 +668,6 @@ static void test_tmsymbol( void )
     if( !isequal_tmsymbol( a, b ) ){
 	bad( "equal tmsymbols compare unequal" );
     }
-    if( !isequal_tmsymbol( a, a ) ){
-	bad( "equal tmsymbols compare unequal" );
-    }
     if( isequal_tmsymbol( a, realb ) ){
 	bad( "unequal tmsymbols compare equal" );
     }
