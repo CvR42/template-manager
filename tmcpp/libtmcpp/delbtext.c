@@ -9,18 +9,18 @@
 
 // Given a position 'from' and a position 'to',
 // remove all characters starting from 'from' up to, but not including 'to'.
-void tmtext::erase( const long from, const long to )
+tmtext *tmtext::erase( const long from, const long to )
 {
     long gapsz = to-from;
     if( gapsz <= 0 ){
-	return;
+	return this;
     }
     long z = sz-(from+gapsz);
     if( z<=0 ){
 	// All chars until the end of the tmtext are to be deleted,
 	// simply adjust the tmtext size..
 	sz = from;
-	return;
+	return this;
     }
     char *d = arr+from;
     char *s = arr+from+gapsz;
@@ -33,4 +33,5 @@ void tmtext::erase( const long from, const long to )
 	z--;
     }
 #endif
+    return this;
 }

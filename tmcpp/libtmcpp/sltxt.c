@@ -7,10 +7,10 @@
 #include "tmcpp.h"
 #include "config.h"
 
-/* Given a tmtext 't' and a start and end position 'from' and 'to',
- * return a new tmtext that contains the tmtext between these positions.
+/* Given a start and end position 'from' and 'to',
+ * return a new tmtext that contains the text between these positions.
  */
-tmtext *slice_tmtext( const tmtext *t, const long from_parm, const long to_parm )
+tmtext *tmtext::slice( const long from_parm, const long to_parm ) const
 {
     long from = from_parm;
     long to = to_parm;
@@ -18,14 +18,14 @@ tmtext *slice_tmtext( const tmtext *t, const long from_parm, const long to_parm 
     if( from<0 ){
 	from = 0;
     }
-    if( to>t->sz ){
-	to = t->sz;
+    if( to>sz ){
+	to = sz;
     }
-    long sz = to-from;
-    tmtext *nw = new tmtext( sz );
-    if( sz>0 ){
-	copyblock_tmtext( nw->arr, t->arr+from, sz );
-	nw->sz = sz;
+    long sl_sz = to-from;
+    tmtext *nw = new tmtext( sl_sz );
+    if( sl_sz>0 ){
+	copyblock( nw->arr, arr+from, sl_sz );
+	nw->sz = sl_sz;
     }
     return nw;
 }

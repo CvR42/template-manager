@@ -8,43 +8,86 @@
 #include "tmcpp.h"
 #include "config.h"
 
-/* Given a tmtext 't', a range 'from' to 'to' and a tmtext 'nw',
- * replace the tmtext in range 'from'..'to' in 't' with the
- * tmtext in 'nw'.
- */
-tmtext *replace_tmtext(
- tmtext *t,
+// Given a range 'from' to 'to' and a tmtext 'nw',
+// replace the text in range 'from'..'to' in 't' with the
+// text in 'nw'.
+tmtext *tmtext::replace(
  const long from_parm,
  const long to_parm,
  const tmtext *nw
 )
 {
-    long h;
-    long oldsz;
-    long inssz;
     long from = from_parm;
     long to = to_parm;
 
     if( to<from ){
-	h = to;
+	long h = to;
 	to = from;
 	from = h;
     }
     if( from<0 ){
 	from = 0;
     }
-    if( to>t->sz ){
-	to = t->sz;
+    if( to>sz ){
+	to = sz;
     }
-    oldsz = to-from;
-    inssz = nw->sz-oldsz;
+    long oldsz = to-from;
+    long inssz = nw->sz-oldsz;
     if( inssz>0 ){
-	insblock_tmtext( t, to, inssz );
+	insblock( to, inssz );
     }
     else if( inssz<0 ){
-	t->erase( to+inssz, to );
+	erase( to+inssz, to );
     }
-    copyblock_tmtext( t->arr+from, nw->arr, nw->sz );
-    return t;
+    copyblock( arr+from, nw->arr, nw->sz );
+    return this;
 }
 
+// Given a range 'from' to 'to', a text 'nw', and a range 'nw_from' to
+// 'nw_to', replace the text in range 'from'..'to' with the
+// range 'nw_from' to 'nw_to' of 'nw'.
+tmtext *tmtext::replace(
+ const long from_parm,
+ const long to_parm,
+ const tmtext *nw,
+ const long nw_from_parm,
+ const long nw_to_parm
+)
+{
+    long from = from_parm;
+    long to = to_parm;
+    long nw_from = nw_from_parm;
+    long nw_to = nw_to_parm;
+
+    if( to<from ){
+	long h = to;
+	to = from;
+	from = h;
+    }
+    if( from<0 ){
+	from = 0;
+    }
+    if( to>sz ){
+	to = sz;
+    }
+    if( nw_from<0 ){
+	nw_from = 0;
+    }
+    if( nw_to>nw->sz ){
+	nw_to = nw->sz;
+    }
+    if( nw_from>nw_to ){
+	nw_from = nw_to;
+    }
+    long oldsz = to-from;
+    long nw_sz = nw_to-nw_from;
+    long inssz = nw_sz-oldsz;
+    if( inssz>0 ){
+	insblock( to, inssz );
+    }
+    else if( inssz<0 ){
+	erase( to+inssz, to );
+    }
+    copyblock( arr+from, nw->arr+nw_from, nw_sz );
+    return this;
+}

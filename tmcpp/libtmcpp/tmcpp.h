@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 #if defined( _AIX ) && defined( _ALL_SOURCE )
 #include <sys/types.h>
 #define GOT_UINT
@@ -189,39 +190,50 @@ public:
 
 // Structure for texts in memory.
 class tmtext {
+public:
+    typedef long size_type;
+
 private:
     static unsigned long newcount;
     static unsigned long freecount;
+    size_type room;
 
 public:
     char *arr;
     mutable long curpos;	// Current read or write pointer.
-    long sz;
-    long room;
+    size_type sz;
+
+private:
+    static void copyblock( char *d, const char *s, const long sz );
+    void insblock( const long pos, const long sz );
 
 public:
-    inline long size() const { return sz; }
-    inline long capacity() const { return room; }
-    tmtext( const long sz=32 );
+    inline size_type size() const { return sz; }
+    inline size_type capacity() const { return room; }
+    tmtext( const size_type sz=32 );
     tmtext( const tmtext &c );
     tmtext( const char *s );
     virtual ~tmtext();
-    void reserve( const long rm );
+    void reserve( const size_type rm );
     virtual tmtext *clone() const { return new tmtext( *this ); }
-    void insert( const long pos_parm, const tmtext *nw );
-    void insert( const long pos_parm, const char *s );
-    void append( const tmtext *nw );
-    void append( const char *s );
-    void erase( const long from, const long to );
-    inline void erase() { sz=0; curpos=0; }
+    tmtext *insert( const size_type pos, const tmtext *nw );
+    tmtext *insert( const size_type pos, const char *s );
+    tmtext *insert( const size_type pos, const char c );
+    tmtext *append( const tmtext *nw );
+    tmtext *append( const char *s );
+    tmtext *append( const char c );
+    tmtext *erase( const size_type from, const size_type to = LONG_MAX );
+    inline tmtext *erase() { sz=0; curpos=0; return this; }
     virtual void destroy() { delete this; }
+    tmtext *slice( const size_type from, const size_type to ) const;
+    tmtext *replace( const size_type from, const size_type to, const tmtext *nw );
+    tmtext *replace( const size_type from, const size_type to, const tmtext *nw, const size_type nw_from, size_type const long nw_to );
     static void stat( FILE *f );
     static int get_balance();
 };
 
 extern int cmp_tmtext( const tmtext *ta, const tmtext *tb );
 #define tmtextNIL ((tmtext *)0)
-extern tmtext *replace_tmtext( tmtext *t, const long from, const long to, const tmtext *nw );
 extern int cmp_string_tmtext( const char *s, const tmtext *t );
 extern tmstring tmtext_to_tmstring( const tmtext *t );
 extern tmtext *puts_tmtext( const char *s, tmtext *t );
@@ -229,24 +241,18 @@ extern tmtext *putc_tmtext( const char c, tmtext *t );
 extern void print_tmtext( TmPrintState *st, const tmtext *t );
 extern void fprint_tmtext( FILE *f, const tmtext *t );
 extern int fscan_tmtext( FILE *f, tmtext **s );
-extern tmtext *slice_tmtext( const tmtext *t, const long from, const long to );
 
 // The functions below are undocumented.
-extern void copyblock_tmtext( char *d, const char *s, const long sz );
-extern void insblock_tmtext( tmtext *t, const long pos, const long sz );
 
-// 'tmbool' functions
-#define TMTRUESTR "True"
-#define TMFALSESTR "False"
-typedef enum en_tmbool { TMFALSE=0, TMTRUE=1 } tmbool;
-#define new_tmbool(b) ((b)?TMTRUE:TMFALSE)
-#define rdup_tmbool(b) (b)
-#define fre_tmbool(b)
-#define rfre_tmbool(b)
-#define print_tmbool(st,b) (st->printWord((b)?TMTRUESTR:TMFALSESTR))
-#define fprint_tmbool(f,b) fputs(((b)?TMTRUESTR:TMFALSESTR),f)
-#define cmp_tmbool(a,b) ((int)a-(int)b)
-#define tmboolNIL TMFALSE
+// 'bool' functions
+#define new_bool(b) ((b)!=0)
+#define rdup_bool(b) (b)
+#define fre_bool(b)
+#define rfre_bool(b)
+#define print_bool(st,b) (st->printWord((b)?"true":"false"))
+#define fprint_bool(f,b) fputs(((b)?"true":"false"),f)
+#define cmp_bool(a,b) ((int)a-(int)b)
+#define boolNIL false
 
 // 'tmsymbol' functions
 extern tmsymbol find_tmsymbol( const char *name );
@@ -339,8 +345,8 @@ extern void fprint_tmstring( FILE *f, tmconststring s );
 extern void stat_tmstring( FILE *f );
 extern int get_balance_tmstring();
 
-// 'tmbool' functions
-extern int fscan_tmbool( FILE *f, tmbool *bp );
+// 'bool' functions
+extern int fscan_bool( FILE *f, bool *bp );
 
 // General low-level service functions
 extern int tm_fscanopenbrac( FILE *f );

@@ -27,5 +27,5 @@ a bcdef @ blablablabigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwordsbigwo
 || test_tmtext
 "a" "bcdef" "blablabla" "\"" "\n" "\1" "\12" "\323" "STOP"
 || testtmbool
-True True False
+true true false
 "pending string for fscan"
