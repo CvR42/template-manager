@@ -98,6 +98,9 @@ static const char *comname( tmcommand com )
 {
     unsigned int ix;
 
+    if( com == EOFLINE ){
+	return "end of file";
+    }
     ix = 0;
     while( dotcomlist[ix].dotcomname[0] != '\0' ){
 	if( com == dotcomlist[ix].dotcomtag ){
@@ -134,7 +137,7 @@ static void unbalance( int lno, tmcommand isterm, tmcommand needterm )
     else {
 	sprintf(
 	    errarg,
-	    "Expected %s, but got %s",
+	    "expected %s, but got %s",
 	    comname( needterm ),
 	    comname( isterm )
 	);

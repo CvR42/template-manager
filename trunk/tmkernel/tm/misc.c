@@ -51,19 +51,20 @@ const tmstring get_type_name( const ds t )
 {
     tmstring nm;
 
+    nm = tmstringNIL;
     switch( t->tag ){
 	case TAGDsCons:
-	    nm = t->DsCons.ctypename;
+	    nm = t->DsCons.name;
 	    break;
 
 	case TAGDsTuple:
-	    nm = t->DsTuple.ttypename;
+	    nm = t->DsTuple.name;
 	    break;
 
-	default:
-	    nm = tmstringNIL;
-	    (void) sprintf( errarg, "%d", t->tag );
-	    crash( "bad tag" );
+	case TAGDsClass:
+	    nm = t->DsClass.name;
+	    break;
+
     }
     return nm;
 }

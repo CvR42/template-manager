@@ -141,6 +141,13 @@ not: '${not 1}' '${not 0}' '${not ""}' '${not}'
 or:  '${or 0 0 0 0}' '${or 1 0 0}' '${or}'
 ----
 
+If
+--
+.foreach b 0 1
+if $b: [${if $b true false}] [${if $b true}] [${if $b}]
+.endforeach
+[${if}]
+
 List manipulation:
 ----
 .set lst a b c d e f
@@ -193,11 +200,13 @@ Datastructure access functions:
 typelist: '${typelist}'
 ttypelist: '${ttypelist}'
 ctypelist: '${ctypelist}'
+classtypelist: '${classtypelist}'
 .foreach t ${typelist}
     conslist $t: '${conslist $t }'
     inherits $t: '${inherits $t }'
+    isvirtual $t: '${isvirtual $t }'
 .foreach c ${conslist $t}
-        celmlist: '${celmlist $t $c }'
+        celmlist: '${celmlist $t $c}'
 .foreach e ${celmlist $t $c }
             ctypeclass $t $c $e: '${ctypeclass $t $c $e }'
 	    ctypellev $t $c $e: ${ctypellev $t $c $e}
@@ -205,10 +214,16 @@ ctypelist: '${ctypelist}'
 .endforeach
 .endforeach
     telmlist $t: '${telmlist $t }'
+    memberlist $t: '${memberlist $t }'
 .foreach e ${telmlist $t }
 	ttypeclass $t $e: '${ttypeclass $t $e }'
 	ttypellev $t $e: ${ttypellev $t $e}
 	ttypename $t $e: '${ttypename $t $e }'
+.endforeach
+.foreach e ${memberlist $t }
+..	membertypeclass $t $e: '${membertypeclass $t $e }'
+..	membertypellev $t $e: ${membertypellev $t $e}
+..	membertypename $t $e: '${membertypename $t $e }'
 .endforeach
 .endforeach
 mklist: ${mklist 0 test a} ${mklist 1 test a} ${mklist 5 test a} ${mklist} ${mklist 5}

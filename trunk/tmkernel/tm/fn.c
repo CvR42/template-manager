@@ -51,7 +51,7 @@ static tmstring fnmax( const tmstring_list sl )
 
     if( sl->sz<1 ){
 	line_error( "'max' requires at least one parameter" );
-	return( newintstr( 0 ) );
+	return newintstr( 0 );
     }
     max = atoi( sl->arr[0] );
     for( ix=0; ix<sl->sz; ix++ ){
@@ -72,7 +72,7 @@ static tmstring fnmin( const tmstring_list sl )
 
     if( sl->sz<1 ){
 	line_error( "'min' requires at least one parameter" );
-	return( newintstr( 0 ) );
+	return newintstr( 0 );
     }
     min = atoi( sl->arr[0] );
     for( ix=0; ix<sl->sz; ix++ ){
@@ -259,8 +259,8 @@ static tmstring fnstrcmp( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
-    if( cmp == 0 ) return( new_tmstring( "0" ) );
-    if( cmp < 0 ) return( new_tmstring( "-1" ) );
+    if( cmp == 0 ) return new_tmstring( "0" );
+    if( cmp < 0 ) return new_tmstring( "-1" );
     return new_tmstring( "1" );
 }
 
@@ -446,7 +446,7 @@ static tmstring fnindex( const tmstring_list sl )
 
     if( sl->sz<1 ){
 	line_error( "'index' requires at least one parameter" );
-	return( new_tmstring( "0" ) );
+	return new_tmstring( "0" );
     }
     estr = sl->arr[0];
     for( ix=1; ix<sl->sz; ix++ ){
@@ -472,7 +472,7 @@ static tmstring fnmember( const tmstring_list sl )
 
     if( sl->sz<1 ){
 	line_error( "'member' requires at least one parameter" );
-	return( new_tmstring( "0" ) );
+	return new_tmstring( "0" );
     }
     estr = sl->arr[0];
     for( ix=1; ix<sl->sz; ix++ ){
@@ -850,6 +850,34 @@ static tmstring fnshift( const tmstring_list sl )
     return ans;
 }
 
+/* if */
+static tmstring fnif( const tmstring_list sl )
+{
+    tmstring ans;
+
+    if( sl->sz<1 ){
+	line_error( "'if' requires at least a condition expression" );
+	return new_tmstring( "" );
+    }
+    if( istruestr( sl->arr[0] ) ){
+	if( sl->sz>=2 ){
+	    ans = rdup_tmstring( sl->arr[1] );
+	}
+	else {
+	    ans = new_tmstring( "" );
+	}
+    }
+    else {
+	if( sl->sz>=3 ){
+	    ans = rdup_tmstring( sl->arr[2] );
+	}
+	else {
+	    ans = new_tmstring( "" );
+	}
+    }
+    return ans;
+}
+
 /* -- logic functions -- */
 
 /* and */
@@ -1037,16 +1065,16 @@ static tmstring fnctypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsCons:
-		vp = d->DsCons.ctypename;
+		vp = d->DsCons.name;
 		nl = append_tmstring_list( nl, new_tmstring( vp ) );
 		break;
 
 	    case TAGDsTuple:
 		break;
 
-	    default:
-		(void) sprintf( errarg, "%d", d->tag );
-		crash( "bad tag" );
+	    case TAGDsClass:
+		break;
+
 	}
     }
     ans = flatstrings( nl );
@@ -1071,16 +1099,50 @@ static tmstring fnttypelist( const tmstring_list sl )
 	d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		vp = d->DsTuple.ttypename;
+		vp = d->DsTuple.name;
 		nl = append_tmstring_list( nl, new_tmstring( vp ) );
 		break;
 
 	    case TAGDsCons:
 		break;
 
-	    default:
-		(void) sprintf( errarg, "%d", d->tag );
-		crash( "bad tag" );
+	    case TAGDsClass:
+		break;
+
+	}
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
+/* Construct a list of class types. */
+static tmstring fnclasstypelist( const tmstring_list sl )
+{
+    ds d;
+    tmstring vp;
+    tmstring ans;
+    unsigned int ix;
+    tmstring_list nl;
+
+    if( sl->sz!=0 ){
+	line_error( "'classtypelist' does not need any parameters" );
+    }
+    nl = new_tmstring_list();
+    for( ix = 0; ix< allds->sz; ix++ ){
+	d = allds->arr[ix];
+	switch( d->tag ){
+	    case TAGDsTuple:
+		break;
+
+	    case TAGDsCons:
+		break;
+
+	    case TAGDsClass:
+		vp = d->DsClass.name;
+		nl = append_tmstring_list( nl, new_tmstring( vp ) );
+		break;
+
 	}
     }
     ans = flatstrings( nl );
@@ -1138,6 +1200,34 @@ static field findfield( field_list el, const tmstring nm )
     return fieldNIL;
 }
 
+/* Given a type name, return TRUE if the type is virtual. */
+static tmstring fnisvirtual( const tmstring_list sl )
+{
+    ds d;
+    bool ans;
+
+    if( sl->sz != 1 ){
+	line_error( "'isvirtual' requires exactly one parameter" );
+	return new_tmstring( "" );
+    }
+    d = findtype( allds, sl->arr[0] );
+    if( d == dsNIL ){
+	return new_tmstring( "" );
+    }
+    ans = FALSE;
+    switch( d->tag ){
+	case TAGDsCons:
+	case TAGDsTuple:
+	    break;
+
+	case TAGDsClass:
+	    ans = d->DsClass.virtual;
+	    break;
+
+    }
+    return newboolstr( ans );
+}
+
 /* Given a type name, return the inherits of this type.  */
 static tmstring fninherits( const tmstring_list sl )
 {
@@ -1145,7 +1235,7 @@ static tmstring fninherits( const tmstring_list sl )
     tmstring ans;
 
     if( sl->sz != 1 ){
-	line_error( "'inherits' does not need any parameters" );
+	line_error( "'inherits' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1155,32 +1245,33 @@ static tmstring fninherits( const tmstring_list sl )
     ans = tmstringNIL;
     switch( d->tag ){
 	case TAGDsCons:
-	    ans = flatstrings( d->DsCons.cinherits );
+	    ans = flatstrings( d->DsCons.inherits );
 	    break;
 
 	case TAGDsTuple:
-	    ans = flatstrings( d->DsTuple.tinherits );
+	    ans = flatstrings( d->DsTuple.inherits );
+	    break;
+
+	case TAGDsClass:
+	    ans = flatstrings( d->DsClass.inherits );
 	    break;
 
     }
     return ans;
 }
 
-/* Construct a list of fields for given tuple type.
- * A constructor type is incorrect.
- */
-static tmstring fntelmlist( const tmstring_list sl )
+/* Construct a list of fields for the given class or tuple type.  */
+static tmstring fnmemberlist( const tmstring_list sl )
 {
     ds d;
-    field_list el;
-    field e;
+    field_list el = field_listNIL;
     tmstring vp;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
 
     if( sl->sz != 1 ){
-	line_error( "'telmlist' does not need any parameters" );
+	line_error( "'memberlist' requires exactly one parameter" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -1188,15 +1279,25 @@ static tmstring fntelmlist( const tmstring_list sl )
 	/* findtype already complained about this. */
 	return new_tmstring( "" );
     }
-    if( d->tag != TAGDsTuple ){
-	sprintf( errarg, "'%s'", sl->arr[0] );
-	line_error( "not a tuple type" );
-	return new_tmstring( "" );
+    switch( d->tag ){
+	case TAGDsTuple:
+	    el = d->DsTuple.fields;
+	    break;
+
+	case TAGDsClass:
+	    el = d->DsClass.fields;
+	    break;
+	    
+
+	case TAGDsCons:
+	    sprintf( errarg, "'%s'", sl->arr[0] );
+	    line_error( "not a tuple or class type" );
+	    return new_tmstring( "" );
     }
     nl = new_tmstring_list();
-    el = d->DsTuple.tuplefields;
     for( ix=0; ix<el->sz; ix++ ){
-	e = el->arr[ix];
+	field e = el->arr[ix];
+
 	vp = e->name;
 	nl = append_tmstring_list( nl, new_tmstring( vp ) );
     }
@@ -1211,7 +1312,7 @@ static tmstring fntelmlist( const tmstring_list sl )
 static tmstring fnttypename( const tmstring_list sl )
 {
     ds d;
-    field_list el;
+    field_list el = field_listNIL;
     field e;
 
     if( sl->sz != 2 ){
@@ -1219,12 +1320,23 @@ static tmstring fnttypename( const tmstring_list sl )
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsTuple ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a tuple type" );
+    if( d == dsNIL ){
 	return new_tmstring( "" );
     }
-    el = d->DsTuple.tuplefields;
+    switch( d->tag ){
+	case TAGDsCons:
+	    (void) strcpy( errarg, sl->arr[0] );
+	    line_error( "not a tuple or class type" );
+	    return new_tmstring( "" );
+
+	case TAGDsTuple:
+	    el = d->DsTuple.fields;
+	    break;
+
+	case TAGDsClass:
+	    el = d->DsClass.fields;
+	    break;
+    }
     e = findfield( el, sl->arr[1] );
     if( e == fieldNIL ){
 	return new_tmstring( "" );
@@ -1237,23 +1349,35 @@ static tmstring fnttypename( const tmstring_list sl )
 
    Possible type classes are: `single' and `list'.
  */
-static tmstring fnttypeclass( const tmstring_list sl )
+static tmstring fnmembertypeclass( const tmstring_list sl )
 {
     ds d;
-    field_list el;
+    field_list el = field_listNIL;
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "'ttypeclass' requires a type and an element name" );
+	line_error( "'membertypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsTuple ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a tuple type" );
+    if( d == dsNIL ){
 	return new_tmstring( "" );
     }
-    el = d->DsTuple.tuplefields;
+    switch( d->tag ){
+        case TAGDsCons:
+	    (void) strcpy( errarg, sl->arr[0] );
+	    line_error( "not a tuple or class type" );
+	    return new_tmstring( "" );
+
+	case TAGDsTuple:
+	    el = d->DsTuple.fields;
+	    break;
+
+	case TAGDsClass:
+	    el = d->DsClass.fields;
+	    break;
+
+    }
     e = findfield( el, sl->arr[1] );
     if( e == fieldNIL ) return new_tmstring( "" );
     return new_tmstring( ( e->level != 0 ? "list" : "single" ) );
@@ -1265,20 +1389,32 @@ static tmstring fnttypeclass( const tmstring_list sl )
 static tmstring fnttypellev( const tmstring_list sl )
 {
     ds d;
-    field_list el;
+    field_list el = field_listNIL;
     field e;
 
     if( sl->sz != 2 ){
-	line_error( "'ttypellev' requires a type and an element name" );
+	line_error( "'membertypellev' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
-    if( d == dsNIL || d->tag != TAGDsTuple ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a tuple type" );
+    if( d == dsNIL ){
 	return new_tmstring( "" );
     }
-    el = d->DsTuple.tuplefields;
+    switch( d->tag ){
+	case TAGDsCons:
+	    (void) strcpy( errarg, sl->arr[0] );
+	    line_error( "not a tuple or class type" );
+	    return new_tmstring( "" );
+
+	case TAGDsTuple:
+	    el = d->DsTuple.fields;
+	    break;
+
+	case TAGDsClass:
+	    el = d->DsClass.fields;
+	    break;
+
+    }
     e = findfield( el, sl->arr[1] );
     if( e == fieldNIL ) return new_tmstring( "" );
     return newintstr( e->level );
@@ -1309,7 +1445,7 @@ static tmstring fnconslist( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.conslist;
+    cl = d->DsCons.constructors;
     nl = new_tmstring_list();
     for( ix=0; ix<cl->sz; ix++ ){
 	c = cl->arr[ix];
@@ -1344,7 +1480,7 @@ static tmstring fncelmlist( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.conslist;
+    cl = d->DsCons.constructors;
     c = find_constructor( cl, sl->arr[1] );
     if( c == constructorNIL ){
 	return new_tmstring( "" );
@@ -1385,7 +1521,7 @@ static tmstring fnctypename( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.conslist;
+    cl = d->DsCons.constructors;
     c = find_constructor( cl, sl->arr[1] );
     if( c == constructorNIL ){
 	return new_tmstring( "" );
@@ -1421,7 +1557,7 @@ static tmstring fnctypeclass( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.conslist;
+    cl = d->DsCons.constructors;
     c = find_constructor( cl, sl->arr[1] );
     if( c == constructorNIL ){
 	return new_tmstring( "" );
@@ -1454,7 +1590,7 @@ static tmstring fnctypellev( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = d->DsCons.conslist;
+    cl = d->DsCons.constructors;
     c = find_constructor( cl, sl->arr[1] );
     if( c == constructorNIL ){
 	return new_tmstring( "" );
@@ -1486,10 +1622,7 @@ static void markdep(
     ds d;
     unsigned int cix;
     constructor_list cl;
-    constructor c;
     unsigned int eix;
-    field_list el;
-    field e;
 
     found = FALSE;
     d = dsNIL;
@@ -1513,28 +1646,37 @@ static void markdep(
     levels[tix] = listlev;
     switch( d->tag ){
 	case TAGDsCons:
-	    cl = d->DsCons.conslist;
+	    cl = d->DsCons.constructors;
 	    for( cix=0; cix<cl->sz; cix++ ){
-		c = cl->arr[cix];
-		el = c->fields;
+		constructor c = cl->arr[cix];
+		field_list el = c->fields;
 		for( eix=0; eix<el->sz; eix++ ){
-		    e = el->arr[eix];
+		    field e = el->arr[eix];
 		    markdep( marked, levels, e->type, e->level, dl );
 		}
 	    }
 	    break;
 
 	case TAGDsTuple:
-	    el = d->DsTuple.tuplefields;
+	{
+	    field_list el = d->DsTuple. fields;
 	    for( eix=0; eix<el->sz; eix++ ){
-		e = el->arr[eix];
+		field e = el->arr[eix];
 		markdep( marked, levels, e->type, e->level, dl );
 	    }
 	    break;
+	}
 
-	default:
-	    (void) sprintf( errarg, "%d", d->tag );
-	    crash( "bad tag" );
+	case TAGDsClass:
+	{
+	    field_list el = d->DsClass. fields;
+	    for( eix=0; eix<el->sz; eix++ ){
+		field e = el->arr[eix];
+		markdep( marked, levels, e->type, e->level, dl );
+	    }
+	    break;
+	}
+
     }
 }
 
@@ -1630,11 +1772,10 @@ static tmstring fndeptype( const tmstring_list sl )
  *
  * Constructor types are not supposed to depend on other types.
  */
-static bool depends_on( const tmstring t, tmstring_list tl )
+static bool depends_on( const tmstring t, const tmstring_list tl )
 {
     unsigned int ix;
     ds d;
-    field_list fl;
 
     ix = find_type_ix( allds, t );
     if( ix>=allds->sz ) return FALSE;
@@ -1645,11 +1786,10 @@ static bool depends_on( const tmstring t, tmstring_list tl )
 
 	case TAGDsTuple:
 	{
-	    field e;
+	    field_list fl = d->DsTuple.fields;
 
-	    fl = d->DsTuple.tuplefields;
 	    for( ix=0; ix<fl->sz; ix++ ){
-		e = fl->arr[ix];
+		field e = fl->arr[ix];
 		if( e->level==0 && member_tmstring_list( e->type, tl ) ){
 		    return TRUE;
 		}
@@ -1657,9 +1797,19 @@ static bool depends_on( const tmstring t, tmstring_list tl )
 	    break;
 	}
 
-	default:
-	    (void) sprintf( errarg, "%d", d->tag );
-	    crash( "bad tag" );
+	case TAGDsClass:
+	{
+	    field_list fl = d->DsClass.fields;
+
+	    for( ix=0; ix<fl->sz; ix++ ){
+		field e = fl->arr[ix];
+		if( e->level==0 && member_tmstring_list( e->type, tl ) ){
+		    return TRUE;
+		}
+	    }
+	    break;
+	}
+
     }
     return FALSE;
 }
@@ -1873,7 +2023,7 @@ static tmstring fnisinenv( const tmstring_list sl )
 
     if( sl->sz != 1 ){
 	line_error( "'isinenv' requires exactly one parameter" );
-	return( new_tmstring( "0" ) );
+	return new_tmstring( "0" );
     }
     v = getenv( sl->arr[0] );
     return newboolstr( v == NULL );
@@ -1886,7 +2036,7 @@ static tmstring fngetenv( const tmstring_list sl )
 
     if( sl->sz != 1 ){
 	line_error( "'getenv' requires exactly one parameter" );
-	return( "" );
+	return new_tmstring( "" );
     }
     v = getenv( sl->arr[0] );
     if( v == NULL ){
@@ -1928,6 +2078,7 @@ static struct fnentry fntab[] = {
      { "call", fncall },
      { "capitalize", fncapitalize },
      { "celmlist", fncelmlist },
+     { "classtypelist", fnclasstypelist },
      { "comm", fncomm },
      { "conslist", fnconslist },
      { "ctypeclass", fnctypeclass },
@@ -1944,12 +2095,15 @@ static struct fnentry fntab[] = {
      { "filt", fnfilt },
      { "first", fnfirst },
      { "getenv", fngetenv },
+     { "if", fnif },
      { "index", fnindex },
      { "inherits", fninherits },
      { "isinenv", fnisinenv },
+     { "isvirtual", fnisvirtual },
      { "len", fnlen },
      { "max", fnmax },
      { "member", fnmember },
+     { "memberlist", fnmemberlist },
      { "min", fnmin },
      { "mklist", fnmklist },
      { "neq", fnstrneq },
@@ -1970,15 +2124,18 @@ static struct fnentry fntab[] = {
      { "strpad", fnstrpad },
      { "subs", fnsubs },
      { "suffix", fnsuffix },
-     { "telmlist", fntelmlist },
+     { "telmlist", fnmemberlist },
      { "tolower", fntolower },
      { "toupper", fntoupper },
      { "tplfilename", fntplfilename },
      { "tpllineno", fntpllineno },
-     { "ttypeclass", fnttypeclass },
+     { "ttypeclass", fnmembertypeclass },
+     { "membertypeclass", fnmembertypeclass },
      { "ttypelist", fnttypelist },
      { "ttypellev", fnttypellev },
+     { "membertypellev", fnttypellev },
      { "ttypename", fnttypename },
+     { "membertypename", fnttypename },
      { "typelist", fntypelist },
      { "uniq", fnuniq },
      { "", fnplus }
