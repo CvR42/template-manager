@@ -30,6 +30,7 @@
 #include "tmpath.h"
 #include "srchfile.h"
 #include "version.h"
+#include "checkds.h"
 
 static char *prognm;
 static FILE *tplfile;
@@ -82,95 +83,6 @@ static const char helptext[] =
     " -v              Set 'verbose' variable (equivalent to `-sverbose')\n"
     "\n"
 ;
-
-/* Given a list of datastructure definitions, an index in the list,
- * a list of visited flags and a list of accepted flags, check the
- * data structure with the given index for circular inheritances.
- */
-static void check_ds_inheritance(
- ds_list dl,
- unsigned int theds,
- bool *visited,
- bool *accepted
-)
-{
-    tmstring_list supers;	/* The list of superclasses. */
-    unsigned int ix;
-    ds me = dl->arr[theds];
-    tmstring myname;
-
-    assert( theds<dl->sz );
-    myname = tmstringNIL;
-    supers = tmstring_listNIL;
-    switch( me->tag ){
-        case TAGDsCons:
-            supers = me->DsCons.inherits;
-            myname = me->DsCons.name;
-            break;
-
-	case TAGDsTuple:
-            supers = me->DsTuple.inherits;
-            myname = me->DsTuple.name;
-            break;
-
-	case TAGDsClass:
-	    supers = me->DsClass.inherits;
-            myname = me->DsClass.name;
-            break;
-
-    }
-    if( accepted[theds] ){
-        return;
-    }
-    if( visited[theds] ){
-	sprintf( errpos, "type '%s'", myname );
-	error( "circular inheritance" );
-	accepted[theds] = TRUE;		/* Break the circle to allow further checks. */
-	return;
-    }
-    visited[theds] = TRUE;
-    for( ix=0; ix<supers->sz; ix++ ){
-        tmstring super = supers->arr[ix];
-        unsigned int superix = find_type_ix( dl, super );
-        if( superix<dl->sz ){
-	    check_ds_inheritance( dl, superix, visited, accepted );
-        }
-    }
-    visited[theds] = FALSE;
-    accepted[theds] = TRUE;
-}
-
-/* Given a list of datastructure definitions, ensure that it does not
- * contain circular inheritances.
- */
-static void check_ds_list_inheritance( ds_list dl )
-{
-    bool *visited;	/* The data structures currently under examination */
-    bool *accepted;	/* The data structures that already passed the test. */
-    unsigned int ix;
-    unsigned int sz;
-
-    sz = dl->sz;
-    visited = TM_MALLOC( bool *, sizeof(bool)*sz );
-    if( visited == NULL ){
-        /* No room. Don't report it; the check is not that important anyway.  */
-        return;
-    }
-    accepted = TM_MALLOC( bool *, sizeof(bool)*sz );
-    if( accepted == NULL ){
-        /* No room. Don't report it; the check is not that important anyway. */
-        TM_FREE( visited );
-        return;
-    }
-    for( ix=0; ix<sz; ix++ ){
-        visited[ix] = accepted[ix] = FALSE;
-    }
-    for( ix=0; ix<sz; ix++ ){
-        check_ds_inheritance( dl, ix, visited, accepted );
-    }
-    TM_FREE( accepted );
-    TM_FREE( visited );
-}
 
 /* Scan command line arguments and options as passed by 'argc' and 'argv'. */
 static void scanargs( int argc, char **argv, tmstring lp )
@@ -366,7 +278,7 @@ int main( int argc, char **argv )
 	ckfreopen( errfilename, "w", stderr );
     }
     allds = parse_ds_file( dsfilename );
-    check_ds_list_inheritance( allds );
+    check_ds_list( allds );
     errcheck();
     if( tplfilename != tmstringNIL ){
 	tplfile = ckfopen( tplfilename, "r" );

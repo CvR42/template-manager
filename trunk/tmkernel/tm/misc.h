@@ -15,5 +15,4 @@ extern FILE *ckfopen( const char *nm, const char *acc );
 extern void ckfreopen( const char *nm, const char *acc, FILE *f );
 extern bool member_tmstring_list( const tmstring s, const tmstring_list l );
 
-extern void cktuple( tmstring nm, field_list fields );
 extern void ckconstructor( tmstring nm, constructor_list cons );
