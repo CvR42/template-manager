@@ -40,7 +40,7 @@ After than you can make all compilation targets with
 
 run some tests on the results with
 
-    make test
+    make check
 
 and install the software with
 
@@ -116,5 +116,5 @@ However, there is no standard MSDOS equivalent for the UNIX command 'diff'.
 You may want to get a public-domain version of the program somewhere,
 or you can do the file comparison by hand.
 
-When you run 'make test', expect a few differences, because file names
+When you run 'make check', expect a few differences, because file names
 under MSDOS look different from the 'normal' versions.
