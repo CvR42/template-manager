@@ -420,7 +420,7 @@ static tmstring fnstrpad( const tmstring_list sl )
     pw = sl->arr[2];
     if( *pw == '\0' ){
 	line_error( "empty padding string" );
-	return new_tmstring( "" );;
+	return new_tmstring( "" );
     }
     cknumpar( sl->arr[1] );
     len = atoi( sl->arr[1] );
