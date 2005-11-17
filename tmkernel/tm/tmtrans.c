@@ -227,6 +227,7 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 		else {
 		    state = SWS_DEFAULT;
 		}
+                break;
 
 	    default:
 		block = append_tplelm_list( block, rdup_tplelm( el->arr[ix] ) );
