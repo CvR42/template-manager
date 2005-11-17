@@ -26,20 +26,19 @@ tmstring search_file(
     const char *mode
 )
 {
-    tmstring ans;		/* The resulting tmstring. */
-    size_t maxlen;	/* The maximum length of the constructed path name. */
-    size_t len;
+    tmstring ans;	/* The resulting tmstring. */
     unsigned int ix;
     FILE *f;
+    size_t maxlen = 0;	/* The maximum length of the constructed path name. */
 
-    maxlen = 0;
     f = fopen( fnm, mode );
     if( f!=NULL ){
 	fclose( f );
 	return new_tmstring( fnm );
     }
     for( ix=0; ix<path->sz; ix++ ){
-	len = strlen( path->arr[ix] );
+        size_t len = strlen( path->arr[ix] );
+
 	if( len>maxlen ){
 	    maxlen = len;
 	}
@@ -56,5 +55,6 @@ tmstring search_file(
 	    return ans;
 	}
     }
+    rfre_tmstring( ans );
     return tmstringNIL;
 }
