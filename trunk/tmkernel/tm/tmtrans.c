@@ -1285,7 +1285,7 @@ static void dofor( const tplelm tpl, FILE *outfile )
 
 	sprintf( vstr, "%d", v );
 	setvar( nm, vstr );	/* Set the iteration variable. */
-	dotrans( to_Foreach(tpl)->body, outfile );
+	dotrans( to_For(tpl)->body, outfile );
     }
     rfre_tmstring_list( sl );
 }
