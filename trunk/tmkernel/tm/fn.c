@@ -139,7 +139,6 @@ static tmstring flat_Type_list( const Type_list tl )
 static tmstring fnmax( const tmstring_list sl )
 {
     int max;
-    int n;
     unsigned int ix;
 
     if( sl->sz<1 ){
@@ -148,6 +147,8 @@ static tmstring fnmax( const tmstring_list sl )
     }
     max = atoi( sl->arr[0] );
     for( ix=0; ix<sl->sz; ix++ ){
+        int n;
+
 	cknumpar( sl->arr[ix] );
 	n = atoi( sl->arr[ix] );
 	if( n>max )
@@ -160,7 +161,6 @@ static tmstring fnmax( const tmstring_list sl )
 static tmstring fnmin( const tmstring_list sl )
 {
     int min;
-    int n;
     unsigned int ix;
 
     if( sl->sz<1 ){
@@ -169,6 +169,8 @@ static tmstring fnmin( const tmstring_list sl )
     }
     min = atoi( sl->arr[0] );
     for( ix=1; ix<sl->sz; ix++ ){
+        int n;
+
 	cknumpar( sl->arr[ix] );
 	n = atoi( sl->arr[ix] );
 	if( n<min )
@@ -460,14 +462,14 @@ static tmstring fnstrlen( const tmstring_list sl )
 /* capitalize */
 static tmstring fncapitalize( const tmstring_list sl )
 {
-    char *np;
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
 
     nl = rdup_tmstring_list( sl );
     for( ix=0; ix<nl->sz; ix++ ){
-	np = nl->arr[ix];
+        char *np = nl->arr[ix];
+
 	if( *np != '\0' && islower( *np ) ){
 	    *np -= (char) ('a' - 'A');
 	}
@@ -480,14 +482,14 @@ static tmstring fncapitalize( const tmstring_list sl )
 /* toupper */
 static tmstring fntoupper( const tmstring_list sl )
 {
-    char *np;
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
 
     nl = rdup_tmstring_list( sl );
     for( ix=0; ix<nl->sz; ix++ ){
-	np = nl->arr[ix];
+        char *np = nl->arr[ix];
+
 	while( *np != '\0' ){
 	    if( islower( *np ) ){
 		*np -= (char) ('a' - 'A');
@@ -503,14 +505,14 @@ static tmstring fntoupper( const tmstring_list sl )
 /* tolower */
 static tmstring fntolower( const tmstring_list sl )
 {
-    char *np;
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
 
     nl = rdup_tmstring_list( sl );
     for( ix=0; ix<nl->sz; ix++ ){
-	np = nl->arr[ix];
+        char *np = nl->arr[ix];
+
 	while( *np != '\0' ){
 	    if( isupper( *np ) ){
 		*np += (char) ('a' - 'A');
@@ -551,7 +553,6 @@ static tmstring fntr( const tmstring_list sl )
     tmstring newchars;
     int ok;
     tmstring_list nl;
-    unsigned int ix;
     tmstring ans;
 
     nl = rdup_tmstring_list( sl );
@@ -572,6 +573,8 @@ static tmstring fntr( const tmstring_list sl )
 	line_error( "'tr': the strings of old and new characters must have the same length" );
     }
     else {
+        unsigned int ix;
+
 	for( ix=0; ix<nl->sz; ix++ ){
 	    nl->arr[ix] = tr_tmstring( nl->arr[ix], oldchars, newchars );
 	}
@@ -686,7 +689,8 @@ static tmstring fnprefix( const tmstring_list sl )
     pfstr = sl->arr[0];
     maxlen = 0;
     for( ix=1; ix<sl->sz; ix++ ){
-	len = strlen( sl->arr[ix] );
+        len = strlen( sl->arr[ix] );
+
 	if( len>maxlen ){
 	    maxlen = len;
 	}
@@ -815,10 +819,8 @@ static tmstring fncomm( const tmstring_list sl )
     unsigned int aix;
     unsigned int bix;
     unsigned int sepix;
-    tmstring tofind;
     char *ans;
     tmstring_list nl;
-    bool takeit;
 
     sepix = 0;
     while( sepix<sl->sz && sl->arr[sepix][0] != '\0' ) sepix++;
@@ -828,8 +830,9 @@ static tmstring fncomm( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( aix=0; aix<sepix; aix++ ){
-	takeit = FALSE;
-	tofind = sl->arr[aix];
+        tmstring tofind = sl->arr[aix];
+        bool takeit = FALSE;
+
 	for( bix=sepix+1; bix<sl->sz; bix++ ){
 	    if( strcmp( tofind, sl->arr[bix] ) == 0 ){
 		takeit = TRUE;
@@ -848,13 +851,11 @@ static tmstring fncomm( const tmstring_list sl )
 /* excl a "" b */
 static tmstring fnexcl( const tmstring_list sl )
 {
+    unsigned int sepix;
     unsigned int aix;
     unsigned int bix;
-    unsigned int sepix;
-    tmstring tofind;
     char *ans;
     tmstring_list nl;
-    bool takeit;
 
     sepix = 0;
     while( sepix<sl->sz && sl->arr[sepix][0] != '\0' ){
@@ -866,8 +867,9 @@ static tmstring fnexcl( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( aix=0; aix<sepix; aix++ ){
-	takeit = TRUE;
-	tofind = sl->arr[aix];
+        tmstring tofind = sl->arr[aix];
+        bool takeit = TRUE;
+
 	for( bix=sepix+1; bix<sl->sz; bix++ ){
 	    if( strcmp( tofind, sl->arr[bix] ) == 0 ){
 		takeit = FALSE;
@@ -1073,10 +1075,9 @@ static tmstring fnif( const tmstring_list sl )
 /* and */
 static tmstring fnand( const tmstring_list sl )
 {
-    bool flag;
+    bool flag = TRUE;
     unsigned int ix;
 
-    flag = TRUE;
     for( ix=0; ix<sl->sz; ix++ ){
 	flag = istruestr( sl->arr[ix] );
 	if( !flag ) break;
@@ -1087,10 +1088,9 @@ static tmstring fnand( const tmstring_list sl )
 /* or */
 static tmstring fnor( const tmstring_list sl )
 {
-    bool flag;
+    bool flag = FALSE;
     unsigned int ix;
 
-    flag = FALSE;
     for( ix=0; ix<sl->sz; ix++ ){
 	flag = istruestr( sl->arr[ix] );
 	if( flag ) break;
@@ -1299,7 +1299,7 @@ static tmstring fntypelist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	ds d = allds->arr[ix];
+	const_ds d = allds->arr[ix];
 
 	nl = append_tmstring_list( nl, new_tmstring( d->name ) );
     }
@@ -1311,7 +1311,6 @@ static tmstring fntypelist( const tmstring_list sl )
 /* Construct a list of constructors. */
 static tmstring fnconstructorlist( const tmstring_list sl )
 {
-    ds d;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1321,7 +1320,8 @@ static tmstring fnconstructorlist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	d = allds->arr[ix];
+        const_ds d = allds->arr[ix];
+
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
 		break;
@@ -1347,7 +1347,6 @@ static tmstring fnconstructorlist( const tmstring_list sl )
 /* Construct a list of constructor types. */
 static tmstring fnctypelist( const tmstring_list sl )
 {
-    ds d;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1357,7 +1356,7 @@ static tmstring fnctypelist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	d = allds->arr[ix];
+	const_ds d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
 		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
@@ -1384,7 +1383,6 @@ static tmstring fnctypelist( const tmstring_list sl )
 /* Construct a list of tuple types. */
 static tmstring fntuplelist( const tmstring_list sl )
 {
-    ds d;
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
@@ -1394,7 +1392,7 @@ static tmstring fntuplelist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	d = allds->arr[ix];
+        const_ds d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
 		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
@@ -1425,7 +1423,7 @@ static tmstring fnclasslist( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	const ds d = allds->arr[ix];
+	const_ds d = allds->arr[ix];
 
 	switch( d->tag ){
 	    case TAGDsTuple:
@@ -1457,7 +1455,7 @@ static tmstring fnaliases( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix = 0; ix< allds->sz; ix++ ){
-	const ds d = allds->arr[ix];
+	const_ds d = allds->arr[ix];
 
 	switch( d->tag ){
 	    case TAGDsTuple:
@@ -1500,7 +1498,7 @@ static bool is_virtual( ds_list types, const tmstring type )
 
     ix = find_type_ix( types, type );
     if( ix<allds->sz ){
-	ds d = allds->arr[ix];
+	const_ds d = allds->arr[ix];
 
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
@@ -1513,7 +1511,7 @@ static bool is_virtual( ds_list types, const tmstring type )
 		break;
 
 	    case TAGDsClass:
-		ans = to_DsClass( d )->isvirtual;
+		ans = to_const_DsClass( d )->isvirtual;
 		break;
 
 	}
@@ -1582,7 +1580,7 @@ static tmstring calc_metaname(
 
     ix = find_type_ix( allds, type );
     if( ix<allds->sz ){
-	const ds d = allds->arr[ix];
+	const_ds d = allds->arr[ix];
 
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
@@ -1651,15 +1649,15 @@ static tmstring calc_alias( const char *pre, const char *suff, const tmstring ty
 
     ix = find_type_ix( allds, type );
     if( ix<allds->sz ){
-	ds d = allds->arr[ix];
-	Type t;
+	const_ds d = allds->arr[ix];
+	const_Type t;
 	tmstring tnm;
 	tmstring res;
 
 	if( d->tag != TAGDsAlias ){
 	    return rdup_tmstring( type );
 	}
-	t = to_DsAlias( d )->type;
+	t = to_const_DsAlias( d )->type;
 	tnm = calc_alias( pre, suff, t->basetype );
 	res = mklistnm( pre, tnm, suff, t->level );
 	rfre_tmstring( tnm );
@@ -1742,7 +1740,7 @@ static tmstring fninherits( const tmstring_list sl )
 
     allinherits = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	const tmstring_list inherits = rdup_tmstring_list( extract_inherits( allds, sl->arr[ix] ) );
+	tmstring_list inherits = rdup_tmstring_list( extract_inherits( allds, sl->arr[ix] ) );
 
 	if( inherits != tmstring_listNIL ){
 	    allinherits = concat_tmstring_list( allinherits, inherits );
@@ -1808,7 +1806,7 @@ static tmstring fnfields( const tmstring_list sl )
  */
 static tmstring fntypename( const tmstring_list sl )
 {
-    Field e;
+    const_Field e;
 
     if( sl->sz != 2 ){
 	line_error( "'ttypename' requires a type and an element name" );
@@ -1830,7 +1828,7 @@ static tmstring fntypename( const tmstring_list sl )
  */
 static tmstring fnttypeclass( const tmstring_list sl )
 {
-    Field e;
+    const_Field e;
 
     if( sl->sz != 2 ){
 	line_error( "'fieldtypeclass' requires a type and an element name" );
@@ -1850,7 +1848,7 @@ static tmstring fnttypeclass( const tmstring_list sl )
  */
 static tmstring fntypelevel( const tmstring_list sl )
 {
-    Field e;
+    const_Field e;
 
     if( sl->sz != 2 ){
 	line_error( "'typelevel' requires a type and an element name" );
@@ -1889,7 +1887,7 @@ static tmstring fnalltypes( const tmstring_list tl )
     nl = new_tmstring_list();
     for( tix=0; tix<tl->sz; tix++ ){
 	tmstring_list fields = new_tmstring_list();
-	const tmstring tnm = tl->arr[tix];
+	const_tmstring tnm = tl->arr[tix];
 	unsigned int fix;
 
 	collect_all_fields( &fields, allds, tnm );
@@ -1924,7 +1922,7 @@ static tmstring fntypes( const tmstring_list pl )
 
     tl = new_Type_list();
     for( tix=0; tix<pl->sz; tix++ ){
-	const tmstring tnm = pl->arr[tix];
+	const_tmstring tnm = pl->arr[tix];
 	const unsigned int ix = find_type_ix( allds, tnm );
 
 	if( ix<allds->sz ){
@@ -2000,7 +1998,7 @@ static bool is_blocked_type( Type_list tl, tmstring t )
     unsigned int ix;
 
     for( ix=0; ix<tl->sz; ix++ ){
-	Type e = tl->arr[ix];
+	const_Type e = tl->arr[ix];
 
 	if( e->level == 0 && strcmp( e->basetype, t ) == 0 ){
 	    return TRUE;
@@ -2026,7 +2024,7 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 	if( !is_blocked_type( blocking, tnm ) ){
 	    tmstring_list inheritors;
 	    tmstring_list fieldnames;
-	    const ds d = allds->arr[ix];
+	    const_ds d = allds->arr[ix];
 	    unsigned int tix;
 
 	    inheritors = new_tmstring_list();
@@ -2047,7 +2045,7 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 	    rfre_tmstring_list( fieldnames );
 	    switch( d->tag ){
 		case TAGDsAlias:
-		    tl = update_reach_Type( tl, visited, blocking, to_DsAlias(d)->type );
+		    tl = update_reach_Type( tl, visited, blocking, to_const_DsAlias(d)->type );
 		    break;
 
 		case TAGDsConstructorBase:
@@ -2161,7 +2159,7 @@ static tmstring fnreach( const tmstring_list pl )
  */
 static tmstring fntype( const tmstring_list sl )
 {
-    Field e;
+    const_Field e;
     const char *pre;
     const char *suff;
 
@@ -2198,12 +2196,12 @@ static tmstring fnconslist( const tmstring_list tl )
 	unsigned int dix = find_type_ix( allds, tl->arr[tix] );
 
 	if( dix<allds->sz ){
-	    const ds d = allds->arr[dix];
+	    const_ds d = allds->arr[dix];
 
 	    if( d->tag == TAGDsConstructorBase ){
 		nl = concat_tmstring_list(
 		    nl,
-		    rdup_tmstring_list( to_DsConstructorBase(d)->constructors )
+		    rdup_tmstring_list( to_const_DsConstructorBase(d)->constructors )
 		);
 	    }
 	}
@@ -2216,7 +2214,7 @@ static tmstring fnconslist( const tmstring_list tl )
 /* construct a list of fields for given type */
 static tmstring fncelmlist( const tmstring_list sl )
 {
-    ds d;
+    const_ds d;
     tmstring_list cl;
     tmstring ans;
     tmstring_list nl;
@@ -2231,7 +2229,7 @@ static tmstring fncelmlist( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = to_DsConstructorBase(d)->constructors;
+    cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -2252,9 +2250,9 @@ static tmstring fncelmlist( const tmstring_list sl )
  */
 static tmstring fnctypename( const tmstring_list sl )
 {
-    ds d;
+    const_ds d;
     tmstring_list cl;
-    Field e;
+    const_Field e;
 
     if( sl->sz != 3 ){
 	line_error( "'ctypename' requires a type, a constructor and a field name" );
@@ -2266,7 +2264,7 @@ static tmstring fnctypename( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = to_DsConstructorBase(d)->constructors;
+    cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -2290,9 +2288,9 @@ static tmstring fnctypename( const tmstring_list sl )
  */
 static tmstring fnctypeclass( const tmstring_list sl )
 {
-    ds d;
+    const_ds d;
     tmstring_list cl;
-    Field e;
+    const_Field e;
 
     if( sl->sz != 3 ){
 	line_error( "'ctypeclass' requires a type, a constructor and a field name" );
@@ -2304,7 +2302,7 @@ static tmstring fnctypeclass( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = to_DsConstructorBase(d)->constructors;
+    cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -2325,9 +2323,9 @@ static tmstring fnctypeclass( const tmstring_list sl )
  */
 static tmstring fnctypellev( const tmstring_list sl )
 {
-    ds d;
+    const_ds d;
     tmstring_list cl;
-    Field e;
+    const_Field e;
 
     if( sl->sz != 3 ){
 	line_error( "'ctypellev' requires a type, a constructor and a field name" );
@@ -2339,7 +2337,7 @@ static tmstring fnctypellev( const tmstring_list sl )
 	line_error( "not a constructor type" );
 	return new_tmstring( "" );
     }
-    cl = to_DsConstructorBase(d)->constructors;
+    cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmstring_list( sl->arr[1], cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
@@ -2366,7 +2364,7 @@ static tmstring fnctypellev( const tmstring_list sl )
 static bool depends_on( const char *pre, const char *suff, const tmstring t, const tmstring_list tl )
 {
     unsigned int ix;
-    ds d;
+    const_ds d;
 
     if( pre[0] != '\0' || suff[0] != '\0' ){
 	tmstring base = get_element_type( pre, suff, t );
@@ -2397,7 +2395,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsAlias:
 	{
-	    Type t = to_DsAlias(d)->type;
+	    const_Type t = to_const_DsAlias(d)->type;
 
 	    if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
 		return TRUE;
@@ -2407,7 +2405,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsTuple:
 	{
-	    Field_list fl = to_DsTuple(d)->fields;
+	    const_Field_list fl = to_const_DsTuple(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		const Field e = fl->arr[ix];
@@ -2422,7 +2420,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsClass:
 	{
-	    Field_list fl = to_DsClass(d)->fields;
+	    const_Field_list fl = to_const_DsClass(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		const Field e = fl->arr[ix];
@@ -2437,7 +2435,7 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
 
 	case TAGDsConstructor:
 	{
-	    const Field_list fl = to_DsConstructor(d)->fields;
+	    const_Field_list fl = to_const_DsConstructor(d)->fields;
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		const Field e = fl->arr[ix];
@@ -2468,7 +2466,6 @@ static tmstring fndepsort( tmstring_list sl )
     bool found;
     tmstring_list nl;
     tmstring t;
-    tmstring baddies;
     tmstring ans;
     const char *pre;
     const char *suff;
@@ -2495,7 +2492,8 @@ static tmstring fndepsort( tmstring_list sl )
 	    ix++;
 	}
 	if( !found ){
-	    baddies = flatstrings( sl );
+            tmstring baddies = flatstrings( sl );
+
 	    strncpy( errarg, baddies, ERRARGLEN-1 );
 	    errarg[ERRARGLEN-1] = '\0';
 	    rfre_tmstring( baddies );
@@ -2554,7 +2552,6 @@ static tmstring fninheritsort( tmstring_list sl )
     bool found;
     tmstring_list nl;
     tmstring t;
-    tmstring baddies;
     tmstring ans;
 
     nl = new_tmstring_list();
@@ -2571,7 +2568,8 @@ static tmstring fninheritsort( tmstring_list sl )
 	    ix++;
 	}
 	if( !found ){
-	    baddies = flatstrings( sl );
+            tmstring baddies = flatstrings( sl );
+
 	    strncpy( errarg, baddies, ERRARGLEN-1 );
 	    errarg[ERRARGLEN-1] = '\0';
 	    rfre_tmstring( baddies );
@@ -2701,16 +2699,13 @@ static tmstring fnmatchvar( const tmstring_list sl )
 /* Evaluate the given parameters again. */
 static tmstring fneval( const tmstring_list sl )
 {
-    tmstring_list nl;
+    tmstring_list nl = new_tmstring_list();
     tmstring ans;
     unsigned int ix;
-    tmstring is;
-    tmstring os;
 
-    nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	is = sl->arr[ix];
-	os = alevalto( &is, '\0' );
+        tmstring is = sl->arr[ix];
+        tmstring os = alevalto( &is, '\0' );
 	nl = append_tmstring_list( nl, os );
     }
     ans = flatstrings( nl );
@@ -2726,7 +2721,7 @@ static tmstring fncall( tmstring_list orgsl )
     tmstring_list fpl;
     tmstring oldfname;
     unsigned int ix;
-    macro m;
+    const_macro m;
     int oldlno;
     tmstring retval;
 
@@ -2797,12 +2792,12 @@ static tmstring fnsearchfile( const tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
-    tmstring path;
     tmstring ans;
 
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	path = search_file( searchpath, sl->arr[ix], PATHSEPSTR, "r" );
+        tmstring path = search_file( searchpath, sl->arr[ix], PATHSEPSTR, "r" );
+
 	if( path == tmstringNIL ){
 	    path = new_tmstring( "?" );
 	}
@@ -3034,7 +3029,6 @@ tmstring evalfn( const tmstring f )
     struct fnentry *fp;
     const char *par;
     char *ans;
-    tmstring_list sl;
 
     if( fntracing ){
 	fprintf( tracestream, "evaluating function ${%s}\n", f );
@@ -3050,7 +3044,8 @@ tmstring evalfn( const tmstring f )
 	fp++;
     }
     if( fp->fnname[0] != '\0' ){
-	sl = chopstring( par );
+        tmstring_list sl = chopstring( par );
+
 	ans = (*fp->fncode)( sl );
 	rfre_tmstring_list( sl );
     }
