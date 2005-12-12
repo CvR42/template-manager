@@ -20,7 +20,7 @@ typedef struct { int x, y; char c; } foo;
 This does not imply that it is easy to transfer data in these records
 and structures from one language to the other.
 Facilities that are provided for this purpose, like \texttt{get} and
-\texttt{put} in Pascal and \texttt{fread} and \texttt{fwrite} in {\C} are useless,
+\texttt{put} in {\Pascal} and \texttt{fread} and \texttt{fwrite} in {\C} are useless,
 and may even cause problems if data is transferred between different
 implementations of the same language.
 \par
@@ -42,7 +42,7 @@ It can also generate code to read the textual representation into
 internal data structures, and code to write these internal data structures
 to the textual representation.
 \par
-At the moment, {\Tm} can generate code for {\C}, Lisp, {\Miranda} and Pascal.
+At the moment, {\Tm} can generate code for {\C}, Lisp, {\Miranda} and {\Pascal}.
 Code generation for any other language is easily added,
 because the generation is based on \defn{templates}:
 source texts for the target programming language
