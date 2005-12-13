@@ -30,6 +30,12 @@ testin: 'mklist' requires at least one parameter
 testin: 'mklist' requires at least one parameter
 testin: 'mklist' requires at least one parameter
 testin: empty padding string
+testin: 'leftstr' requires a non-negative length
+testin: 'leftstr' requires at least one parameter
+testin: 'rightstr' requires a non-negative length
+testin: 'rightstr' requires at least one parameter
+testin: tochar: character code out of range: character code -1
+testin: tochar: character code out of range: character code 256
 testin: 'tr': no new characters given
 testin: 'tr': no old characters given
 testin: 'tr': the strings of old and new characters must have the same length
