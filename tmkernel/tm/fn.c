@@ -10,7 +10,7 @@
 #include <ctype.h>
 #include <assert.h>
 
-/* tm library */
+/* Tm library */
 #include <tmc.h>
 
 /* local definitions */
@@ -393,7 +393,7 @@ static tmstring fnstrneq( const_tmstring_list sl )
     return newboolstr( cmp != 0 );
 }
 
-/* -- tmstring functions -- */
+/* -- string functions -- */
 
 /* len */
 static tmstring fnlen( const_tmstring_list sl )
@@ -523,6 +523,31 @@ static tmstring fntolower( const_tmstring_list sl )
     return ans;
 }
 
+/* tochar */
+static tmstring fntochar( const_tmstring_list sl )
+{
+    tmstring ans = create_tmstring( 1+sl->sz );
+    char *p = ans;
+    unsigned int ix;
+
+    for( ix=0; ix<sl->sz; ix++ ){
+        const_tmstring n = sl->arr[ix];
+        int v;
+
+        cknumpar( n );
+        v = atoi( n );
+        if( v<0 || v>255 ){
+            sprintf( errarg, "character code %d", v );
+            line_error( "tochar: character code out of range" );
+        }
+        else {
+            *p++ = (char) v;
+        }
+    }
+    *p = '\0';
+    return ans;
+}
+
 /* Given a string 's', a list of old characters 'oldchars' and a list of
  * new characters 'newchars', replace all occurences of characters in
  * 'oldchars' with the corresponding character in 'newchars'.
@@ -584,7 +609,7 @@ static tmstring fntr( const_tmstring_list sl )
     return ans;
 }
 
-/* fnindex <c> <word> */
+/* fnstrindex <c> <word> */
 static tmstring fnstrindex( const_tmstring_list sl )
 {
     int n;
@@ -598,6 +623,72 @@ static tmstring fnstrindex( const_tmstring_list sl )
     ixp = strchr( sl->arr[1], sl->arr[0][0] );
     n = ( ixp == CHARNIL ? 0 : 1 + (int)(ixp - sl->arr[1]) );
     return newintstr( n );
+}
+
+/* fnleftstr <n> <word> .. <word> */
+static tmstring fnleftstr( const_tmstring_list sl )
+{
+    int n;
+    tmstring_list nl = new_tmstring_list();
+    unsigned int ix;
+    tmstring ans;
+
+    if( sl->sz < 1 ){
+	line_error( "'leftstr' requires at least one parameter" );
+	return new_tmstring( "" );
+    }
+    cknumpar( sl->arr[0] );
+    n = atoi( sl->arr[0] );
+    if( n<0 ){
+        line_error( "'leftstr' requires a non-negative length" );
+	n  = 0;
+    }
+    for( ix=1; ix<sl->sz; ix++ ){
+        tmstring s = rdup_tmstring( sl->arr[ix] );
+        size_t sz = strlen( s );
+        
+        if( sz>(size_t) n ){
+            /* Truncate the string. */
+            s[n] = '\0';
+        }
+	nl = append_tmstring_list( nl, s );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
+}
+
+/* fnrightstr <n> <word> .. <word> */
+static tmstring fnrightstr( const_tmstring_list sl )
+{
+    int n;
+    tmstring_list nl = new_tmstring_list();
+    unsigned int ix;
+    tmstring ans;
+
+    if( sl->sz < 1 ){
+	line_error( "'rightstr' requires at least one parameter" );
+	return new_tmstring( "" );
+    }
+    cknumpar( sl->arr[0] );
+    n = atoi( sl->arr[0] );
+    if( n<0 ){
+        line_error( "'rightstr' requires a non-negative length" );
+        n  = 0;
+    }
+    for( ix=1; ix<sl->sz; ix++ ){
+        tmstring s = rdup_tmstring( sl->arr[ix] );
+        size_t sz = strlen( s );
+        
+        if( sz>(size_t) n  ){
+            memmove( s, s+(sz-n), (unsigned int) n );
+            s[n] = '\0';
+        }
+	nl = append_tmstring_list( nl, s );
+    }
+    ans = flatstrings( nl );
+    rfre_tmstring_list( nl );
+    return ans;
 }
 
 /* index <elm> <list> */
@@ -2957,12 +3048,12 @@ static struct fnentry fntab[] = {
      { "inheritsort", fninheritsort },
      { "isinenv", fnisinenv },
      { "isvirtual", fnisvirtual },
+     { "leftstr", fnleftstr },
      { "len", fnlen },
      { "listtypes", fnlisttypes },
      { "matchmacro", fnmatchmacro },
      { "matchvar", fnmatchvar },
      { "max", fnmax },
-     { "now", fnnow },
      { "member", fnmember },
      { "metatype", fnmetatype },
      { "min", fnmin },
@@ -2970,11 +3061,13 @@ static struct fnentry fntab[] = {
      { "neq", fnstrneq },
      { "nonvirtual", fnnonvirtual },
      { "not", fnnot },
+     { "now", fnnow },
      { "or", fnor },
      { "prefix", fnprefix },
      { "processortime", fnprocessortime },
      { "reach", fnreach },
      { "rev", fnrev },
+     { "rightstr", fnrightstr },
      { "rmlist", fnrmlist },
      { "searchfile", fnsearchfile },
      { "searchpath", fnsearchpath },
@@ -2993,6 +3086,7 @@ static struct fnentry fntab[] = {
      { "suffix", fnsuffix },
      { "superclasses", fnsuperclasses },
      { "telmlist", fnfields },
+     { "tochar", fntochar },
      { "tolower", fntolower },
      { "toupper", fntoupper },
      { "tplfilename", fntplfilename },
