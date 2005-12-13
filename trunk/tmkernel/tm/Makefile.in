@@ -168,6 +168,10 @@ check: testin sub.ds test.ds testsub goodout gooderr goodrdir $(TM)
 	diff testerr gooderr
 	diff testrdir goodrdir
 
+tests: check
+
+test: check
+
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
 
