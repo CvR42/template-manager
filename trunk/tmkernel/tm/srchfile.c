@@ -20,7 +20,7 @@
  * use in Tm, but may not be in general.
  */
 tmstring search_file(
-    const tmstring_list path,
+    const_tmstring_list path,
     const char *fnm,
     const char *sep,
     const char *mode

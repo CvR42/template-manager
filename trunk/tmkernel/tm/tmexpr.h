@@ -1,3 +1,3 @@
 /* File: $Id$ */
 
-extern char *evalexpr( const tmstring x );
+extern char *evalexpr( const_tmstring x );
