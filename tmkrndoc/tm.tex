@@ -640,10 +640,20 @@ will produce:
 Return the given words with the first character of each word converted
 to upper case.
 \\
+\texttt{leftstr n w..w}\index{leftstr@\texttt{leftstr}}
+&
+Return the left \texttt{n} characters of each word \texttt{w}.  If
+a word has less than \texttt{n} characters, return the entire word.
+\\
+\texttt{rightstr n w..w}\index{rightstr@\texttt{rightstr}}
+&
+Return the right \texttt{n} characters of each word \texttt{w}.  If
+a word has less than \texttt{n} characters, return the entire word.
+\\
 \texttt{strpad w len pw}\index{strpad@\texttt{strpad}}
 &
-Return word \texttt{w} made to length \texttt{len} either by truncation or padding
-at the end with copies of \texttt{pw}.
+Return word \texttt{w} made to length \texttt{len} either by
+truncation or padding at the end with copies of \texttt{pw}.
 \\
 \texttt{strlen w}\index{strlen@\texttt{strlen}}
 &
@@ -651,8 +661,14 @@ Return the number of characters in word \texttt{w}.
 \\
 \texttt{strindex c w}\index{strindex@\texttt{strindex}}
 &
-Return the index of the first occurrence of character \texttt{c} in word \texttt{w},
-counting from 1, or 0 if \texttt{c} does not occur in \texttt{w}.
+Return the index of the first occurrence of character \texttt{c}
+in word \texttt{w}, counting from 1, or 0 if \texttt{c} does not
+occur in \texttt{w}.
+\\
+\texttt{tochar c..c}\index{tochar@\texttt{tochar}}
+&
+Given a list of numbers representing ASCII character codes \verb'c',
+return a string containing these characters.
 \\
 \texttt{tolower e..e}\index{tolower@\texttt{tolower}}
 &
@@ -660,15 +676,16 @@ Return the given words with all upper case characters converted to lower case.
 \\
 \texttt{toupper e..e}\index{toupper@\texttt{toupper}}
 &
-Return the given words \verb'e' with all lower case characters converted to upper case.
+Return the given words \texttt{e} with all lower case characters
+converted to upper case.
 \\
 \texttt{tr o n e..e}\index{tr@\texttt{tr}}
 &
-Given a string of old characters \verb'o', a list of new characters \verb'n',
-and a list of words \verb'e',
-return all \verb'e', with all characters occuring in \verb'o' replaced
-with the corresponding character in \verb'n'.
-The strings \verb'o' and \verb'n' must be of the same length.
+Given a string of old characters \texttt{o}, a list of new characters
+\texttt{n}, and a list of words \texttt{e}, return all \texttt{e},
+with all characters occuring in \texttt{o} replaced with the
+corresponding character in \texttt{n}.  The strings \texttt{o} and
+\texttt{n} must be of the same length.
 \end{desctab}
 For example:
 \begin{showfile}
