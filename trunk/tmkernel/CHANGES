@@ -1,5 +1,8 @@
-New in version 2.1.1 ???
+New in version 2.2.0 ???
 
+- Added the 'tochar' template function.
+- Added the 'leftstr' and 'rightstr' template functions.
+- Lots of const correctness.
 - Fixed an obscure bug in the append_ function in the llu template.
 
 New in version 2.1.0 Tue Feb 22 17:34:14 CET 2005
