@@ -183,7 +183,7 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
     deflt = tplelm_listNIL;
     val = tmstringNIL;
     for( ix=0; ix<el->sz; ix++ ){
-	const tplelm e = el->arr[ix];
+	const_tplelm e = el->arr[ix];
 
 	switch( e->tag ){
 	    case TAGCase:
@@ -222,7 +222,7 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 		}
 		if( e->tag == TAGCase ){
 		    state = SWS_CASE;
-		    val = to_Case(e)->val;
+		    val = to_const_Case(e)->val;
 		}
 		else {
 		    state = SWS_DEFAULT;
@@ -664,12 +664,12 @@ tmstring alevalto( char **spi, const int sc )
 /* Copy an ordinary line to the output and replace all VARCHAR
  * references with the variable.
  */
-static void doplain( const tplelm l, FILE *outfile )
+static void doplain( const_Plain l, FILE *outfile )
 {
     tmstring is;
     tmstring os;
 
-    is = to_Plain(l)->line;
+    is = l->line;
     os = alevalto( &is, '\0' );
     if( outfile == NULL ){
 	line_error( "no output allowed in expression macro" );
@@ -682,7 +682,7 @@ static void doplain( const tplelm l, FILE *outfile )
 }
 
 /* Handle 'insert' command. */
-static void doinsert( const tplelm tpl, FILE *outfile )
+static void doinsert( const_Insert tpl, FILE *outfile )
 {
     tmstring fname;
     tmstring oldfname;
@@ -691,7 +691,7 @@ static void doinsert( const tplelm tpl, FILE *outfile )
     tmstring is;
     tmstring os;
 
-    is = to_Insert(tpl)->fname;
+    is = tpl->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -716,14 +716,14 @@ static void doinsert( const tplelm tpl, FILE *outfile )
 }
 
 /* Handle 'redirect' command. */
-static void doredirect( const tplelm e )
+static void doredirect( const_Redirect e )
 {
     tmstring fname;
     FILE *outfile;
     char *is;
     char *os;
 
-    is = to_Redirect(e)->fname;
+    is = e->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -732,20 +732,20 @@ static void doredirect( const tplelm e )
 	return;
     }
     outfile = ckfopen( fname, "w" );
-    dotrans( to_Redirect(e)->body, outfile );
+    dotrans( e->body, outfile );
     fclose( outfile );
     fre_tmstring( fname );
 }
 
 /* Handle 'appendfile' command. */
-static void doappendfile( const tplelm e )
+static void doappendfile( const_Appendfile e )
 {
     tmstring fname;
     FILE *outfile;
     char *is;
     char *os;
 
-    is = to_Appendfile(e)->fname;
+    is = e->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -754,13 +754,13 @@ static void doappendfile( const tplelm e )
 	return;
     }
     outfile = ckfopen( fname, "a" );
-    dotrans( to_Appendfile(e)->body, outfile );
+    dotrans( e->body, outfile );
     fclose( outfile );
     fre_tmstring( fname );
 }
 
 /* Handle 'include' command. */
-static void doinclude( const tplelm tpl, FILE *outfile )
+static void doinclude( const_Include tpl, FILE *outfile )
 {
     tmstring fname;
     tmstring oldfname;
@@ -769,7 +769,7 @@ static void doinclude( const tplelm tpl, FILE *outfile )
     char *is;
     char *os;
 
-    is = to_Include(tpl)->fname;
+    is = tpl->fname;
     os = alevalto( &is, '\0' );
     scan1par( os, &fname );
     fre_tmstring( os );
@@ -797,31 +797,31 @@ static void doinclude( const tplelm tpl, FILE *outfile )
 }
 
 /* Handle 'error' command. */
-static void doerror( const tplelm tpl )
+static void doerror( const_Error tpl )
 {
     char *is;
     char *os;
 
-    is = to_Error(tpl)->str;
+    is = tpl->str;
     os = alevalto( &is, '\0' );
     fprintf( stderr, "%s\n", os );
     fre_tmstring( os );
 }
 
 /* Handle 'exit' command. */
-static void doexit( const tplelm tpl )
+static void doexit( const_Exit tpl )
 {
     char *is;
     char *os;
 
-    is = to_Exit(tpl)->str;
+    is = tpl->str;
     os = alevalto( &is, '\0' );
     exit( atoi( os ) );
     /* freeing is no use */
 }
 
 /* Handle 'globalset' command. */
-static void doglobalset( const tplelm tpl )
+static void doglobalset( const_GlobalSet tpl )
 {
     char *is;
     char *os;
@@ -829,7 +829,7 @@ static void doglobalset( const tplelm tpl )
     tmstring_list sl;
     tmstring nm;
 
-    is = to_GlobalSet(tpl)->line;
+    is = tpl->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -848,7 +848,7 @@ static void doglobalset( const tplelm tpl )
 }
 
 /* Handle 'set' command. */
-static void doset( const tplelm tpl )
+static void doset( const_Set tpl )
 {
     char *is;
     char *os;
@@ -856,7 +856,7 @@ static void doset( const tplelm tpl )
     tmstring_list sl;
     tmstring nm;
 
-    is = to_Set(tpl)->line;
+    is = tpl->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -877,7 +877,7 @@ static void doset( const tplelm tpl )
 /* Given a tmstring 's', an old type name 'old' and a new type name 'nw'.
  * replace the string with a copy of 'nw'  if it is equal to 'old'.
  */
-static tmstring rename_tmstring( tmstring s, tmstring old, tmstring nw )
+static tmstring rename_tmstring( tmstring s, const_tmstring old, const_tmstring nw )
 {
     if( strcmp( s, old ) == 0 ){
 	rfre_tmstring( s );
@@ -890,7 +890,7 @@ static tmstring rename_tmstring( tmstring s, tmstring old, tmstring nw )
  * type name 'nw', rewrite these strings to use the new type name
  * instead of the old type name.
  */
-static tmstring_list rename_tmstring_list( tmstring_list dl, const tmstring old, const tmstring nw )
+static tmstring_list rename_tmstring_list( tmstring_list dl, const_tmstring old, const_tmstring nw )
 {
     unsigned int ix;
 
@@ -904,7 +904,7 @@ static tmstring_list rename_tmstring_list( tmstring_list dl, const tmstring old,
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Type rename_Type( Type t, const tmstring old, const tmstring nw )
+static Type rename_Type( Type t, const_tmstring old, const_tmstring nw )
 {
     t->basetype = rename_tmstring( t->basetype, old, nw );
     return t;
@@ -914,7 +914,7 @@ static Type rename_Type( Type t, const tmstring old, const tmstring nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Field rename_Field( Field f, const tmstring old, const tmstring nw )
+static Field rename_Field( Field f, const_tmstring old, const_tmstring nw )
 {
     f->type = rename_Type( f->type, old, nw );
     return f;
@@ -924,7 +924,7 @@ static Field rename_Field( Field f, const tmstring old, const tmstring nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Field_list rename_Field_list( Field_list dl, const tmstring old, const tmstring nw )
+static Field_list rename_Field_list( Field_list dl, const_tmstring old, const_tmstring nw )
 {
     unsigned int ix;
 
@@ -938,7 +938,7 @@ static Field_list rename_Field_list( Field_list dl, const tmstring old, const tm
  * type name 'nw', rewrite this definition to use the new name
  * instead of the old name.
  */
-static ds rename_ds( ds d, const tmstring old, const tmstring nw )
+static ds rename_ds( ds d, const_tmstring old, const_tmstring nw )
 {
     d->name = rename_tmstring( d->name, old, nw );
     d->inherits = rename_tmstring_list( d->inherits, old, nw );
@@ -990,7 +990,7 @@ static ds rename_ds( ds d, const tmstring old, const tmstring nw )
  * type name 'nw', rewrite these definitions to use the new name
  * instead of the old name.
  */
-static ds_list rename_ds_list( ds_list dl, const tmstring old, const tmstring nw )
+static ds_list rename_ds_list( ds_list dl, const_tmstring old, const_tmstring nw )
 {
     unsigned int ix;
 
@@ -1001,13 +1001,13 @@ static ds_list rename_ds_list( ds_list dl, const tmstring old, const tmstring nw
 }
 
 /* Handle 'rename' command. */
-static void dorename( const tplelm tpl )
+static void dorename( const_Rename tpl )
 {
     char *is;
     char *os;
     tmstring_list sl;
 
-    is = to_Rename(tpl)->line;
+    is = tpl->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     rfre_tmstring( os );
@@ -1026,14 +1026,14 @@ static void dorename( const tplelm tpl )
 }
 
 /* Handle 'return' command. */
-static void doreturn( const tplelm tpl )
+static void doreturn( const_Return tpl )
 {
     char *is;
     char *os;
     tmstring val;
     tmstring_list sl;
 
-    is = to_Return(tpl)->retval;
+    is = tpl->retval;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1044,7 +1044,7 @@ static void doreturn( const tplelm tpl )
 }
 
 /* Handle 'append' command. */
-static void doappend( const tplelm tpl )
+static void doappend( const_Append tpl )
 {
     char *is;
     char *os;
@@ -1052,7 +1052,7 @@ static void doappend( const tplelm tpl )
     tmstring nm;
     tmstring_list sl;
 
-    is = to_Append(tpl)->line;
+    is = tpl->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1075,7 +1075,7 @@ static void doappend( const tplelm tpl )
 }
 
 /* Handle 'globalappend' command. */
-static void doglobalappend( const tplelm tpl )
+static void doglobalappend( const_GlobalAppend tpl )
 {
     char *is;
     char *os;
@@ -1083,7 +1083,7 @@ static void doglobalappend( const tplelm tpl )
     tmstring nm;
     tmstring_list sl;
 
-    is = to_GlobalAppend(tpl)->line;
+    is = tpl->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1108,7 +1108,7 @@ static void doglobalappend( const tplelm tpl )
 /* Given a type list 'types' and a type name 'nm', delete that type from
  * the list of types.
  */
-static ds_list delete_type( ds_list types, const tmstring nm )
+static ds_list delete_type( ds_list types, const_tmstring nm )
 {
     unsigned int ix = find_type_ix( types, nm );
 
@@ -1119,7 +1119,7 @@ static ds_list delete_type( ds_list types, const tmstring nm )
 }
 
 /* Handle 'deletetype' command. */
-static void dodeletetype( const DeleteType tpl )
+static void dodeletetype( const_DeleteType tpl )
 {
     char *is;
     char *os;
@@ -1137,7 +1137,7 @@ static void dodeletetype( const DeleteType tpl )
 }
 
 /* Handle 'if' command. */
-static void doif( const If tpl, FILE *outfile )
+static void doif( const_If tpl, FILE *outfile )
 {
     char *is;
     char *os;
@@ -1156,7 +1156,7 @@ static void doif( const If tpl, FILE *outfile )
 }
 
 /* Handle 'switch' command. */
-static void doswitch( const Switch tpl, FILE *outfile )
+static void doswitch( const_Switch tpl, FILE *outfile )
 {
     char *is;
     char *os;
@@ -1212,7 +1212,7 @@ static void doswitch( const Switch tpl, FILE *outfile )
    Given a list of template lines, starting with a foreach command line,
    generate output lines. Handle local commands by recursion.
  */
-static void doforeach( const tplelm tpl, FILE *outfile )
+static void doforeach( const_Foreach tpl, FILE *outfile )
 {
     char *nm;
     char *is;
@@ -1220,7 +1220,7 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     tmstring_list sl;
 
-    is = to_Foreach(tpl)->felist;
+    is = tpl->felist;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1232,7 +1232,7 @@ static void doforeach( const tplelm tpl, FILE *outfile )
     nm = sl->arr[0];
     for( ix=1; ix<sl->sz; ix++ ){
 	setvar( nm, sl->arr[ix] );
-	dotrans( to_Foreach(tpl)->body, outfile );
+	dotrans( tpl->body, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -1241,7 +1241,7 @@ static void doforeach( const tplelm tpl, FILE *outfile )
    Given a list of template lines, starting with a foreach command line,
    generate output lines. Handle local commands by recursion.
  */
-static void dofor( const tplelm tpl, FILE *outfile )
+static void dofor( const_For tpl, FILE *outfile )
 {
     char *nm;
     char *is;
@@ -1252,7 +1252,7 @@ static void dofor( const tplelm tpl, FILE *outfile )
     int stride = 1;
     int v;
 
-    is = to_For(tpl)->parms;
+    is = tpl->parms;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1285,7 +1285,7 @@ static void dofor( const tplelm tpl, FILE *outfile )
 
 	sprintf( vstr, "%d", v );
 	setvar( nm, vstr );	/* Set the iteration variable. */
-	dotrans( to_For(tpl)->body, outfile );
+	dotrans( tpl->body, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -1295,21 +1295,21 @@ static void dofor( const tplelm tpl, FILE *outfile )
    generate output lines until condition is false. Handle local commands
    by recursion.
  */
-static void dowhile( const tplelm tpl, FILE *outfile )
+static void dowhile( const_While tpl, FILE *outfile )
 {
-    bool done;
-    char *is;
-    char *os;
-
     for(;;){
-	is = to_While(tpl)->cond;
+        bool done;
+        char *is;
+        char *os;
+
+	is = tpl->cond;
 	os = alevalto( &is, '\0' );
 	done = isfalsestr( os );
 	fre_tmstring( os );
 	if( done ){
 	    return;
 	}
-	dotrans( to_While(tpl)->body, outfile );
+	dotrans( tpl->body, outfile );
     }
 }
 
@@ -1317,7 +1317,7 @@ static void dowhile( const tplelm tpl, FILE *outfile )
  * in separate words, copy the macro body, and store it in the
  * macro table.
  */
-static void domacro( const Macro tpl )
+static void domacro( const_Macro tpl )
 {
     char *nm;
     char *is;
@@ -1335,13 +1335,13 @@ static void domacro( const Macro tpl )
     }
     nm = rdup_tmstring( sl->arr[0] );
     sl = delete_tmstring_list( sl, 0 );
-    setmacro( nm, tplfilename, sl, to_Macro(tpl)->body );
+    setmacro( nm, tplfilename, sl, tpl->body );
     rfre_tmstring( nm );
     rfre_tmstring_list( sl );
 }
 
 /* Handle 'call' command (calls a macro). */
-static void docall( const tplelm tpl, FILE *outfile )
+static void docall( const_Call tpl, FILE *outfile )
 {
     char *is;
     char *os;
@@ -1352,7 +1352,7 @@ static void docall( const tplelm tpl, FILE *outfile )
     unsigned int ix;
     macro m;
 
-    is = to_Call(tpl)->line;
+    is = tpl->line;
     os = alevalto( &is, '\0' );
     sl = chopstring( os );
     fre_tmstring( os );
@@ -1402,33 +1402,33 @@ static void docall( const tplelm tpl, FILE *outfile )
    Given a list of template lines in 'tpl' generate text from them,
    and write this text to 'outfile'.
  */
-void dotrans( const tplelm_list tpl, FILE *outfile )
+void dotrans( const_tplelm_list tpl, FILE *outfile )
 {
     unsigned int ix;
-    tplelm e;
 
     for( ix=0; ix<tpl->sz; ix++ ){
-	e = tpl->arr[ix];
+        const_tplelm e = tpl->arr[ix];
+
 	tpllineno = e->lno;
 	switch( e->tag ){
 	    case TAGError:
-		doerror( e );
+		doerror( to_const_Error( e ) );
 		break;
 
 	    case TAGForeach:
-		doforeach( e, outfile );
+		doforeach( to_const_Foreach( e ), outfile );
 		break;
 
 	    case TAGFor:
-		dofor( e, outfile );
+		dofor( to_const_For( e ), outfile );
 		break;
 
 	    case TAGIf:
-		doif( to_If( e ), outfile );
+		doif( to_const_If( e ), outfile );
 		break;
 
 	    case TAGSwitch:
-		doswitch( to_Switch(e), outfile );
+		doswitch( to_const_Switch(e), outfile );
 		break;
 
 	    case TAGCase:
@@ -1436,67 +1436,67 @@ void dotrans( const tplelm_list tpl, FILE *outfile )
 		break;
 
 	    case TAGPlain:
-		doplain( e, outfile );
+		doplain( to_const_Plain( e ), outfile );
 		break;
 
 	    case TAGRename:
-		dorename( e );
+		dorename( to_const_Rename( e ) );
 		break;
 
 	    case TAGSet:
-		doset( e );
+		doset( to_const_Set( e ) );
 		break;
 
 	    case TAGGlobalSet:
-		doglobalset( e );
+		doglobalset( to_const_GlobalSet( e ) );
 		break;
 
 	    case TAGReturn:
-		doreturn( e );
+		doreturn( to_const_Return( e ) );
 		break;
 
 	    case TAGDeleteType:
-		dodeletetype( to_DeleteType( e ) );
+		dodeletetype( to_const_DeleteType( e ) );
 		break;
 
 	    case TAGGlobalAppend:
-		doglobalappend( e );
+		doglobalappend( to_const_GlobalAppend( e ) );
 		break;
 
 	    case TAGAppend:
-		doappend( e );
+		doappend( to_const_Append( e ) );
 		break;
 
 	    case TAGRedirect:
-		doredirect( e );
+		doredirect( to_const_Redirect( e ) );
 		break;
 
 	    case TAGAppendfile:
-		doappendfile( e );
+		doappendfile( to_const_Appendfile( e ) );
 		break;
 
 	    case TAGInclude:
-		doinclude( e, outfile );
+		doinclude( to_const_Include( e ), outfile );
 		break;
 
 	    case TAGInsert:
-		doinsert( e, outfile );
+		doinsert( to_const_Insert( e ), outfile );
 		break;
 
 	    case TAGExit:
-		doexit( e );
+		doexit( to_const_Exit( e ) );
 		break;
 
 	    case TAGWhile:
-		dowhile( e, outfile );
+		dowhile( to_const_While( e ), outfile );
 		break;
 
 	    case TAGMacro:
-		domacro( to_Macro( e ) );
+		domacro( to_const_Macro( e ) );
 		break;
 
 	    case TAGCall:
-		docall( e, outfile );
+		docall( to_const_Call( e ), outfile );
 		break;
 
 	}

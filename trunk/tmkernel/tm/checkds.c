@@ -101,10 +101,10 @@ bool check_ds_list( const ds_list dl )
     /* First check on double definition of a type. */
     for( ix=0; ix<dl->sz; ix++ ){
 	unsigned int iy;
-	const tmstring nmx = dl->arr[ix]->name;
+	const_tmstring nmx = dl->arr[ix]->name;
 
 	for( iy=ix+1; iy<dl->sz; iy++ ){
-	    const tmstring nmy = dl->arr[iy]->name;
+	    const_tmstring nmy = dl->arr[iy]->name;
 
 	    if( strcmp( nmx, nmy ) == 0 ){
 		sprintf( errarg, "type '%s'", nmx );
@@ -143,7 +143,7 @@ bool check_ds_list( const ds_list dl )
 	return ok;
     }
     for( ix=0; ix<dl->sz; ix++ ){
-	const tmstring nmx = dl->arr[ix]->name;
+	const_tmstring nmx = dl->arr[ix]->name;
 	char msg[200];
 	tmstring_list tl = new_tmstring_list();
 

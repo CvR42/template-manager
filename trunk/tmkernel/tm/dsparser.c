@@ -24,7 +24,7 @@ static lextok curr_token;
 /* Forward declarations. */
 static bool parse_class_components( classComponent_list *clp );
 static void update_class_info(
-    tmstring nm,
+    const_tmstring nm,
     tmstring_list *inherits,
     Field_list *fields,
     ds_list *types,
@@ -68,7 +68,7 @@ static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
 static ds_list add_constructor_list( ds_list l, const ds c )
 {
     unsigned int ix;
-    const tmstring cnm = c->name;
+    const_tmstring cnm = c->name;
 
     for( ix=0; ix<l->sz; ix++ ){
 	if( strcmp( cnm, l->arr[ix]->name ) == 0 ){
@@ -106,7 +106,7 @@ static ds merge_cons_types( const ds a, const ds b )
  * 'tnm' to which the constructor belongs, ensure that if 't' is a constructor
  * type, 'cnm' does not occur in it.
  */
-static void ckcname_type( const ds t, const tmstring cnm, const tmstring tnm )
+static void ckcname_type( const ds t, const_tmstring cnm, const_tmstring tnm )
 {
     tmstring_list cl;
 
@@ -125,7 +125,7 @@ static void ckcname_type( const ds t, const tmstring cnm, const tmstring tnm )
  * 'tnm' to which the constructor belongs, ensure that 'cnm' does not
  * occur in any of the constructor types of 'l'.
  */
-static void ckcname( const ds_list l, const tmstring cnm, const tmstring tnm )
+static void ckcname( const ds_list l, const_tmstring cnm, const_tmstring tnm )
 {
     unsigned int ix;
 
@@ -278,7 +278,7 @@ static bool parse_Field_list( Field_list *flp )
  * of, the name of the construcotr (if it isn't empty), try to parse a
  * constructor. Return TRUE iff this succeeded.
  */
-static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
+static bool parse_constructor( const_tmstring super, tmstring p_nm, ds *cp )
 {
     bool ok;
     Field_list fl;
@@ -317,7 +317,7 @@ static bool parse_constructor( const tmstring super, tmstring p_nm, ds *cp )
  * try to parse a list of constructors up to (but not including)
  * the final ';'. Return TRUE if you have a valid constructor list.
  */
-static bool parse_constructor_list( const tmstring super, tmstring nm, ds_list *clp )
+static bool parse_constructor_list( const_tmstring super, tmstring nm, ds_list *clp )
 {
     bool ok;
     ds nw;
@@ -407,7 +407,7 @@ static bool parse_constructor_type( tmstring nm, ds_list *tp )
     }
     members = new_tmstring_list();
     for( ix=0; ix<cl->sz; ix++ ){
-	const tmstring mnm = cl->arr[ix]->name;
+	const_tmstring mnm = cl->arr[ix]->name;
 
 	members = append_tmstring_list( members, rdup_tmstring( mnm ) );
     }
@@ -644,7 +644,7 @@ static bool parse_class_components( classComponent_list *clp )
     return TRUE;
 }
 
-static ds_list create_subtype( const tmstring nm, const tmstring super, const classComponent comp )
+static ds_list create_subtype( const_tmstring nm, const_tmstring super, const classComponent comp )
 {
     tmstring_list inherits;
     Field_list fields;
@@ -665,7 +665,7 @@ static ds_list create_subtype( const tmstring nm, const tmstring super, const cl
 }
 
 static void update_class_info(
-    tmstring nm,
+    const_tmstring nm,
     tmstring_list *inherits,
     Field_list *fields,
     ds_list *types,

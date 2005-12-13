@@ -247,7 +247,7 @@ static const char *evalbool( const char *x, long *vp )
 /* Given a tmstring 'x' containing a numerical expression,
  * evaluate it, and construct a tmstring from the resulting integer.
  */
-char *evalexpr( const tmstring x )
+char *evalexpr( const_tmstring x )
 {
     char buf[NUMBUFSIZE];
     const char *s;

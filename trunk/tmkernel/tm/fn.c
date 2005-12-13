@@ -36,7 +36,7 @@ static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list block
  * If both the prefix and the suffix are empty, consider no type to be
  * a list type.
  */
-static tmstring get_element_type( const char *pre, const char *suff, const tmstring t )
+static tmstring get_element_type( const char *pre, const char *suff, const_tmstring t )
 {
     const size_t prelen = strlen( pre );
     const size_t sufflen = strlen( suff );
@@ -62,7 +62,7 @@ static tmstring get_element_type( const char *pre, const char *suff, const tmstr
  * return a Type representing this type string.
  * given 
  */
-static Type split_type( const char *pre, const char *suff, const tmstring t )
+static Type split_type( const char *pre, const char *suff, const_tmstring t )
 {
     tmstring old;
     tmuint level = 0;
@@ -125,9 +125,7 @@ static tmstring flat_Type_list( const Type_list tl )
     return ans;
 }
 
-/***************************************************************
- *   tm functions                                              *
- ***************************************************************/
+/* ------ tm functions ------ */
 
 /* implementation of functions. Each function is given a parameter
    tmstring and an origin tmstring for error messages
@@ -136,7 +134,7 @@ static tmstring flat_Type_list( const Type_list tl )
 /* -- numerical functions -- */
 
 /* max */
-static tmstring fnmax( const tmstring_list sl )
+static tmstring fnmax( const_tmstring_list sl )
 {
     int max;
     unsigned int ix;
@@ -158,7 +156,7 @@ static tmstring fnmax( const tmstring_list sl )
 }
 
 /* min */
-static tmstring fnmin( const tmstring_list sl )
+static tmstring fnmin( const_tmstring_list sl )
 {
     int min;
     unsigned int ix;
@@ -180,7 +178,7 @@ static tmstring fnmin( const tmstring_list sl )
 }
 
 /* addition */
-static tmstring fnplus( const tmstring_list sl )
+static tmstring fnplus( const_tmstring_list sl )
 {
     int sum = 0;
     unsigned int ix;
@@ -193,7 +191,7 @@ static tmstring fnplus( const tmstring_list sl )
 }
 
 /* subtraction */
-static tmstring fnsubtract( const tmstring_list sl )
+static tmstring fnsubtract( const_tmstring_list sl )
 {
     int a;
 
@@ -209,7 +207,7 @@ static tmstring fnsubtract( const tmstring_list sl )
 }
 
 /* multiplication */
-static tmstring fntimes( const tmstring_list sl )
+static tmstring fntimes( const_tmstring_list sl )
 {
     int prod = 1;
     unsigned int ix;
@@ -222,7 +220,7 @@ static tmstring fntimes( const tmstring_list sl )
 }
 
 /* division */
-static tmstring fndiv( const tmstring_list sl )
+static tmstring fndiv( const_tmstring_list sl )
 {
     int a;
 
@@ -238,7 +236,7 @@ static tmstring fndiv( const tmstring_list sl )
 }
 
 /* modulus */
-static tmstring fnmod( const tmstring_list sl )
+static tmstring fnmod( const_tmstring_list sl )
 {
     int a;
 
@@ -256,7 +254,7 @@ static tmstring fnmod( const tmstring_list sl )
 /* -- comparison functions -- */
 
 /* < */
-static tmstring fnless( const tmstring_list sl )
+static tmstring fnless( const_tmstring_list sl )
 {
     bool b;
 
@@ -272,7 +270,7 @@ static tmstring fnless( const tmstring_list sl )
 }
 
 /* <= */
-static tmstring fnlesseq( const tmstring_list sl )
+static tmstring fnlesseq( const_tmstring_list sl )
 {
     bool b;
 
@@ -288,7 +286,7 @@ static tmstring fnlesseq( const tmstring_list sl )
 }
 
 /* > */
-static tmstring fngreater( const tmstring_list sl )
+static tmstring fngreater( const_tmstring_list sl )
 {
     bool b;
 
@@ -304,7 +302,7 @@ static tmstring fngreater( const tmstring_list sl )
 }
 
 /* >= */
-static tmstring fngreatereq( const tmstring_list sl )
+static tmstring fngreatereq( const_tmstring_list sl )
 {
     bool b;
 
@@ -320,7 +318,7 @@ static tmstring fngreatereq( const tmstring_list sl )
 }
 
 /* == */
-static tmstring fneq( const tmstring_list sl )
+static tmstring fneq( const_tmstring_list sl )
 {
     bool b;
 
@@ -336,7 +334,7 @@ static tmstring fneq( const tmstring_list sl )
 }
 
 /* != */
-static tmstring fnneq( const tmstring_list sl )
+static tmstring fnneq( const_tmstring_list sl )
 {
     bool b;
 
@@ -352,7 +350,7 @@ static tmstring fnneq( const tmstring_list sl )
 }
 
 /* strcmp */
-static tmstring fnstrcmp( const tmstring_list sl )
+static tmstring fnstrcmp( const_tmstring_list sl )
 {
     int cmp;
 
@@ -368,7 +366,7 @@ static tmstring fnstrcmp( const tmstring_list sl )
 }
 
 /* eq */
-static tmstring fnstreq( const tmstring_list sl )
+static tmstring fnstreq( const_tmstring_list sl )
 {
     int cmp;
 
@@ -382,7 +380,7 @@ static tmstring fnstreq( const tmstring_list sl )
 }
 
 /* neq */
-static tmstring fnstrneq( const tmstring_list sl )
+static tmstring fnstrneq( const_tmstring_list sl )
 {
     int cmp;
 
@@ -398,13 +396,13 @@ static tmstring fnstrneq( const tmstring_list sl )
 /* -- tmstring functions -- */
 
 /* len */
-static tmstring fnlen( const tmstring_list sl )
+static tmstring fnlen( const_tmstring_list sl )
 {
     return newintstr( (int) sl->sz );
 }
 
 /* strpad */
-static tmstring fnstrpad( const tmstring_list sl )
+static tmstring fnstrpad( const_tmstring_list sl )
 {
     tmstring w;
     tmstring wp;
@@ -446,7 +444,7 @@ static tmstring fnstrpad( const tmstring_list sl )
 }
 
 /* strlen */
-static tmstring fnstrlen( const tmstring_list sl )
+static tmstring fnstrlen( const_tmstring_list sl )
 {
     int l;
 
@@ -460,7 +458,7 @@ static tmstring fnstrlen( const tmstring_list sl )
 }
 
 /* capitalize */
-static tmstring fncapitalize( const tmstring_list sl )
+static tmstring fncapitalize( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -480,7 +478,7 @@ static tmstring fncapitalize( const tmstring_list sl )
 }
 
 /* toupper */
-static tmstring fntoupper( const tmstring_list sl )
+static tmstring fntoupper( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -503,7 +501,7 @@ static tmstring fntoupper( const tmstring_list sl )
 }
 
 /* tolower */
-static tmstring fntolower( const tmstring_list sl )
+static tmstring fntolower( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -531,7 +529,7 @@ static tmstring fntolower( const tmstring_list sl )
  *
  * The same string is returned, with the replacements implemented.
  */
-static tmstring tr_tmstring( tmstring s, const tmstring oldchars, const tmstring newchars )
+static tmstring tr_tmstring( tmstring s, const_tmstring oldchars, const_tmstring newchars )
 {
     unsigned int ix = 0;
 
@@ -547,7 +545,7 @@ static tmstring tr_tmstring( tmstring s, const tmstring oldchars, const tmstring
 }
 
 /* tr <oldchars> <newchars> s..s */
-static tmstring fntr( const tmstring_list sl )
+static tmstring fntr( const_tmstring_list sl )
 {
     tmstring oldchars;
     tmstring newchars;
@@ -587,7 +585,7 @@ static tmstring fntr( const tmstring_list sl )
 }
 
 /* fnindex <c> <word> */
-static tmstring fnstrindex( const tmstring_list sl )
+static tmstring fnstrindex( const_tmstring_list sl )
 {
     int n;
     char *ixp;
@@ -606,7 +604,7 @@ static tmstring fnstrindex( const tmstring_list sl )
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnindex( const tmstring_list sl )
+static tmstring fnindex( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
@@ -631,7 +629,7 @@ static tmstring fnindex( const tmstring_list sl )
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnmember( const tmstring_list sl )
+static tmstring fnmember( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
@@ -652,7 +650,7 @@ static tmstring fnmember( const tmstring_list sl )
 }
 
 /* seplist <str> <list> */
-static tmstring fnseplist( const tmstring_list sl )
+static tmstring fnseplist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -672,7 +670,7 @@ static tmstring fnseplist( const tmstring_list sl )
 }
 
 /* prefix <pf> <list> */
-static tmstring fnprefix( const tmstring_list sl )
+static tmstring fnprefix( const_tmstring_list sl )
 {
     tmstring pfstr;
     tmstring ans;
@@ -709,7 +707,7 @@ static tmstring fnprefix( const tmstring_list sl )
 }
 
 /* suffix <sf> <list> */
-static tmstring fnsuffix( const tmstring_list sl )
+static tmstring fnsuffix( const_tmstring_list sl )
 {
     tmstring sfstr;
     tmstring ans;
@@ -753,7 +751,7 @@ static int sortcmp( const void *pa, const void *pb )
 }
 
 /* sort e1..en */
-static tmstring fnsort( const tmstring_list sl )
+static tmstring fnsort( const_tmstring_list sl )
 {
     tmstring ans;
     int (*cmpf)( const void *, const void * );
@@ -781,7 +779,7 @@ static int sizesortcmp( const void *pa, const void *pb )
 }
 
 /* sizesort e1..en */
-static tmstring fnsizesort( const tmstring_list sl )
+static tmstring fnsizesort( const_tmstring_list sl )
 {
     tmstring ans;
     int (*cmpf)( const void *, const void * );
@@ -793,7 +791,7 @@ static tmstring fnsizesort( const tmstring_list sl )
 }
 
 /* rev e1..en */
-static tmstring fnrev( const tmstring_list sl )
+static tmstring fnrev( const_tmstring_list sl )
 {
     unsigned int lix;
     unsigned int rix;
@@ -814,7 +812,7 @@ static tmstring fnrev( const tmstring_list sl )
 }
 
 /* comm a "" b */
-static tmstring fncomm( const tmstring_list sl )
+static tmstring fncomm( const_tmstring_list sl )
 {
     unsigned int aix;
     unsigned int bix;
@@ -849,7 +847,7 @@ static tmstring fncomm( const tmstring_list sl )
 }
 
 /* excl a "" b */
-static tmstring fnexcl( const tmstring_list sl )
+static tmstring fnexcl( const_tmstring_list sl )
 {
     unsigned int sepix;
     unsigned int aix;
@@ -886,7 +884,7 @@ static tmstring fnexcl( const tmstring_list sl )
 }
 
 /* uniq e1..en */
-static tmstring fnuniq( const tmstring_list sl )
+static tmstring fnuniq( const_tmstring_list sl )
 {
     tmstring_list nl;
     tmstring ans;
@@ -913,7 +911,7 @@ static tmstring fnuniq( const tmstring_list sl )
  * find all elements matching 'findpat' and replace them
  * by 'newpat'. Do not copy elements that don't match.
  */
-static tmstring fnfilt( const tmstring_list sl )
+static tmstring fnfilt( const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -947,7 +945,7 @@ static tmstring fnfilt( const tmstring_list sl )
    find all elements matching 'findpat' and replace them
    by 'newpat'. Copy elements that don't match.
  */
-static tmstring fnsubs( const tmstring_list sl )
+static tmstring fnsubs( const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -984,7 +982,7 @@ static tmstring fnsubs( const tmstring_list sl )
    find all elements matching 'findpat' and delete them.
    Copy elements that don't match.
  */
-static tmstring fnrmlist( const tmstring_list sl )
+static tmstring fnrmlist( const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -1013,7 +1011,7 @@ static tmstring fnrmlist( const tmstring_list sl )
 }
 
 /* first */
-static tmstring fnfirst( const tmstring_list sl )
+static tmstring fnfirst( const_tmstring_list sl )
 {
     tmstring ans;
 
@@ -1027,7 +1025,7 @@ static tmstring fnfirst( const tmstring_list sl )
 }
 
 /* shift */
-static tmstring fnshift( const tmstring_list sl )
+static tmstring fnshift( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
@@ -1043,7 +1041,7 @@ static tmstring fnshift( const tmstring_list sl )
 }
 
 /* if */
-static tmstring fnif( const tmstring_list sl )
+static tmstring fnif( const_tmstring_list sl )
 {
     tmstring ans;
 
@@ -1073,7 +1071,7 @@ static tmstring fnif( const tmstring_list sl )
 /* -- logic functions -- */
 
 /* and */
-static tmstring fnand( const tmstring_list sl )
+static tmstring fnand( const_tmstring_list sl )
 {
     bool flag = TRUE;
     unsigned int ix;
@@ -1086,7 +1084,7 @@ static tmstring fnand( const tmstring_list sl )
 }
 
 /* or */
-static tmstring fnor( const tmstring_list sl )
+static tmstring fnor( const_tmstring_list sl )
 {
     bool flag = FALSE;
     unsigned int ix;
@@ -1099,7 +1097,7 @@ static tmstring fnor( const tmstring_list sl )
 }
 
 /* not */
-static tmstring fnnot( const tmstring_list sl )
+static tmstring fnnot( const_tmstring_list sl )
 {
     bool a;
 
@@ -1116,7 +1114,7 @@ static tmstring fnnot( const tmstring_list sl )
 
 
 /* listtypes <list> */
-static tmstring fnlisttypes( const tmstring_list sl )
+static tmstring fnlisttypes( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1134,7 +1132,7 @@ static tmstring fnlisttypes( const tmstring_list sl )
     }
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	const tmstring s = sl->arr[ix];
+	const_tmstring s = sl->arr[ix];
 	tmstring et = get_element_type( pre, suff, s );
 
 	if( et != tmstringNIL ){
@@ -1148,7 +1146,7 @@ static tmstring fnlisttypes( const tmstring_list sl )
 }
 
 /* delisttypes <list> */
-static tmstring fndelisttypes( const tmstring_list sl )
+static tmstring fndelisttypes( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1179,7 +1177,7 @@ static tmstring fndelisttypes( const tmstring_list sl )
 }
 
 /* singletypes <list> */
-static tmstring fnsingletypes( const tmstring_list sl )
+static tmstring fnsingletypes( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1213,7 +1211,7 @@ static tmstring fnsingletypes( const tmstring_list sl )
 }
 
 /* stemname <list> */
-static tmstring fnstemname( const tmstring_list sl )
+static tmstring fnstemname( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1252,7 +1250,7 @@ static tmstring fnstemname( const tmstring_list sl )
 }
 
 /* mklist <n> <list> */
-static tmstring fnmklist( const tmstring_list sl )
+static tmstring fnmklist( const_tmstring_list sl )
 {
     tmstring ans;
     int n;
@@ -1288,7 +1286,7 @@ static tmstring fnmklist( const tmstring_list sl )
 }
 
 /* Construct a list of types. */
-static tmstring fntypelist( const tmstring_list sl )
+static tmstring fntypelist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1309,7 +1307,7 @@ static tmstring fntypelist( const tmstring_list sl )
 }
 
 /* Construct a list of constructors. */
-static tmstring fnconstructorlist( const tmstring_list sl )
+static tmstring fnconstructorlist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1345,7 +1343,7 @@ static tmstring fnconstructorlist( const tmstring_list sl )
     return ans;
 }
 /* Construct a list of constructor types. */
-static tmstring fnctypelist( const tmstring_list sl )
+static tmstring fnctypelist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1381,7 +1379,7 @@ static tmstring fnctypelist( const tmstring_list sl )
 }
 
 /* Construct a list of tuple types. */
-static tmstring fntuplelist( const tmstring_list sl )
+static tmstring fntuplelist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1412,7 +1410,7 @@ static tmstring fntuplelist( const tmstring_list sl )
 }
 
 /* Construct a list of class types. */
-static tmstring fnclasslist( const tmstring_list sl )
+static tmstring fnclasslist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1444,7 +1442,7 @@ static tmstring fnclasslist( const tmstring_list sl )
 }
 
 /* Construct a list of aliases. */
-static tmstring fnaliases( const tmstring_list sl )
+static tmstring fnaliases( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1478,7 +1476,7 @@ static tmstring fnaliases( const tmstring_list sl )
 /* Given a list of types 'dl', search for type with name 't'.
  * Give an error message if it is not found.
  */ 
-static ds findtype( ds_list dl, const tmstring t )
+static ds findtype( ds_list dl, const_tmstring t )
 {
     unsigned int ix;
 
@@ -1491,7 +1489,7 @@ static ds findtype( ds_list dl, const tmstring t )
     return dl->arr[ix];
 }
 
-static bool is_virtual( ds_list types, const tmstring type )
+static bool is_virtual( ds_list types, const_tmstring type )
 {
     bool ans = FALSE;
     unsigned int ix;
@@ -1520,7 +1518,7 @@ static bool is_virtual( ds_list types, const tmstring type )
 }
 
 /* Given a type name, return TRUE if the type is virtual. */
-static tmstring fnisvirtual( const tmstring_list sl )
+static tmstring fnisvirtual( const_tmstring_list sl )
 {
     bool ans = FALSE;
 
@@ -1535,7 +1533,7 @@ static tmstring fnisvirtual( const tmstring_list sl )
 }
 
 /* Given a list of types, return the ones that are virtual. */
-static tmstring fnvirtual( const tmstring_list sl )
+static tmstring fnvirtual( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list res;
@@ -1553,7 +1551,7 @@ static tmstring fnvirtual( const tmstring_list sl )
 }
 
 /* Given a list of types, return the ones that are not virtual. */
-static tmstring fnnonvirtual( const tmstring_list sl )
+static tmstring fnnonvirtual( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list res;
@@ -1573,7 +1571,7 @@ static tmstring fnnonvirtual( const tmstring_list sl )
 static tmstring calc_metaname(
  const char *pre,
  const char *suff,
- const tmstring type
+ const_tmstring type
 )
 {
     unsigned int ix;
@@ -1612,7 +1610,7 @@ static tmstring calc_metaname(
 }
 
 /* Given a type name, return the metatype of this type.  */
-static tmstring fnmetatype( const tmstring_list sl )
+static tmstring fnmetatype( const_tmstring_list sl )
 {
     const char *pre;
     const char *suff;
@@ -1643,7 +1641,7 @@ static tmstring fnmetatype( const tmstring_list sl )
 /* Given a type, return the alias of the type, or the original if
  * it doesn't have one.
  */
-static tmstring calc_alias( const char *pre, const char *suff, const tmstring type )
+static tmstring calc_alias( const char *pre, const char *suff, const_tmstring type )
 {
     unsigned int ix;
 
@@ -1667,7 +1665,7 @@ static tmstring calc_alias( const char *pre, const char *suff, const tmstring ty
 }
 
 /* Given a type name, return the alias of this type.  */
-static tmstring fnalias( const tmstring_list sl )
+static tmstring fnalias( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list res;
@@ -1698,7 +1696,7 @@ static tmstring fnalias( const tmstring_list sl )
 /* Given a type name, return the subclasses (transitive closure of inheritors)
  * of this type.
  */
-static tmstring fnsubclasses( const tmstring_list sl )
+static tmstring fnsubclasses( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list subclasses;
@@ -1716,7 +1714,7 @@ static tmstring fnsubclasses( const tmstring_list sl )
 /* Given a type name, return the superclasses (transitive closure of inherits)
  * of this type.
  */
-static tmstring fnsuperclasses( const tmstring_list sl )
+static tmstring fnsuperclasses( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list superclasses;
@@ -1732,7 +1730,7 @@ static tmstring fnsuperclasses( const tmstring_list sl )
 }
 
 /* Given a type name, return the inherits of this type.  */
-static tmstring fninherits( const tmstring_list sl )
+static tmstring fninherits( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
@@ -1754,7 +1752,7 @@ static tmstring fninherits( const tmstring_list sl )
 /* Given a type name, return the inheritors (the types that inherit
  * from this type).
  */
-static tmstring fninheritors( const tmstring_list sl )
+static tmstring fninheritors( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list inheritors;
@@ -1770,7 +1768,7 @@ static tmstring fninheritors( const tmstring_list sl )
 }
 
 /* Construct a list of fields (including inherited ones) for the given type.  */
-static tmstring fnallfields( const tmstring_list sl )
+static tmstring fnallfields( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1786,7 +1784,7 @@ static tmstring fnallfields( const tmstring_list sl )
 }
 
 /* Construct a list of fields for the given type.  */
-static tmstring fnfields( const tmstring_list sl )
+static tmstring fnfields( const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1804,7 +1802,7 @@ static tmstring fnfields( const tmstring_list sl )
 /* Given a tuple type name and element name, return the
    type name of the given element.
  */
-static tmstring fntypename( const tmstring_list sl )
+static tmstring fntypename( const_tmstring_list sl )
 {
     const_Field e;
 
@@ -1826,7 +1824,7 @@ static tmstring fntypename( const tmstring_list sl )
 
    Possible type classes are: `single' and `list'.
  */
-static tmstring fnttypeclass( const tmstring_list sl )
+static tmstring fnttypeclass( const_tmstring_list sl )
 {
     const_Field e;
 
@@ -1846,7 +1844,7 @@ static tmstring fnttypeclass( const tmstring_list sl )
 /* Given a type name and element name, return the
    list level of the given element.
  */
-static tmstring fntypelevel( const tmstring_list sl )
+static tmstring fntypelevel( const_tmstring_list sl )
 {
     const_Field e;
 
@@ -1868,7 +1866,7 @@ static tmstring fntypelevel( const tmstring_list sl )
  * Unknown types are ignored.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fnalltypes( const tmstring_list tl )
+static tmstring fnalltypes( const_tmstring_list tl )
 {
     const char *pre;
     const char *suff;
@@ -1914,7 +1912,7 @@ static tmstring fnalltypes( const tmstring_list tl )
  * Unknown types are ignored.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fntypes( const tmstring_list pl )
+static tmstring fntypes( const_tmstring_list pl )
 {
     unsigned int tix;
     Type_list tl;
@@ -2093,7 +2091,7 @@ static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list block
  * the type.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fnreach( const tmstring_list pl )
+static tmstring fnreach( const_tmstring_list pl )
 {
     unsigned int ix;
     Type_list tl;
@@ -2157,7 +2155,7 @@ static tmstring fnreach( const tmstring_list pl )
 /* Given a type name and element name, return the
    type of the given element, constructed from its type name and list level.
  */
-static tmstring fntype( const tmstring_list sl )
+static tmstring fntype( const_tmstring_list sl )
 {
     const_Field e;
     const char *pre;
@@ -2185,7 +2183,7 @@ static tmstring fntype( const tmstring_list sl )
 }
 
 /* construct a list of constructors for the given types */
-static tmstring fnconslist( const tmstring_list tl )
+static tmstring fnconslist( const_tmstring_list tl )
 {
     tmstring_list nl;
     unsigned int tix;
@@ -2212,7 +2210,7 @@ static tmstring fnconslist( const tmstring_list tl )
 }
 
 /* construct a list of fields for given type */
-static tmstring fncelmlist( const tmstring_list sl )
+static tmstring fncelmlist( const_tmstring_list sl )
 {
     const_ds d;
     tmstring_list cl;
@@ -2248,7 +2246,7 @@ static tmstring fncelmlist( const tmstring_list sl )
    It is not possible to determine whether it is a list of elements
    or not from this list.
  */
-static tmstring fnctypename( const tmstring_list sl )
+static tmstring fnctypename( const_tmstring_list sl )
 {
     const_ds d;
     tmstring_list cl;
@@ -2286,7 +2284,7 @@ static tmstring fnctypename( const tmstring_list sl )
     single
     list
  */
-static tmstring fnctypeclass( const tmstring_list sl )
+static tmstring fnctypeclass( const_tmstring_list sl )
 {
     const_ds d;
     tmstring_list cl;
@@ -2321,7 +2319,7 @@ static tmstring fnctypeclass( const tmstring_list sl )
    list level of the given element.
 
  */
-static tmstring fnctypellev( const tmstring_list sl )
+static tmstring fnctypellev( const_tmstring_list sl )
 {
     const_ds d;
     tmstring_list cl;
@@ -2361,7 +2359,7 @@ static tmstring fnctypellev( const tmstring_list sl )
  * List types depend on their element types; for nested types this
  * applies transitively.
  */
-static bool depends_on( const char *pre, const char *suff, const tmstring t, const tmstring_list tl )
+static bool depends_on( const char *pre, const char *suff, const_tmstring t, const_tmstring_list tl )
 {
     unsigned int ix;
     const_ds d;
@@ -2459,16 +2457,14 @@ static bool depends_on( const char *pre, const char *suff, const tmstring t, con
    Collect these types in a new list.
    Repeat until all types are deleted from the input list.
  */
-static tmstring fndepsort( tmstring_list sl )
+static tmstring fndepsort( const_tmstring_list real_sl )
 {
-    unsigned int ix;
-    unsigned int foundix;
-    bool found;
     tmstring_list nl;
     tmstring t;
     tmstring ans;
     const char *pre;
     const char *suff;
+    tmstring_list sl = rdup_tmstring_list( real_sl );
 
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
@@ -2480,9 +2476,10 @@ static tmstring fndepsort( tmstring_list sl )
     }
     nl = new_tmstring_list();
     while( sl->sz!=0 ){
-	found = FALSE;
-	ix = 0;
-	foundix = 0;
+	bool found = FALSE;
+	unsigned int ix = 0;
+	unsigned int foundix = 0;
+
 	while( !found && ix<sl->sz ){
 	    t = sl->arr[ix];
 	    if( !depends_on( pre, suff, t, sl ) ){
@@ -2504,6 +2501,7 @@ static tmstring fndepsort( tmstring_list sl )
 	nl = append_tmstring_list( nl, rdup_tmstring( t ) );
 	sl = delete_tmstring_list( sl, foundix );
     }
+    rfre_tmstring_list( sl );
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
     return ans;
@@ -2518,7 +2516,7 @@ static tmstring fndepsort( tmstring_list sl )
  * List types depend on their element types; for nested types this
  * applies transitively.
  */
-static bool inherit_depends_on( const tmstring t, const tmstring_list tl )
+static bool inherit_depends_on( const_tmstring t, const_tmstring_list tl )
 {
     unsigned int ix;
     tmstring_list inherits;
@@ -2545,20 +2543,19 @@ static bool inherit_depends_on( const tmstring t, const tmstring_list tl )
    Collect these types in a new list.
    Repeat until all types are deleted from the input list.
  */
-static tmstring fninheritsort( tmstring_list sl )
+static tmstring fninheritsort( const_tmstring_list real_sl )
 {
-    unsigned int ix;
-    unsigned int foundix;
-    bool found;
     tmstring_list nl;
-    tmstring t;
     tmstring ans;
+    tmstring_list sl = rdup_tmstring_list( real_sl );
 
     nl = new_tmstring_list();
     while( sl->sz!=0 ){
-	found = FALSE;
-	ix = 0;
-	foundix = 0;
+        bool found = FALSE;
+        unsigned int ix = 0;
+        unsigned int foundix = 0;
+        tmstring t;
+
 	while( !found && ix<sl->sz ){
 	    t = sl->arr[ix];
 	    if( !inherit_depends_on( t, sl ) ){
@@ -2580,12 +2577,13 @@ static tmstring fninheritsort( tmstring_list sl )
 	nl = append_tmstring_list( nl, rdup_tmstring( t ) );
 	sl = delete_tmstring_list( sl, foundix );
     }
+    rfre_tmstring_list( sl );
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
     return ans;
 }
 
-static tmstring fndsfilename( const tmstring_list sl )
+static tmstring fndsfilename( const_tmstring_list sl )
 {
 
     if( sl->sz!=0 ){
@@ -2594,7 +2592,7 @@ static tmstring fndsfilename( const tmstring_list sl )
     return new_tmstring( dsfilename );
 }
 
-static tmstring fntplfilename( const tmstring_list sl )
+static tmstring fntplfilename( const_tmstring_list sl )
 {
 
     if( sl->sz!=0 ){
@@ -2603,7 +2601,7 @@ static tmstring fntplfilename( const tmstring_list sl )
     return new_tmstring( tplfilename );
 }
 
-static tmstring fntpllineno( const tmstring_list sl )
+static tmstring fntpllineno( const_tmstring_list sl )
 {
 
     if( sl->sz != 0 ){
@@ -2613,7 +2611,7 @@ static tmstring fntpllineno( const tmstring_list sl )
 }
 
 /* Return true iff the given argument is the name of a variable. */
-static tmstring fndefined( const tmstring_list sl )
+static tmstring fndefined( const_tmstring_list sl )
 {
     char *v;
 
@@ -2627,7 +2625,7 @@ static tmstring fndefined( const tmstring_list sl )
 }
 
 /* Return true iff the given argument is the name of a defined macro. */
-static tmstring fndefinedmacro( const tmstring_list sl )
+static tmstring fndefinedmacro( const_tmstring_list sl )
 {
     macro v;
 
@@ -2643,7 +2641,7 @@ static tmstring fndefinedmacro( const tmstring_list sl )
 /* matchmacro pat
  * Return a list of all macros whose name matches pattern 'pat'.
  */
-static tmstring fnmatchmacro( const tmstring_list sl )
+static tmstring fnmatchmacro( const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -2670,7 +2668,7 @@ static tmstring fnmatchmacro( const tmstring_list sl )
 /* matchvar pat
  * Return a list of all vars whose name matches pattern 'pat'.
  */
-static tmstring fnmatchvar( const tmstring_list sl )
+static tmstring fnmatchvar( const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -2697,7 +2695,7 @@ static tmstring fnmatchvar( const tmstring_list sl )
 /* -- nested evaluation: 'call' and 'eval' -- */
 
 /* Evaluate the given parameters again. */
-static tmstring fneval( const tmstring_list sl )
+static tmstring fneval( const_tmstring_list sl )
 {
     tmstring_list nl = new_tmstring_list();
     tmstring ans;
@@ -2714,7 +2712,7 @@ static tmstring fneval( const tmstring_list sl )
 }
 
 /* Call a macro. */
-static tmstring fncall( tmstring_list orgsl )
+static tmstring fncall( const_tmstring_list orgsl )
 {
     tmstring_list sl;
     tmstring nm;
@@ -2774,7 +2772,7 @@ static tmstring fncall( tmstring_list orgsl )
 /* -- OS interface -- */
 
 /* Return the search path */
-static tmstring fnsearchpath( const tmstring_list sl )
+static tmstring fnsearchpath( const_tmstring_list sl )
 {
     if( sl->sz!=0 ){
 	line_error( "'searchpath' does not need any parameters" );
@@ -2788,7 +2786,7 @@ static tmstring fnsearchpath( const tmstring_list sl )
  * list with '?'.
  * The access mode is assumed to be 'r'.
  */
-static tmstring fnsearchfile( const tmstring_list sl )
+static tmstring fnsearchfile( const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
@@ -2809,7 +2807,7 @@ static tmstring fnsearchfile( const tmstring_list sl )
 }
 
 /* See if an environment variable is set. */
-static tmstring fnisinenv( const tmstring_list sl )
+static tmstring fnisinenv( const_tmstring_list sl )
 {
     char *v;
 
@@ -2823,7 +2821,7 @@ static tmstring fnisinenv( const tmstring_list sl )
 }
 
 /* access of environment variables */
-static tmstring fngetenv( const tmstring_list sl )
+static tmstring fngetenv( const_tmstring_list sl )
 {
     const char *v;
 
@@ -2842,7 +2840,7 @@ static tmstring fngetenv( const tmstring_list sl )
 /* Return the current amount of processor time consumed by the program.
  * The time is expressed in milliseconds.
  */
-static tmstring fnprocessortime( const tmstring_list sl )
+static tmstring fnprocessortime( const_tmstring_list sl )
 {
     clock_t t_ticks = clock()-start_time;
     long t_ms = (1000*((long) t_ticks))/CLOCKS_PER_SEC;
@@ -2857,7 +2855,7 @@ static tmstring fnprocessortime( const tmstring_list sl )
 }
 
 /* Return the current clock time.  */
-static tmstring fnnow( const tmstring_list sl )
+static tmstring fnnow( const_tmstring_list sl )
 {
     char buf[30];
 
@@ -2872,7 +2870,7 @@ static tmstring fnnow( const tmstring_list sl )
 /* Given a time and a format string, generate a time string in the
  * given format.
  */
-static tmstring fnformattime( const tmstring_list sl )
+static tmstring fnformattime( const_tmstring_list sl )
 {
     char buf[STRBUFSIZE+1];
     time_t t;
@@ -2898,13 +2896,9 @@ static tmstring fnformattime( const tmstring_list sl )
     return new_tmstring( buf );
 }
 
-/***************************************************************
- *                                                             *
- *   function table                                            *
- *                                                             *
- ***************************************************************/
+/* ------ function table ------ */
 
-typedef tmstring (*charfn)( tmstring_list );
+typedef tmstring (*charfn)( const_tmstring_list );
 
 /* structure to describe an entry in the table of functions */
 struct fnentry {
@@ -3023,7 +3017,7 @@ static struct fnentry fntab[] = {
    by looking up the function name in a list and delegating evaluation to
    that function.
  */
-tmstring evalfn( const tmstring f )
+tmstring evalfn( const_tmstring f )
 {
     char *fnname;
     struct fnentry *fp;
