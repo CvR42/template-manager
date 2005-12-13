@@ -41,6 +41,8 @@ DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
             goodwords main.bib pdstitle.sty plot.ds .cvsignore \
 	    title.ct title.ds ch.sh cast.t alias.ds
 
+all: $(TOPFILE).pdf
+
 help:
 	@echo Possible targets:
 	@echo 'clean   - Remove all intermediate files.'
@@ -52,8 +54,6 @@ help:
 	@echo 'install - Install (dummy for compatibility reasons).'
 	@echo 'spell   - Run spelling check.'
 	@echo 'sort    - Sort spelling goodwords.'
-
-all: $(TOPFILE).pdf
 
 fast: $(TOPFILE).pdf
 

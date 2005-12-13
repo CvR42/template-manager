@@ -3,3 +3,5 @@
 ${len $s}, ${tolower $s}, ${toupper $s}, ${capitalize $s}
 ${strindex c $w}, ${strpad $w 15 -=}, ${strpad $w 3 -}
 ${tr ae ea creation and reality are no friends}
+${tochar 65 66 67}
+${leftstr 3 a ab abc abcd abcde}, ${rightstr 3 a ab abc abcd abcde}
