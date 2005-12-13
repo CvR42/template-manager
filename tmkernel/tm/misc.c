@@ -132,7 +132,7 @@ unsigned int find_field_ix( const Field_list fl, const char *nm )
 /* Search for tmstring 's' in the list 'l' and return TRUE if
    found or FALSE otherwise.
  */
-bool member_tmstring_list( const tmstring s, const tmstring_list l )
+bool member_tmstring_list( const_tmstring s, const_tmstring_list l )
 {
     unsigned int sno;
 
@@ -147,7 +147,7 @@ bool member_tmstring_list( const tmstring s, const tmstring_list l )
 /* Search for all strings 'sl' in the list 'l' and return TRUE if
  * any of them occurs in 'l', or FALSE otherwise.
  */
-bool any_member_tmstring_list( const tmstring_list sl, const tmstring_list l )
+bool any_member_tmstring_list( const_tmstring_list sl, const_tmstring_list l )
 {
     unsigned int ix;
 
@@ -232,7 +232,7 @@ tmstring_list extract_inherits( const ds_list types, const char *type )
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types that inherit 'type'.
  */
-void collect_subclasses( tmstring_list *res, const ds_list types, const tmstring type )
+void collect_subclasses( tmstring_list *res, const ds_list types, const_tmstring type )
 {
     tmstring_list queue;
 
@@ -263,13 +263,13 @@ void collect_subclasses( tmstring_list *res, const ds_list types, const tmstring
 void collect_superclasses( tmstring_list *res, const ds_list types, const char *type )
 {
     unsigned int ix;
-    const tmstring_list inherits = extract_inherits( types, type );
+    const_tmstring_list inherits = extract_inherits( types, type );
 
     if( inherits == tmstring_listNIL ){
 	return;
     }
     for( ix=0; ix<inherits->sz; ix++ ){
-	const tmstring t = inherits->arr[ix];
+	const_tmstring t = inherits->arr[ix];
 
 	if( !member_tmstring_list( t, *res ) ){
 	    collect_superclasses( res, types, t );
@@ -282,7 +282,7 @@ void collect_superclasses( tmstring_list *res, const ds_list types, const char *
  * and a type name 'type', collect into '*res' the types that inherit
  * 'type'.
  */
-void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring type )
+void collect_inheritors( tmstring_list *res, const ds_list types, const_tmstring type )
 {
     unsigned int tix;
     unsigned int ix;
@@ -299,7 +299,7 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring
     mine = new_tmstring_list();
     for( ix=0; ix<types->sz; ix++ ){
 	const ds d = types->arr[ix];
-	const tmstring_list inherits = d->inherits;
+	const_tmstring_list inherits = d->inherits;
 
 	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
 	    const char *nm = d->name;
@@ -410,7 +410,7 @@ void collect_inherited_fields( tmstring_list *fields, const ds_list types, const
 /* Given a description 'desc' and a list of tmstrings 'l', check
  * that the given list of tmstrings does not contain duplicate entries.
  */
-bool check_double_strings( const char *msg, const tmstring_list l )
+bool check_double_strings( const char *msg, const_tmstring_list l )
 {
     unsigned int ixa;
     unsigned int ixb;

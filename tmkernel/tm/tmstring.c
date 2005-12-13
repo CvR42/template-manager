@@ -192,7 +192,7 @@ tmstring_list chopstring( const char *p )
  * the total length of the required tmstring is
  *  sum(<all joined tmstrings>) + (n-1)*strlen(sep)
  */
-tmstring sepstrings( const tmstring_list sl, const char *sep )
+tmstring sepstrings( const_tmstring_list sl, const char *sep )
 {
     const char *cp;	/* pointer in copied tmstrings  */
     char *cs;		/* tmstring under construction */
@@ -228,13 +228,13 @@ tmstring sepstrings( const tmstring_list sl, const char *sep )
 /* Given a tmstring_list 'sl', construct one single tmstring from by separating
  * all tmstrings in 'sl' from each other with a ' '.
  */
-tmstring flatstrings( const tmstring_list sl )
+tmstring flatstrings( const_tmstring_list sl )
 {
     return sepstrings( sl, " " );
 }
 
 /* Return TRUE if this tmstring represents FALSE. */
-bool isfalsestr( const tmstring s )
+bool isfalsestr( const_tmstring s )
 {
     const char *p;
 
@@ -249,7 +249,7 @@ bool isfalsestr( const tmstring s )
 }
 
 /* Return TRUE if this tmstring does not represent FALSE. */
-bool istruestr( const tmstring s )
+bool istruestr( const_tmstring s )
 {
     const char *p;
 
@@ -267,7 +267,7 @@ bool istruestr( const tmstring s )
  * 'suff', return a new tmstring containing the list name constructed
  * from these ingredients.
  */
-tmstring mklistnm( const char *pre, const tmstring tnm, const char *suff, unsigned int level )
+tmstring mklistnm( const char *pre, const_tmstring tnm, const char *suff, unsigned int level )
 {
     size_t sz;
     tmstring res;

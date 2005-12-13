@@ -109,6 +109,8 @@ DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) \
     $(TMOUTPUT) $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES)
 
 
+all: $(PROG)
+
 help :
 	@echo " Possible make targets:"
 	@echo "all		Create local running programs."
@@ -119,8 +121,6 @@ help :
 	@echo "depend		Update dependencies in $(MAKEFILE)."
 	@echo "doc		Format documentation."
 	@echo "man		Format manual pages."
-
-all: $(PROG)
 
 $(PROG): $(OBJS)
 	$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) -o $(PROG)
