@@ -1,6 +1,6 @@
 /* File: $Id$
  *
- * Handle expressions.
+ * Evaluate template expressions.
  */
 
 #include "config.h"

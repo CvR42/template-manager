@@ -48,6 +48,7 @@
 .append wantdefs setroom_tmstring_list
 .append wantdefs delete_tmstring_list
 .append wantdefs extract_tmstring_list
+.append wantdefs extractlist_tmstring_list
 .append wantdefs insert_tmstring_list
 ..
 .append wantdefs ${prefix new_ ${subclasses tplelm}}
