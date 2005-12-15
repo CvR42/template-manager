@@ -47,6 +47,7 @@ and the remainder of the line is interpreted as a list of parameters.
 The list of parameters is evaluated each time the command is executed.
 Evaluation of the parameters does \emph{not} occur for termination commands
 (\texttt{.endif}, \texttt{.endforeach}, \texttt{.endwhile}, etc.).
+
 \subsection{Assignment}
 \label{s.assignment}
 Assignment statements modify the value of a variable. In most of these
@@ -54,22 +55,23 @@ statements, the new value is stored in the current \defn{context}.
 A context is created upon invocation of a macro, or the execution of a
 \verb'.include' command. Upon completion of the macro, or termination
 of the \verb'.include', the context is destroyed, and the old value of
-a variable (if it has a value in the old context) is visible again.
+a variable (if it has one in the old context) is visible again.
 This means that it usually is not necessary to worry about side-effects
 of macros or included files.
 
 Since in some cases it is desirable to allow side-effects, the
-\verb'.globalappend' and \verb'.globalset' commands are provided.
-These commands remove all current values of a variable from all
-contexts, and store the new value in the outermost context. As a result
-the new value is visible in all contexts.
+\verb'.globalappend', \verb'.globalset', and \verb'.globalsplit'
+commands are provided.  These commands remove all current values
+of a variable from all contexts, and store the new value in the
+outermost context. As a result the new value is visible in all
+contexts.
 \begin{verbatim}
 .set <var> <val>..<val>
 \end{verbatim}
 \begin{desc}
 \index{.set@\verb+.set+}
 Set variable \texttt{<var>} to the given list of values.
-The new value of the variable is visible in the current context.
+The new value of \texttt{<var>} is visible in the current context.
 \end{desc}
 \begin{verbatim}
 .append <var> <val>..<val>
@@ -78,7 +80,7 @@ The new value of the variable is visible in the current context.
 \index{.append@\verb+.append+}
 Append the given list of values after the current values of variable
 \texttt{<var>}.
-The new value of the variable is visible in the current context.
+The new value of \texttt{<var>} is visible in the current context.
 For example:
 \begin{showfile}
 \verbatiminput{append.xt}
@@ -88,21 +90,67 @@ will produce:
 \verbatiminput{append.out}
 \end{showfile}
 \end{desc}
+
+\begin{verbatim}
+.split <var1>..<varn> = <val1>..<valn>
+\end{verbatim}
+\begin{desc}
+\index{.split@\verb+.split+}
+Set variable \texttt{<var1>} to value \texttt{<val1>}, variable
+\texttt{<var2>} to value \texttt{<val2>}, and so on. The list of
+parameters to the \texttt{.split} must contain at least one word
+that is the equal sign (`\verb'=''). The first such occurence indicates
+the end of the list of variables, and the beginning of the list of
+values. The new value of the variables is visible in the current context.
+
+There must be at least be one variable. If there are fewer values
+than variables, the last variables are set to the empty string. If
+there are more values than variables, the last variable gets all
+remaining values.
+
+For example:
+\begin{showfile}
+\verbatiminput{split.xt}
+\end{showfile}
+will produce:
+\begin{showfile}
+\verbatiminput{split.out}
+\end{showfile}
+\end{desc}
+
 \begin{verbatim}
 .globalappend <var> <val> <val> <val>
 \end{verbatim}
 \begin{desc}
 Append the given list of values after the current value of variable
-\verb'<var>'. The new value of the variable visible in \emph{all}
+\verb'<var>'. The new value of \texttt{<var>} is visible in \emph{all}
 variable contexts.
 \end{desc}
 \begin{verbatim}
-.globalset <expr>
+.globalset <var> <val>..<val>
 \end{verbatim}
 \begin{desc}
 Set variable \verb'<var>' to the given list of values.  The new value
-of the variable visible to \emph{all} variable contexts.
+of \texttt{<var>} is visible in \emph{all} variable contexts.
 \end{desc}
+\begin{verbatim}
+.globalsplit <var1>..<varn> = <val1>..<valn>
+\end{verbatim}
+\begin{desc}
+Set variable \texttt{<var1>} to value \texttt{<val1>}, variable
+\texttt{<var2>} to value \texttt{<val2>}, and so on. The new values
+of the variables are visible in \emph{all} variable contexts. The list of
+parameters to the \texttt{.split} must contain at least one word
+that is the equal sign (`\verb'=''). The first such occurence indicates
+the end of the list of variables, and the beginning of the list of
+values.
+
+There must be at least be one variable. If there are fewer values
+than variables, the last variables are set to the empty string. If
+there are more values than variables, the last variable gets all
+remaining values.
+\end{desc}
+
 \subsection{Datastructure modification}
 These commands directly modify the data structures that have been
 read in from the data structure file. There is no way to revert the
@@ -125,7 +173,7 @@ nor is it allowed to introduce inheritance cycles.
 \begin{desc}
 \index{.deletetype@\verb+.deletetype+}
 Delete the definitions of all given types. Deletion requests for
-non-existing types is silently ignored.
+non-existing types are silently ignored.
 \end{desc}
 For example, these commands can be used to remove alias types from
 data structures. Given the following data structure definition file
