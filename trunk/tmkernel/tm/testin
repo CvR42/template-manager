@@ -543,17 +543,23 @@ ${call tv 1 2} ${call} ${call tv}
 [${call tv ""}]
 .macro testglobal
 .globalset gv 2
+.globalsplit gs1 gs2 = a b c d
 .set ngv 2
+.split ngs1 ngs2 = a b c d
 .globalappend gl test
 .append ngl test
 .endmacro
 .set gv 1
 .set ngv 1
+.split gs1 gs2 = w x y z
+.split ngs1 ngs2 = w x y z
 .set gl 123
 .set ngl 123
 gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
+gs1: [$(gs1)] gs2: [$(gs2)] ngs1: [$(ngs1)] ngs2: [$(ngs2)]
 .call testglobal
 gv: $(gv), ngv: $(ngv) gl: [$(gl)], ngl: [$(ngl)]
+gs1: [$(gs1)] gs2: [$(gs2)] ngs1: [$(ngs1)] ngs2: [$(ngs2)]
 matchmacro: '${matchmacro *}' '${matchmacro}' '${matchmacro (*}'
 definedmacro: '${definedmacro testglobal}' '${definedmacro iserniet}' '${definedmacro}' '${definedmacro testglobal testglobal}'
 matchvar: '${matchvar *}' '${matchvar}' '${matchvar *e*}'
@@ -582,3 +588,11 @@ ${formattime 1000000 "%m/%d/%Y %H:%M:%S"}
 ${formattime 10000000 "%m/%d/%Y %H:%M:%S"}
 ${formattime 100000000 "%m/%d/%Y %H:%M:%S"}
 ${formattime 1000000000 "%m/%d/%Y %H:%M:%S"}
+
+-- .split --
+.foreach pat "a b" "a b c" "a" "a b c d e f" ""
+.split v1 v2 = $(pat)
+'$(pat)' -> v1: '$(v1)' v2: '$(v2)'
+.endforeach
+.split v1 v2
+.split = a b c{formattime 1000000000 "%m/%d/%Y %H:%M:%S"}
