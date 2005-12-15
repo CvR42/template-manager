@@ -49,6 +49,15 @@ d: 3
 e: default
 f: default
 ----
+aap: 1
+aap: 3
+boek: 1
+ccc: default
+daf: 2
+daf: 3
+eend: default
+fado: default
+----
 
 for:
 ---
@@ -219,7 +228,7 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '289'
+tpllineno: '302'
 1 bla
 testsub
 ----

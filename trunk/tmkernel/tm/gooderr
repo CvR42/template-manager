@@ -70,4 +70,6 @@ testin: bad regular expression: Unmatched '('
 testin: 'definedmacro' requires exactly one parameter: not 0
 testin: 'definedmacro' requires exactly one parameter: not 2
 testin: 'matchvar' requires exactly one parameter: not 0
+testin: .split: no '=' found
+testin: .split: no variables
 errors detected, program aborted
