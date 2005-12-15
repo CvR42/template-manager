@@ -1,5 +1,7 @@
 New in version 2.2.0 ???
 
+- regular expressions in .switch cases.
+- Added the .split and .globalsplit statements.
 - Added the 'tochar' template function.
 - Added the 'leftstr' and 'rightstr' template functions.
 - Lots of const correctness.
