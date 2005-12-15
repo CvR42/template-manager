@@ -52,7 +52,7 @@ static unsigned int hashval( const char *s )
     unsigned int v = 0;
 
     while( *s!= '\0' ){
-	 v = (v ^ *s);
+	 v = (v ^ (unsigned int) *s);
 	 v<<=1;
 	 if( v & HASHWIDTH ) v++;
 	 v &= HASHMASK;
