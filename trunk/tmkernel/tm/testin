@@ -107,6 +107,19 @@ $v: default
 .endswitch
 .endforeach
 ----
+.foreach v aap boek ccc daf eend fado
+.switch $v
+.case a* b*
+$v: 1
+.case d*
+$v: 2
+.case a* d*
+$v: 3
+.default
+$v: default
+.endswitch
+.endforeach
+----
 
 for:
 ---
