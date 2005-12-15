@@ -1023,10 +1023,12 @@ v:[toplevelv]
 []
 []
 gv: 1, ngv: 1 gl: [123], ngl: [123]
+gs1: [w] gs2: [x y z] ngs1: [w] ngs2: [x y z]
 gv: 2, ngv: 1 gl: [123 test], ngl: [123]
+gs1: [a] gs2: [b c d] ngs1: [w] ngs2: [x y z]
 matchmacro: 'testglobal test tv' '' ''
 definedmacro: '1' '0' '0' '0'
-matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff i var l bad op libpath pass t av test2 msg v test1 tmvers x ngl y gv pats z wildstring unknownvariable pathsep yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
+matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff gs1 i var gs2 l bad op libpath pass t av test2 msg v test1 tmvers x ngl y gv pats z wildstring unknownvariable pathsep ngs1 ngs2 yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
 ----
 
 Eval
@@ -1050,3 +1052,10 @@ Test time formatting
 04/26/1970 17:46:40
 03/03/1973 09:46:40
 09/09/2001 01:46:40
+
+-- .split --
+'a b' -> v1: 'a' v2: 'b'
+'a b c' -> v1: 'a' v2: 'b c'
+'a' -> v1: 'a' v2: ''
+'a b c d e f' -> v1: 'a' v2: 'b c d e f'
+'' -> v1: '' v2: ''
