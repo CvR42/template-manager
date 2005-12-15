@@ -158,7 +158,7 @@ Set variable \texttt{<var>} to each of the values \texttt{<val>} and do a
 translation of all following lines up to the next unbalanced
 \texttt{.endforeach} for each of these values of \texttt{<var>}.
 The new value of the variable is only visible in the current context.
-See section~\ref{s.assignment} for a discussion of contexts.
+See \S\ref{s.assignment} for a discussion of contexts.
 
 For example:
 \begin{showfile}
@@ -186,7 +186,7 @@ After each iteration, increment the value of
 \texttt{<var>} with the value 
 \texttt{<stride>}, or with 1 if no stride is specified.
 The new value of the variable is only visible in the current context.
-See section~\ref{s.assignment} for a discussion of contexts.
+See \S\ref{s.assignment} for a discussion of contexts.
 
 The values 
 \texttt{<start>},
@@ -237,17 +237,22 @@ will produce:
 \begin{desc}
 Evaluate the parameter of the \verb'.switch' expression; the result
 should be a single word. Evaluate all \verb'.case' lines from top
-to bottom, and if the list of words of a \verb'.case' line contains
-the word that is switched on, execute the lines of that case.
+to bottom, and if one of the words of a \verb'.case' line matches
+the word of the \verb'.switch' statement, execute the lines of that case.
 Execution stops at the next \verb'.case' or \verb'.default' line,
 or at the \verb'.endswitch' line.
 
+The words of the \verb'.case' lines may contain regular
+expressions, see \S\ref{s.regex} for details.
+
+Note that a word in the \verb'.switch' may match several \verb'.case'
+lines. All of these cases will be executed.
 If the list of cases is exhausted, but no case has been executed,
 execute the statement in the \verb'.default' section, if it exists.
 
-The list of words of a case statement may contain any number of words,
+The list of words of a \verb'.case' statement may contain any number of words,
 including no words at all. There can be at most one \verb'.default'
-section. Note that more than one case can be executed for a switch value.
+section.
 
 For example:
 \begin{showfile}
@@ -434,11 +439,11 @@ variable `\texttt{b}' is referenced, not the variable `\texttt{bla}'.
 If the characters `\texttt{\$\{}' are encountered the evaluated string up to
 the next unbalanced `\texttt{\}}' is interpreted as a function invocation,
 and the result of that function replaces the invocation string,
-see section~\ref{s.fn}.
+see \S\ref{s.fn}.
 If the characters `\texttt{\$[}' are encountered the evaluated string up
 to the next unbalanced `\texttt{]}' is interpreted as an integer expression,
 and the result of the evaluation of that expression replaces the expression,
-see section~\ref{s.intexpr}.
+see \S\ref{s.intexpr}.
 If any other character is encountered after the `\texttt{\$}',
 it is copied literally.
 
@@ -948,14 +953,14 @@ Return the current line number in the current template file.
 \\
 \texttt{matchvar pat}\index{matchvar@\texttt{machvar}}
 &
-Given a regular expression as defined in section~\ref{s.regex},
+Given a regular expression as defined in \S\ref{s.regex},
 return a list of all variables that match this regular expression.
 In particular, \verb'${matchvar *}' will return a list of all
 variables. The order of the returned list is arbitrary.
 \\
 \texttt{matchmacro pat}\index{matchmacro@\texttt{machmacro}}
 &
-Given a regular expression as defined in section~\ref{s.regex},
+Given a regular expression as defined in \S\ref{s.regex},
 return a list of all macros that match this regular expression.
 In particular, \verb'${matchmacro *}' will return a list of all
 macros. The order of the returned list is arbitrary.
