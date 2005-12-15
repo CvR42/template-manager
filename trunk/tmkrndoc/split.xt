@@ -1,0 +1,6 @@
+.split a b = first second
+a: [$a], b: [$b]
+.split a b = first
+a: [$a], b: [$b]
+.split a b = first second third
+a: [$a], b: [$b]
