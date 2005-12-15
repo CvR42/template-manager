@@ -681,7 +681,7 @@ static tmstring fnrightstr( const_tmstring_list sl )
         size_t sz = strlen( s );
         
         if( sz>(size_t) n  ){
-            memmove( s, s+(sz-n), (unsigned int) n );
+            memmove( s, s+(sz-n), (size_t) n );
             s[n] = '\0';
         }
 	nl = append_tmstring_list( nl, s );
@@ -2994,7 +2994,7 @@ typedef tmstring (*charfn)( const_tmstring_list );
 /* structure to describe an entry in the table of functions */
 struct fnentry {
     const char *fnname;
-    charfn fncode;
+    const charfn fncode;
 };
 
 /* table of functions. It is terminated by an entry with an
