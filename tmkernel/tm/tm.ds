@@ -56,8 +56,10 @@ tplelm = { lno:int } +
     If: { cond:tmstring, ifthen:[tplelm], ifelse:[tplelm] } |
     Switch: { val:tmstring, cases:[Switchcase], deflt:[tplelm] } |
     Set: { line:tmstring } |
+    Split: { line:tmstring } |
     Rename: { line:tmstring } |
     GlobalSet: { line:tmstring } |
+    GlobalSplit: { line:tmstring } |
     Append: { line:tmstring } |
     GlobalAppend: { line:tmstring } |
     DeleteType: { line:tmstring } |

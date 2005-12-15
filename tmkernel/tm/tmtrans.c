@@ -24,8 +24,9 @@
 #include "misc.h"
 #include "tmtrans.h"
 #include "var.h"
-#include "srchfile.h"
 #include "checkds.h"
+#include "refex.h"
+#include "srchfile.h"
 
 /* tags for command table */
 typedef enum en_tmcommands {
@@ -51,6 +52,7 @@ typedef enum en_tmcommands {
     FOREACH,
     GLOBALAPPEND,
     GLOBALSET,
+    GLOBALSPLIT,
     IF,
     INCLUDE,
     INSERT,
@@ -59,6 +61,7 @@ typedef enum en_tmcommands {
     RENAME,
     RETURN,
     SET,
+    SPLIT,
     SWITCH,
     WHILE
 } tmcommand;
@@ -84,8 +87,8 @@ static struct dotcom dotcomlist[] = {
     { "deletetype", DELETETYPE },
     { "else", ELSE },
     { "endappendfile", ENDAPPENDFILE },
-    { "endforeach", ENDFOREACH },
     { "endfor", ENDFOR },
+    { "endforeach", ENDFOREACH },
     { "endif", ENDIF },
     { "endmacro", ENDMACRO },
     { "endredirect", ENDREDIRECT },
@@ -97,6 +100,7 @@ static struct dotcom dotcomlist[] = {
     { "foreach", FOREACH },
     { "globalappend", GLOBALAPPEND },
     { "globalset", GLOBALSET },
+    { "globalsplit", GLOBALSPLIT },
     { "if", IF },
     { "include", INCLUDE },
     { "insert", INSERT },
@@ -105,6 +109,7 @@ static struct dotcom dotcomlist[] = {
     { "rename", RENAME },
     { "return", RETURN },
     { "set", SET },
+    { "split", SPLIT },
     { "switch", SWITCH },
     { "while", WHILE },
     { "", SET }		/* end of table mark */
@@ -173,15 +178,13 @@ static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 {
     unsigned int ix;
     tplelm_list block;
-    tplelm_list deflt;
+    tplelm_list deflt = tplelm_listNIL;
     Switchcase_list cases;
     switchstate state = SWS_NONE;
-    tmstring val;
+    tmstring val = tmstringNIL;
 
     block = new_tplelm_list();
     cases = new_Switchcase_list();
-    deflt = tplelm_listNIL;
-    val = tmstringNIL;
     for( ix=0; ix<el->sz; ix++ ){
 	const_tplelm e = el->arr[ix];
 
@@ -460,6 +463,16 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			tel = append_tplelm_list( tel, te );
 			break;
 
+		    case SPLIT:
+			te = (tplelm) new_Split( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
+		    case GLOBALSPLIT:
+			te = (tplelm) new_GlobalSplit( tpllineno, new_tmstring( p ) );
+			tel = append_tplelm_list( tel, te );
+			break;
+
 		    case RETURN:
 			te = (tplelm) new_Return( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
@@ -523,7 +536,7 @@ tmstring alevalto( char **spi, const int sc )
 
     si = *spi;
     cp = new_tmstring( si );
-    croom = (int) strlen( si );
+    croom = (unsigned int) strlen( si );
     six = 0;
     if( sevaltr ){
 	if( sc == '\0' ){
@@ -874,6 +887,114 @@ static void doset( const_Set tpl )
     fre_tmstring( nm );
 }
 
+/* Handle 'split' command. */
+static void dosplit( const_Split tpl )
+{
+    tmstring val;
+    tmstring_list sl;
+    tmstring_list rest;
+    unsigned int seppos = 0;
+    unsigned int valix;
+    unsigned int varix;
+
+    char *is = tpl->line;
+    char *os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+
+    while( seppos<sl->sz ){
+        tmstring s = sl->arr[seppos];
+
+        if( s[0] == '=' && s[1] == '\0' ){
+            break;
+        }
+        seppos++;
+    }
+    if( seppos>=sl->sz ){
+	line_error( ".split: no '=' found" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    if( seppos==0 ){
+	line_error( ".split: no variables" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    valix = seppos+1;
+    varix = 0;
+
+    while( varix+1<seppos ){
+        if( valix<sl->sz ){
+            setvar( sl->arr[varix], sl->arr[valix] );
+            valix++;
+        }
+        else {
+            setvar( sl->arr[varix], "" );
+        }
+        varix++;
+    }
+    sl = extractlist_tmstring_list( sl, valix, sl->sz, &rest );
+    val = flatstrings( rest );
+    setvar( sl->arr[varix], val );
+    rfre_tmstring_list( sl );
+    rfre_tmstring_list( rest );
+    fre_tmstring( val );
+}
+
+/* Handle 'globalsplit' command. */
+static void doglobalsplit( const_GlobalSplit tpl )
+{
+    tmstring val;
+    tmstring_list sl;
+    tmstring_list rest;
+    unsigned int seppos = 0;
+    unsigned int valix;
+    unsigned int varix;
+
+    char *is = tpl->line;
+    char *os = alevalto( &is, '\0' );
+    sl = chopstring( os );
+    fre_tmstring( os );
+
+    while( seppos<sl->sz ){
+        tmstring s = sl->arr[seppos];
+
+        if( s[0] == '=' && s[1] == '\0' ){
+            break;
+        }
+        seppos++;
+    }
+    if( seppos>=sl->sz ){
+	line_error( ".globalsplit: no '=' found" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    if( seppos==0 ){
+	line_error( ".globalsplit: no variables" );
+	rfre_tmstring_list( sl );
+	return;
+    }
+    valix = seppos+1;
+    varix = 0;
+
+    while( varix+1<seppos ){
+        if( valix<sl->sz ){
+            globalsetvar( sl->arr[varix], sl->arr[valix] );
+            valix++;
+        }
+        else {
+            globalsetvar( sl->arr[varix], "" );
+        }
+        varix++;
+    }
+    sl = extractlist_tmstring_list( sl, valix, sl->sz, &rest );
+    val = flatstrings( rest );
+    globalsetvar( sl->arr[varix], val );
+    rfre_tmstring_list( rest );
+    rfre_tmstring_list( sl );
+    fre_tmstring( val );
+}
+
 /* Given a tmstring 's', an old type name 'old' and a new type name 'nw'.
  * replace the string with a copy of 'nw'  if it is equal to 'old'.
  */
@@ -1155,6 +1276,29 @@ static void doif( const_If tpl, FILE *outfile )
     }
 }
 
+static bool matches_tmstring( const_tmstring word, const_tmstring pattern )
+{
+    const char *errm = ref_comp( pattern );
+    if( errm != NULL ){
+        strcpy( errarg, errm );
+        line_error( "bad regular expression" );
+        return FALSE;
+    }
+    return ref_exec( word );
+}
+
+static bool matches_tmstring_list( const_tmstring word, const_tmstring_list patterns )
+{
+    unsigned int i;
+
+    for( i=0; i<patterns->sz; i++ ){
+        if( matches_tmstring( word, patterns->arr[i] ) ){
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 /* Handle 'switch' command. */
 static void doswitch( const_Switch tpl, FILE *outfile )
 {
@@ -1189,7 +1333,7 @@ static void doswitch( const_Switch tpl, FILE *outfile )
 	sentence = alevalto( &caseval, '\0' );
 	words = chopstring( sentence );
 	rfre_tmstring( sentence );
-	if( member_tmstring_list( sl->arr[0], words ) ){
+	if( matches_tmstring_list( sl->arr[0], words ) ){
 	    /* We've got a match. */
 	    dotrans( cases->arr[ix]->action, outfile );
 	    visited = TRUE;
@@ -1350,7 +1494,7 @@ static void docall( const_Call tpl, FILE *outfile )
     tmstring_list fpl;
     tmstring oldfname;
     unsigned int ix;
-    macro m;
+    const_macro m;
 
     is = tpl->line;
     os = alevalto( &is, '\0' );
@@ -1449,6 +1593,14 @@ void dotrans( const_tplelm_list tpl, FILE *outfile )
 
 	    case TAGGlobalSet:
 		doglobalset( to_const_GlobalSet( e ) );
+		break;
+
+	    case TAGSplit:
+		dosplit( to_const_Split( e ) );
+		break;
+
+	    case TAGGlobalSplit:
+		doglobalsplit( to_const_GlobalSplit( e ) );
 		break;
 
 	    case TAGReturn:
