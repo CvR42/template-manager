@@ -15,10 +15,10 @@ the \texttt{.set} command (to set some parameters for the modules),
 and the \texttt{..} command (to add comments to the {\Tm} input).
 \section{Conventions}
 Boolean functions return the string `\texttt{0}' for
-{\it false} or the string `\texttt{1}' for {\it true}.
+\textit{false} or the string `\texttt{1}' for \textit{true}.
 At places where a boolean expression is expected,
-the string `\texttt{0}' is {\it false},
-all other strings are {\it true}.
+the string `\texttt{0}' is \textit{false},
+all other strings are \textit{true}.
 
 A \defn{number} is a string of digits with an optional sign before it.
 
@@ -255,12 +255,12 @@ will produce:
 \begin{desc}
 \index{.if@\verb+.if+}
 Evaluate \texttt{<expr>}.
-If \texttt{<expr>} is {\it true},
+If \texttt{<expr>} is \textit{true},
 translate the following lines up to the next unbalanced
 \texttt{.else} or \texttt{.endif}
 and if relevant skip all lines between \texttt{.else} and \texttt{.endif}.
 
-If \texttt{<expr>} is {\it false},
+If \texttt{<expr>} is \textit{false},
 only translate all lines between the following unbalanced
 \texttt{.else} and \texttt{.endif}.
 If no \texttt{.else} is encountered, no translation is done.
@@ -315,8 +315,8 @@ will produce:
 \begin{desc}
 \index{.while@\verb+.while+}
 Evaluate \texttt{<expr>} and translate the subsequent lines up to the next
-unbalanced \texttt{.endwhile} if \texttt{<expr>} is {\it true}.
-Repeat this until \texttt{<expr>} is {\it false}.
+unbalanced \texttt{.endwhile} if \texttt{<expr>} is \textit{true}.
+Repeat this until \texttt{<expr>} is \textit{false}.
 \end{desc}
 \subsection{File inclusion and redirection}
 \begin{verbatim}
@@ -502,7 +502,7 @@ The absolute directory path of the library of standard modules.
 This may differ between installations,
 so use this variable to locate the library, or let {\Tm} locate
 it using its search path.
-By default Tm uses a built-in path, but you can change this by setting
+By default {\Tm} uses a built-in path, but you can change this by setting
 the environment variable TMLIBPATH\index{TMLIBPATH@\verb'TMLIBPATH'}.
 \\
 \texttt{pathsep}\index{pathsep@\texttt{pathsep}}
@@ -529,8 +529,8 @@ code.
 \texttt{verbose}\index{verbose@\texttt{verbose}}
 &
 The verbose flag.
-It is {\it true} if the flag \texttt{-v} has been given at the command line,
-else {\it false}.
+It is \textit{true} if the flag \texttt{-v} has been given at the command line,
+else \textit{false}.
 \end{desctab}
 
 The variables \texttt{listpre} and \texttt{listsuff} are used by the functions
@@ -559,41 +559,41 @@ is different from `\texttt{00}').
 \begin{desctab}
 \texttt{eq sa sb}\index{eq@\texttt{eq}}
 &
-Return {\it true} if the string $\verb'sa' = \verb'sb'$.
+Return \textit{true} if the string $\verb'sa' = \verb'sb'$.
 Strings are equal if they are of the same length and are have the
 same character at the same position in the string.
 To compare numbers use \texttt{==}.
 \\
 \texttt{neq sa sb}\index{neq@\texttt{neq}}
 &
-Return {\it true} if the string $\texttt{sa} \not= \texttt{sb}$.
+Return \textit{true} if the string $\texttt{sa} \not= \texttt{sb}$.
 To compare numbers use \verb'!='.
 \\
 \texttt{== na nb}\index{==@\texttt{==}}
 &
-Return {\it true} if $\texttt{na} = \texttt{nb}$.
+Return \textit{true} if $\texttt{na} = \texttt{nb}$.
 To compare strings use \texttt{eq}.
 \\
 \verb'!= na nb'\index{"!=@\texttt{"!=}}
 &
-Return {\it true} if $\texttt{na} \not= \texttt{nb}$.
+Return \textit{true} if $\texttt{na} \not= \texttt{nb}$.
 To compare strings use \texttt{neq}.
 \\
 \texttt{< na nb}\index{<@\texttt{<}}
 &
-Return {\it true} if $\texttt{na} < \texttt{nb}$.
+Return \textit{true} if $\texttt{na} < \texttt{nb}$.
 \\
 \texttt{<= na nb}\index{<=@\texttt{<=}}
 &
-Return {\it true} if $\texttt{na} \leq \texttt{nb}$.
+Return \textit{true} if $\texttt{na} \leq \texttt{nb}$.
 \\
 \texttt{> na nb}\index{>@\texttt{>}}
 &
-Return {\it true} if $\texttt{na} > \texttt{nb}$.
+Return \textit{true} if $\texttt{na} > \texttt{nb}$.
 \\
 \texttt{>= na nb}\index{>=@\texttt{>=}}
 &
-Return {\it true} if $\texttt{na} \geq \texttt{nb}$.
+Return \textit{true} if $\texttt{na} \geq \texttt{nb}$.
 \end{desctab}
 For example:
 \begin{showfile}
@@ -654,24 +654,24 @@ will produce:
 \begin{desctab}
 \texttt{and b1..bn}\index{and@\texttt{and}}
 &
-Return {\it true} if all of \texttt{b1} {\ldots} \texttt{bn} are {\it true},
-or else {\it false}.
-The \texttt{and} of an empty list is {\it true}.
+Return \textit{true} if all of \texttt{b1} {\ldots} \texttt{bn} are \textit{true},
+or else \textit{false}.
+The \texttt{and} of an empty list is \textit{true}.
 \\
 \texttt{not b}\index{not@\texttt{not}}
 &
-Return {\it true} if \texttt{b} is {\it false}, or else {\it true}.
+Return \textit{true} if \texttt{b} is \textit{false}, or else \textit{true}.
 \\
 \texttt{or b1..bn}\index{or@\texttt{or}}
 &
-Return {\it true} if one of \texttt{b1}
-{\ldots} \texttt{bn} is {\it true},
-or else {\it false}.
-The \texttt{or} of an empty list is {\it false}.
+Return \textit{true} if one of \texttt{b1}
+{\ldots} \texttt{bn} is \textit{true},
+or else \textit{false}.
+The \texttt{or} of an empty list is \textit{false}.
 \\
 \texttt{if cond a b}
 &
-Evaluate the expression \texttt{cond}, and if it is {\it true}, return
+Evaluate the expression \texttt{cond}, and if it is \textit{true}, return
 \texttt{a}, else return \texttt{b}.
 If \texttt{a} or \texttt{b} are absent, an empty string is assumed.
 \end{desctab}
@@ -757,8 +757,8 @@ or 0 if \texttt{w} does not occur in the list.
 \\
 \texttt{member w e..e}\index{member@\texttt{member}}
 &
-Return {\it true} if word \verb'w' occurs in the list of elements,
-or {\it false} if it does not.
+Return \textit{true} if word \verb'w' occurs in the list of elements,
+or \textit{false} if it does not.
 \\
 \texttt{shift e..e}\index{shift@\texttt{shift}}
 &
@@ -962,7 +962,7 @@ If the variable does not exist an empty string is returned.
 \texttt{isinenv nm}\index{isinenv@\texttt{isinenv}}
 &
 Determine whether environment variable \texttt{nm} exists.
-Return {\it true} if it exists, or {\it false} \/if it does not.
+Return \textit{true} if it exists, or \textit{false} \/if it does not.
 \\
 \texttt{dsfilename}\index{dsfilename@\texttt{dsfilename}}
 &
@@ -1013,13 +1013,13 @@ macros. The order of the returned list is arbitrary.
 \\
 \texttt{defined v}\index{defined@\texttt{defined}}
 &
-Return {\it true} if variable \texttt{v} is defined,
-or {\it false} otherwise.
+Return \textit{true} if variable \texttt{v} is defined,
+or \textit{false} otherwise.
 \\
 \texttt{definedmacro m}\index{definedmacro@\texttt{definedmacro}}
 &
-Return {\it true} if macro \texttt{m} is defined,
-or {\it false} otherwise.
+Return \textit{true} if macro \texttt{m} is defined,
+or \textit{false} otherwise.
 \end{desctab}
 
 For example:
