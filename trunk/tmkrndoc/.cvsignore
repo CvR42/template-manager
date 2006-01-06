@@ -1,4 +1,5 @@
 *.aux
+*.out
 *.ps
 *.ps.gz
 dist.lst

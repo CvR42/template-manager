@@ -1,8 +1,0 @@
-/* Enum type 'expr'. */
-typedef enum en_expr {
-    TAGExprConst = 0,
-    TAGExprPlus = 1,
-    TAGExprMinus = 2,
-    TAGExprVar = 3
-} expr;
-
