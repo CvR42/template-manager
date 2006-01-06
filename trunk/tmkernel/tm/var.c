@@ -326,11 +326,12 @@ void newvarctx( void )
 void flushvar( void )
 {
     unsigned int hv;
-    var_list vl;
-    macro_list ml;
     unsigned int ix;
 
     for( hv=0; hv<HASHWIDTH; hv++ ){
+        var_list vl;
+        macro_list ml;
+
 	vl = variables[hv];
 	ix = 0;
 	while( ix<vl->sz ){
