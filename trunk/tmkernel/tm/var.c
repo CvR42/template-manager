@@ -326,11 +326,11 @@ void newvarctx( void )
 void flushvar( void )
 {
     unsigned int hv;
-    unsigned int ix;
 
     for( hv=0; hv<HASHWIDTH; hv++ ){
         var_list vl;
         macro_list ml;
+        unsigned int ix;
 
 	vl = variables[hv];
 	ix = 0;
@@ -365,9 +365,8 @@ void flushvar( void )
  */
 tmstring getvar( const char *nm )
 {
-    var v;
+    var v = findvar( nm );
 
-    v = findvar( nm );
     if( v != varNIL ){
 	if( vartr )
 	    fprintf( tracestream, "found: %s = '%s' (ctx=%u)\n", nm, v->val, v->lvl );
@@ -382,9 +381,8 @@ tmstring getvar( const char *nm )
  */
 tmstring getretval( void )
 {
-    var v;
+    var v = findlocvar( RETVALNAME );
 
-    v = findlocvar( RETVALNAME );
     if( v != varNIL ){
 	if( vartr ){
 	    fprintf(
