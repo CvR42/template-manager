@@ -1535,8 +1535,8 @@ for various templates (e.g. the \texttt{print} functions).
 For the library the following files are provided:
 
 \begin{desctab}
-\texttt{libtmc.a} & The library itself. \\
-\texttt{tmc.h} & The header file with declarations for the library functions. \\
+\item[\texttt{libtmc.a}] The library itself.
+\item[\texttt{tmc.h}] The header file with declarations for the library functions. \\
 \end{desctab}
 \subsection{Print optimizer functions}
 The print optimizer will attempt as much as possible to write a constructor,
@@ -2428,63 +2428,53 @@ it is not necessary to set them;
 a reasonable default will be chosen.
 \par
 \begin{desctab}
-\texttt{basename}\index{basename@\texttt{basename}}
-&
+\item[\texttt{basename}]\index{basename@\texttt{basename}}
 This variable is used to generate the names of
 definitions that are generated only once
 (e.g. initialization and statistics functions).
 This variable \emph{must} be set.
-\\
-\texttt{wantdefs}\index{wantdefs@\texttt{wantdefs}}
-&
-If set,
-this variable contains the names of the type and function definitions that
-must be generated.
-If these functions require the definition of other functions,
-the necessary functions will be generated,
-but will be declared \texttt{static}.
-If \texttt{alldefs} is set all possible definitions are generated.
-\\
-\texttt{notwantdefs}\index{notwantdefs@\texttt{notwantdefs}}
-&
+
+\item[\texttt{wantdefs}]\index{wantdefs@\texttt{wantdefs}}
+If set, this variable contains the names of the type and function
+definitions that must be generated.  If these functions require the
+definition of other functions, the necessary functions will be
+generated, but will be declared \texttt{static}.  If \texttt{alldefs}
+is set all possible definitions are generated.
+
+\item[\texttt{notwantdefs}]\index{notwantdefs@\texttt{notwantdefs}}
 If set, this variable contains the names of the type and function
 definitions for which under \emph{all} conditions \emph{no} code must
 be generated.
-\\
-\texttt{alldefs}\index{alldefs@\texttt{alldefs}}
-&
-If set,
-this variable indicates that all possible type and function definitions, and
-all functions for first level lists, must be generated for all defined types.
+
+\item[\texttt{alldefs}]\index{alldefs@\texttt{alldefs}}
+If set, this variable indicates that all possible type and function
+definitions, and all functions for first level lists, must be
+generated for all defined types.
 \end{desctab}
-\par
+
 At least one of the variables \texttt{wantdefs} and \texttt{alldefs}
 must be set.
-\par
+
 In the generated {\C} code a number of preprocessor variables are used:
-\par
+
 \begin{desctab}
-\texttt{FATAL(msg)}\index{FATAL@\texttt{FATAL()}}
-&
+\item[\texttt{FATAL(msg)}]\index{FATAL@\texttt{FATAL()}}
 \texttt{\#define} this if you want to supply a fatal error handler to print
 \texttt{msg}.
 By default \verb'tm_fatal()' is used,
 see section~\ref{s.csupportlib}.
-\\
-\texttt{FIRSTROOM}\index{FIRSTROOM@\texttt{FIRSTROOM}}
-&
+
+\item[\texttt{FIRSTROOM}]\index{FIRSTROOM@\texttt{FIRSTROOM}}
 The initial room of an array when created with \verb+new_<type>_list()+.
 Default it is 0.
-\\
-\texttt{LOGNEW}\index{LOGNEW@\texttt{LOGNEW}}
-&
+
+\item[\texttt{LOGNEW}]\index{LOGNEW@\texttt{LOGNEW}}
 \texttt{\#define} this if you want code to record the origin of all
 \verb+new_<type>()+ requests.
 If this code is enabled, you can print with \verb+report_lognew()+ the
 source file and line of all pending allocated blocks.
 See section~\ref{s.allocation} for a detailed description.
-\par
+
 \emph{Important:} \texttt{LOGNEW} only works if all code is compiled
 with \texttt{LOGNEW}.
-\\
 \end{desctab}
