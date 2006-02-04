@@ -4,7 +4,7 @@
 .. All rights reserved.
 ..
 .. file: calu.ct
-.. tm C support. Variant: array lists, union constructors.
+.. Tm C support. Variant: array lists.
 ..
 .. The following variables must be set in tm:
 .. basename:     the name of the module. used to generate stat_..
@@ -25,8 +25,8 @@
 
    template file:      ${tplfilename}
    datastructure file: ${dsfilename}
-   tm version:         $(tmvers)
-   tm kernel version:  $(kernel-version)
+   Tm version:         $(tmvers)
+   Tm kernel version:  $(kernel-version)
  */
 
 #ifndef FIRSTROOM
