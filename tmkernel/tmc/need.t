@@ -4,7 +4,6 @@
 .. All rights reserved.
 ..
 .. File: need.t
-.. CvR
 ..
 .. Analysis of required code for given set of routines.
 .. Given a list of wanted routines and ds definitions in the variable
@@ -42,6 +41,15 @@
 .if ${not ${defined notwantdefs}}
 .set notwantdefs
 .endif
+..
+.. Now check for forbidden field names.
+.foreach t ${typelist}
+. set fields = ${fields $t}
+. if ${member tag $(fields)}
+.  error "Error: type $t contains reserved field name 'tag'"
+.  set bad 1
+. endif
+.endforeach
 ..
 .if $(bad)
 . exit 1

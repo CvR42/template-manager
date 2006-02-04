@@ -4,7 +4,7 @@
 .. All rights reserved.
 ..
 .. file: calu.ht
-.. Tm C support. Variant: array lists, union constructors.
+.. Tm C support. Variant: array lists.
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
 /* ---- start of ${tplfilename} ---- */
