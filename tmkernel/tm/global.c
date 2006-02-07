@@ -19,10 +19,10 @@ FILE *tracestream = 0;
 FILE *statstream = 0;
 
 tmstring tplfilename = tmstringNIL;
-int tpllineno = 0;
+unsigned int tpllineno = 0;
 tmstring dsfilename = tmstringNIL;
 FILE *dsfile;
-int dslineno = 0;
+unsigned int dslineno = 0;
 ds_list allds;
 tmstring_list searchpath = tmstring_listNIL;
 

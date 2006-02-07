@@ -48,7 +48,7 @@ var == (
 
 Switchcase == ( cases:tmstring, action:[tplelm] );
 
-tplelm = { lno:int } +
+tplelm = { lno:tmuint } +
     Plain: { line:tmstring } |
     For: { parms:tmstring, body:[tplelm] } |
     Foreach: { felist:tmstring, body:[tplelm] } |
