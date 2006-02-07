@@ -8,8 +8,8 @@
 
 #include "config.h"
 #include "tmdefs.h"
-#include "error.h"
 #include "tmcode.h"
+#include "error.h"
 #include "misc.h"
 #include "checkds.h"
 
