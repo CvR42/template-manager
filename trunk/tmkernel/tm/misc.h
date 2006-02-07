@@ -4,7 +4,7 @@
  */
 
 extern unsigned int find_type_ix( const_ds_list dl, const char *t );
-extern unsigned int find_field_ix( const Field_list fl, const char *nm );
+extern unsigned int find_field_ix( const_Field_list fl, const char *nm );
 extern FILE *ckfopen( const char *nm, const char *acc );
 extern void ckfreopen( const char *nm, const char *acc, FILE *f );
 extern bool member_tmstring_list( const_tmstring s, const_tmstring_list l );
