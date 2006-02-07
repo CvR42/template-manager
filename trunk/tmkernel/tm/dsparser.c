@@ -65,7 +65,7 @@ static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
  * list l and return the newly constructed list. Reject constructors
  * that are already defined.
  */
-static ds_list add_constructor_list( ds_list l, const ds c )
+static ds_list add_constructor_list( ds_list l, const_ds c )
 {
     unsigned int ix;
     const_tmstring cnm = c->name;
@@ -85,35 +85,35 @@ static ds_list add_constructor_list( ds_list l, const ds c )
  * type that has the constructors of both.
  * It *must* be certain that 'a' and 'b' are both constructor types.
  */
-static ds merge_cons_types( const ds a, const ds b )
+static ds merge_cons_types( const_ds a, const_ds b )
 {
     tmstring_list ila;
     tmstring_list ilb;
     unsigned int ix;
 
-    tmstring_list la = rdup_tmstring_list( to_DsConstructorBase(a)->constructors );
-    tmstring_list lb = rdup_tmstring_list( to_DsConstructorBase(b)->constructors );
+    tmstring_list la = rdup_tmstring_list( to_const_DsConstructorBase(a)->constructors );
+    tmstring_list lb = rdup_tmstring_list( to_const_DsConstructorBase(b)->constructors );
     la = concat_tmstring_list( la, lb );
     ila = rdup_tmstring_list( a->inherits );
     ilb = b->inherits;
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return (ds) new_DsConstructorBase( rdup_tmstring( a->name ), ila, tmstring_listNIL, la );
+    return to_ds( new_DsConstructorBase( rdup_tmstring( a->name ), ila, tmstring_listNIL, la ) );
 }
 
 /* Given a type 't', a constructor name 'cnm' and a type name
  * 'tnm' to which the constructor belongs, ensure that if 't' is a constructor
  * type, 'cnm' does not occur in it.
  */
-static void ckcname_type( const ds t, const_tmstring cnm, const_tmstring tnm )
+static void ckcname_type( const_ds t, const_tmstring cnm, const_tmstring tnm )
 {
     tmstring_list cl;
 
     if( t->tag != TAGDsConstructorBase ){
 	return;
     }
-    cl = to_DsConstructorBase(t)->constructors;
+    cl = to_const_DsConstructorBase(t)->constructors;
     if( member_tmstring_list( tnm, cl ) ){
 	(void) sprintf( errpos, "type %s", tnm );
 	(void) sprintf( errarg, "'%s' (in type %s)", cnm, t->name );
@@ -125,7 +125,7 @@ static void ckcname_type( const ds t, const_tmstring cnm, const_tmstring tnm )
  * 'tnm' to which the constructor belongs, ensure that 'cnm' does not
  * occur in any of the constructor types of 'l'.
  */
-static void ckcname( const ds_list l, const_tmstring cnm, const_tmstring tnm )
+static void ckcname( const_ds_list l, const_tmstring cnm, const_tmstring tnm )
 {
     unsigned int ix;
 
@@ -138,7 +138,7 @@ static void ckcname( const ds_list l, const_tmstring cnm, const_tmstring tnm )
  * constructor type, it does not contain the same constructor names
  * as in previous constructor types.
  */
-static void ckcnames( ds_list l, ds t )
+static void ckcnames( const_ds_list l, const_ds t )
 {
     tmstring_list cl;
     unsigned int ix;
@@ -147,7 +147,7 @@ static void ckcnames( ds_list l, ds t )
     if( t->tag != TAGDsConstructorBase ){
 	return;
     }
-    cl = to_DsConstructorBase(t)->constructors;
+    cl = to_const_DsConstructorBase(t)->constructors;
     tnm = t->name;
     for( ix=0; ix<cl->sz; ix++ ){
 	ckcname( l, cl->arr[ix], tnm );
@@ -506,7 +506,7 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
 	yyerror( "')' expected" );
     }
     cktuple( nm, body, inherits );
-    *tp = (ds) new_DsTuple( nm, inherits, tmstring_listNIL, body );
+    *tp = to_ds( new_DsTuple( nm, inherits, tmstring_listNIL, body ) );
     return TRUE;
 }
 
