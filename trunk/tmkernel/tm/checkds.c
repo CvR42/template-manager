@@ -21,12 +21,12 @@ void cktuple( const_tmstring nm, const_Field_list fields, const_tmstring_list in
     unsigned int ix;	/* index of currently checked field */
 
     for( ix=0; ix<fields->sz; ix++ ){
-	Field fx = fields->arr[ix];
-	tmstring fnm = fx->name;
+	const_Field fx = fields->arr[ix];
+	const_tmstring fnm = fx->name;
 	unsigned int iy;	/* index of searched subsequent fields */
 
 	for( iy=ix+1; iy<fields->sz; iy++ ){
-	    Field fy = fields->arr[iy];
+	    const_Field fy = fields->arr[iy];
 
 	    if( strcmp( fy->name, fnm ) == 0 ){
 		sprintf( errpos, "in type '%s'", nm );
@@ -57,7 +57,7 @@ static bool check_ds_inheritance(
 {
     tmstring_list supers;	/* The list of superclasses. */
     unsigned int ix;
-    ds me = dl->arr[theds];
+    const_ds me = dl->arr[theds];
     bool ok = TRUE;
 
     assert( theds<dl->sz );
