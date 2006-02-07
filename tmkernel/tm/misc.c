@@ -115,12 +115,12 @@ unsigned int find_type_ix( const_ds_list types, const char *t )
  * Return the index of that field in the list, or fl->sz if not
  * found.
  */ 
-unsigned int find_field_ix( const Field_list fl, const char *nm )
+unsigned int find_field_ix( const_Field_list fl, const char *nm )
 {
     unsigned int ix;
 
     for( ix = 0; ix < fl->sz; ix++ ){
-	const Field f = fl->arr[ix];
+	const_Field f = fl->arr[ix];
 
 	if( strcmp( f->name, nm ) == 0 ){
 	    return ix;
@@ -368,7 +368,7 @@ void collect_fields( tmstring_list *fields, const_ds_list types, const char *typ
     }
     if( el != Field_listNIL ){
 	for( ix=0; ix<el->sz; ix++ ){
-	    const Field e = el->arr[ix];
+	    const_Field e = el->arr[ix];
 
 	    *fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
 	}
