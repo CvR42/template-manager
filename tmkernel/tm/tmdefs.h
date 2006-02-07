@@ -63,3 +63,9 @@ typedef int bool;
 #define VARCHAR '$'
 #define LCOMCHAR '.'
 #define DQUOTE '"'
+
+#if __GNUC__
+#define ATTRIBUTE_PRINTF(fmt,args) __attribute__((format(printf,fmt,args)))
+#else
+#define ATTRIBUTE_PRINTF(fmt,args)
+#endif
