@@ -3,6 +3,14 @@
 ||
 || All rights reserved.
 
+|| An origin descriptor.
+|| This is tacked to all sorts of constructs for which it is useful
+|| to track the file and line number they started in.
+origin == ( file:tmsymbol, line:tmuint );
+
+|| A symbol with its origin.
+origsymbol == ( sym:tmsymbol, org:origin );
+
 || Structure of the datastructure itself
 || The Class type is in its canonical form. Before canonization
 || it is represented as a classComponent list.
