@@ -82,7 +82,7 @@ static unsigned int types_hashval( const char *s )
  * after the change they are more likely to fail, but the result is
  * still correct.
  */ 
-unsigned int find_type_ix( const ds_list types, const char *t )
+unsigned int find_type_ix( const_ds_list types, const char *t )
 {
     unsigned int ix;
     unsigned int hv;
@@ -159,7 +159,7 @@ bool any_member_tmstring_list( const_tmstring_list sl, const_tmstring_list l )
     return FALSE;
 }
 
-Field find_field_super( const ds_list types, tmstring_list supers, const char *nm )
+Field find_field_super( const_ds_list types, tmstring_list supers, const char *nm )
 {
     unsigned int ix;
 
@@ -173,7 +173,7 @@ Field find_field_super( const ds_list types, tmstring_list supers, const char *n
     return FieldNIL;
 }
 
-Field find_field( const ds_list types, const char *type, const char *nm )
+Field find_field( const_ds_list types, const char *type, const char *nm )
 {
     unsigned int pos;
     ds t;
@@ -217,7 +217,7 @@ Field find_field( const ds_list types, const char *type, const char *nm )
     return find_field_super( types, inherits, nm );
 }
 
-tmstring_list extract_inherits( const ds_list types, const char *type )
+tmstring_list extract_inherits( const_ds_list types, const char *type )
 {
     unsigned int ix;
 
@@ -232,7 +232,7 @@ tmstring_list extract_inherits( const ds_list types, const char *type )
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types that inherit 'type'.
  */
-void collect_subclasses( tmstring_list *res, const ds_list types, const_tmstring type )
+void collect_subclasses( tmstring_list *res, const_ds_list types, const_tmstring type )
 {
     tmstring_list queue;
 
@@ -260,7 +260,7 @@ void collect_subclasses( tmstring_list *res, const ds_list types, const_tmstring
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types where 'type' inherits from.
  */
-void collect_superclasses( tmstring_list *res, const ds_list types, const char *type )
+void collect_superclasses( tmstring_list *res, const_ds_list types, const char *type )
 {
     unsigned int ix;
     const_tmstring_list inherits = extract_inherits( types, type );
@@ -282,7 +282,7 @@ void collect_superclasses( tmstring_list *res, const ds_list types, const char *
  * and a type name 'type', collect into '*res' the types that inherit
  * 'type'.
  */
-void collect_inheritors( tmstring_list *res, const ds_list types, const_tmstring type )
+void collect_inheritors( tmstring_list *res, const_ds_list types, const_tmstring type )
 {
     unsigned int tix;
     unsigned int ix;
@@ -298,7 +298,7 @@ void collect_inheritors( tmstring_list *res, const ds_list types, const_tmstring
     }
     mine = new_tmstring_list();
     for( ix=0; ix<types->sz; ix++ ){
-	const ds d = types->arr[ix];
+	const_ds d = types->arr[ix];
 	const_tmstring_list inherits = d->inherits;
 
 	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
@@ -336,7 +336,7 @@ ds_list zap_memoized_inheritors( ds_list types )
  * Constructor types in the inherit tree are considered to have an
  * empty field list.
  */
-void collect_fields( tmstring_list *fields, const ds_list types, const char *type )
+void collect_fields( tmstring_list *fields, const_ds_list types, const char *type )
 {
     unsigned int ix;
     Field_list el = Field_listNIL;
@@ -381,7 +381,7 @@ void collect_fields( tmstring_list *fields, const ds_list types, const char *typ
  * Constructor types in the inherit tree are considered to have an
  * empty field list, but may of course inherit from other classes.
  */
-void collect_all_fields( tmstring_list *fields, const ds_list types, const char *type )
+void collect_all_fields( tmstring_list *fields, const_ds_list types, const char *type )
 {
     collect_inherited_fields( fields, types, type );
     collect_fields( fields, types, type );
@@ -393,7 +393,7 @@ void collect_all_fields( tmstring_list *fields, const ds_list types, const char 
  * Constructor types in the inherit tree are considered to have an
  * empty field list, but may of course inherit from other classes.
  */
-void collect_inherited_fields( tmstring_list *fields, const ds_list types, const char *type )
+void collect_inherited_fields( tmstring_list *fields, const_ds_list types, const char *type )
 {
     tmstring_list inherits;
     unsigned int ix;
