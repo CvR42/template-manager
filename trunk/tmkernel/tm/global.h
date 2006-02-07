@@ -7,10 +7,10 @@ extern FILE *tracestream;
 extern FILE *statstream;
 
 extern tmstring tplfilename;
-extern int tpllineno;
+extern unsigned int tpllineno;
 extern tmstring dsfilename;
 extern FILE *dsfile;
-extern int dslineno;
+extern unsigned int dslineno;
 extern ds_list allds;
 
 extern clock_t start_time;

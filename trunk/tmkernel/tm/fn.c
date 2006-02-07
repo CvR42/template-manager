@@ -2698,7 +2698,7 @@ static tmstring fntpllineno( const_tmstring_list sl )
     if( sl->sz != 0 ){
 	line_error( "'tpllineno' does not need any parameters" );
     }
-    return newintstr( tpllineno );
+    return newuintstr( tpllineno );
 }
 
 /* Return true iff the given argument is the name of a variable. */
