@@ -92,3 +92,10 @@
 .append wantdefs new_Switchcase
 .append wantdefs new_Switchcase_list
 .append wantdefs append_Switchcase_list
+..
+.append wantdefs new_origin
+.append wantdefs rfre_origin
+.append wantdefs rdup_origin
+..
+.append wantdefs new_origsymbol
+.append wantdefs new_origsymbol_list
