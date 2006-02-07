@@ -135,14 +135,14 @@ static const char *comname( tmcommand com )
 /* Generate error messages for unbalance in the .<command> and
    .end<command> pairs.
  */
-static void unbalance( int lno, tmcommand isterm, tmcommand needterm )
+static void unbalance( unsigned int lno, tmcommand isterm, tmcommand needterm )
 {
     if( isterm == needterm ){
 	return;    /* just for safety */
     }
     if( needterm != EOFLINE ){
 	if( isterm != EOFLINE ){
-	    sprintf( errarg, "unbalanced command at %s(%d)", tplfilename, lno );
+	    sprintf( errarg, "unbalanced command at %s(%u)", tplfilename, lno );
 	    line_error( "unexpected dot command" );
 	}
 	else {
@@ -174,7 +174,7 @@ typedef enum en_switchstate {
  * from these statements, by searching for the 'case' and 'default'
  * lines.
  */
-static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
+static tplelm construct_switch( unsigned int lno, const char *swval, tplelm_list el )
 {
     unsigned int ix;
     tplelm_list block;
@@ -271,7 +271,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
     tplelm te;
     tplelm_list tel;
     tmcommand subendcom;
-    int firstlno;
+    unsigned int firstlno;
     size_t inbufsz;
     unsigned int bufix;
     char *inbuf;
@@ -334,7 +334,7 @@ static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 			return tel;
 
 		    case CASE:
-			te = (tplelm) new_Case( tpllineno, new_tmstring( p ) );
+			te = to_tplelm( new_Case( tpllineno, new_tmstring( p ) ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
