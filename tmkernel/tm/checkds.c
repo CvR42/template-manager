@@ -16,7 +16,7 @@
 /* Ensure that there are no double names in tuple with name 'nm'
  * and fields 'fields'.
  */
-void cktuple( tmstring nm, Field_list fields, tmstring_list inherits )
+void cktuple( const_tmstring nm, const_Field_list fields, const_tmstring_list inherits )
 {
     unsigned int ix;	/* index of currently checked field */
 
@@ -49,7 +49,7 @@ void cktuple( tmstring nm, Field_list fields, tmstring_list inherits )
  * data structure with the given index for circular inheritances.
  */
 static bool check_ds_inheritance(
- ds_list dl,
+ const_ds_list dl,
  unsigned int theds,
  bool *visited,
  bool *accepted
@@ -89,7 +89,7 @@ static bool check_ds_inheritance(
 /* Given a list of datastructure definitions, ensure that it does not
  * contain circular inheritances.
  */
-bool check_ds_list( const ds_list dl )
+bool check_ds_list( const_ds_list dl )
 {
     bool *visited;	/* The data structures currently under examination */
     bool *accepted;	/* The data structures that already passed the test. */
