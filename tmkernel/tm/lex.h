@@ -21,6 +21,8 @@ extern YYSTYPE yylval;
 extern char linebuf[];
 extern unsigned int lineix;
 extern lextok yylex( void );
+extern origin make_origin( void );
+
 extern void init_lex( void );
 extern void end_lex( void );
 extern void stat_lex( FILE *f );

@@ -249,7 +249,7 @@ static bool parse_field( Field *fp )
     }
     next_token();
     ok = parse_Type( &t );
-    *fp = new_Field( s, t );
+    *fp = new_Field( new_origsymbol( s, make_origin() ), t );
     return ok;
 }
 
