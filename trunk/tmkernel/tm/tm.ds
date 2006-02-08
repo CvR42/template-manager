@@ -17,8 +17,8 @@ origsymbol == ( sym:tmsymbol, org:origin );
 ||
 || The list of inheritors of this type is a memoize of a lengthy
 || and frequently used calculation.
-ds = { name:tmstring, inherits:[tmstring], inheritors:[tmstring] } +
-    DsConstructorBase: { constructors:[tmstring] } |
+ds = { name:tmsymbol, inherits:[tmsymbol], inheritors:[tmsymbol] } +
+    DsConstructorBase: { constructors:[tmsymbol] } |
     DsTuple: { fields:[Field] } |
     DsClass: { fields:[Field], isvirtual:tmbool } |
     DsConstructor: { fields:[Field] } |
@@ -26,15 +26,15 @@ ds = { name:tmstring, inherits:[tmstring], inheritors:[tmstring] } +
     ;
 
 classComponent =
-    CCSuper: { super:tmstring } |
+    CCSuper: { super:tmsymbol } |
     CCFields: { fields:[Field] } |
     CCAlternatives: { alternatives:[alternative] } |
     CCSublist:  { components:[classComponent] }
     ;
 
-alternative == ( label:tmstring, component:classComponent );
+alternative == ( label:tmsymbol, component:classComponent );
 
-Type == ( level:tmuint, basetype:tmstring );
+Type == ( level:tmuint, basetype:tmsymbol );
 
 Field == ( name:origsymbol, type:Type );
 
