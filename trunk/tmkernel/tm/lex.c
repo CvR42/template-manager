@@ -209,6 +209,12 @@ static int lexgetc( void )
     return c;
 }
 
+/* Return a new origin descriptor. */
+origin make_origin()
+{
+    return new_origin( add_tmsymbol( dsfilename ), dslineno );
+}
+
 void show_parse_context( FILE *f )
 {
     unsigned int ix;
