@@ -33,6 +33,8 @@ static FILE *tplfile;
 static tmstring outfilename;	/* Possible output redirection file. */
 static tmstring errfilename;	/* Possible error redirection file. */
 
+static int mylextr;
+
 /* Table of debugging flags plus associated information.
 
    Table is ended by an entry with flagchar '\0'
@@ -45,7 +47,7 @@ static dbflag flagtab[] = {
     { 'n', &noerrorline, "don't generate line numbers in error messages (useful for diffs)" },
     { 's', &prstat, "statistics" },
     { 'v', &vartr, "variable and macro tracing" },
-    { 'x', &lextr, "tracing of lexical analyzer" },
+    { 'x', &mylextr, "tracing of lexical analyzer" },
     { '\0', &fntracing, "" }
 };
 
@@ -248,8 +250,7 @@ static void scanargs( int argc, char **argv, tmstring lp )
     if( tplfnm != tmstringNIL ){
 	tplfilename = search_file( searchpath, tplfnm, PATHSEPSTR, "r" );
 	if( tplfilename == tmstringNIL ){
-	    sprintf( errarg, "'%s'", tplfnm );
-	    error( "file not found" );
+	    error( "file `%s' not found", tplfnm );
 	    exit( 1 );
 	}
 	rfre_tmstring( tplfnm );
@@ -257,6 +258,7 @@ static void scanargs( int argc, char **argv, tmstring lp )
     else {
 	tplfilename = tmstringNIL;
     }
+    set_lex_debugging( mylextr );
 }
 
 int main( int argc, char **argv )
@@ -266,11 +268,9 @@ int main( int argc, char **argv )
     int lev;
     char buf[10];
 
-    dsfile = stdout;
     tracestream = stderr;
     statstream = stderr;
     start_time = clock();
-    init_error();
     init_lex();
     init_var();
     active_libpath = find_active_libpath();
@@ -305,7 +305,7 @@ int main( int argc, char **argv )
     setvar( "kernel-version", TMKERNEL_VERSION );
     setvar( "libpath", active_libpath );
     setvar( "pathsep", PATHSEPSTR );
-    translate( tplfile, stdout );
+    translate( tplfile, tplfilename, stdout );
     fclose( tplfile );
     end_lex();
     rfre_ds_list( allds );

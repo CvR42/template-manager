@@ -22,7 +22,7 @@
 #include "global.h"
 #include "misc.h"
 
-static const char *evalbool( const char *x, long *vp );
+static const char *evalbool( const_origin org, const char *x, long *vp );
 
 /* integer expression evaluation.
  * All these functions evaluate a set of operators at one
@@ -39,7 +39,7 @@ static const char *evalbool( const char *x, long *vp );
  */
 
 /* Evaluate integer constants and '()'. */
-static const char *evalconst( const char *x, long *vp )
+static const char *evalconst( const_origin org, const char *x, long *vp )
 {
     tmstring buf;
     char *bufp;
@@ -49,7 +49,7 @@ static const char *evalconst( const char *x, long *vp )
 	x++;
     }
     if( *x == ORBRAC ){
-	s = evalbool( x+1, vp );
+	s = evalbool( org, x+1, vp );
 	while( isspace( *s ) ) s++;
 	if( *s != CRBRAC ){
 	    return x;
@@ -65,7 +65,7 @@ static const char *evalconst( const char *x, long *vp )
     }
     *bufp = '\0';
     if( buf[0] == '\0' ){
-	line_error( "bad expression" );
+	origin_error( org, "bad expression" );
 	*vp = 0;
     }
     else{
@@ -76,37 +76,37 @@ static const char *evalconst( const char *x, long *vp )
 }
 
 /* Evaluate unary operators. */
-static const char *evalun( const char *x, long *vp )
+static const char *evalun( const_origin org, const char *x, long *vp )
 {
     const char *s;
     long v;
 
     while( isspace( *x ) ) x++;
     if( *x == '-' ){
-	s = evalun( x+1, &v );
+	s = evalun( org, x+1, &v );
 	*vp = -v;
 	return s;
     }
     if( *x == '!' ){
-	s = evalun( x+1, &v );
+	s = evalun( org, x+1, &v );
 	*vp = !v;
 	return s;
     }
     if( *x == '+' ){
-	return evalun( x+1, vp );
+	return evalun( org, x+1, vp );
     }
-    return evalconst( x, vp);
+    return evalconst( org, x, vp);
 }
 
 /* Evaluate product operators. */
-static const char *evalprod( const char *x, long *vp )
+static const char *evalprod( const_origin org, const char *x, long *vp )
 {
     const char *s;
     long v1;
     long v2;
 
     while( isspace( *x ) ) x++;
-    s = evalun( x, &v1 );
+    s = evalun( org, x, &v1 );
     if( s == x ){
 	*vp = 0;
 	return x;
@@ -114,14 +114,14 @@ static const char *evalprod( const char *x, long *vp )
 again:
     while( isspace( *s ) ) s++;
     if( *s == '*' ){
-	s = evalun( s+1, &v2 );
+	s = evalun( org, s+1, &v2 );
 	v1 = v1*v2;
 	goto again;
     }
     if( *s == '/' ){
-	s = evalun( s+1, &v2 );
+	s = evalun( org, s+1, &v2 );
 	if( v2 == 0 ){
-	    line_error( "division by zero" );
+	    origin_error( org, "division by zero" );
 	    v1 = 1;
 	}
 	else {
@@ -130,9 +130,9 @@ again:
 	goto again;
     }
     if( *s == '%' ){
-	s = evalun( s+1, &v2 );
+	s = evalun( org, s+1, &v2 );
 	if( v2 == 0 ){
-	    line_error( "modulus by zero" );
+	    origin_error( org, "modulus by zero" );
 	    v1 = 1;
 	}
 	else {
@@ -145,14 +145,14 @@ again:
 }
 
 /* Evaluate sum operators. */
-static const char *evalsum( const char *x, long *vp )
+static const char *evalsum( const_origin org, const char *x, long *vp )
 {
     const char *s;
     long v1;
     long v2;
 
     while( isspace( *x ) ) x++;
-    s = evalprod( x, &v1 );
+    s = evalprod( org, x, &v1 );
     if( s == x ){
 	*vp = 0;
 	return x;
@@ -160,12 +160,12 @@ static const char *evalsum( const char *x, long *vp )
 again:
     while( isspace( *s ) ) s++;
     if( *s == '+' ){
-	s = evalprod( s+1, &v2 );
+	s = evalprod( org, s+1, &v2 );
 	v1 = v1 + v2;
 	goto again;
     }
     if( *s == '-' ){
-	s = evalprod( s+1, &v2 );
+	s = evalprod( org, s+1, &v2 );
 	v1 = v1 - v2;
 	goto again;
     }
@@ -174,46 +174,46 @@ again:
 }
 
 /* Evaluate compare operators. */
-static const char *evalcmp( const char *x, long *vp )
+static const char *evalcmp( const_origin org, const char *x, long *vp )
 {
     const char *s;
     long v1;
     long v2;
 
     while( isspace( *x ) ) x++;
-    s = evalsum( x, &v1 );
+    s = evalsum( org, x, &v1 );
     if( s == x ){
 	*vp = 0;
 	return x;
     }
     while( isspace( *s ) ) s++;
     if( s[0] == '!' && s[1] == '=' ){
-	s = evalsum( s+2, &v2 );
+	s = evalsum( org, s+2, &v2 );
 	*vp = (v1!=v2);
 	return s;
     }
     if( s[0] == '=' && s[1] == '=' ){
-	s = evalsum( s+2, &v2 );
+	s = evalsum( org, s+2, &v2 );
 	*vp = (v1==v2);
 	return s;
     }
     if( s[0] == '<' && s[1] == '=' ){
-	s = evalsum( s+2, &v2 );
+	s = evalsum( org, s+2, &v2 );
 	*vp = (v1<=v2);
 	return s;
     }
     if( s[0] == '<' ){
-	s = evalsum( s+1, &v2 );
+	s = evalsum( org, s+1, &v2 );
 	*vp = (v1<v2);
 	return s;
     }
     if( s[0] == '>' && s[1] == '=' ){
-	s = evalsum( s+2, &v2 );
+	s = evalsum( org, s+2, &v2 );
 	*vp = (v1>=v2);
 	return s;
     }
     if( s[0] == '>' ){
-	s = evalsum( s+1, &v2 );
+	s = evalsum( org, s+1, &v2 );
 	*vp = (v1>v2);
 	return s;
     }
@@ -222,21 +222,21 @@ static const char *evalcmp( const char *x, long *vp )
 }
 
 /* Evaluate boolean binary operators. */
-static const char *evalbool( const char *x, long *vp )
+static const char *evalbool( const_origin org, const char *x, long *vp )
 {
     const char *s;
     long v1;
     long v2;
 
-    s = evalcmp( x, &v1 );
+    s = evalcmp( org, x, &v1 );
     while( isspace( *s ) ) s++;
     if( s[0] == '&' ){
-	s = evalbool( s+1, &v2 );
+	s = evalbool( org, s+1, &v2 );
 	*vp = v1 && v2;
 	return s;
     }
     if( s[0] == '|' ){
-	s = evalbool( s+1, &v2 );
+	s = evalbool( org, s+1, &v2 );
 	*vp = v1 || v2;
 	return s;
     }
@@ -247,7 +247,7 @@ static const char *evalbool( const char *x, long *vp )
 /* Given a tmstring 'x' containing a numerical expression,
  * evaluate it, and construct a tmstring from the resulting integer.
  */
-char *evalexpr( const_tmstring x )
+char *evalexpr( const_origin org, const_tmstring x )
 {
     char buf[NUMBUFSIZE];
     const char *s;
@@ -256,11 +256,10 @@ char *evalexpr( const_tmstring x )
     if( fntracing ){
 	fprintf( tracestream, "evaluating expression $[%s]\n", x );
     }
-    s =  evalbool( x, &v );
+    s =  evalbool( org, x, &v );
     while( isspace( *s ) ) s++;
     if( *s != '\0' ){
-	(void) strcpy( errarg, s );
-	line_error( "bad expression" );
+	origin_error( org, "bad expression '%s'", s );
     }
     (void) sprintf( buf, "%ld", v );
     if( fntracing ){

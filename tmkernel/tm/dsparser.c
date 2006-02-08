@@ -32,19 +32,6 @@ static void update_class_info(
     tmbool *isvirtual
 );
 
-static void yyerror( const char *s )
-{
-    show_parse_context( stderr );
-    if( noerrorline ){
-	(void) sprintf( errpos, "%s", dsfilename );
-    }
-    else {
-	(void) sprintf( errpos, "%s(%d)", dsfilename, dslineno );
-    }
-    error( s );
-    fputc( '\n', stderr );
-}
-
 /* Given a tmstring list 'l' and a tmstring 's', add 's' to the
  * list 'l' and return the newly constructed list. Reject strings
  * that are already defined.
@@ -52,8 +39,9 @@ static void yyerror( const char *s )
 static tmsymbol_list add_inherit_list( tmsymbol_list l, tmsymbol s )
 {
     if( member_tmsymbol_list( s, l ) ){
-	(void) sprintf( errarg, "'%s'", s->name );
-	yyerror( "duplicate inheritance" );
+        /* FIXME: do something smarter. */
+	/* (void) sprintf( errarg, "'%s'", s->name ); */
+	parserror( "duplicate inheritance" );
     }
     else {
 	l = append_tmsymbol_list( l, rdup_tmsymbol( s ) );
@@ -72,8 +60,11 @@ static ds_list add_constructor_list( ds_list l, const_ds c )
 
     for( ix=0; ix<l->sz; ix++ ){
 	if( cnm->sym == l->arr[ix]->name->sym ){
+#if 0
+            /* FIXME: enable again. */
 	    (void) sprintf( errarg, "'%s'", cnm->sym->name );
-	    yyerror( "double use of constructor name" );
+#endif
+	    parserror( "double use of constructor name" );
 	    return l;
 	}
     }
@@ -114,10 +105,8 @@ static void ckcname_type( const_ds t, const_tmsymbol cnm, const_origsymbol tnm )
 	return;
     }
     cl = to_const_DsConstructorBase(t)->constructors;
-    if( member_tmsymbol_list( tnm->sym, cl ) ){
-	(void) sprintf( errpos, "type %s", tnm->sym->name );
-	(void) sprintf( errarg, "'%s' (in type %s)", cnm->name, t->name->sym->name );
-	error( "constructor already defined" );
+    if( member_tmsymbol_list( cnm, cl ) ){
+	origsymbol_error( tnm, "constructor '%s' already defined", cnm->name );
     }
 }
 
@@ -169,6 +158,10 @@ static ds_list add_ds_list( ds_list l, ds t )
     ds old;		/* The old type definition. */
     ds nw;		/* The type constructed from two constr. def'ns. */
 
+    if( t->tag == TAGDsInclude ){
+        l = append_ds_list( l, rdup_ds( t ) );
+        return l;
+    }
     nm = t->name;
     ix = find_type_ix( l, nm->sym );
     if( ix<l->sz ){
@@ -179,8 +172,10 @@ static ds_list add_ds_list( ds_list l, ds t )
 	    l = append_ds_list( l, nw );
 	}
 	else {
+#if 0
 	    (void) sprintf( errarg, "'%s'", nm->sym->name );
-	    yyerror( "redefinition of type" );
+#endif
+	    parserror( "redefinition of type" );
 	}
     }
     else {
@@ -215,7 +210,7 @@ static bool parse_Type( Type *tp )
 	    next_token();
 	}
 	else {
-	    yyerror( "']' expected" );
+	    parserror( "']' expected" );
 	}
 	return TRUE;
     }
@@ -224,7 +219,7 @@ static bool parse_Type( Type *tp )
 	next_token();
 	return TRUE;
     }
-    yyerror( "type specification expected" );
+    parserror( "type specification expected" );
     return FALSE;
 }
 
@@ -241,7 +236,7 @@ static bool parse_field( Field *fp )
     elmname = yylval.parsymbol;
     next_token();
     if( curr_token!=COLON ){
-	yyerror( "':' expected" );
+	parserror( "':' expected" );
 	return FALSE;
     }
     next_token();
@@ -296,7 +291,7 @@ static bool parse_constructor( tmsymbol super, tmsymbol p_nm, ds *cp )
     }
     ok = parse_Field_list( &fl );
     if( !ok ){
-	yyerror( "invalid field list" );
+	parserror( "invalid field list" );
 	return FALSE;
     }
     *cp = (ds) new_DsConstructor(
@@ -341,7 +336,7 @@ static bool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
 	    rfre_ds( nw );
 	}
 	else {
-	    yyerror( "constructor expected" );
+	    parserror( "constructor expected" );
 	    /* Try to recover by skipping tokens up to the next
 	     * '|', ';' or LEXEOF.
 	     */
@@ -359,7 +354,7 @@ static bool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
 	    next_token();
 	}
 	else {
-	    yyerror( "'|' expected" );
+	    parserror( "'|' expected" );
 	}
     }
     return TRUE;
@@ -427,7 +422,7 @@ static bool parse_tuplebody( Field_list *flp )
 	    *flp = append_Field_list( *flp, nw );
 	}
 	else {
-	    yyerror( "field expected" );
+	    parserror( "field expected" );
 	    /* Try to recover by skipping tokens up to the next
 	     * ',', ,}', ')', ';' or LEXEOF. */
 	    while(
@@ -470,7 +465,7 @@ static bool parse_tuple_type( tmsymbol nm, ds *tp )
 	    next_token();
 	}
 	else {
-	    yyerror( "'+' expected" );
+	    parserror( "'+' expected" );
 	    rfre_tmsymbol_list( inherits );
 	    return FALSE;
 	}
@@ -479,7 +474,7 @@ static bool parse_tuple_type( tmsymbol nm, ds *tp )
 	next_token();
     }
     else {
-	yyerror( "'(' expected" );
+	parserror( "'(' expected" );
 	rfre_tmsymbol_list( inherits );
 	return FALSE;
     }
@@ -491,7 +486,7 @@ static bool parse_tuple_type( tmsymbol nm, ds *tp )
 	next_token();
     }
     else {
-	yyerror( "')' expected" );
+	parserror( "')' expected" );
     }
     cktuple( nm, body, inherits );
     *tp = to_ds( new_DsTuple( new_origsymbol( nm, make_origin() ), inherits, tmsymbol_listNIL, body ) );
@@ -520,7 +515,7 @@ static bool parse_class_component( classComponent *cp )
 	res = (classComponent) new_CCFields( fields );
 	if( curr_token != RCBRAC ){
 	    /* '{' to balance bracket below */
-	    yyerror( "'}' expected" );
+	    parserror( "'}' expected" );
 	    rfre_classComponent( res );
 	    return FALSE;
 	}
@@ -558,14 +553,14 @@ static bool parse_class_component( classComponent *cp )
 		 */
 		next_token();
 		if( curr_token != NAME ){
-		    yyerror( "label name expected, because a '|' must be followed by a label" );
+		    parserror( "label name expected, because a '|' must be followed by a label" );
 		    rfre_alternative_list( alts );
 		    return FALSE;
 		}
 		nm = yylval.parsymbol;
 		next_token();
 		if( curr_token != COLON ){
-		    yyerror( "':' expected, because a '|' must be followed by a label" );
+		    parserror( "':' expected, because a '|' must be followed by a label" );
 		}
 	    }
 	    res = (classComponent) new_CCAlternatives( alts );
@@ -589,7 +584,7 @@ static bool parse_class_component( classComponent *cp )
 	res = (classComponent) new_CCSublist( ccl );
 	if( curr_token != RRBRAC ){
 	    /* '(' to balance bracket below */
-	    yyerror( "')' expected" );
+	    parserror( "')' expected" );
 	    rfre_classComponent( res );
 	    return FALSE;
 	}
@@ -597,7 +592,7 @@ static bool parse_class_component( classComponent *cp )
 	*cp = res;
 	return TRUE;
     }
-    yyerror( "class type component expected" );
+    parserror( "class type component expected" );
     return FALSE;
 }
 
@@ -724,7 +719,7 @@ static ds_list normalize_class( tmsymbol nm, const classComponent_list ccl, tmbo
 }
 
 /* Try to parse a data structure definition or an include. 
- * 'dl'. Return TRUE if you managed to do that.
+ * Return TRUE if you managed to do that.
  *
  * When an include is given, all the data structures encountered in
  * the included file are appended. That's why the ds list is passed.
@@ -738,28 +733,33 @@ static bool parse_ds( ds_list *dl )
 	tmstring fnm;
 
 	next_token();
+        *dl = new_ds_list();
 	if( curr_token!=STRING ){
-	    yyerror( "file name string expected" );
+	    parserror( "file name string expected" );
 	    while( curr_token!=SEMI && curr_token!=LEXEOF ){
 		if( curr_token == STRING ){
 		    rfre_tmstring( yylval.parstring );
 		}
 		next_token();
 	    }
-	    if( curr_token==SEMI ){
+	    if( curr_token == SEMI ){
 		next_token();
 	    }
-	    *dl = new_ds_list();
 	    return TRUE;
 	}
 	fnm = yylval.parstring;
-	/* parse_ds_file() eats the current token. */
-	*dl = parse_ds_file( fnm );
-	rfre_tmstring( fnm );
-	if( curr_token==LEXEOF ){
-	    /* The LEXEOF is from the included file. */
-	    next_token();
-	}
+        *dl = append_ds_list(
+            *dl,
+            to_ds(
+                new_DsInclude(
+                    origsymbolNIL,
+                    tmsymbol_listNIL,
+                    tmsymbol_listNIL,
+                    fnm
+                )
+            )
+        );
+        next_token();    /* Eat the filename string. */
 	return TRUE;
     }
     if( curr_token!=NAME ){
@@ -824,12 +824,12 @@ static bool parse_ds( ds_list *dl )
 	}
 
 	case LEXEOF:
-	    yyerror( "unexpected end of file" );
+	    parserror( "unexpected end of file" );
 	    ok = FALSE;
 	    break;
 
 	default:
-	    yyerror( "'=', '~=', '::=' or '==' expected" );
+	    parserror( "'=', '~=', '::=' or '==' expected" );
 	    ok = FALSE;
 	    break;
     }
@@ -868,14 +868,14 @@ static ds_list parse_ds_list( void )
 	}
 	ok = parse_ds( &nw );
 	if( !ok ){
-	    yyerror( "datastructure definition expected" );
+	    parserror( "datastructure definition expected" );
 	    return dl;
 	}
 	for( ix=0; ix<nw->sz; ix++ ){
 	    dl = add_ds_list( dl, nw->arr[ix] );
 	}
 	if( curr_token!=SEMI ){
-	    yyerror( "';' expected" );
+	    parserror( "';' expected" );
 	}
 	else {
 	    next_token();
@@ -892,44 +892,48 @@ static ds_list parse_ds_list( void )
 ds_list parse_ds_file( const char *fnm )
 {
     ds_list ans;
-    FILE *oldf;
-    tmstring oldfnm;
-    int oldlineno;
-    char oldlinebuf[LINESIZE];
-    unsigned int oldlineix;
+    FILE *dsfile;
+    unsigned int ix = 0;
+    tmstring dsfilename;
 
     if( fnm == tmstringNIL ){
 	/* No file name specified. */
 	return new_ds_list();
     }
-    oldf = dsfile;
-    oldfnm = dsfilename;
-    oldlineno = dslineno;
-    strcpy( oldlinebuf, linebuf );
-    oldlineix = lineix;
     dsfilename = search_file( searchpath, fnm, PATHSEPSTR, "r" );
     if( dsfilename == tmstringNIL ){
-	sprintf( errarg, "'%s'", fnm );
-	fatal( "file not found" );
+	internal_error( "file `%s' not found", fnm );
     }
     dsfile = ckfopen( dsfilename, "r" );
-    dslineno = 1;
-    linebuf[0] = '\0';
-    lineix = 0;
+    set_lexfile( dsfile, dsfilename );
     next_token();
     ans = parse_ds_list();
     if( curr_token!=LEXEOF ){
-	yyerror( "extra tokens in included file ignored" );
+	parserror( "extra tokens in included file ignored" );
 	while( curr_token!=LEXEOF ){
 	    next_token();
 	}
     }
     fclose( dsfile );
     rfre_tmstring( dsfilename );
-    dsfile = oldf;
-    dsfilename = oldfnm;
-    dslineno = oldlineno;
-    strcpy( linebuf, oldlinebuf );
-    lineix = oldlineix;
+
+    /* Now expand any includes. */
+    while( ix<ans->sz ){
+        ds d = ans->arr[ix];
+
+        if( d->tag == TAGDsInclude ){
+            /* Replace the include with the contents of the included file. */
+            const_tmstring filenm = to_const_DsInclude( d )->fnm;
+            ds_list dl = parse_ds_file( filenm );
+
+            ans = delete_ds_list( ans, ix );
+            if( dl != ds_listNIL ){
+                ans = insertlist_ds_list( ans, ix, dl );
+            }
+        }
+        else {
+            ix++;
+        }
+    }
     return ans;
 }

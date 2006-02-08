@@ -137,20 +137,20 @@ static tmstring flat_Type_list( const Type_list tl )
 /* -- numerical functions -- */
 
 /* max */
-static tmstring fnmax( const_tmstring_list sl )
+static tmstring fnmax( const_origin org, const_tmstring_list sl )
 {
     int max;
     unsigned int ix;
 
     if( sl->sz<1 ){
-	line_error( "'max' requires at least one parameter" );
+	origin_error( org, "'max' requires at least one parameter" );
 	return newintstr( 0 );
     }
     max = atoi( sl->arr[0] );
     for( ix=0; ix<sl->sz; ix++ ){
         int n;
 
-	cknumpar( sl->arr[ix] );
+	cknumpar( org, sl->arr[ix] );
 	n = atoi( sl->arr[ix] );
 	if( n>max )
 	    max = n;
@@ -159,20 +159,20 @@ static tmstring fnmax( const_tmstring_list sl )
 }
 
 /* min */
-static tmstring fnmin( const_tmstring_list sl )
+static tmstring fnmin( const_origin org, const_tmstring_list sl )
 {
     int min;
     unsigned int ix;
 
     if( sl->sz<1 ){
-	line_error( "'min' requires at least one parameter" );
+	origin_error( org, "'min' requires at least one parameter" );
 	return newintstr( 0 );
     }
     min = atoi( sl->arr[0] );
     for( ix=1; ix<sl->sz; ix++ ){
         int n;
 
-	cknumpar( sl->arr[ix] );
+	(void) cknumpar( org, sl->arr[ix] );
 	n = atoi( sl->arr[ix] );
 	if( n<min )
 	    min = n;
@@ -181,75 +181,72 @@ static tmstring fnmin( const_tmstring_list sl )
 }
 
 /* addition */
-static tmstring fnplus( const_tmstring_list sl )
+static tmstring fnplus( const_origin org, const_tmstring_list sl )
 {
     int sum = 0;
     unsigned int ix;
 
     for( ix=0; ix<sl->sz; ix++ ){
-	cknumpar( sl->arr[ix] );
+      (void) cknumpar( org, sl->arr[ix] );
 	sum += atoi( sl->arr[ix] );
     }
     return newintstr( sum );
 }
 
 /* subtraction */
-static tmstring fnsubtract( const_tmstring_list sl )
+static tmstring fnsubtract( const_origin org, const_tmstring_list sl )
 {
     int a;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'subtract' requires exactly two parameters" );
+	origin_error( org, "'subtract' requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     a = atoi( sl->arr[0] ) - atoi( sl->arr[1] );
     return newintstr( a );
 }
 
 /* multiplication */
-static tmstring fntimes( const_tmstring_list sl )
+static tmstring fntimes( const_origin org, const_tmstring_list sl )
 {
     int prod = 1;
     unsigned int ix;
 
     for( ix=0; ix<sl->sz; ix++ ){
-	cknumpar( sl->arr[ix] );
+        (void) cknumpar( org, sl->arr[ix] );
 	prod *= atoi( sl->arr[ix] );
     }
     return newintstr( prod );
 }
 
 /* division */
-static tmstring fndiv( const_tmstring_list sl )
+static tmstring fndiv( const_origin org, const_tmstring_list sl )
 {
     int a;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "division requires exactly two parameters" );
+	origin_error( org, "division requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     a = atoi( sl->arr[0] ) / atoi( sl->arr[1] );
     return newintstr( a );
 }
 
 /* modulus */
-static tmstring fnmod( const_tmstring_list sl )
+static tmstring fnmod( const_origin org, const_tmstring_list sl )
 {
     int a;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "modulus requires exactly two parameters" );
+	origin_error( org, "modulus requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     a = atoi( sl->arr[0] ) % atoi( sl->arr[1] );
     return newintstr( a );
 }
@@ -257,109 +254,102 @@ static tmstring fnmod( const_tmstring_list sl )
 /* -- comparison functions -- */
 
 /* < */
-static tmstring fnless( const_tmstring_list sl )
+static tmstring fnless( const_origin org, const_tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     b = atoi( sl->arr[0] ) < atoi( sl->arr[1] );
     return newboolstr( b );
 }
 
 /* <= */
-static tmstring fnlesseq( const_tmstring_list sl )
+static tmstring fnlesseq( const_origin org, const_tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     b = atoi( sl->arr[0] ) <= atoi( sl->arr[1] );
     return newboolstr( b );
 }
 
 /* > */
-static tmstring fngreater( const_tmstring_list sl )
+static tmstring fngreater( const_origin org, const_tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     b = atoi( sl->arr[0] ) > atoi( sl->arr[1] );
     return newboolstr( b );
 }
 
 /* >= */
-static tmstring fngreatereq( const_tmstring_list sl )
+static tmstring fngreatereq( const_origin org, const_tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     b = atoi( sl->arr[0] ) >= atoi( sl->arr[1] );
     return newboolstr( b );
 }
 
 /* == */
-static tmstring fneq( const_tmstring_list sl )
+static tmstring fneq( const_origin org, const_tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     b = atoi( sl->arr[0] ) == atoi( sl->arr[1] );
     return newboolstr( b );
 }
 
 /* != */
-static tmstring fnneq( const_tmstring_list sl )
+static tmstring fnneq( const_origin org, const_tmstring_list sl )
 {
     bool b;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[1] );
     b = atoi( sl->arr[0] ) != atoi( sl->arr[1] );
     return newboolstr( b );
 }
 
 /* strcmp */
-static tmstring fnstrcmp( const_tmstring_list sl )
+static tmstring fnstrcmp( const_origin org, const_tmstring_list sl )
 {
     int cmp;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
@@ -369,13 +359,12 @@ static tmstring fnstrcmp( const_tmstring_list sl )
 }
 
 /* eq */
-static tmstring fnstreq( const_tmstring_list sl )
+static tmstring fnstreq( const_origin org, const_tmstring_list sl )
 {
     int cmp;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
@@ -383,13 +372,12 @@ static tmstring fnstreq( const_tmstring_list sl )
 }
 
 /* neq */
-static tmstring fnstrneq( const_tmstring_list sl )
+static tmstring fnstrneq( const_origin org, const_tmstring_list sl )
 {
     int cmp;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "comparison requires exactly two parameters" );
+	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     cmp = strcmp( sl->arr[0] , sl->arr[1] );
@@ -399,13 +387,15 @@ static tmstring fnstrneq( const_tmstring_list sl )
 /* -- string functions -- */
 
 /* len */
-static tmstring fnlen( const_tmstring_list sl )
+static tmstring fnlen( const_origin org, const_tmstring_list sl )
 {
+    (void) org;
+
     return newintstr( (int) sl->sz );
 }
 
 /* strpad */
-static tmstring fnstrpad( const_tmstring_list sl )
+static tmstring fnstrpad( const_origin org, const_tmstring_list sl )
 {
     tmstring w;
     tmstring wp;
@@ -415,17 +405,16 @@ static tmstring fnstrpad( const_tmstring_list sl )
     tmstring bufp;
 
     if( sl->sz != 3 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'pad' requires exactly three parameters" );
+	origin_error( org, "'pad' requires exactly three parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     w = sl->arr[0];
     pw = sl->arr[2];
     if( *pw == '\0' ){
-	line_error( "empty padding string" );
+	origin_error( org, "empty padding string" );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[1] );
+    (void) cknumpar( org, sl->arr[1] );
     len = atoi( sl->arr[1] );
     buf = create_tmstring( len+1 );
     wp = w;
@@ -447,10 +436,11 @@ static tmstring fnstrpad( const_tmstring_list sl )
 }
 
 /* strlen */
-static tmstring fnstrlen( const_tmstring_list sl )
+static tmstring fnstrlen( const_origin org, const_tmstring_list sl )
 {
     int l;
 
+    (void) org;
     if( sl->sz<1 ){
 	l = 0;
     }
@@ -461,12 +451,13 @@ static tmstring fnstrlen( const_tmstring_list sl )
 }
 
 /* capitalize */
-static tmstring fncapitalize( const_tmstring_list sl )
+static tmstring fncapitalize( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
 
+    (void) org;
     nl = rdup_tmstring_list( sl );
     for( ix=0; ix<nl->sz; ix++ ){
         char *np = nl->arr[ix];
@@ -481,12 +472,13 @@ static tmstring fncapitalize( const_tmstring_list sl )
 }
 
 /* toupper */
-static tmstring fntoupper( const_tmstring_list sl )
+static tmstring fntoupper( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
 
+    (void) org;
     nl = rdup_tmstring_list( sl );
     for( ix=0; ix<nl->sz; ix++ ){
         char *np = nl->arr[ix];
@@ -504,12 +496,13 @@ static tmstring fntoupper( const_tmstring_list sl )
 }
 
 /* tolower */
-static tmstring fntolower( const_tmstring_list sl )
+static tmstring fntolower( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
     unsigned int ix;
 
+    (void) org;
     nl = rdup_tmstring_list( sl );
     for( ix=0; ix<nl->sz; ix++ ){
         char *np = nl->arr[ix];
@@ -527,7 +520,7 @@ static tmstring fntolower( const_tmstring_list sl )
 }
 
 /* tochar */
-static tmstring fntochar( const_tmstring_list sl )
+static tmstring fntochar( const_origin org, const_tmstring_list sl )
 {
     tmstring ans = create_tmstring( 1+sl->sz );
     char *p = ans;
@@ -535,16 +528,16 @@ static tmstring fntochar( const_tmstring_list sl )
 
     for( ix=0; ix<sl->sz; ix++ ){
         const_tmstring n = sl->arr[ix];
-        int v;
 
-        cknumpar( n );
-        v = atoi( n );
-        if( v<0 || v>255 ){
-            sprintf( errarg, "character code %d", v );
-            line_error( "tochar: character code out of range" );
-        }
-        else {
-            *p++ = (char) v;
+        if( cknumpar( org, n ) ){
+            int v = atoi( n );
+
+            if( v<0 || v>255 ){
+                origin_error( org, "tochar: character code %d out of range", v );
+            }
+            else {
+                *p++ = (char) v;
+            }
         }
     }
     *p = '\0';
@@ -573,7 +566,7 @@ static tmstring tr_tmstring( tmstring s, const_tmstring oldchars, const_tmstring
 }
 
 /* tr <oldchars> <newchars> s..s */
-static tmstring fntr( const_tmstring_list sl )
+static tmstring fntr( const_origin org, const_tmstring_list sl )
 {
     tmstring oldchars;
     tmstring newchars;
@@ -584,19 +577,19 @@ static tmstring fntr( const_tmstring_list sl )
     nl = rdup_tmstring_list( sl );
     nl = extract_tmstring_list( nl, 0, &oldchars, &ok );
     if( !ok ){
-	line_error( "'tr': no old characters given" );
+	origin_error( org, "'tr': no old characters given" );
 	rfre_tmstring_list( nl );
 	return new_tmstring( "" );
     }
     nl = extract_tmstring_list( nl, 0, &newchars, &ok );
     if( !ok ){
-	line_error( "'tr': no new characters given" );
+	origin_error( org, "'tr': no new characters given" );
 	rfre_tmstring_list( nl );
 	rfre_tmstring( oldchars );
 	return new_tmstring( "" );
     }
     if( strlen( oldchars ) != strlen( newchars ) ){
-	line_error( "'tr': the strings of old and new characters must have the same length" );
+	origin_error( org, "'tr': the strings of old and new characters must have the same length" );
     }
     else {
         unsigned int ix;
@@ -613,14 +606,13 @@ static tmstring fntr( const_tmstring_list sl )
 }
 
 /* fnstrindex <c> <word> */
-static tmstring fnstrindex( const_tmstring_list sl )
+static tmstring fnstrindex( const_origin org, const_tmstring_list sl )
 {
     int n;
     char *ixp;
 
     if( sl->sz != 2 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'strindex' requires exactly two parameters" );
+	origin_error( org, "'strindex' requires exactly two parameters, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     ixp = strchr( sl->arr[1], sl->arr[0][0] );
@@ -629,7 +621,7 @@ static tmstring fnstrindex( const_tmstring_list sl )
 }
 
 /* fnleftstr <n> <word> .. <word> */
-static tmstring fnleftstr( const_tmstring_list sl )
+static tmstring fnleftstr( const_origin org, const_tmstring_list sl )
 {
     int n;
     tmstring_list nl = new_tmstring_list();
@@ -637,14 +629,18 @@ static tmstring fnleftstr( const_tmstring_list sl )
     tmstring ans;
 
     if( sl->sz < 1 ){
-	line_error( "'leftstr' requires at least one parameter" );
+	origin_error( org, "'leftstr' requires at least one parameter" );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    n = atoi( sl->arr[0] );
-    if( n<0 ){
-        line_error( "'leftstr' requires a non-negative length" );
-	n  = 0;
+    if( cknumpar( org, sl->arr[0] ) ){
+        n = atoi( sl->arr[0] );
+        if( n<0 ){
+            origin_error( org, "'leftstr' requires a non-negative length" );
+            n = 0;
+        }
+    }
+    else {
+        n = 0;
     }
     for( ix=1; ix<sl->sz; ix++ ){
         tmstring s = rdup_tmstring( sl->arr[ix] );
@@ -662,7 +658,7 @@ static tmstring fnleftstr( const_tmstring_list sl )
 }
 
 /* fnrightstr <n> <word> .. <word> */
-static tmstring fnrightstr( const_tmstring_list sl )
+static tmstring fnrightstr( const_origin org, const_tmstring_list sl )
 {
     int n;
     tmstring_list nl = new_tmstring_list();
@@ -670,14 +666,18 @@ static tmstring fnrightstr( const_tmstring_list sl )
     tmstring ans;
 
     if( sl->sz < 1 ){
-	line_error( "'rightstr' requires at least one parameter" );
+	origin_error( org, "'rightstr' requires at least one parameter" );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
-    n = atoi( sl->arr[0] );
-    if( n<0 ){
-        line_error( "'rightstr' requires a non-negative length" );
-        n  = 0;
+    if( cknumpar( org, sl->arr[0] ) ){
+        n = atoi( sl->arr[0] );
+        if( n<0 ){
+            origin_error( org, "'rightstr' requires a non-negative length" );
+            n = 0;
+        }
+    }
+    else {
+        n = 0;
     }
     for( ix=1; ix<sl->sz; ix++ ){
         tmstring s = rdup_tmstring( sl->arr[ix] );
@@ -698,13 +698,13 @@ static tmstring fnrightstr( const_tmstring_list sl )
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnindex( const_tmstring_list sl )
+static tmstring fnindex( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
 
     if( sl->sz<1 ){
-	line_error( "'index' requires at least one parameter" );
+	origin_error( org, "'index' requires at least one parameter" );
 	return new_tmstring( "0" );
     }
     estr = sl->arr[0];
@@ -723,14 +723,14 @@ static tmstring fnindex( const_tmstring_list sl )
 /* Note that due to a coincidence the index in the tmstring list
  * the correct index to return.
  */
-static tmstring fnmember( const_tmstring_list sl )
+static tmstring fnmember( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
     bool found = FALSE;
 
     if( sl->sz<1 ){
-	line_error( "'member' requires at least one parameter" );
+	origin_error( org, "'member' requires at least one parameter" );
 	return new_tmstring( "0" );
     }
     estr = sl->arr[0];
@@ -744,14 +744,14 @@ static tmstring fnmember( const_tmstring_list sl )
 }
 
 /* seplist <str> <list> */
-static tmstring fnseplist( const_tmstring_list sl )
+static tmstring fnseplist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmstring_list nl;
 
     if( sl->sz<1 ){
-	line_error( "'seplist' requires at least one parameter" );
+	origin_error( org, "'seplist' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -764,7 +764,7 @@ static tmstring fnseplist( const_tmstring_list sl )
 }
 
 /* prefix <pf> <list> */
-static tmstring fnprefix( const_tmstring_list sl )
+static tmstring fnprefix( const_origin org, const_tmstring_list sl )
 {
     tmstring pfstr;
     tmstring ans;
@@ -775,7 +775,7 @@ static tmstring fnprefix( const_tmstring_list sl )
     unsigned int ix;
 
     if( sl->sz<1 ){
-	line_error( "'prefix' requires at least one parameter" );
+	origin_error( org, "'prefix' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     pfstr = sl->arr[0];
@@ -801,7 +801,7 @@ static tmstring fnprefix( const_tmstring_list sl )
 }
 
 /* suffix <sf> <list> */
-static tmstring fnsuffix( const_tmstring_list sl )
+static tmstring fnsuffix( const_origin org, const_tmstring_list sl )
 {
     tmstring sfstr;
     tmstring ans;
@@ -812,7 +812,7 @@ static tmstring fnsuffix( const_tmstring_list sl )
     unsigned int ix;
 
     if( sl->sz<1 ){
-	line_error( "'suffix' requires at least one parameter" );
+	origin_error( org, "'suffix' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     sfstr = sl->arr[0];
@@ -845,11 +845,12 @@ static int sortcmp( const void *pa, const void *pb )
 }
 
 /* sort e1..en */
-static tmstring fnsort( const_tmstring_list sl )
+static tmstring fnsort( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     int (*cmpf)( const void *, const void * );
 
+    (void) org;
     cmpf = sortcmp;
     qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
     ans = flatstrings( sl );
@@ -873,11 +874,12 @@ static int sizesortcmp( const void *pa, const void *pb )
 }
 
 /* sizesort e1..en */
-static tmstring fnsizesort( const_tmstring_list sl )
+static tmstring fnsizesort( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     int (*cmpf)( const void *, const void * );
 
+    (void) org;
     cmpf = sizesortcmp;
     qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
     ans = flatstrings( sl );
@@ -885,13 +887,14 @@ static tmstring fnsizesort( const_tmstring_list sl )
 }
 
 /* rev e1..en */
-static tmstring fnrev( const_tmstring_list sl )
+static tmstring fnrev( const_origin org, const_tmstring_list sl )
 {
     unsigned int lix;
     unsigned int rix;
     tmstring tmp;
     char *ans;
 
+    (void) org;
     lix = 0;
     rix = sl->sz;
     while( lix<rix ){
@@ -906,7 +909,7 @@ static tmstring fnrev( const_tmstring_list sl )
 }
 
 /* comm a "" b */
-static tmstring fncomm( const_tmstring_list sl )
+static tmstring fncomm( const_origin org, const_tmstring_list sl )
 {
     unsigned int aix;
     unsigned int bix;
@@ -917,7 +920,7 @@ static tmstring fncomm( const_tmstring_list sl )
     sepix = 0;
     while( sepix<sl->sz && sl->arr[sepix][0] != '\0' ) sepix++;
     if( sepix>=sl->sz ){
-	line_error( "no separator" );
+	origin_error( org, "no separator" );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -941,7 +944,7 @@ static tmstring fncomm( const_tmstring_list sl )
 }
 
 /* excl a "" b */
-static tmstring fnexcl( const_tmstring_list sl )
+static tmstring fnexcl( const_origin org, const_tmstring_list sl )
 {
     unsigned int sepix;
     unsigned int aix;
@@ -954,7 +957,7 @@ static tmstring fnexcl( const_tmstring_list sl )
 	sepix++;
     }
     if( sepix>=sl->sz ){
-	line_error( "no separator" );
+	origin_error( org, "no separator" );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -978,7 +981,7 @@ static tmstring fnexcl( const_tmstring_list sl )
 }
 
 /* uniq e1..en */
-static tmstring fnuniq( const_tmstring_list sl )
+static tmstring fnuniq( const_origin org, const_tmstring_list sl )
 {
     tmstring_list nl;
     tmstring ans;
@@ -986,6 +989,7 @@ static tmstring fnuniq( const_tmstring_list sl )
     unsigned int ix;
     int (*cmpf)( const void *, const void * );
 
+    (void) org;
     cmpf = sortcmp;
     qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
     nl = new_tmstring_list();
@@ -1005,7 +1009,7 @@ static tmstring fnuniq( const_tmstring_list sl )
  * find all elements matching 'findpat' and replace them
  * by 'newpat'. Do not copy elements that don't match.
  */
-static tmstring fnfilt( const_tmstring_list sl )
+static tmstring fnfilt( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -1014,13 +1018,12 @@ static tmstring fnfilt( const_tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz < 2 ){
-	line_error( "'filt' requires at least two parameters" );
+	origin_error( org, "'filt' requires at least two parameters" );
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
     if( errm != (char *) NULL ){
-	(void) strcpy( errarg, errm );
-	line_error( "bad regular expression" );
+	origin_error( org, "bad regular expression: %s", errm );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -1039,7 +1042,7 @@ static tmstring fnfilt( const_tmstring_list sl )
    find all elements matching 'findpat' and replace them
    by 'newpat'. Copy elements that don't match.
  */
-static tmstring fnsubs( const_tmstring_list sl )
+static tmstring fnsubs( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -1048,13 +1051,12 @@ static tmstring fnsubs( const_tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz < 2 ){
-	line_error( "'subs' requires at least two parameters" );
+	origin_error( org, "'subs' requires at least two parameters" );
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
     if( errm != (char *) NULL ){
-	(void) strcpy( errarg, errm );
-	line_error( "bad regular expression" );
+	origin_error( org, "bad regular expression: %s", errm );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -1076,7 +1078,7 @@ static tmstring fnsubs( const_tmstring_list sl )
    find all elements matching 'findpat' and delete them.
    Copy elements that don't match.
  */
-static tmstring fnrmlist( const_tmstring_list sl )
+static tmstring fnrmlist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
@@ -1084,13 +1086,12 @@ static tmstring fnrmlist( const_tmstring_list sl )
     tmstring_list nl;
 
     if( sl->sz < 1 ){
-	line_error( "'rmlist' requires at least one parameter" );
+	origin_error( org, "'rmlist' requires at least one parameter" );
 	return new_tmstring( "" );
     }
     errm = ref_comp( sl->arr[0] );
     if( errm != (char *) NULL ){
-	(void) strcpy( errarg, errm );
-	line_error( "bad regular expression" );
+	origin_error( org, "bad regular expression: %s", errm );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
@@ -1105,10 +1106,11 @@ static tmstring fnrmlist( const_tmstring_list sl )
 }
 
 /* first */
-static tmstring fnfirst( const_tmstring_list sl )
+static tmstring fnfirst( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
 
+    (void) org;
     if( sl->sz <1 ){
 	ans = new_tmstring( "" );
     }
@@ -1119,12 +1121,13 @@ static tmstring fnfirst( const_tmstring_list sl )
 }
 
 /* shift */
-static tmstring fnshift( const_tmstring_list sl )
+static tmstring fnshift( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
     tmstring ans;
 
+    (void) org;
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
         nl = append_tmstring_list( nl, new_tmstring( sl->arr[ix] ) );
@@ -1135,12 +1138,12 @@ static tmstring fnshift( const_tmstring_list sl )
 }
 
 /* if */
-static tmstring fnif( const_tmstring_list sl )
+static tmstring fnif( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
 
     if( sl->sz<1 ){
-	line_error( "'if' requires at least a condition expression" );
+	origin_error( org, "'if' requires at least a condition expression" );
 	return new_tmstring( "" );
     }
     if( istruestr( sl->arr[0] ) ){
@@ -1165,11 +1168,12 @@ static tmstring fnif( const_tmstring_list sl )
 /* -- logic functions -- */
 
 /* and */
-static tmstring fnand( const_tmstring_list sl )
+static tmstring fnand( const_origin org, const_tmstring_list sl )
 {
     bool flag = TRUE;
     unsigned int ix;
 
+    (void) org;
     for( ix=0; ix<sl->sz; ix++ ){
 	flag = istruestr( sl->arr[ix] );
 	if( !flag ) break;
@@ -1178,11 +1182,12 @@ static tmstring fnand( const_tmstring_list sl )
 }
 
 /* or */
-static tmstring fnor( const_tmstring_list sl )
+static tmstring fnor( const_origin org, const_tmstring_list sl )
 {
     bool flag = FALSE;
     unsigned int ix;
 
+    (void) org;
     for( ix=0; ix<sl->sz; ix++ ){
 	flag = istruestr( sl->arr[ix] );
 	if( flag ) break;
@@ -1191,10 +1196,11 @@ static tmstring fnor( const_tmstring_list sl )
 }
 
 /* not */
-static tmstring fnnot( const_tmstring_list sl )
+static tmstring fnnot( const_origin org, const_tmstring_list sl )
 {
     bool a;
 
+    (void) org;
     if( sl->sz < 1 ){
 	a = TRUE;
     }
@@ -1208,7 +1214,7 @@ static tmstring fnnot( const_tmstring_list sl )
 
 
 /* listtypes <list> */
-static tmstring fnlisttypes( const_tmstring_list sl )
+static tmstring fnlisttypes( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1216,6 +1222,7 @@ static tmstring fnlisttypes( const_tmstring_list sl )
     const char *pre;
     const char *suff;
 
+    (void) org;
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -1240,7 +1247,7 @@ static tmstring fnlisttypes( const_tmstring_list sl )
 }
 
 /* delisttypes <list> */
-static tmstring fndelisttypes( const_tmstring_list sl )
+static tmstring fndelisttypes( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1248,6 +1255,7 @@ static tmstring fndelisttypes( const_tmstring_list sl )
     const char *pre;
     const char *suff;
 
+    (void) org;
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -1271,7 +1279,7 @@ static tmstring fndelisttypes( const_tmstring_list sl )
 }
 
 /* singletypes <list> */
-static tmstring fnsingletypes( const_tmstring_list sl )
+static tmstring fnsingletypes( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1279,6 +1287,7 @@ static tmstring fnsingletypes( const_tmstring_list sl )
     const char *pre;
     const char *suff;
 
+    (void) org;
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -1305,7 +1314,7 @@ static tmstring fnsingletypes( const_tmstring_list sl )
 }
 
 /* stemname <list> */
-static tmstring fnstemname( const_tmstring_list sl )
+static tmstring fnstemname( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmstring_list nl;
@@ -1322,7 +1331,7 @@ static tmstring fnstemname( const_tmstring_list sl )
 	suff = "";
     }
     if( pre[0] == '\0' && suff[0] == '\0' ){
-	line_error( "'stemname' cannot function if both '" LISTPRE "' and '" LISTSUFF "' are empty" );
+	origin_error( org, "'stemname' cannot function if both '" LISTPRE "' and '" LISTSUFF "' are empty" );
 	ans = flatstrings( sl );
 	return ans;
     }
@@ -1344,7 +1353,7 @@ static tmstring fnstemname( const_tmstring_list sl )
 }
 
 /* mklist <n> <list> */
-static tmstring fnmklist( const_tmstring_list sl )
+static tmstring fnmklist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     int n;
@@ -1362,10 +1371,10 @@ static tmstring fnmklist( const_tmstring_list sl )
 	suff = "";
     }
     if( sl->sz<1 ){
-	line_error( "'mklist' requires at least one parameter" );
+	origin_error( org, "'mklist' requires at least one parameter" );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
+    cknumpar( org, sl->arr[0] );
     n = atoi( sl->arr[0] );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
@@ -1380,14 +1389,14 @@ static tmstring fnmklist( const_tmstring_list sl )
 }
 
 /* Construct a list of types. */
-static tmstring fntypelist( const_tmstring_list sl )
+static tmstring fntypelist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'typelist' does not need any parameters" );
+      origin_error( org, "'typelist' does not need any parameters" );
     }
     nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1401,29 +1410,24 @@ static tmstring fntypelist( const_tmstring_list sl )
 }
 
 /* Construct a list of constructors. */
-static tmstring fnconstructorlist( const_tmstring_list sl )
+static tmstring fnconstructorlist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'constructorlist' does not need any parameters" );
+	origin_error( org, "'constructorlist' does not need any parameters" );
     }
     nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
         const_ds d = allds->arr[ix];
 
 	switch( d->tag ){
+            case TAGDsInclude:
 	    case TAGDsConstructorBase:
-		break;
-
 	    case TAGDsTuple:
-		break;
-
 	    case TAGDsClass:
-		break;
-
 	    case TAGDsAlias:
 		break;
 
@@ -1437,14 +1441,14 @@ static tmstring fnconstructorlist( const_tmstring_list sl )
     return ans;
 }
 /* Construct a list of constructor types. */
-static tmstring fnctypelist( const_tmstring_list sl )
+static tmstring fnctypelist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'ctypelist' does not need any parameters" );
+	origin_error( org, "'ctypelist' does not need any parameters" );
     }
     nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1454,15 +1458,10 @@ static tmstring fnctypelist( const_tmstring_list sl )
 		nl = append_tmsymbol_list( nl, d->name->sym );
 		break;
 
+            case TAGDsInclude:
 	    case TAGDsTuple:
-		break;
-
 	    case TAGDsAlias:
-		break;
-
 	    case TAGDsClass:
-		break;
-
 	    case TAGDsConstructor:
 		break;
 	}
@@ -1473,14 +1472,14 @@ static tmstring fnctypelist( const_tmstring_list sl )
 }
 
 /* Construct a list of tuple types. */
-static tmstring fntuplelist( const_tmstring_list sl )
+static tmstring fntuplelist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'tuplelist' does not need any parameters" );
+	origin_error( org, "'tuplelist' does not need any parameters" );
     }
     nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1494,6 +1493,7 @@ static tmstring fntuplelist( const_tmstring_list sl )
 	    case TAGDsConstructor:
 	    case TAGDsClass:
 	    case TAGDsAlias:
+	    case TAGDsInclude:
 		break;
 
 	}
@@ -1504,14 +1504,14 @@ static tmstring fntuplelist( const_tmstring_list sl )
 }
 
 /* Construct a list of class types. */
-static tmstring fnclasslist( const_tmstring_list sl )
+static tmstring fnclasslist( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'classlist' does not need any parameters" );
+	origin_error( org, "'classlist' does not need any parameters" );
     }
     nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1519,6 +1519,7 @@ static tmstring fnclasslist( const_tmstring_list sl )
 
 	switch( d->tag ){
 	    case TAGDsTuple:
+	    case TAGDsInclude:
 	    case TAGDsConstructorBase:
 	    case TAGDsConstructor:
 	    case TAGDsAlias:
@@ -1536,14 +1537,14 @@ static tmstring fnclasslist( const_tmstring_list sl )
 }
 
 /* Construct a list of aliases. */
-static tmstring fnaliases( const_tmstring_list sl )
+static tmstring fnaliases( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list nl;
 
     if( sl->sz!=0 ){
-	line_error( "'aliases' does not need any parameters" );
+	origin_error( org, "'aliases' does not need any parameters" );
     }
     nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
@@ -1551,6 +1552,7 @@ static tmstring fnaliases( const_tmstring_list sl )
 
 	switch( d->tag ){
 	    case TAGDsTuple:
+	    case TAGDsInclude:
 	    case TAGDsConstructorBase:
 	    case TAGDsConstructor:
 	    case TAGDsClass:
@@ -1570,14 +1572,13 @@ static tmstring fnaliases( const_tmstring_list sl )
 /* Given a list of types 'dl', search for type with name 't'.
  * Give an error message if it is not found.
  */ 
-static ds findtype( ds_list dl, const_tmstring t )
+static ds findtype( const_origin org, ds_list dl, const_tmstring t )
 {
     unsigned int ix;
 
     ix = find_type_ix( dl, add_tmsymbol( t ) );
     if( ix>=dl->sz ){
-	sprintf( errarg, "`%s'", t );
-	line_error( "unknown type" );
+	origin_error( org, "unknown type `%s'", t );
 	return dsNIL;
     }
     return dl->arr[ix];
@@ -1598,6 +1599,7 @@ static bool is_virtual( ds_list types, const_tmstring type )
 		break;
 
 	    case TAGDsTuple:
+	    case TAGDsInclude:
 	    case TAGDsAlias:
 	    case TAGDsConstructor:
 		break;
@@ -1612,7 +1614,7 @@ static bool is_virtual( ds_list types, const_tmstring type )
 }
 
 /* Given a type name, return TRUE if the type is virtual. */
-static tmstring fnisvirtual( const_tmstring_list sl )
+static tmstring fnisvirtual( const_origin org, const_tmstring_list sl )
 {
     bool ans = FALSE;
 
@@ -1620,19 +1622,19 @@ static tmstring fnisvirtual( const_tmstring_list sl )
 	ans = is_virtual( allds, sl->arr[0] );
     }
     else {
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'isvirtual' requires exactly one parameter" );
+	origin_error( org, "'isvirtual' requires exactly one parameter, not %u", sl->sz );
     }
     return newboolstr( ans );
 }
 
 /* Given a list of types, return the ones that are virtual. */
-static tmstring fnvirtual( const_tmstring_list sl )
+static tmstring fnvirtual( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list res;
     tmstring ans;
 
+    (void) org;
     res = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	if( is_virtual( allds, sl->arr[ix] ) ){
@@ -1645,12 +1647,13 @@ static tmstring fnvirtual( const_tmstring_list sl )
 }
 
 /* Given a list of types, return the ones that are not virtual. */
-static tmstring fnnonvirtual( const_tmstring_list sl )
+static tmstring fnnonvirtual( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list res;
     tmstring ans;
 
+    (void) org;
     res = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	if( !is_virtual( allds, sl->arr[ix] ) ){
@@ -1684,6 +1687,9 @@ static tmstring calc_metaname(
 	    case TAGDsTuple:
 		return new_tmstring( "tuple" );
 
+	    case TAGDsInclude:
+		return tmstringNIL;
+
 	    case TAGDsAlias:
 		return new_tmstring( "alias" );
 
@@ -1704,7 +1710,7 @@ static tmstring calc_metaname(
 }
 
 /* Given a type name, return the metatype of this type.  */
-static tmstring fnmetatype( const_tmstring_list sl )
+static tmstring fnmetatype( const_origin org, const_tmstring_list sl )
 {
     const char *pre;
     const char *suff;
@@ -1712,6 +1718,7 @@ static tmstring fnmetatype( const_tmstring_list sl )
     tmstring_list res;
     tmstring ans;
 
+    (void) org;
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -1759,7 +1766,7 @@ static tmstring calc_alias( const char *pre, const char *suff, const_tmstring ty
 }
 
 /* Given a type name, return the alias of this type.  */
-static tmstring fnalias( const_tmstring_list sl )
+static tmstring fnalias( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list res;
@@ -1767,6 +1774,7 @@ static tmstring fnalias( const_tmstring_list sl )
     const char *pre;
     const char *suff;
 
+    (void) org;
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -1790,12 +1798,13 @@ static tmstring fnalias( const_tmstring_list sl )
 /* Given a type name, return the subclasses (transitive closure of inheritors)
  * of this type.
  */
-static tmstring fnsubclasses( const_tmstring_list sl )
+static tmstring fnsubclasses( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmsymbol_list subclasses;
     unsigned int ix;
 
+    (void) org;
     subclasses = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_subclasses( &subclasses, allds, add_tmsymbol( sl->arr[ix] ) );
@@ -1808,12 +1817,13 @@ static tmstring fnsubclasses( const_tmstring_list sl )
 /* Given a type name, return the superclasses (transitive closure of inherits)
  * of this type.
  */
-static tmstring fnsuperclasses( const_tmstring_list sl )
+static tmstring fnsuperclasses( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmsymbol_list superclasses;
     unsigned int ix;
 
+    (void) org;
     superclasses = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_superclasses( &superclasses, allds, add_tmsymbol( sl->arr[ix] ) );
@@ -1824,12 +1834,13 @@ static tmstring fnsuperclasses( const_tmstring_list sl )
 }
 
 /* Given a type name, return the inherits of this type.  */
-static tmstring fninherits( const_tmstring_list sl )
+static tmstring fninherits( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
     tmsymbol_list allinherits;
 
+    (void) org;
     allinherits = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	tmsymbol_list inherits = rdup_tmsymbol_list( extract_inherits( allds, add_tmsymbol( sl->arr[ix] ) ) );
@@ -1846,12 +1857,13 @@ static tmstring fninherits( const_tmstring_list sl )
 /* Given a type name, return the inheritors (the types that inherit
  * from this type).
  */
-static tmstring fninheritors( const_tmstring_list sl )
+static tmstring fninheritors( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmsymbol_list inheritors;
     unsigned int ix;
 
+    (void) org;
     inheritors = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_inheritors( &inheritors, allds, add_tmsymbol( sl->arr[ix] ) );
@@ -1862,12 +1874,13 @@ static tmstring fninheritors( const_tmstring_list sl )
 }
 
 /* Construct a list of fields (including inherited ones) for the given type.  */
-static tmstring fnallfields( const_tmstring_list sl )
+static tmstring fnallfields( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmsymbol_list nl;
     unsigned int ix;
 
+    (void) org;
     nl = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_all_fields( &nl, allds, add_tmsymbol( sl->arr[ix] ) );
@@ -1878,12 +1891,13 @@ static tmstring fnallfields( const_tmstring_list sl )
 }
 
 /* Construct a list of fields for the given type.  */
-static tmstring fnfields( const_tmstring_list sl )
+static tmstring fnfields( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     tmsymbol_list nl;
     unsigned int ix;
 
+    (void) org;
     nl = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_fields( &nl, allds, add_tmsymbol( sl->arr[ix] ) );
@@ -1896,18 +1910,17 @@ static tmstring fnfields( const_tmstring_list sl )
 /* Given a tuple type name and element name, return the
    type name of the given element.
  */
-static tmstring fntypename( const_tmstring_list sl )
+static tmstring fntypename( const_origin org, const_tmstring_list sl )
 {
     const_Field e;
 
     if( sl->sz != 2 ){
-	line_error( "'ttypename' requires a type and an element name" );
+	origin_error( org, "'ttypename' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "field not found" );
+	origin_error( org, "type `%s' has no field `%s'", sl->arr[0], sl->arr[1] );
 	return new_tmstring( "" );
     }
     return new_tmstring( e->type->basetype->name );
@@ -1918,18 +1931,17 @@ static tmstring fntypename( const_tmstring_list sl )
 
    Possible type classes are: `single' and `list'.
  */
-static tmstring fnttypeclass( const_tmstring_list sl )
+static tmstring fnttypeclass( const_origin org, const_tmstring_list sl )
 {
     const_Field e;
 
     if( sl->sz != 2 ){
-	line_error( "'fieldtypeclass' requires a type and an element name" );
+	origin_error( org, "'fieldtypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "field not found" );
+	origin_error( org, "type `%s' has no field `%s'", sl->arr[0], sl->arr[1] );
 	return new_tmstring( "" );
     }
     return new_tmstring( ( e->type->level != 0 ? "list" : "single" ) );
@@ -1938,18 +1950,17 @@ static tmstring fnttypeclass( const_tmstring_list sl )
 /* Given a type name and element name, return the
    list level of the given element.
  */
-static tmstring fntypelevel( const_tmstring_list sl )
+static tmstring fntypelevel( const_origin org, const_tmstring_list sl )
 {
     const_Field e;
 
     if( sl->sz != 2 ){
-	line_error( "'typelevel' requires a type and an element name" );
+	origin_error( org, "'typelevel' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "field not found" );
+	origin_error( org, "type `%s' has no field `%s'", sl->arr[0], sl->arr[1] );
 	return new_tmstring( "" );
     }
     return newuintstr( e->type->level );
@@ -1960,7 +1971,7 @@ static tmstring fntypelevel( const_tmstring_list sl )
  * Unknown types are ignored.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fnalltypes( const_tmstring_list tl )
+static tmstring fnalltypes( const_origin org, const_tmstring_list tl )
 {
     const char *pre;
     const char *suff;
@@ -1968,6 +1979,7 @@ static tmstring fnalltypes( const_tmstring_list tl )
     tmstring_list nl;
     tmstring ans;
 
+    (void) org;
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -2006,12 +2018,13 @@ static tmstring fnalltypes( const_tmstring_list tl )
  * Unknown types are ignored.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fntypes( const_tmstring_list pl )
+static tmstring fntypes( const_origin org, const_tmstring_list pl )
 {
     unsigned int tix;
     Type_list tl;
     tmstring ans;
 
+    (void) org;
     tl = new_Type_list();
     for( tix=0; tix<pl->sz; tix++ ){
 	const_tmsymbol tnm = add_tmsymbol( pl->arr[tix] );
@@ -2023,9 +2036,8 @@ static tmstring fntypes( const_tmstring_list pl )
 
 	    switch( d->tag ){
 		case TAGDsConstructorBase:
-		    break;
-
 		case TAGDsAlias:
+		case TAGDsInclude:
 		    break;
 
 		case TAGDsTuple:
@@ -2071,7 +2083,7 @@ static Type_list add_Type_list( Type_list tl, Type t )
     return append_Type_list( tl, t );
 }
 
-static bool member_Type_list( Type_list tl, Type t )
+static bool member_Type_list( Type_list tl, const_Type t )
 {
     unsigned int ix;
 
@@ -2142,6 +2154,7 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 
 		case TAGDsConstructorBase:
 		case TAGDsTuple:
+		case TAGDsInclude:
 		case TAGDsClass:
 		case TAGDsConstructor:
 		    break;
@@ -2185,7 +2198,7 @@ static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list block
  * the type.
  * List types for the fields are constructed with LISTPRE and LISTSIFF.
  */
-static tmstring fnreach( const_tmstring_list pl )
+static tmstring fnreach( const_origin org, const_tmstring_list pl )
 {
     unsigned int ix;
     Type_list tl;
@@ -2197,6 +2210,7 @@ static tmstring fnreach( const_tmstring_list pl )
     const char *suff;
     bool in_blocking;
 
+    (void) org;
     sz = allds->sz;
     tl = new_Type_list();
     blocking = new_Type_list();
@@ -2249,20 +2263,19 @@ static tmstring fnreach( const_tmstring_list pl )
 /* Given a type name and element name, return the
    type of the given element, constructed from its type name and list level.
  */
-static tmstring fntype( const_tmstring_list sl )
+static tmstring fntype( const_origin org, const_tmstring_list sl )
 {
     const_Field e;
     const char *pre;
     const char *suff;
 
     if( sl->sz != 2 ){
-	line_error( "'type' requires a type and an element name" );
+	origin_error( org, "'type' requires a type and an element name" );
 	return new_tmstring( "" );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "field not found" );
+	origin_error( org, "type `%s' has no field `%s'", sl->arr[0], sl->arr[1] );
 	return new_tmstring( "" );
     }
     pre = getvar( LISTPRE );
@@ -2277,12 +2290,13 @@ static tmstring fntype( const_tmstring_list sl )
 }
 
 /* construct a list of constructors for the given types */
-static tmstring fnconslist( const_tmstring_list tl )
+static tmstring fnconslist( const_origin org, const_tmstring_list tl )
 {
     tmsymbol_list nl;
     unsigned int tix;
     tmstring ans;
 
+    (void) org;
     nl = new_tmsymbol_list();
     for( tix=0; tix<tl->sz; tix++ ){
 	unsigned int dix = find_type_ix( allds, add_tmsymbol( tl->arr[tix] ) );
@@ -2304,7 +2318,7 @@ static tmstring fnconslist( const_tmstring_list tl )
 }
 
 /* construct a list of fields for given type */
-static tmstring fncelmlist( const_tmstring_list sl )
+static tmstring fncelmlist( const_origin org, const_tmstring_list sl )
 {
     const_ds d;
     const_tmsymbol_list cl;
@@ -2312,20 +2326,17 @@ static tmstring fncelmlist( const_tmstring_list sl )
     tmsymbol_list nl;
 
     if( sl->sz != 2 ){
-	line_error( "'celmlist' requires exactly two parameters" );
+	origin_error( org, "'celmlist' requires two parameters" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
+    d = findtype( org, allds, sl->arr[0] );
     if( d == dsNIL || d->tag != TAGDsConstructorBase ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a constructor type" );
+	origin_error( org, "type `%s' is not a constructor type", sl->arr[0] );
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
-	(void) strcpy( errarg, sl->arr[0] );
-	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "not a member of this constructor type" );
+	origin_error( org, "type `%s' does not have a constructor `%s'", sl->arr[0], sl->arr[1] );
     }
     nl = new_tmsymbol_list();
     collect_fields( &nl, allds, add_tmsymbol( sl->arr[1] ) );
@@ -2340,32 +2351,28 @@ static tmstring fncelmlist( const_tmstring_list sl )
    It is not possible to determine whether it is a list of elements
    or not from this list.
  */
-static tmstring fnctypename( const_tmstring_list sl )
+static tmstring fnctypename( const_origin org, const_tmstring_list sl )
 {
     const_ds d;
     tmsymbol_list cl;
     const_Field e;
 
     if( sl->sz != 3 ){
-	line_error( "'ctypename' requires a type, a constructor and a field name" );
+	origin_error( org, "'ctypename' requires a type, a constructor and a field name" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
+    d = findtype( org, allds, sl->arr[0] );
     if( d == dsNIL || d->tag != TAGDsConstructorBase ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a constructor type" );
+	origin_error( org, "type `%s' is not a constructor type", sl->arr[0] );
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
-	(void) strcpy( errarg, sl->arr[0] );
-	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "not a member of this constructor type" );
+	origin_error( org, "type `%s' does not have a constructor `%s'", sl->arr[0], sl->arr[1] );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[1] ), add_tmsymbol( sl->arr[2] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in constructor '%s'", sl->arr[2], sl->arr[1] );
-	line_error( "field not found" );
+	origin_error( org, "constructor `%s' does not have a field `%s'", sl->arr[1], sl->arr[2] );
 	return new_tmstring( "" );
     }
     return new_tmstring( e->type->basetype->name );
@@ -2378,32 +2385,28 @@ static tmstring fnctypename( const_tmstring_list sl )
     single
     list
  */
-static tmstring fnctypeclass( const_tmstring_list sl )
+static tmstring fnctypeclass( const_origin org, const_tmstring_list sl )
 {
     const_ds d;
     tmsymbol_list cl;
     const_Field e;
 
     if( sl->sz != 3 ){
-	line_error( "'ctypeclass' requires a type, a constructor and a field name" );
+	origin_error( org, "'ctypeclass' requires a type, a constructor and a field name" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
+    d = findtype( org, allds, sl->arr[0] );
     if( d == dsNIL || d->tag != TAGDsConstructorBase ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a constructor type" );
+	origin_error( org, "type `%s' is not a constructor type", sl->arr[0] );
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
-	(void) strcpy( errarg, sl->arr[0] );
-	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "not a member of this constructor type" );
+	origin_error( org, "type `%s' does not have a constructor `%s'", sl->arr[0], sl->arr[1] );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[1] ), add_tmsymbol( sl->arr[2] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
-	line_error( "field not found" );
+	origin_error( org, "constructor `%s' does not have a field `%s'", sl->arr[1], sl->arr[2] );
 	return new_tmstring( "" );
     }
     return new_tmstring( ( e->type->level!=0 ? "list" : "single" ) );
@@ -2413,32 +2416,28 @@ static tmstring fnctypeclass( const_tmstring_list sl )
    list level of the given element.
 
  */
-static tmstring fnctypellev( const_tmstring_list sl )
+static tmstring fnctypellev( const_origin org, const_tmstring_list sl )
 {
     const_ds d;
     tmsymbol_list cl;
     const_Field e;
 
     if( sl->sz != 3 ){
-	line_error( "'ctypellev' requires a type, a constructor and a field name" );
+	origin_error( org, "'ctypellev' requires a type, a constructor and a field name" );
 	return new_tmstring( "" );
     }
-    d = findtype( allds, sl->arr[0] );
+    d = findtype( org, allds, sl->arr[0] );
     if( d == dsNIL || d->tag != TAGDsConstructorBase ){
-	(void) strcpy( errarg, sl->arr[0] );
-	line_error( "not a constructor type" );
+	origin_error( org, "type '%s' is not a constructor type", sl->arr[0] );
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
     if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
-	(void) strcpy( errarg, sl->arr[0] );
-	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
-	line_error( "not a member of this constructor type" );
+	origin_error( org, "type `%s' does not have a constructor `%s'", sl->arr[0], sl->arr[1] );
     }
     e = find_field( allds, add_tmsymbol( sl->arr[1] ), add_tmsymbol( sl->arr[2] ) );
     if( e == FieldNIL ){
-	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
-	line_error( "field not found" );
+	origin_error( org, "constructor `%s' does not have a field `%s'", sl->arr[1], sl->arr[2] );
 	return new_tmstring( "" );
     }
     return newuintstr( e->type->level );
@@ -2483,6 +2482,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmsymbol t, con
     }
     switch( d->tag ){
 	case TAGDsConstructorBase:
+	case TAGDsInclude:
 	    break;
 
 	case TAGDsAlias:
@@ -2551,7 +2551,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmsymbol t, con
    Collect these types in a new list.
    Repeat until all types are deleted from the input list.
  */
-static tmstring fndepsort( const_tmstring_list real_sl )
+static tmstring fndepsort( const_origin org, const_tmstring_list real_sl )
 {
     tmsymbol_list nl;
     tmsymbol t;
@@ -2589,10 +2589,8 @@ static tmstring fndepsort( const_tmstring_list real_sl )
 	if( !found ){
             tmstring baddies = flatsymbols( sl );
 
-	    strncpy( errarg, baddies, ERRARGLEN-1 );
-	    errarg[ERRARGLEN-1] = '\0';
-	    rfre_tmsymbol( baddies );
-	    line_error( "circular dependency" );
+	    origin_error( org, "circular dependency: %s", baddies );
+	    rfre_tmstring( baddies );
 	    break;
 	}
 	t = sl->arr[foundix];
@@ -2639,7 +2637,7 @@ static bool inherit_depends_on( const_tmstring t, const_tmstring_list tl )
    Collect these types in a new list.
    Repeat until all types are deleted from the input list.
  */
-static tmstring fninheritsort( const_tmstring_list real_sl )
+static tmstring fninheritsort( const_origin org, const_tmstring_list real_sl )
 {
     tmstring_list nl;
     tmstring ans;
@@ -2663,10 +2661,8 @@ static tmstring fninheritsort( const_tmstring_list real_sl )
 	if( !found ){
             tmstring baddies = flatstrings( sl );
 
-	    strncpy( errarg, baddies, ERRARGLEN-1 );
-	    errarg[ERRARGLEN-1] = '\0';
+	    origin_error( org, "circular dependency: %s", baddies );
 	    rfre_tmstring( baddies );
-	    line_error( "circular dependency" );
 	    break;
 	}
 	t = sl->arr[foundix];
@@ -2679,41 +2675,40 @@ static tmstring fninheritsort( const_tmstring_list real_sl )
     return ans;
 }
 
-static tmstring fndsfilename( const_tmstring_list sl )
+static tmstring fndsfilename( const_origin org, const_tmstring_list sl )
 {
 
     if( sl->sz!=0 ){
-	line_error( "'dsfilename' does not need any parameters" );
+	origin_error( org, "'dsfilename' does not need any parameters" );
     }
     return new_tmstring( dsfilename );
 }
 
-static tmstring fntplfilename( const_tmstring_list sl )
+static tmstring fntplfilename( const_origin org, const_tmstring_list sl )
 {
 
     if( sl->sz!=0 ){
-	line_error( "'tplfilename' does not need any parameters" );
+	origin_error( org, "'tplfilename' does not need any parameters" );
     }
-    return new_tmstring( tplfilename );
+    return new_tmstring( org->file->name );
 }
 
-static tmstring fntpllineno( const_tmstring_list sl )
+static tmstring fntpllineno( const_origin org, const_tmstring_list sl )
 {
 
     if( sl->sz != 0 ){
-	line_error( "'tpllineno' does not need any parameters" );
+	origin_error( org, "'tpllineno' does not need any parameters" );
     }
-    return newuintstr( tpllineno );
+    return newuintstr( org->line );
 }
 
 /* Return true iff the given argument is the name of a variable. */
-static tmstring fndefined( const_tmstring_list sl )
+static tmstring fndefined( const_origin org, const_tmstring_list sl )
 {
     char *v;
 
     if( sl->sz != 1 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'defined' requires exactly one parameter" );
+	origin_error( org, "'defined' requires exactly one parameter, not %u", sl->sz );
 	return newboolstr( 0 );
     }
     v = getvar( sl->arr[0] );
@@ -2721,13 +2716,12 @@ static tmstring fndefined( const_tmstring_list sl )
 }
 
 /* Return true iff the given argument is the name of a defined macro. */
-static tmstring fndefinedmacro( const_tmstring_list sl )
+static tmstring fndefinedmacro( const_origin org, const_tmstring_list sl )
 {
     macro v;
 
     if( sl->sz != 1 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'definedmacro' requires exactly one parameter" );
+	origin_error( org, "'definedmacro' requires exactly one parameter, not %u", sl->sz );
 	return newboolstr( 0 );
     }
     v = findmacro( sl->arr[0] );
@@ -2737,22 +2731,20 @@ static tmstring fndefinedmacro( const_tmstring_list sl )
 /* matchmacro pat
  * Return a list of all macros whose name matches pattern 'pat'.
  */
-static tmstring fnmatchmacro( const_tmstring_list sl )
+static tmstring fnmatchmacro( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
     tmstring_list nl;
 
     if( sl->sz != 1 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'matchmacro' requires exactly one parameter" );
+	origin_error( org, "'matchmacro' requires exactly one parameter, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
     errm = match_macros( sl->arr[0], &nl );
     if( errm != (char *) NULL ){
-	(void) strcpy( errarg, errm );
-	line_error( "bad regular expression" );
+	origin_error( org, "bad regular expression: %s", errm );
 	rfre_tmstring_list( nl );
 	return new_tmstring( "" );
     }
@@ -2764,22 +2756,20 @@ static tmstring fnmatchmacro( const_tmstring_list sl )
 /* matchvar pat
  * Return a list of all vars whose name matches pattern 'pat'.
  */
-static tmstring fnmatchvar( const_tmstring_list sl )
+static tmstring fnmatchvar( const_origin org, const_tmstring_list sl )
 {
     tmstring ans;
     const char *errm;
     tmstring_list nl;
 
     if( sl->sz != 1 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'matchvar' requires exactly one parameter" );
+	origin_error( org, "'matchvar' requires exactly one parameter, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     nl = new_tmstring_list();
     errm = match_vars( sl->arr[0], &nl );
     if( errm != NULL ){
-	(void) strcpy( errarg, errm );
-	line_error( "bad regular expression" );
+	origin_error( org, "bad regular expression: %s", errm );
 	rfre_tmstring_list( nl );
 	return new_tmstring( "" );
     }
@@ -2791,15 +2781,16 @@ static tmstring fnmatchvar( const_tmstring_list sl )
 /* -- nested evaluation: 'call' and 'eval' -- */
 
 /* Evaluate the given parameters again. */
-static tmstring fneval( const_tmstring_list sl )
+static tmstring fneval( const_origin org, const_tmstring_list sl )
 {
     tmstring_list nl = new_tmstring_list();
     tmstring ans;
     unsigned int ix;
 
+    (void) org;
     for( ix=0; ix<sl->sz; ix++ ){
         tmstring is = sl->arr[ix];
-        tmstring os = alevalto( &is, '\0' );
+        tmstring os = alevalto( org, &is, '\0' );
 	nl = append_tmstring_list( nl, os );
     }
     ans = flatstrings( nl );
@@ -2808,19 +2799,17 @@ static tmstring fneval( const_tmstring_list sl )
 }
 
 /* Call a macro. */
-static tmstring fncall( const_tmstring_list orgsl )
+static tmstring fncall( const_origin org, const_tmstring_list orgsl )
 {
     tmstring_list sl;
     tmstring nm;
-    tmstring_list fpl;
-    tmstring oldfname;
+    tmstring_list formals;
     unsigned int ix;
     const_macro m;
-    int oldlno;
     tmstring retval;
 
     if( orgsl->sz<1 ){
-	line_error( "no macro name given" );
+	origin_error( org, "no macro name given" );
 	return new_tmstring( "" );
     }
     sl = rdup_tmstring_list( orgsl );
@@ -2828,50 +2817,43 @@ static tmstring fncall( const_tmstring_list orgsl )
     sl = delete_tmstring_list( sl, 0 );
     m = findmacro( nm );
     if( m == macroNIL ){
-	sprintf( errarg, "'%s'", nm );
-	line_error( "no such macro" );
+	origin_error( org, "macro `%s' does not exist", nm );
 	rfre_tmstring_list( sl );
 	rfre_tmstring( nm );
 	return new_tmstring( "" );
     }
-    fpl = m->fpl;
+    formals = m->fpl;
     rfre_tmstring( nm );
-    if( fpl->sz != sl->sz ){
-	sprintf(
-	    errarg,
-	    "%u instead of %u (macro '%s')",
+    if( formals->sz != sl->sz ){
+	origin_error(
+            org,
+            "wrong number of parameters for macro `%s': %u instead of %u",
+	    m->name,
 	    sl->sz,
-	    fpl->sz,
-	    m->name
-	);
-	line_error( "wrong number of parameters" );
+	    formals->sz
+        );
 	rfre_tmstring_list( sl );
 	return new_tmstring( "" );
     }
-    oldlno = tpllineno;
-    oldfname = tplfilename;
-    tplfilename = m->orgfile;
     newvarctx();
-    setvar( "templatefile", m->orgfile );
+    setvar( "templatefile", m->org->file->name );
     for( ix=0; ix<sl->sz; ix++ ){
-	setvar( fpl->arr[ix], sl->arr[ix] );
+	setvar( formals->arr[ix], sl->arr[ix] );
     }
     rfre_tmstring_list( sl );
     dotrans( m->body, (FILE *)0 );
     retval =  getretval();
     flushvar();
-    tplfilename = oldfname;
-    tpllineno = oldlno;
     return retval;
 }
 
 /* -- OS interface -- */
 
 /* Return the search path */
-static tmstring fnsearchpath( const_tmstring_list sl )
+static tmstring fnsearchpath( const_origin org, const_tmstring_list sl )
 {
     if( sl->sz!=0 ){
-	line_error( "'searchpath' does not need any parameters" );
+	origin_error( org, "'searchpath' does not need any parameters" );
     }
     return flatstrings( searchpath );
 }
@@ -2882,12 +2864,13 @@ static tmstring fnsearchpath( const_tmstring_list sl )
  * list with '?'.
  * The access mode is assumed to be 'r'.
  */
-static tmstring fnsearchfile( const_tmstring_list sl )
+static tmstring fnsearchfile( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring_list nl;
     tmstring ans;
 
+    (void) org;
     nl = new_tmstring_list();
     for( ix=0; ix<sl->sz; ix++ ){
         tmstring path = search_file( searchpath, sl->arr[ix], PATHSEPSTR, "r" );
@@ -2903,13 +2886,12 @@ static tmstring fnsearchfile( const_tmstring_list sl )
 }
 
 /* See if an environment variable is set. */
-static tmstring fnisinenv( const_tmstring_list sl )
+static tmstring fnisinenv( const_origin org, const_tmstring_list sl )
 {
     char *v;
 
     if( sl->sz != 1 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'isinenv' requires exactly one parameter" );
+	origin_error( org, "'isinenv' requires exactly one parameter, not %u", sl->sz );
 	return new_tmstring( "0" );
     }
     v = getenv( sl->arr[0] );
@@ -2917,13 +2899,12 @@ static tmstring fnisinenv( const_tmstring_list sl )
 }
 
 /* access of environment variables */
-static tmstring fngetenv( const_tmstring_list sl )
+static tmstring fngetenv( const_origin org, const_tmstring_list sl )
 {
     const char *v;
 
     if( sl->sz != 1 ){
-	(void) sprintf( errarg, "not %u", sl->sz );
-	line_error( "'getenv' requires exactly one parameter" );
+	origin_error( org, "'getenv' requires exactly one parameter, not %u", sl->sz );
 	return new_tmstring( "" );
     }
     v = getenv( sl->arr[0] );
@@ -2936,14 +2917,14 @@ static tmstring fngetenv( const_tmstring_list sl )
 /* Return the current amount of processor time consumed by the program.
  * The time is expressed in milliseconds.
  */
-static tmstring fnprocessortime( const_tmstring_list sl )
+static tmstring fnprocessortime( const_origin org, const_tmstring_list sl )
 {
     clock_t t_ticks = clock()-start_time;
     long t_ms = (1000*((long) t_ticks))/CLOCKS_PER_SEC;
     char buf[30];
 
     if( sl->sz != 0 ){
-	line_error( "'processortime' does not need any parameters" );
+	origin_error( org, "'processortime' does not need any parameters" );
 	return new_tmstring( "0" );
     }
     sprintf( buf, "%ld", t_ms );
@@ -2951,12 +2932,12 @@ static tmstring fnprocessortime( const_tmstring_list sl )
 }
 
 /* Return the current clock time.  */
-static tmstring fnnow( const_tmstring_list sl )
+static tmstring fnnow( const_origin org, const_tmstring_list sl )
 {
     char buf[30];
 
     if( sl->sz != 0 ){
-	line_error( "'now' does not need any parameters" );
+	origin_error( org, "'now' does not need any parameters" );
 	return new_tmstring( "0" );
     }
     sprintf( buf, "%ld", time( NULL )  );
@@ -2966,14 +2947,14 @@ static tmstring fnnow( const_tmstring_list sl )
 /* Given a time and a format string, generate a time string in the
  * given format.
  */
-static tmstring fnformattime( const_tmstring_list sl )
+static tmstring fnformattime( const_origin org, const_tmstring_list sl )
 {
     char buf[STRBUFSIZE+1];
     time_t t;
     const char *fmt;
 
     if( sl->sz < 1 ){
-	line_error( "'formattime' requires at least a time" );
+	origin_error( org, "'formattime' requires at least a time" );
 	return new_tmstring( "" );
     }
     if( sl->sz < 2 ){
@@ -2983,10 +2964,10 @@ static tmstring fnformattime( const_tmstring_list sl )
 	fmt = sl->arr[1];
     }
     if( sl->sz>2 ){
-	line_error( "'formattime' requires one or two" );
+	origin_error( org, "'formattime' requires one or two" );
 	return new_tmstring( "" );
     }
-    cknumpar( sl->arr[0] );
+    cknumpar( org, sl->arr[0] );
     t = (time_t) atol( sl->arr[0] );
     (void) strftime( buf, STRBUFSIZE, fmt, gmtime( &t ) );
     return new_tmstring( buf );
@@ -2994,7 +2975,7 @@ static tmstring fnformattime( const_tmstring_list sl )
 
 /* ------ function table ------ */
 
-typedef tmstring (*charfn)( const_tmstring_list );
+typedef tmstring (*charfn)( const_origin org, const_tmstring_list );
 
 /* structure to describe an entry in the table of functions */
 struct fnentry {
@@ -3116,7 +3097,7 @@ static struct fnentry fntab[] = {
    by looking up the function name in a list and delegating evaluation to
    that function.
  */
-tmstring evalfn( const_tmstring f )
+tmstring evalfn( const_origin org, const tmstring f )
 {
     char *fnname;
     struct fnentry *fp;
@@ -3126,9 +3107,9 @@ tmstring evalfn( const_tmstring f )
     if( fntracing ){
 	fprintf( tracestream, "evaluating function ${%s}\n", f );
     }
-    par = scanword( f, &fnname );
+    par = scanword( org, f, &fnname );
     if( fnname == CHARNIL ){
-	line_error( "no name specified" );
+	origin_error( org, "no name specified" );
 	return new_tmstring( "" );
     }
     fp = fntab;
@@ -3137,14 +3118,13 @@ tmstring evalfn( const_tmstring f )
 	fp++;
     }
     if( fp->fnname[0] != '\0' ){
-        tmstring_list sl = chopstring( par );
+	tmstring_list sl = chopstring( org, par );
 
-	ans = (*fp->fncode)( sl );
+	ans = (*fp->fncode)( org, sl );
 	rfre_tmstring_list( sl );
     }
     else {
-	(void) strcpy( errarg, fnname );
-	line_error( "no such function" );
+	origin_error( org, "no such function: '%s'", fnname );
 	ans = new_tmstring( "" );
     }
     fre_tmstring( fnname );
