@@ -18,8 +18,7 @@ FILE *ckfopen( const char *nm, const char *acc )
     FILE *hnd = fopen( nm, acc );
 
     if( NULL == hnd ){
-	(void) strcpy( errarg, nm );
-	sys_error( errno );
+	sys_error( errno, "%s", nm );
 	exit( 1 );
     }
     return hnd;
@@ -31,8 +30,7 @@ FILE *ckfopen( const char *nm, const char *acc )
 void ckfreopen( const char *nm, const char *acc, FILE *f )
 {
     if( freopen( nm, acc, f ) == NULL ){
-	(void) strcpy( errarg, nm );
-	sys_error( errno );
+	sys_error( errno, "%s", nm );
 	exit( 1 );
     }
 }
@@ -102,7 +100,7 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
     for( ix = 0; ix < types->sz; ix++ ){
 	const_ds d = types->arr[ix];
 
-	if( d->name->sym == t ){
+	if( d->name != origsymbolNIL && d->name->sym == t ){
 	    prev_types_ix = ix;
 	    types_hash[hv] = ix;
 	    return ix;
@@ -203,9 +201,7 @@ Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
     inherits = t->inherits;
     switch( t->tag ){
 	case TAGDsAlias:
-	    fl = Field_listNIL;
-	    break;
-
+	case TAGDsInclude:
 	case TAGDsConstructorBase:
 	    fl = Field_listNIL;
 	    break;
@@ -375,6 +371,7 @@ void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol 
 	    el = to_DsConstructor(d)->fields;
 	    break;
 
+	case TAGDsInclude:
 	case TAGDsConstructorBase:
 	    return;
     }
@@ -434,8 +431,7 @@ bool check_double_strings( const char *msg, const_tmstring_list l )
 	for( ixb=ixa+1; ixb<l->sz; ixb++ ){
 	    tmstring sb = l->arr[ixb];
 	    if( strcmp( sa, sb ) == 0 ){
-		sprintf( errarg, "'%s'", sa );
-		error( msg );
+		error( "%s: `%s'", msg, sa );
 		ok = FALSE;
 	    }
 	}
@@ -459,8 +455,7 @@ bool check_double_symbols( const char *msg, const_tmsymbol_list l )
 	    tmsymbol sb = l->arr[ixb];
 
 	    if( sa == sb ){
-		sprintf( errarg, "'%s'", sa->name );
-		error( msg );
+		error( "%s: `%s'", msg, sa->name );
 		ok = FALSE;
 	    }
 	}

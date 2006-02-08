@@ -4,10 +4,10 @@
  */
 
 #include "config.h"
-#include "tmdefs.h"
 #include <ctype.h>
 #include <tmc.h>
 
+#include "tmdefs.h"
 #include "tmcode.h"
 #include "tmstring.h"
 #include "error.h"
@@ -24,9 +24,13 @@ YYSTYPE yylval;
 #endif
 
 static char yytext[256];
-char linebuf[LINESIZE] = "";
-unsigned int lineix = 0;
-unsigned int oldlineix = 0;
+static char linebuf[LINESIZE] = "";
+static unsigned int lineix = 0;
+static unsigned int oldlineix = 0;
+static unsigned int lexlineno = 0;
+static tmstring lexfilename = tmstringNIL;
+static FILE *lexfile;	/* file to read from. */
+static bool lextr = FALSE;
 
 /******************************************************
  *            SCANNING TREES                          *
@@ -52,7 +56,7 @@ struct sctnode {
 static long newsctnodecnt;
 static long fresctnodecnt;
 
-struct sctnode *toktree;
+static struct sctnode *toktree;
 
 /* Create a new scan tree node to match character 'c'. The next character
    to be considered is described by node 'nxt'. The subtree is set empty,
@@ -154,13 +158,13 @@ static struct tok toktab[] =
    Is terminated by an entry with NULL string.
  */
 
-struct tok rwtab[] =
+static struct tok rwtab[] =
 {
     { NULL, NONE, "" }
 };
 
 /******************************************************
- *            FILE MANAGEMENT                         *
+ *            File management                         *
  ******************************************************/
 
 #define UNGETBUFLENSTEP 10
@@ -198,7 +202,7 @@ static int lexgetc( void )
     }
     else {
 	if( linebuf[lineix] == '\0' ){
-	    if( fgets( linebuf, LINESIZE, dsfile ) == NULL ){
+	    if( fgets( linebuf, LINESIZE, lexfile ) == NULL ){
 		return EOF;
 	    }
 	    lineix = 0;
@@ -212,10 +216,10 @@ static int lexgetc( void )
 /* Return a new origin descriptor. */
 origin make_origin()
 {
-    return new_origin( add_tmsymbol( dsfilename ), dslineno );
+    return new_origin( add_tmsymbol( lexfilename ), lexlineno );
 }
 
-void show_parse_context( FILE *f )
+static void show_parse_context( FILE *f )
 {
     unsigned int ix;
     bool shown = FALSE;
@@ -242,16 +246,22 @@ void show_parse_context( FILE *f )
     fputc( '\n', f );
 }
 
+void parserror( const char *message )
+{
+    fileline_error( lexfilename, lexlineno, message );
+    show_parse_context( stderr );
+}
+
 /* Try to read a string. Return TRUE if this is successful, and set '*s'
    to point to that string, else return FALSE. A string may contain escape
    sequences with a '\\', but no newlines. The '"' around
    the string are stripped.
  */
-static bool scanstring( char **s )
+static bool scan_string( tmstring *s )
 {
     int c;
     bool done;
-    char *bufp;
+    tmstring bufp;
     unsigned int ix;
     unsigned int sz;
 
@@ -261,17 +271,18 @@ static bool scanstring( char **s )
 	return FALSE;
     }
     ix = 0;
-    bufp = new_tmstring( "" );
-    sz = 0;
+    sz = 5;	/* Initial guess for a reasonable string size. */
+    bufp = create_tmstring( sz );
+    bufp[0] = '\0';
     done = FALSE;
     while( !done ){
 	if( ix>= sz ){
-	    sz += 10;
-	    bufp = realloc_tmstring( bufp, sz+1 );
+	    sz += 2+sz;
+	    bufp = realloc_tmstring( bufp, sz );
 	}
 	c = lexgetc();
 	if (c == '\n' ){
-	    line_error( "End of line in string" );
+	    parserror( "End of line in string" );
 	    done = TRUE;
 	}
 	if( c == '"' ){
@@ -303,7 +314,7 @@ static bool scanstring( char **s )
    Fill '*tokval' with the token value, and '*toknm' with the name
    of the token. Return TRUE if this is successful, else return FALSE.
  */
-static bool scantoken(
+static bool scan_token(
     const struct sctnode *tree,
     char *buf,
     lextok *tokval,
@@ -324,8 +335,8 @@ static bool scantoken(
 	lexungetc( c );
 	return FALSE;
     }
-    buf[0] = c;
-    if( scantoken( tp->sub, &buf[1], tokval, toknm ) ){
+    buf[0] = (char) c;
+    if( scan_token( tp->sub, &buf[1], tokval, toknm ) ){
 	return TRUE;
     }
     if( tp->valid ){
@@ -340,19 +351,19 @@ static bool scantoken(
 
 /* Try to read a symbol in the string 'buf' using lexgetc(). Return TRUE if
    this is successful, else return FALSE.
-   A symbol is of the form [a-zA-Z][a-zA-Z0-9_]*.
+   A symbol is of the form [a-zA-Z_][a-zA-Z0-9_]*.
  */
-static bool scansymbol( char *buf )
+static bool scan_symbol( char *buf )
 {
     int c;
 
     c = lexgetc();
-    if( !isalpha( c ) ){
+    if( !isalpha( c ) && c != '_' ){
 	lexungetc( c );
 	return FALSE;
     }
     do{
-	*buf++ = c;
+	*buf++ = (char) c;
 	c = lexgetc();
     } while( isalnum( c ) || c == '_' );
     *buf = '\0';
@@ -369,7 +380,7 @@ static void skipcomment( void )
     while( c != '\n' && c != EOF ){
 	c = lexgetc();
     }
-    dslineno++;
+    lexlineno++;
 }
 
 /* Return next token from lex input file. Set 'yytext' to the characters
@@ -393,7 +404,7 @@ again:
 	c = '|';
     }
     if( c == '\n' ){
-	dslineno++;
+	lexlineno++;
 	goto again;
     }
     if( isspace( c ) ) goto again;
@@ -405,10 +416,10 @@ again:
     }
     lexungetc( c );
     oldlineix = lineix;
-    if( scanstring( &yylval.parstring ) ){
+    if( scan_string( &yylval.parstring ) ){
 	return STRING;
     }
-    if( scansymbol( yytext ) ){
+    if( scan_symbol( yytext ) ){
 	struct tok *rwp;
 
 	for( rwp = rwtab; rwp->tokstr != NULL; rwp++ ){
@@ -421,19 +432,12 @@ again:
 	lexshow( NAME, "NAME" );
 	return NAME;
     }
-    if( scantoken( toktree, yytext, &tokval, &toknm ) ){
-	lexshow(tokval,toknm);
+    if( scan_token( toktree, yytext, &tokval, &toknm ) ){
+	lexshow( tokval, toknm );
 	return tokval;
     }
     c = lexgetc();
-    if( c >= ' ' && c<= 0x7e ){
-	(void) sprintf( errarg, "'%c'", c );
-    }
-    else {
-	(void) sprintf( errarg, "0x%02x", c );
-    }
-    (void) sprintf( errpos, "%s(%d)", dsfilename, dslineno );
-    error( "bad token" );
+    parserror( "bad token" );
     return NONE;
 }
 
@@ -442,8 +446,8 @@ void init_lex( void )
 {
     struct tok *ttp;
 
-    newsctnodecnt=0;
-    fresctnodecnt=0;
+    newsctnodecnt = 0;
+    fresctnodecnt = 0;
     ungetbuflen = 2;	/* Don't make this 0, some mallocs don't like it */
     ungetbuf = TM_MALLOC( int *, ungetbuflen*sizeof(int) );
     ungetbufix = 0;
@@ -453,7 +457,25 @@ void init_lex( void )
     }
 }
 
-/* Terminate lexcial analysis routines. Free all allocated memory */
+/* Specify that lex routines should read from file 'f'. This file has
+ * name 'nm'.
+ */
+void set_lexfile( FILE *f, const char *nm )
+{
+    lexfile = f;
+    if( lexfilename != tmstringNIL ){
+        rfre_tmstring( lexfilename );
+    }
+    lexfilename = new_tmstring( nm );
+    lexlineno = 1;
+}
+
+void set_lex_debugging( tmbool flag )
+{
+    lextr = flag;
+}
+
+/* Terminate lexcial analysis routines. Free all allocated memory. */
 void end_lex( void )
 {
     rfre_sctnode( toktree );
@@ -466,7 +488,6 @@ void end_lex( void )
 /* Give allocation statistics of lex routines. */
 void stat_lex( FILE *f )
 {
-#ifdef STAT
     fprintf( f, "ungetbuflen=%d\n", ungetbuflen );
     fprintf(
 	f,
@@ -476,7 +497,4 @@ void stat_lex( FILE *f )
 	newsctnodecnt,
 	((newsctnodecnt==fresctnodecnt)? "": "<-")
     );
-#else
-    (void) f; /* to stop 'f unused' */
-#endif
 }

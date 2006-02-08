@@ -27,7 +27,7 @@
  * [^ \t\n\r\f\0]+: An arbitrary tmstring of nonblanks and non-specials.
  * "[^"\0]*": Arbitrary characters surrounded by "".
  */
-const char *scanword( const char *s, char **w )
+const char *scanword( const_origin org, const char *s, char **w )
 {
     tmstring buf;
     const char *start;
@@ -53,7 +53,7 @@ const char *scanword( const char *s, char **w )
 	}
 	end = s;
 	if( *s != DQUOTE ){
-	    line_error( "unexpected end of line" );
+	    origin_error( org, "unexpected end of line" );
 	}
 	else {
 	    s++;
@@ -88,14 +88,14 @@ const char *scanword( const char *s, char **w )
    'p1', ensure that 'p' contains exactly one parameter and create
    a copy of the tmstring to put in '*p1'.
  */
-void scan1par( const char *pl, char **p1 )
+void scan1par( const_origin org, const char *pl, char **p1 )
 {
-    pl = scanword( pl, p1 );
+    pl = scanword( org, pl, p1 );
     if( *p1 == CHARNIL ){
-	line_error( "missing parameter" );
+	origin_error( org, "missing parameter" );
 	return;
     }
-    cknopar( pl );
+    cknopar( org, pl );
 }
 
 /***************************************************************
@@ -105,23 +105,21 @@ void scan1par( const char *pl, char **p1 )
 /* Given a tmstring 's', ensure that it does not contain an other
    parameter, or else complain.
  */
-void cknopar( const char *s )
+void cknopar( const_origin org, const char *s )
 {
     while( isspace( *s ) ) s++;
     if( *s != '\0' ){
-	(void) sprintf( errarg, "'%s'", s );
-	line_error( "excess function parameters" );
+	origin_error( org, "excess function parameters: `%s'", s );
     }
 }
 
 /* Given a tmstring 's', ensure that it is a correct number,
    or else complain.
  */
-void cknumpar( const char *n )
+bool cknumpar( const_origin org, const char *n )
 {
-    const char *s;
+    const char *s = n;
 
-    s = n;
     while( isspace( *s ) ){
 	s++;
     }
@@ -135,9 +133,10 @@ void cknumpar( const char *n )
 	s++;
     }
     if( *s != '\0' ){
-	(void) sprintf( errarg, "'%s'", n );
-	line_error( "malformed number" );
+	origin_error( org, "malformed number `%s'", n );
+        return FALSE;
     }
+    return TRUE;
 }
 
 /* Return a new "1" or "0" tmstring reflecting the value of boolean 'b'. */
@@ -167,14 +166,14 @@ char *newuintstr( tmuint n )
 /* Given a tmstring 'p', chop it into words using 'scanword' and return
  * a tmstringlist containing the pieces.
  */
-tmstring_list chopstring( const char *p )
+tmstring_list chopstring( const_origin org, const char *p )
 {
     char *s;
     tmstring_list sl;
 
     sl = new_tmstring_list();
     for(;;){
-	p = scanword( p, &s );
+	p = scanword( org, p, &s );
 	if( s == CHARNIL ) break;
 	sl = append_tmstring_list( sl, s );
     }
@@ -294,6 +293,7 @@ bool isfalsestr( const_tmstring s )
 	p++;
     }
     if( p[0] != '0' ){
+        /* This also covers the empty string. */
 	return FALSE;
     }
     return ( isspace( p[1] ) || p[1] == '\0' );
@@ -308,6 +308,7 @@ bool istruestr( const_tmstring s )
 	p++;
     }
     if( p[0] != '0' ){
+        /* This also covers the empty string. */
 	return TRUE;
     }
     return ( !(isspace( p[1] ) || p[1] == '\0') );
