@@ -1060,7 +1060,7 @@ static Field_list rename_Field_list( Field_list dl, const_tmsymbol old, tmsymbol
  */
 static ds rename_ds( ds d, const_tmsymbol old, tmsymbol nw )
 {
-    d->name = rename_tmsymbol( d->name, old, nw );
+    d->name->sym = rename_tmsymbol( d->name->sym, old, nw );
     d->inherits = rename_tmsymbol_list( d->inherits, old, nw );
     switch( d->tag ){
 	case TAGDsConstructorBase:
