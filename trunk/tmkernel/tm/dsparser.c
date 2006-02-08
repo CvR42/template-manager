@@ -234,11 +234,14 @@ static bool parse_field( Field *fp )
     tmstring elmname;
     bool ok;
     Type t;
+    tmsymbol s;
 
     if( curr_token!=NAME ){
 	return FALSE;
     }
     elmname = yylval.parstring;
+    s = add_tmsymbol( elmname );
+    rfre_tmstring( elmname );
     next_token();
     if( curr_token!=COLON ){
 	yyerror( "':' expected" );
@@ -246,7 +249,7 @@ static bool parse_field( Field *fp )
     }
     next_token();
     ok = parse_Type( &t );
-    *fp = new_Field( elmname, t );
+    *fp = new_Field( s, t );
     return ok;
 }
 

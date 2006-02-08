@@ -202,10 +202,10 @@ tmstring sepstrings( const_tmstring_list sl, const char *sep )
 
     len = 0;
     if( sl->sz!=0 ){
-	len += (sl->sz-1)*(int) strlen(sep);
+	len += (sl->sz-1)*(unsigned int) strlen(sep);
     }
     for( ix=0; ix<sl->sz; ix++ ){
-	len += (int) strlen( sl->arr[ix] );
+	len += (unsigned int) strlen( sl->arr[ix] );
     }
     cs = create_tmstring( len+1 );
     bufp = cs;
@@ -233,12 +233,63 @@ tmstring flatstrings( const_tmstring_list sl )
     return sepstrings( sl, " " );
 }
 
+/* Given a tmstring_list 'sl' and a separation tmstring 'sep', construct one
+ * single (newly allocated) tmstring from all tmstrings in 'sl' separated from
+ * each other with a copy of 'sep'.
+ *
+ * To prevent problems with a fixed buffer, the final length of the
+ * tmstring is calculated, and sufficient room is allocated for that
+ * tmstring.
+ *
+ * the total length of the required tmstring is
+ *  sum(<all joined tmstrings>) + (n-1)*strlen(sep)
+ */
+tmstring sepsymbols( const_tmsymbol_list sl, const char *sep )
+{
+    const char *cp;	/* pointer in copied tmstrings  */
+    char *cs;		/* tmstring under construction */
+    char *bufp;		/* pointer in tmstring under construction */
+    unsigned int ix;	/* index in tmstring array */
+    unsigned int len;	/* calculated length of tmstring */
+
+    len = 0;
+    if( sl->sz!=0 ){
+	len += (sl->sz-1)*(unsigned int) strlen(sep);
+    }
+    for( ix=0; ix<sl->sz; ix++ ){
+	len += (unsigned int) strlen( sl->arr[ix]->name );
+    }
+    cs = create_tmstring( len+1 );
+    bufp = cs;
+    for( ix=0; ix<sl->sz; ix++ ){
+	if( ix!=0 ){
+	    cp = sep;
+	    while( *cp!='\0' ){
+		*bufp++ = *cp++;
+	    }
+	}
+	cp = sl->arr[ix]->name;
+	while( *cp!='\0' ){
+	    *bufp++ = *cp++;
+	}
+    }
+    *bufp = '\0';
+    return cs;
+}
+
+/* Given a tmstring_list 'sl', construct one single tmstring from by separating
+ * all tmstrings in 'sl' from each other with a ' '.
+ */
+tmstring flatsymbols( const_tmsymbol_list sl )
+{
+    return sepsymbols( sl, " " );
+}
+
 /* Return TRUE if this tmstring represents FALSE. */
 bool isfalsestr( const_tmstring s )
 {
-    const char *p;
+    const char *p = s;
 
-    p = s;
     while( isspace( *p ) ){
 	p++;
     }
@@ -251,9 +302,8 @@ bool isfalsestr( const_tmstring s )
 /* Return TRUE if this tmstring does not represent FALSE. */
 bool istruestr( const_tmstring s )
 {
-    const char *p;
+    const char *p = s;
 
-    p = s;
     while( isspace( *p ) ){
 	p++;
     }
