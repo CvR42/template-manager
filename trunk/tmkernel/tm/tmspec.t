@@ -99,3 +99,7 @@
 ..
 .append wantdefs new_origsymbol
 .append wantdefs new_origsymbol_list
+..
+.append wantdefs new_tmsymbol_list
+.append wantdefs append_tmsymbol_list
+.append wantdefs rfre_tmsymbol_list

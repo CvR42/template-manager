@@ -22,15 +22,15 @@ void cktuple( const_tmstring nm, const_Field_list fields, const_tmstring_list in
 
     for( ix=0; ix<fields->sz; ix++ ){
 	const_Field fx = fields->arr[ix];
-	const_tmstring fnm = fx->name;
+	const_tmsymbol fnm = fx->name;
 	unsigned int iy;	/* index of searched subsequent fields */
 
 	for( iy=ix+1; iy<fields->sz; iy++ ){
 	    const_Field fy = fields->arr[iy];
 
-	    if( strcmp( fy->name, fnm ) == 0 ){
+	    if( fy->name == fnm ){
 		sprintf( errpos, "in type '%s'", nm );
-		sprintf( errarg, "'%s'", fnm );
+		sprintf( errarg, "'%s'", fnm->name );
 		error( "double use of field name" );
 		return;
 	    }
@@ -152,12 +152,12 @@ bool check_ds_list( const_ds_list dl )
 	ok &= check_double_strings( msg, tl );
 	rfre_tmstring_list( tl );
 	if( ok ){
-	    tmstring_list fields = new_tmstring_list();
+	    tmsymbol_list fields = new_tmsymbol_list();
 
 	    collect_all_fields( &fields, dl, nmx );
 	    sprintf( msg, "Duplicate field in type '%s'", nmx );
-	    ok &= check_double_strings( msg, fields );
-	    rfre_tmstring_list( fields );
+	    ok &= check_double_symbols( msg, fields );
+	    rfre_tmsymbol_list( fields );
 	}
     }
     return ok;
