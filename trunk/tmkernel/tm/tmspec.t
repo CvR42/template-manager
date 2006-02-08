@@ -103,3 +103,8 @@
 .append wantdefs new_tmsymbol_list
 .append wantdefs append_tmsymbol_list
 .append wantdefs rfre_tmsymbol_list
+.append wantdefs rdup_tmsymbol_list
+.append wantdefs extract_tmsymbol_list
+.append wantdefs concat_tmsymbol_list
+.append wantdefs setroom_tmsymbol_list
+.append wantdefs delete_tmsymbol_list

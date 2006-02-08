@@ -417,7 +417,7 @@ again:
 		return rwp->tokval;
 	    }
 	}
-	yylval.parstring = new_tmstring( yytext );
+	yylval.parsymbol = add_tmsymbol( yytext );
 	lexshow( NAME, "NAME" );
 	return NAME;
     }

@@ -67,6 +67,7 @@ static Type split_type( const char *pre, const char *suff, const_tmstring t )
     tmstring old;
     tmuint level = 0;
     tmstring nw;
+    Type res;
 
     nw = rdup_tmstring( t );
     for(;;) {
@@ -78,7 +79,9 @@ static Type split_type( const char *pre, const char *suff, const_tmstring t )
 	rfre_tmstring( old );
 	level++;
     }
-    return new_Type( level, old );
+    res = new_Type( level, add_tmsymbol( old ) );
+    rfre_tmstring( old );
+    return res;
 }
 
 /* Given a list of types, return a list of strings representing these
@@ -86,7 +89,7 @@ static Type split_type( const char *pre, const char *suff, const_tmstring t )
  */
 static tmstring make_typename( const char *pre, const char *suff, const Type t )
 {
-    return mklistnm( pre, t->basetype, suff, t->level );
+    return mklistnm( pre, t->basetype->name, suff, t->level );
 }
 
 /* Given a list of types, return a list of strings representing these
@@ -1381,19 +1384,19 @@ static tmstring fntypelist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz!=0 ){
 	line_error( "'typelist' does not need any parameters" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
 	const_ds d = allds->arr[ix];
 
-	nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+	nl = append_tmsymbol_list( nl, d->name );
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1402,12 +1405,12 @@ static tmstring fnconstructorlist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz!=0 ){
 	line_error( "'constructorlist' does not need any parameters" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
         const_ds d = allds->arr[ix];
 
@@ -1425,12 +1428,12 @@ static tmstring fnconstructorlist( const_tmstring_list sl )
 		break;
 
 	    case TAGDsConstructor:
-		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+		nl = append_tmsymbol_list( nl, d->name );
 		break;
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 /* Construct a list of constructor types. */
@@ -1438,17 +1441,17 @@ static tmstring fnctypelist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz!=0 ){
 	line_error( "'ctypelist' does not need any parameters" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
 	const_ds d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
-		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+		nl = append_tmsymbol_list( nl, d->name );
 		break;
 
 	    case TAGDsTuple:
@@ -1464,8 +1467,8 @@ static tmstring fnctypelist( const_tmstring_list sl )
 		break;
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1474,17 +1477,17 @@ static tmstring fntuplelist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz!=0 ){
 	line_error( "'tuplelist' does not need any parameters" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
         const_ds d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+		nl = append_tmsymbol_list( nl, d->name );
 		break;
 
 	    case TAGDsConstructorBase:
@@ -1495,8 +1498,8 @@ static tmstring fntuplelist( const_tmstring_list sl )
 
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1505,12 +1508,12 @@ static tmstring fnclasslist( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz!=0 ){
 	line_error( "'classlist' does not need any parameters" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
 	const_ds d = allds->arr[ix];
 
@@ -1522,13 +1525,13 @@ static tmstring fnclasslist( const_tmstring_list sl )
 		break;
 
 	    case TAGDsClass:
-		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+		nl = append_tmsymbol_list( nl, d->name );
 		break;
 
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1537,12 +1540,12 @@ static tmstring fnaliases( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz!=0 ){
 	line_error( "'aliases' does not need any parameters" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix = 0; ix< allds->sz; ix++ ){
 	const_ds d = allds->arr[ix];
 
@@ -1554,13 +1557,13 @@ static tmstring fnaliases( const_tmstring_list sl )
 		break;
 
 	    case TAGDsAlias:
-		nl = append_tmstring_list( nl, new_tmstring( d->name ) );
+		nl = append_tmsymbol_list( nl, d->name );
 		break;
 
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1571,9 +1574,9 @@ static ds findtype( ds_list dl, const_tmstring t )
 {
     unsigned int ix;
 
-    ix = find_type_ix( dl, t );
+    ix = find_type_ix( dl, add_tmsymbol( t ) );
     if( ix>=dl->sz ){
-	(void) strcpy( errarg, t );
+	sprintf( errarg, "`%s'", t );
 	line_error( "unknown type" );
 	return dsNIL;
     }
@@ -1585,7 +1588,7 @@ static bool is_virtual( ds_list types, const_tmstring type )
     bool ans = FALSE;
     unsigned int ix;
 
-    ix = find_type_ix( types, type );
+    ix = find_type_ix( types, add_tmsymbol( type ) );
     if( ix<allds->sz ){
 	const_ds d = allds->arr[ix];
 
@@ -1667,7 +1670,7 @@ static tmstring calc_metaname(
 {
     unsigned int ix;
 
-    ix = find_type_ix( allds, type );
+    ix = find_type_ix( allds, add_tmsymbol( type ) );
     if( ix<allds->sz ){
 	const_ds d = allds->arr[ix];
 
@@ -1736,7 +1739,7 @@ static tmstring calc_alias( const char *pre, const char *suff, const_tmstring ty
 {
     unsigned int ix;
 
-    ix = find_type_ix( allds, type );
+    ix = find_type_ix( allds, add_tmsymbol( type ) );
     if( ix<allds->sz ){
 	const_ds d = allds->arr[ix];
 	const_Type t;
@@ -1747,7 +1750,7 @@ static tmstring calc_alias( const char *pre, const char *suff, const_tmstring ty
 	    return rdup_tmstring( type );
 	}
 	t = to_const_DsAlias( d )->type;
-	tnm = calc_alias( pre, suff, t->basetype );
+	tnm = calc_alias( pre, suff, t->basetype->name );
 	res = mklistnm( pre, tnm, suff, t->level );
 	rfre_tmstring( tnm );
 	return res;
@@ -1790,15 +1793,15 @@ static tmstring fnalias( const_tmstring_list sl )
 static tmstring fnsubclasses( const_tmstring_list sl )
 {
     tmstring ans;
-    tmstring_list subclasses;
+    tmsymbol_list subclasses;
     unsigned int ix;
 
-    subclasses = new_tmstring_list();
+    subclasses = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	collect_subclasses( &subclasses, allds, sl->arr[ix] );
+	collect_subclasses( &subclasses, allds, add_tmsymbol( sl->arr[ix] ) );
     }
-    ans = flatstrings( subclasses );
-    rfre_tmstring_list( subclasses );
+    ans = flatsymbols( subclasses );
+    rfre_tmsymbol_list( subclasses );
     return ans;
 }
 
@@ -1808,15 +1811,15 @@ static tmstring fnsubclasses( const_tmstring_list sl )
 static tmstring fnsuperclasses( const_tmstring_list sl )
 {
     tmstring ans;
-    tmstring_list superclasses;
+    tmsymbol_list superclasses;
     unsigned int ix;
 
-    superclasses = new_tmstring_list();
+    superclasses = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	collect_superclasses( &superclasses, allds, sl->arr[ix] );
+	collect_superclasses( &superclasses, allds, add_tmsymbol( sl->arr[ix] ) );
     }
-    ans = flatstrings( superclasses );
-    rfre_tmstring_list( superclasses );
+    ans = flatsymbols( superclasses );
+    rfre_tmsymbol_list( superclasses );
     return ans;
 }
 
@@ -1825,18 +1828,18 @@ static tmstring fninherits( const_tmstring_list sl )
 {
     tmstring ans;
     unsigned int ix;
-    tmstring_list allinherits;
+    tmsymbol_list allinherits;
 
-    allinherits = new_tmstring_list();
+    allinherits = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	tmstring_list inherits = rdup_tmstring_list( extract_inherits( allds, sl->arr[ix] ) );
+	tmsymbol_list inherits = rdup_tmsymbol_list( extract_inherits( allds, add_tmsymbol( sl->arr[ix] ) ) );
 
-	if( inherits != tmstring_listNIL ){
-	    allinherits = concat_tmstring_list( allinherits, inherits );
+	if( inherits != tmsymbol_listNIL ){
+	    allinherits = concat_tmsymbol_list( allinherits, inherits );
 	}
     }
-    ans = flatstrings( allinherits );
-    rfre_tmstring_list( allinherits );
+    ans = flatsymbols( allinherits );
+    rfre_tmsymbol_list( allinherits );
     return ans;
 }
 
@@ -1846,15 +1849,15 @@ static tmstring fninherits( const_tmstring_list sl )
 static tmstring fninheritors( const_tmstring_list sl )
 {
     tmstring ans;
-    tmstring_list inheritors;
+    tmsymbol_list inheritors;
     unsigned int ix;
 
-    inheritors = new_tmstring_list();
+    inheritors = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	collect_inheritors( &inheritors, allds, sl->arr[ix] );
+	collect_inheritors( &inheritors, allds, add_tmsymbol( sl->arr[ix] ) );
     }
-    ans = flatstrings( inheritors );
-    rfre_tmstring_list( inheritors );
+    ans = flatsymbols( inheritors );
+    rfre_tmsymbol_list( inheritors );
     return ans;
 }
 
@@ -1867,7 +1870,7 @@ static tmstring fnallfields( const_tmstring_list sl )
 
     nl = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	collect_all_fields( &nl, allds, sl->arr[ix] );
+	collect_all_fields( &nl, allds, add_tmsymbol( sl->arr[ix] ) );
     }
     ans = flatsymbols( nl );
     rfre_tmsymbol_list( nl );
@@ -1883,7 +1886,7 @@ static tmstring fnfields( const_tmstring_list sl )
 
     nl = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
-	collect_fields( &nl, allds, sl->arr[ix] );
+	collect_fields( &nl, allds, add_tmsymbol( sl->arr[ix] ) );
     }
     ans = flatsymbols( nl );
     rfre_tmsymbol_list( nl );
@@ -1901,13 +1904,13 @@ static tmstring fntypename( const_tmstring_list sl )
 	line_error( "'ttypename' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return new_tmstring( e->type->basetype );
+    return new_tmstring( e->type->basetype->name );
 }
 
 /* Given a type name and element name, return the
@@ -1923,7 +1926,7 @@ static tmstring fnttypeclass( const_tmstring_list sl )
 	line_error( "'fieldtypeclass' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
@@ -1943,7 +1946,7 @@ static tmstring fntypelevel( const_tmstring_list sl )
 	line_error( "'typelevel' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
@@ -1976,12 +1979,12 @@ static tmstring fnalltypes( const_tmstring_list tl )
     nl = new_tmstring_list();
     for( tix=0; tix<tl->sz; tix++ ){
 	tmsymbol_list fields = new_tmsymbol_list();
-	const_tmstring tnm = tl->arr[tix];
+	const_tmsymbol tnm = add_tmsymbol( tl->arr[tix] );
 	unsigned int fix;
 
 	collect_all_fields( &fields, allds, tnm );
 	for( fix=0; fix<fields->sz; fix++ ){
-	    const Field e = find_field( allds, tnm, fields->arr[fix]->name );
+	    const Field e = find_field( allds, tnm, fields->arr[fix] );
 
 	    /* Since we only enumerate the fields we know exist for this
 	     * type, this should never fail.
@@ -2011,7 +2014,7 @@ static tmstring fntypes( const_tmstring_list pl )
 
     tl = new_Type_list();
     for( tix=0; tix<pl->sz; tix++ ){
-	const_tmstring tnm = pl->arr[tix];
+	const_tmsymbol tnm = add_tmsymbol( pl->arr[tix] );
 	const unsigned int ix = find_type_ix( allds, tnm );
 
 	if( ix<allds->sz ){
@@ -2060,7 +2063,7 @@ static Type_list add_Type_list( Type_list tl, Type t )
     for( ix=0; ix<tl->sz; ix++ ){
 	const_Type lt = tl->arr[ix];
 
-	if( lt->level == t->level && strcmp( lt->basetype, t->basetype ) == 0 ){
+	if( lt->level == t->level && lt->basetype == t->basetype ){
 	    rfre_Type( t );
 	    return tl;
 	}
@@ -2075,21 +2078,21 @@ static bool member_Type_list( Type_list tl, Type t )
     for( ix=0; ix<tl->sz; ix++ ){
 	const_Type e = tl->arr[ix];
 
-	if( e->level == t->level && strcmp( e->basetype, t->basetype ) == 0 ){
+	if( e->level == t->level && e->basetype == t->basetype ){
 	    return TRUE;
 	}
     }
     return FALSE;
 }
 
-static bool is_blocked_type( Type_list tl, tmstring t )
+static bool is_blocked_type( Type_list tl, tmsymbol t )
 {
     unsigned int ix;
 
     for( ix=0; ix<tl->sz; ix++ ){
 	const_Type e = tl->arr[ix];
 
-	if( e->level == 0 && strcmp( e->basetype, t ) == 0 ){
+	if( e->level == 0 && e->basetype == t ){
 	    return TRUE;
 	}
     }
@@ -2099,7 +2102,7 @@ static bool is_blocked_type( Type_list tl, tmstring t )
 /* Given a list of type 'tl', an array of 'visited' flags and a type name,
  * update the list of types with the reach of this type.
  */
-static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, tmstring tnm )
+static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, tmsymbol tnm )
 {
     const unsigned int ix = find_type_ix( allds, tnm );
     Type t;
@@ -2111,21 +2114,21 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 	}
 	visited[ix] = TRUE;
 	if( !is_blocked_type( blocking, tnm ) ){
-	    tmstring_list inheritors;
+	    tmsymbol_list inheritors;
 	    tmsymbol_list fieldnames;
 	    const_ds d = allds->arr[ix];
 	    unsigned int tix;
 
-	    inheritors = new_tmstring_list();
+	    inheritors = new_tmsymbol_list();
 	    collect_inheritors( &inheritors, allds, tnm );
 	    for( tix=0; tix<inheritors->sz; tix++ ){
 		tl = update_reach( tl, visited, blocking, inheritors->arr[tix] );
 	    }
-	    rfre_tmstring_list( inheritors );
+	    rfre_tmsymbol_list( inheritors );
 	    fieldnames = new_tmsymbol_list();
 	    collect_all_fields( &fieldnames, allds, tnm );
 	    for( tix=0; tix<fieldnames->sz; tix++ ){
-		Field f = find_field( allds, tnm, fieldnames->arr[tix]->name );
+		Field f = find_field( allds, tnm, fieldnames->arr[tix] );
 
 		if( f != FieldNIL ){
 		    tl = update_reach_Type( tl, visited, blocking, f->type );
@@ -2146,7 +2149,7 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 	    }
 	}
     }
-    t = new_Type( 0, rdup_tmstring( tnm ) );
+    t = new_Type( 0, tnm );
     tl = add_Type_list( tl, t );
     return tl;
 }
@@ -2256,7 +2259,7 @@ static tmstring fntype( const_tmstring_list sl )
 	line_error( "'type' requires a type and an element name" );
 	return new_tmstring( "" );
     }
-    e = find_field( allds, sl->arr[0], sl->arr[1] );
+    e = find_field( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "field not found" );
@@ -2276,27 +2279,27 @@ static tmstring fntype( const_tmstring_list sl )
 /* construct a list of constructors for the given types */
 static tmstring fnconslist( const_tmstring_list tl )
 {
-    tmstring_list nl;
+    tmsymbol_list nl;
     unsigned int tix;
     tmstring ans;
 
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( tix=0; tix<tl->sz; tix++ ){
-	unsigned int dix = find_type_ix( allds, tl->arr[tix] );
+	unsigned int dix = find_type_ix( allds, add_tmsymbol( tl->arr[tix] ) );
 
 	if( dix<allds->sz ){
 	    const_ds d = allds->arr[dix];
 
 	    if( d->tag == TAGDsConstructorBase ){
-		nl = concat_tmstring_list(
+		nl = concat_tmsymbol_list(
 		    nl,
-		    rdup_tmstring_list( to_const_DsConstructorBase(d)->constructors )
+		    rdup_tmsymbol_list( to_const_DsConstructorBase(d)->constructors )
 		);
 	    }
 	}
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -2304,12 +2307,12 @@ static tmstring fnconslist( const_tmstring_list tl )
 static tmstring fncelmlist( const_tmstring_list sl )
 {
     const_ds d;
-    tmstring_list cl;
+    const_tmsymbol_list cl;
     tmstring ans;
     tmsymbol_list nl;
 
     if( sl->sz != 2 ){
-	line_error( "'celmlist' requires two parameters" );
+	line_error( "'celmlist' requires exactly two parameters" );
 	return new_tmstring( "" );
     }
     d = findtype( allds, sl->arr[0] );
@@ -2319,13 +2322,13 @@ static tmstring fncelmlist( const_tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
-    if( !member_tmstring_list( sl->arr[1], cl ) ){
+    if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "not a member of this constructor type" );
     }
     nl = new_tmsymbol_list();
-    collect_fields( &nl, allds, sl->arr[1] );
+    collect_fields( &nl, allds, add_tmsymbol( sl->arr[1] ) );
     ans = flatsymbols( nl );
     rfre_tmsymbol_list( nl );
     return ans;
@@ -2340,7 +2343,7 @@ static tmstring fncelmlist( const_tmstring_list sl )
 static tmstring fnctypename( const_tmstring_list sl )
 {
     const_ds d;
-    tmstring_list cl;
+    tmsymbol_list cl;
     const_Field e;
 
     if( sl->sz != 3 ){
@@ -2354,18 +2357,18 @@ static tmstring fnctypename( const_tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
-    if( !member_tmstring_list( sl->arr[1], cl ) ){
+    if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "not a member of this constructor type" );
     }
-    e = find_field( allds, sl->arr[1], sl->arr[2] );
+    e = find_field( allds, add_tmsymbol( sl->arr[1] ), add_tmsymbol( sl->arr[2] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in constructor '%s'", sl->arr[2], sl->arr[1] );
 	line_error( "field not found" );
 	return new_tmstring( "" );
     }
-    return new_tmstring( e->type->basetype );
+    return new_tmstring( e->type->basetype->name );
 }
 
 /* given a type name, constructor name and element name, return the
@@ -2378,7 +2381,7 @@ static tmstring fnctypename( const_tmstring_list sl )
 static tmstring fnctypeclass( const_tmstring_list sl )
 {
     const_ds d;
-    tmstring_list cl;
+    tmsymbol_list cl;
     const_Field e;
 
     if( sl->sz != 3 ){
@@ -2392,12 +2395,12 @@ static tmstring fnctypeclass( const_tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
-    if( !member_tmstring_list( sl->arr[1], cl ) ){
+    if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "not a member of this constructor type" );
     }
-    e = find_field( allds, sl->arr[1], sl->arr[2] );
+    e = find_field( allds, add_tmsymbol( sl->arr[1] ), add_tmsymbol( sl->arr[2] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
 	line_error( "field not found" );
@@ -2413,7 +2416,7 @@ static tmstring fnctypeclass( const_tmstring_list sl )
 static tmstring fnctypellev( const_tmstring_list sl )
 {
     const_ds d;
-    tmstring_list cl;
+    tmsymbol_list cl;
     const_Field e;
 
     if( sl->sz != 3 ){
@@ -2427,12 +2430,12 @@ static tmstring fnctypellev( const_tmstring_list sl )
 	return new_tmstring( "" );
     }
     cl = to_const_DsConstructorBase(d)->constructors;
-    if( !member_tmstring_list( sl->arr[1], cl ) ){
+    if( !member_tmsymbol_list( add_tmsymbol( sl->arr[1] ), cl ) ){
 	(void) strcpy( errarg, sl->arr[0] );
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "not a member of this constructor type" );
     }
-    e = find_field( allds, sl->arr[1], sl->arr[2] );
+    e = find_field( allds, add_tmsymbol( sl->arr[1] ), add_tmsymbol( sl->arr[2] ) );
     if( e == FieldNIL ){
 	sprintf( errarg, "'%s' in type '%s'", sl->arr[2], sl->arr[1] );
 	line_error( "field not found" );
@@ -2450,18 +2453,18 @@ static tmstring fnctypellev( const_tmstring_list sl )
  * List types depend on their element types; for nested types this
  * applies transitively.
  */
-static bool depends_on( const char *pre, const char *suff, const_tmstring t, const_tmstring_list tl )
+static bool depends_on( const char *pre, const char *suff, const_tmsymbol t, const_tmsymbol_list tl )
 {
     unsigned int ix;
     const_ds d;
 
     if( pre[0] != '\0' || suff[0] != '\0' ){
-	tmstring base = get_element_type( pre, suff, t );
+	tmstring base = get_element_type( pre, suff, t->name );
 
 	while( base != tmstringNIL ){
 	    tmstring nw;
 
-	    if( member_tmstring_list( base, tl ) ){
+	    if( member_tmsymbol_list( add_tmsymbol( base ), tl ) ){
 		rfre_tmstring( base );
 		return TRUE;
 	    }
@@ -2475,7 +2478,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmstring t, con
 	return FALSE;
     }
     d = allds->arr[ix];
-    if( any_member_tmstring_list( d->inherits, tl ) ){
+    if( any_member_tmsymbol_list( d->inherits, tl ) ){
 	return TRUE;
     }
     switch( d->tag ){
@@ -2486,7 +2489,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmstring t, con
 	{
 	    const_Type t = to_const_DsAlias(d)->type;
 
-	    if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
+	    if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
 		return TRUE;
 	    }
 	    break;
@@ -2500,7 +2503,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmstring t, con
 		const Field e = fl->arr[ix];
 		const Type t = e->type;
 
-		if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
+		if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2515,7 +2518,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmstring t, con
 		const Field e = fl->arr[ix];
 		const Type t = e->type;
 
-		if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
+		if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2530,7 +2533,7 @@ static bool depends_on( const char *pre, const char *suff, const_tmstring t, con
 		const Field e = fl->arr[ix];
 		const Type t = e->type;
 
-		if( t->level==0 && member_tmstring_list( t->basetype, tl ) ){
+		if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2550,13 +2553,17 @@ static bool depends_on( const char *pre, const char *suff, const_tmstring t, con
  */
 static tmstring fndepsort( const_tmstring_list real_sl )
 {
-    tmstring_list nl;
-    tmstring t;
+    tmsymbol_list nl;
+    tmsymbol t;
     tmstring ans;
+    unsigned int ix;
     const char *pre;
     const char *suff;
-    tmstring_list sl = rdup_tmstring_list( real_sl );
+    tmsymbol_list sl = setroom_tmsymbol_list( new_tmsymbol_list(), real_sl->sz );
 
+    for( ix=0; ix<real_sl->sz; ix++ ){
+        sl = append_tmsymbol_list( sl, add_tmsymbol( real_sl->arr[ix] ) );
+    }
     pre = getvar( LISTPRE );
     if( pre == CHARNIL ){
 	pre = "";
@@ -2565,7 +2572,7 @@ static tmstring fndepsort( const_tmstring_list real_sl )
     if( suff == CHARNIL ){
 	suff = "";
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     while( sl->sz!=0 ){
 	bool found = FALSE;
 	unsigned int ix = 0;
@@ -2580,21 +2587,21 @@ static tmstring fndepsort( const_tmstring_list real_sl )
 	    ix++;
 	}
 	if( !found ){
-            tmstring baddies = flatstrings( sl );
+            tmstring baddies = flatsymbols( sl );
 
 	    strncpy( errarg, baddies, ERRARGLEN-1 );
 	    errarg[ERRARGLEN-1] = '\0';
-	    rfre_tmstring( baddies );
+	    rfre_tmsymbol( baddies );
 	    line_error( "circular dependency" );
 	    break;
 	}
 	t = sl->arr[foundix];
-	nl = append_tmstring_list( nl, rdup_tmstring( t ) );
-	sl = delete_tmstring_list( sl, foundix );
+	nl = append_tmsymbol_list( nl, t );
+	sl = delete_tmsymbol_list( sl, foundix );
     }
-    rfre_tmstring_list( sl );
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    rfre_tmsymbol_list( sl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -2610,20 +2617,18 @@ static tmstring fndepsort( const_tmstring_list real_sl )
 static bool inherit_depends_on( const_tmstring t, const_tmstring_list tl )
 {
     unsigned int ix;
-    tmstring_list inherits;
-    bool res = FALSE;
+    tmsymbol_list inherits;
 
-    inherits = extract_inherits( allds, t );
-    if( inherits == tmstring_listNIL ){
-	return res;
+    inherits = extract_inherits( allds, add_tmsymbol( t ) );
+    if( inherits == tmsymbol_listNIL ){
+	return FALSE;
     }
     for( ix=0; ix<inherits->sz; ix++ ){
-	if( member_tmstring_list( inherits->arr[ix], tl ) ){
-	    res = TRUE;
-	    break;
+	if( member_tmstring_list( inherits->arr[ix]->name, tl ) ){
+	    return TRUE;
 	}
     }
-    return res;
+    return FALSE;
 }
 
 /* Given a list of type names, re-arrange them so that inherited types

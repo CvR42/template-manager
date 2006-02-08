@@ -995,28 +995,27 @@ static void doglobalsplit( const_GlobalSplit tpl )
     fre_tmstring( val );
 }
 
-/* Given a tmstring 's', an old type name 'old' and a new type name 'nw'.
- * replace the string with a copy of 'nw'  if it is equal to 'old'.
+/* Given a tmsymbol 's', an old type name 'old' and a new type name 'nw'.
+ * replace the symbol with a copy of 'nw'  if it is equal to 'old'.
  */
-static tmstring rename_tmstring( tmstring s, const_tmstring old, const_tmstring nw )
+static tmsymbol rename_tmsymbol( tmsymbol s, const_tmsymbol old, tmsymbol nw )
 {
-    if( strcmp( s, old ) == 0 ){
-	rfre_tmstring( s );
-	s = rdup_tmstring( nw );
+    if( s == old ){
+	s = nw;
     }
     return s;
 }
 
-/* Given a list of strings, an old type name 'old' and a new
- * type name 'nw', rewrite these strings to use the new type name
+/* Given a list of symbols, an old type name 'old' and a new
+ * type name 'nw', rewrite these symbols to use the new type name
  * instead of the old type name.
  */
-static tmstring_list rename_tmstring_list( tmstring_list dl, const_tmstring old, const_tmstring nw )
+static tmsymbol_list rename_tmsymbol_list( tmsymbol_list dl, const_tmsymbol old, tmsymbol nw )
 {
     unsigned int ix;
 
     for( ix=0; ix<dl->sz; ix++ ){
-	dl->arr[ix] = rename_tmstring( dl->arr[ix], old, nw );
+	dl->arr[ix] = rename_tmsymbol( dl->arr[ix], old, nw );
     }
     return dl;
 }
@@ -1025,9 +1024,9 @@ static tmstring_list rename_tmstring_list( tmstring_list dl, const_tmstring old,
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Type rename_Type( Type t, const_tmstring old, const_tmstring nw )
+static Type rename_Type( Type t, const_tmsymbol old, tmsymbol nw )
 {
-    t->basetype = rename_tmstring( t->basetype, old, nw );
+    t->basetype = rename_tmsymbol( t->basetype, old, nw );
     return t;
 }
 
@@ -1035,7 +1034,7 @@ static Type rename_Type( Type t, const_tmstring old, const_tmstring nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Field rename_Field( Field f, const_tmstring old, const_tmstring nw )
+static Field rename_Field( Field f, const_tmsymbol old, tmsymbol nw )
 {
     f->type = rename_Type( f->type, old, nw );
     return f;
@@ -1045,7 +1044,7 @@ static Field rename_Field( Field f, const_tmstring old, const_tmstring nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Field_list rename_Field_list( Field_list dl, const_tmstring old, const_tmstring nw )
+static Field_list rename_Field_list( Field_list dl, const_tmsymbol old, tmsymbol nw )
 {
     unsigned int ix;
 
@@ -1059,16 +1058,16 @@ static Field_list rename_Field_list( Field_list dl, const_tmstring old, const_tm
  * type name 'nw', rewrite this definition to use the new name
  * instead of the old name.
  */
-static ds rename_ds( ds d, const_tmstring old, const_tmstring nw )
+static ds rename_ds( ds d, const_tmsymbol old, tmsymbol nw )
 {
-    d->name = rename_tmstring( d->name, old, nw );
-    d->inherits = rename_tmstring_list( d->inherits, old, nw );
+    d->name = rename_tmsymbol( d->name, old, nw );
+    d->inherits = rename_tmsymbol_list( d->inherits, old, nw );
     switch( d->tag ){
 	case TAGDsConstructorBase:
 	{
 	    DsConstructorBase dsub = to_DsConstructorBase( d );
 
-	    dsub->constructors = rename_tmstring_list( dsub->constructors, old, nw );
+	    dsub->constructors = rename_tmsymbol_list( dsub->constructors, old, nw );
 	    break;
 	}
 
@@ -1111,7 +1110,7 @@ static ds rename_ds( ds d, const_tmstring old, const_tmstring nw )
  * type name 'nw', rewrite these definitions to use the new name
  * instead of the old name.
  */
-static ds_list rename_ds_list( ds_list dl, const_tmstring old, const_tmstring nw )
+static ds_list rename_ds_list( ds_list dl, const_tmsymbol old, tmsymbol nw )
 {
     unsigned int ix;
 
@@ -1137,7 +1136,7 @@ static void dorename( const_Rename tpl )
 	rfre_tmstring_list( sl );
 	return;
     }
-    allds = rename_ds_list( allds, sl->arr[0], sl->arr[1] );
+    allds = rename_ds_list( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( !check_ds_list( allds ) ){
 	sprintf( errarg, "'%s'->'%s'", sl->arr[0], sl->arr[1] );
 	line_error( "The problems were caused by .rename" );
@@ -1231,7 +1230,7 @@ static void doglobalappend( const_GlobalAppend tpl )
  */
 static ds_list delete_type( ds_list types, const_tmstring nm )
 {
-    unsigned int ix = find_type_ix( types, nm );
+    unsigned int ix = find_type_ix( types, add_tmsymbol( nm ) );
 
     if( ix>=types->sz ){
 	return types;

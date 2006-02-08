@@ -24,8 +24,8 @@ static lextok curr_token;
 /* Forward declarations. */
 static bool parse_class_components( classComponent_list *clp );
 static void update_class_info(
-    const_tmstring nm,
-    tmstring_list *inherits,
+    tmsymbol nm,
+    tmsymbol_list *inherits,
     Field_list *fields,
     ds_list *types,
     const classComponent cc,
@@ -49,14 +49,14 @@ static void yyerror( const char *s )
  * list 'l' and return the newly constructed list. Reject strings
  * that are already defined.
  */
-static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
+static tmsymbol_list add_inherit_list( tmsymbol_list l, tmsymbol s )
 {
-    if( member_tmstring_list( s, l ) ){
-	(void) sprintf( errarg, "'%s'", s );
+    if( member_tmsymbol_list( s, l ) ){
+	(void) sprintf( errarg, "'%s'", s->name );
 	yyerror( "duplicate inheritance" );
     }
     else {
-	l = append_tmstring_list( l, rdup_tmstring( s ) );
+	l = append_tmsymbol_list( l, rdup_tmsymbol( s ) );
     }
     return l;
 }
@@ -68,11 +68,11 @@ static tmstring_list add_inherit_list( tmstring_list l, tmstring s )
 static ds_list add_constructor_list( ds_list l, const_ds c )
 {
     unsigned int ix;
-    const_tmstring cnm = c->name;
+    const_tmsymbol cnm = c->name;
 
     for( ix=0; ix<l->sz; ix++ ){
-	if( strcmp( cnm, l->arr[ix]->name ) == 0 ){
-	    (void) sprintf( errarg, "'%s'", cnm );
+	if( cnm == l->arr[ix]->name ){
+	    (void) sprintf( errarg, "'%s'", cnm->name );
 	    yyerror( "double use of constructor name" );
 	    return l;
 	}
@@ -87,36 +87,36 @@ static ds_list add_constructor_list( ds_list l, const_ds c )
  */
 static ds merge_cons_types( const_ds a, const_ds b )
 {
-    tmstring_list ila;
-    tmstring_list ilb;
+    tmsymbol_list ila;
+    tmsymbol_list ilb;
     unsigned int ix;
 
-    tmstring_list la = rdup_tmstring_list( to_const_DsConstructorBase(a)->constructors );
-    tmstring_list lb = rdup_tmstring_list( to_const_DsConstructorBase(b)->constructors );
-    la = concat_tmstring_list( la, lb );
-    ila = rdup_tmstring_list( a->inherits );
+    tmsymbol_list la = rdup_tmsymbol_list( to_const_DsConstructorBase(a)->constructors );
+    tmsymbol_list lb = rdup_tmsymbol_list( to_const_DsConstructorBase(b)->constructors );
+    la = concat_tmsymbol_list( la, lb );
+    ila = rdup_tmsymbol_list( a->inherits );
     ilb = b->inherits;
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return to_ds( new_DsConstructorBase( rdup_tmstring( a->name ), ila, tmstring_listNIL, la ) );
+    return to_ds( new_DsConstructorBase( a->name, ila, tmsymbol_listNIL, la ) );
 }
 
 /* Given a type 't', a constructor name 'cnm' and a type name
  * 'tnm' to which the constructor belongs, ensure that if 't' is a constructor
  * type, 'cnm' does not occur in it.
  */
-static void ckcname_type( const_ds t, const_tmstring cnm, const_tmstring tnm )
+static void ckcname_type( const_ds t, const_tmsymbol cnm, const_tmsymbol tnm )
 {
-    tmstring_list cl;
+    tmsymbol_list cl;
 
     if( t->tag != TAGDsConstructorBase ){
 	return;
     }
     cl = to_const_DsConstructorBase(t)->constructors;
-    if( member_tmstring_list( tnm, cl ) ){
-	(void) sprintf( errpos, "type %s", tnm );
-	(void) sprintf( errarg, "'%s' (in type %s)", cnm, t->name );
+    if( member_tmsymbol_list( tnm, cl ) ){
+	(void) sprintf( errpos, "type %s", tnm->name );
+	(void) sprintf( errarg, "'%s' (in type %s)", cnm->name, t->name->name );
 	error( "constructor already defined" );
     }
 }
@@ -125,7 +125,7 @@ static void ckcname_type( const_ds t, const_tmstring cnm, const_tmstring tnm )
  * 'tnm' to which the constructor belongs, ensure that 'cnm' does not
  * occur in any of the constructor types of 'l'.
  */
-static void ckcname( const_ds_list l, const_tmstring cnm, const_tmstring tnm )
+static void ckcname( const_ds_list l, const_tmsymbol cnm, const_tmsymbol tnm )
 {
     unsigned int ix;
 
@@ -140,9 +140,9 @@ static void ckcname( const_ds_list l, const_tmstring cnm, const_tmstring tnm )
  */
 static void ckcnames( const_ds_list l, const_ds t )
 {
-    tmstring_list cl;
+    tmsymbol_list cl;
     unsigned int ix;
-    tmstring tnm;
+    tmsymbol tnm;
 
     if( t->tag != TAGDsConstructorBase ){
 	return;
@@ -164,7 +164,7 @@ static void ckcnames( const_ds_list l, const_ds t )
  */
 static ds_list add_ds_list( ds_list l, ds t )
 {
-    tmstring nm;	/* Name of the new type. */
+    tmsymbol nm;	/* Name of the new type. */
     unsigned int ix;	/* Index of any previous def'n of it. */
     ds old;		/* The old type definition. */
     ds nw;		/* The type constructed from two constr. def'ns. */
@@ -179,7 +179,7 @@ static ds_list add_ds_list( ds_list l, ds t )
 	    l = append_ds_list( l, nw );
 	}
 	else {
-	    (void) sprintf( errarg, "'%s'", nm );
+	    (void) sprintf( errarg, "'%s'", nm->name );
 	    yyerror( "redefinition of type" );
 	}
     }
@@ -220,7 +220,7 @@ static bool parse_Type( Type *tp )
 	return TRUE;
     }
     if( curr_token==NAME ){
-	*tp = new_Type( 0, yylval.parstring );
+	*tp = new_Type( 0, yylval.parsymbol );
 	next_token();
 	return TRUE;
     }
@@ -231,17 +231,14 @@ static bool parse_Type( Type *tp )
 /* Try to parse a field. Return TRUE iff you have a valid field. */
 static bool parse_field( Field *fp )
 {
-    tmstring elmname;
+    tmsymbol elmname;
     bool ok;
     Type t;
-    tmsymbol s;
 
     if( curr_token!=NAME ){
 	return FALSE;
     }
-    elmname = yylval.parstring;
-    s = add_tmsymbol( elmname );
-    rfre_tmstring( elmname );
+    elmname = yylval.parsymbol;
     next_token();
     if( curr_token!=COLON ){
 	yyerror( "':' expected" );
@@ -249,7 +246,7 @@ static bool parse_field( Field *fp )
     }
     next_token();
     ok = parse_Type( &t );
-    *fp = new_Field( new_origsymbol( s, make_origin() ), t );
+    *fp = new_Field( new_origsymbol( elmname, make_origin() ), t );
     return ok;
 }
 
@@ -281,35 +278,31 @@ static bool parse_Field_list( Field_list *flp )
  * of, the name of the construcotr (if it isn't empty), try to parse a
  * constructor. Return TRUE iff this succeeded.
  */
-static bool parse_constructor( const_tmstring super, tmstring p_nm, ds *cp )
+static bool parse_constructor( tmsymbol super, tmsymbol p_nm, ds *cp )
 {
     bool ok;
     Field_list fl;
-    tmstring nm;
+    tmsymbol nm;
 
-    if( p_nm == tmstringNIL ){
+    if( p_nm == tmsymbolNIL ){
 	if( curr_token!=NAME ){
 	    return FALSE;
 	}
-	nm = yylval.parstring;
+	nm = yylval.parsymbol;
 	next_token();
     }
     else {
-	nm = rdup_tmstring( p_nm );
+	nm = p_nm;
     }
     ok = parse_Field_list( &fl );
     if( !ok ){
 	yyerror( "invalid field list" );
-	rfre_tmstring( nm );
 	return FALSE;
     }
     *cp = (ds) new_DsConstructor(
 	nm,
-	append_tmstring_list(
-	    new_tmstring_list(),
-	    rdup_tmstring( super )
-	),
-	tmstring_listNIL,
+	append_tmsymbol_list( new_tmsymbol_list(), super ),
+	tmsymbol_listNIL,
 	fl
     );
     return TRUE;
@@ -320,23 +313,20 @@ static bool parse_constructor( const_tmstring super, tmstring p_nm, ds *cp )
  * try to parse a list of constructors up to (but not including)
  * the final ';'. Return TRUE if you have a valid constructor list.
  */
-static bool parse_constructor_list( const_tmstring super, tmstring nm, ds_list *clp )
+static bool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
 {
     bool ok;
     ds nw;
 
     *clp = new_ds_list();
     if( curr_token==SEMI ){
-	if( nm != tmstringNIL ){
+	if( nm != tmsymbolNIL ){
 	    *clp = append_ds_list(
 		*clp,
 		(ds) new_DsConstructor(
-		    rdup_tmstring( nm ),
-		    append_tmstring_list(
-			new_tmstring_list(),
-			rdup_tmstring( super )
-		    ),
-		    tmstring_listNIL,
+		    nm,
+		    append_tmsymbol_list( new_tmsymbol_list(), super ),
+		    tmsymbol_listNIL,
 		    new_Field_list()
 		)
 	    );
@@ -345,7 +335,7 @@ static bool parse_constructor_list( const_tmstring super, tmstring nm, ds_list *
     }
     for(;;){
 	ok = parse_constructor( super, nm, &nw );
-	nm = tmstringNIL;
+	nm = tmsymbolNIL;
 	if( ok ){
 	    *clp = add_constructor_list( *clp, nw );
 	    rfre_ds( nw );
@@ -356,7 +346,7 @@ static bool parse_constructor_list( const_tmstring super, tmstring nm, ds_list *
 	     * '|', ';' or LEXEOF.
 	     */
 	    while( curr_token!=BAR && curr_token!=SEMI && curr_token!=LEXEOF ){
-		if( curr_token == NAME || curr_token == STRING ){
+		if( curr_token == STRING ){
 		    rfre_tmstring( yylval.parstring );
 		}
 		next_token();
@@ -379,44 +369,40 @@ static bool parse_constructor_list( const_tmstring super, tmstring nm, ds_list *
  * of a constructor definition, up to (but not including) the final ';'.
  * Return TRUE if this succeeded, and set *tp to the parsed constructor.
  */
-static bool parse_constructor_type( tmstring nm, ds_list *tp )
+static bool parse_constructor_type( tmsymbol nm, ds_list *tp )
 {
     bool ok;
     ds_list cl;
-    tmstring_list inherits;
-    tmstring cnm = tmstringNIL;
+    tmsymbol_list inherits;
+    tmsymbol cnm = tmsymbolNIL;
     unsigned int ix;
-    tmstring_list members;
+    tmsymbol_list members;
 
-    inherits = new_tmstring_list();
+    inherits = new_tmsymbol_list();
     /* First eat all names followed by a '+'. After that assume
      * that the first constructor has started.
      */
     while( curr_token == NAME ){
-	cnm = yylval.parstring;
+	cnm = yylval.parsymbol;
 	next_token();
 	if( curr_token != PLUS ){
 	    /* Not a plus, so at least it isn't an inherit. */
 	    break;
 	}
 	inherits = add_inherit_list( inherits, cnm );
-	rfre_tmstring( cnm );
-	cnm = tmstringNIL;
+	cnm = tmsymbolNIL;
 	next_token();	/* Eat the PLUS */
     }
     ok = parse_constructor_list( nm, cnm, &cl );
-    if( cnm != tmstringNIL ){
-	rfre_tmstring( cnm );
-    }
-    members = new_tmstring_list();
+    members = new_tmsymbol_list();
     for( ix=0; ix<cl->sz; ix++ ){
-	const_tmstring mnm = cl->arr[ix]->name;
+	tmsymbol mnm = cl->arr[ix]->name;
 
-	members = append_tmstring_list( members, rdup_tmstring( mnm ) );
+	members = append_tmsymbol_list( members, mnm );
     }
     *tp = append_ds_list(
 	new_ds_list(),
-	(ds) new_DsConstructorBase( nm, inherits, tmstring_listNIL, members )
+	(ds) new_DsConstructorBase( nm, inherits, tmsymbol_listNIL, members )
     );
     *tp = concat_ds_list( *tp, cl );
     return ok;
@@ -451,7 +437,7 @@ static bool parse_tuplebody( Field_list *flp )
 		&& curr_token!=LEXEOF
 		&& curr_token!=RCBRAC
 	    ){
-		if( curr_token == NAME || curr_token == STRING ){
+		if( curr_token == STRING ){
 		    rfre_tmstring( yylval.parstring );
 		}
 		next_token();
@@ -470,23 +456,22 @@ static bool parse_tuplebody( Field_list *flp )
 /* Given a type name 'nm', try to parse a tuple definition. Return
  * TRUE iff you have a valid tuple.
  */
-static bool parse_tuple_type( tmstring nm, ds *tp )
+static bool parse_tuple_type( tmsymbol nm, ds *tp )
 {
     bool ok;
     Field_list body;
-    tmstring_list inherits;
+    tmsymbol_list inherits;
 
-    inherits = new_tmstring_list();
+    inherits = new_tmsymbol_list();
     while( curr_token == NAME ){
-	inherits = add_inherit_list( inherits, yylval.parstring );
-	rfre_tmstring( yylval.parstring );
+	inherits = add_inherit_list( inherits, yylval.parsymbol );
 	next_token();
 	if( curr_token == PLUS ){
 	    next_token();
 	}
 	else {
 	    yyerror( "'+' expected" );
-	    rfre_tmstring_list( inherits );
+	    rfre_tmsymbol_list( inherits );
 	    return FALSE;
 	}
     }
@@ -495,7 +480,7 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
     }
     else {
 	yyerror( "'(' expected" );
-	rfre_tmstring_list( inherits );
+	rfre_tmsymbol_list( inherits );
 	return FALSE;
     }
     ok = parse_tuplebody( &body );
@@ -509,7 +494,7 @@ static bool parse_tuple_type( tmstring nm, ds *tp )
 	yyerror( "')' expected" );
     }
     cktuple( nm, body, inherits );
-    *tp = to_ds( new_DsTuple( nm, inherits, tmstring_listNIL, body ) );
+    *tp = to_ds( new_DsTuple( nm, inherits, tmsymbol_listNIL, body ) );
     return TRUE;
 }
 
@@ -547,7 +532,7 @@ static bool parse_class_component( classComponent *cp )
 	/* This can be either a inherit specification or a list of
 	 * alternatives.
 	 */
-	tmstring nm = yylval.parstring;
+	tmsymbol nm = yylval.parsymbol;
 
 	next_token();
 	if( curr_token == COLON ){
@@ -561,7 +546,6 @@ static bool parse_class_component( classComponent *cp )
 	    for(;;){
 		next_token();
 		if( !parse_class_component( &cc ) ){
-		    rfre_tmstring( nm );
 		    rfre_alternative_list( alts );
 		    return FALSE;
 		}
@@ -578,7 +562,7 @@ static bool parse_class_component( classComponent *cp )
 		    rfre_alternative_list( alts );
 		    return FALSE;
 		}
-		nm = yylval.parstring;
+		nm = yylval.parsymbol;
 		next_token();
 		if( curr_token != COLON ){
 		    yyerror( "':' expected, because a '|' must be followed by a label" );
@@ -647,29 +631,29 @@ static bool parse_class_components( classComponent_list *clp )
     return TRUE;
 }
 
-static ds_list create_subtype( const_tmstring nm, const_tmstring super, const classComponent comp )
+static ds_list create_subtype( tmsymbol nm, tmsymbol super, const classComponent comp )
 {
-    tmstring_list inherits;
+    tmsymbol_list inherits;
     Field_list fields;
     ds_list types;
     tmbool isvirtual = TMFALSE;
 
-    inherits = new_tmstring_list();
+    inherits = new_tmsymbol_list();
     fields = new_Field_list();
     types = new_ds_list();
-    inherits = append_tmstring_list( inherits, rdup_tmstring( super ) );
+    inherits = append_tmsymbol_list( inherits, super );
     update_class_info( nm, &inherits, &fields, &types, comp, &isvirtual );
     types = append_ds_list(
 	types,
-	(ds) new_DsClass( rdup_tmstring( nm ), inherits, tmstring_listNIL, fields, isvirtual )
+	to_ds( new_DsClass( nm, inherits, tmsymbol_listNIL, fields, isvirtual ) )
     );
     return types;
 
 }
 
 static void update_class_info(
-    const_tmstring nm,
-    tmstring_list *inherits,
+    tmsymbol nm,
+    tmsymbol_list *inherits,
     Field_list *fields,
     ds_list *types,
     const classComponent cc,
@@ -678,7 +662,7 @@ static void update_class_info(
 {
     switch( cc->tag ){
 	case TAGCCSuper:
-	    *inherits = append_tmstring_list( *inherits, rdup_tmstring( to_CCSuper(cc)->super ) );
+	    *inherits = append_tmsymbol_list( *inherits, to_CCSuper(cc)->super );
 	    break;
 
 	case TAGCCFields:
@@ -719,14 +703,14 @@ static void update_class_info(
     }
 }
 
-static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbool isvirtual )
+static ds_list normalize_class( tmsymbol nm, const classComponent_list ccl, tmbool isvirtual )
 {
-    tmstring_list inherits;
+    tmsymbol_list inherits;
     Field_list fields;
     unsigned int ix;
     ds_list types;
 
-    inherits = new_tmstring_list();
+    inherits = new_tmsymbol_list();
     fields = new_Field_list();
     types = new_ds_list();
     for( ix=0; ix<ccl->sz; ix++ ){
@@ -734,7 +718,7 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbo
     }
     types = append_ds_list(
 	types,
-	(ds) new_DsClass( rdup_tmstring( nm ), inherits, tmstring_listNIL, fields, isvirtual )
+	to_ds( new_DsClass( nm, inherits, tmsymbol_listNIL, fields, isvirtual ) )
     );
     return types;
 }
@@ -747,7 +731,7 @@ static ds_list normalize_class( tmstring nm, const classComponent_list ccl, tmbo
  */
 static bool parse_ds( ds_list *dl )
 {
-    tmstring nm;
+    tmsymbol nm;
     bool ok;
 
     if( curr_token==INCLUDE ){
@@ -757,7 +741,7 @@ static bool parse_ds( ds_list *dl )
 	if( curr_token!=STRING ){
 	    yyerror( "file name string expected" );
 	    while( curr_token!=SEMI && curr_token!=LEXEOF ){
-		if( curr_token == NAME || curr_token == STRING ){
+		if( curr_token == STRING ){
 		    rfre_tmstring( yylval.parstring );
 		}
 		next_token();
@@ -781,7 +765,7 @@ static bool parse_ds( ds_list *dl )
     if( curr_token!=NAME ){
 	return FALSE;
     }
-    nm = yylval.parstring;
+    nm = yylval.parsymbol;
     next_token();
     switch( curr_token ){
 	case COLCOLEQ:
@@ -803,7 +787,7 @@ static bool parse_ds( ds_list *dl )
 	    next_token();
 	    ok = parse_Type( &t );
 	    if( ok ){
-		ds nw = (ds) new_DsAlias( nm, new_tmstring_list(), tmstring_listNIL, t );
+		ds nw = to_ds( new_DsAlias( nm, new_tmsymbol_list(), tmsymbol_listNIL, t ) );
 
 		*dl = new_ds_list();
 		*dl = append_ds_list( *dl, nw );
@@ -835,7 +819,6 @@ static bool parse_ds( ds_list *dl )
 	    if( ok ){
 		*dl = normalize_class( nm, nw, isvirtual );
 		rfre_classComponent_list( nw );
-		rfre_tmstring( nm );
 	    }
 	    break;
 	}
@@ -851,12 +834,11 @@ static bool parse_ds( ds_list *dl )
 	    break;
     }
     if( !ok ){
-	rfre_tmstring( nm );
 	/* Try to recover from the parse error: eat everything until
 	 * end of file or a semicolon.
 	 */
 	while( curr_token!=SEMI && curr_token!=LEXEOF ){
-	    if( curr_token == NAME || curr_token == STRING ){
+	    if( curr_token == STRING ){
 		rfre_tmstring( yylval.parstring );
 	    }
 	    next_token();
