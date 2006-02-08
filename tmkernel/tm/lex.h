@@ -12,6 +12,7 @@ typedef enum en_lextok {
 
 typedef union un_YYSTYPE {
     char *parstring;
+    tmsymbol parsymbol;
 } YYSTYPE;
 
 extern YYSTYPE yylval;

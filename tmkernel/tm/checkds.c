@@ -16,28 +16,28 @@
 /* Ensure that there are no double names in tuple with name 'nm'
  * and fields 'fields'.
  */
-void cktuple( const_tmstring nm, const_Field_list fields, const_tmstring_list inherits )
+void cktuple( const_tmsymbol nm, const_Field_list fields, const_tmsymbol_list inherits )
 {
     unsigned int ix;	/* index of currently checked field */
 
     for( ix=0; ix<fields->sz; ix++ ){
 	const_Field fx = fields->arr[ix];
-	const_tmsymbol fnm = fx->name;
+	const_origsymbol fnm = fx->name;
 	unsigned int iy;	/* index of searched subsequent fields */
 
 	for( iy=ix+1; iy<fields->sz; iy++ ){
 	    const_Field fy = fields->arr[iy];
 
 	    if( fy->name == fnm ){
-		sprintf( errpos, "in type '%s'", nm );
-		sprintf( errarg, "'%s'", fnm->name );
+		sprintf( errpos, "in type '%s'", nm->name );
+		sprintf( errarg, "'%s'", fnm->sym->name );
 		error( "double use of field name" );
 		return;
 	    }
 	}
     }
-    if( member_tmstring_list( nm, inherits ) ){
-	sprintf( errpos, "in type '%s'", nm );
+    if( member_tmsymbol_list( nm, inherits ) ){
+	sprintf( errpos, "in type '%s'", nm->name );
 	error( "Type inherits itself" );
 	return;
     }
@@ -55,7 +55,7 @@ static bool check_ds_inheritance(
  bool *accepted
 )
 {
-    tmstring_list supers;	/* The list of superclasses. */
+    tmsymbol_list supers;	/* The list of superclasses. */
     unsigned int ix;
     const_ds me = dl->arr[theds];
     bool ok = TRUE;
@@ -65,22 +65,22 @@ static bool check_ds_inheritance(
         return ok;
     }
     if( visited[theds] ){
-	sprintf( errpos, "type '%s'", me->name );
+	sprintf( errpos, "type '%s'", me->name->name );
 	error( "circular inheritance/alias hierarchy" );
 	accepted[theds] = TRUE;		/* Break the circle to allow further checks. */
 	return FALSE;
     }
     visited[theds] = TRUE;
-    supers = rdup_tmstring_list( me->inherits );
+    supers = rdup_tmsymbol_list( me->inherits );
     for( ix=0; ix<supers->sz; ix++ ){
-        tmstring super = supers->arr[ix];
+        tmsymbol super = supers->arr[ix];
         unsigned int superix = find_type_ix( dl, super );
 
         if( superix<dl->sz ){
 	    ok &= check_ds_inheritance( dl, superix, visited, accepted );
         }
     }
-    rfre_tmstring_list( supers );
+    rfre_tmsymbol_list( supers );
     visited[theds] = FALSE;
     accepted[theds] = TRUE;
     return ok;
@@ -101,13 +101,13 @@ bool check_ds_list( const_ds_list dl )
     /* First check on double definition of a type. */
     for( ix=0; ix<dl->sz; ix++ ){
 	unsigned int iy;
-	const_tmstring nmx = dl->arr[ix]->name;
+	const_tmsymbol nmx = dl->arr[ix]->name;
 
 	for( iy=ix+1; iy<dl->sz; iy++ ){
-	    const_tmstring nmy = dl->arr[iy]->name;
+	    const_tmsymbol nmy = dl->arr[iy]->name;
 
-	    if( strcmp( nmx, nmy ) == 0 ){
-		sprintf( errarg, "type '%s'", nmx );
+	    if( nmx == nmy ){
+		sprintf( errarg, "type '%s'", nmx->name );
 		error( "Double definition" );
 		ok = FALSE;
 		break;
@@ -143,19 +143,19 @@ bool check_ds_list( const_ds_list dl )
 	return ok;
     }
     for( ix=0; ix<dl->sz; ix++ ){
-	const_tmstring nmx = dl->arr[ix]->name;
+	tmsymbol nmx = dl->arr[ix]->name;
 	char msg[200];
-	tmstring_list tl = new_tmstring_list();
+	tmsymbol_list tl = new_tmsymbol_list();
 
 	collect_superclasses( &tl, dl, nmx );
-	sprintf( msg, "Duplicate superclass in type '%s'", nmx );
-	ok &= check_double_strings( msg, tl );
-	rfre_tmstring_list( tl );
+	sprintf( msg, "Duplicate superclass in type '%s'", nmx->name );
+	ok &= check_double_symbols( msg, tl );
+	rfre_tmsymbol_list( tl );
 	if( ok ){
 	    tmsymbol_list fields = new_tmsymbol_list();
 
 	    collect_all_fields( &fields, dl, nmx );
-	    sprintf( msg, "Duplicate field in type '%s'", nmx );
+	    sprintf( msg, "Duplicate field in type '%s'", nmx->name );
 	    ok &= check_double_symbols( msg, fields );
 	    rfre_tmsymbol_list( fields );
 	}
