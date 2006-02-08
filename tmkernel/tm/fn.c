@@ -1393,7 +1393,7 @@ static tmstring fntypelist( const_tmstring_list sl )
     for( ix = 0; ix< allds->sz; ix++ ){
 	const_ds d = allds->arr[ix];
 
-	nl = append_tmsymbol_list( nl, d->name );
+	nl = append_tmsymbol_list( nl, d->name->sym );
     }
     ans = flatsymbols( nl );
     rfre_tmsymbol_list( nl );
@@ -1428,7 +1428,7 @@ static tmstring fnconstructorlist( const_tmstring_list sl )
 		break;
 
 	    case TAGDsConstructor:
-		nl = append_tmsymbol_list( nl, d->name );
+		nl = append_tmsymbol_list( nl, d->name->sym );
 		break;
 	}
     }
@@ -1451,7 +1451,7 @@ static tmstring fnctypelist( const_tmstring_list sl )
 	const_ds d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsConstructorBase:
-		nl = append_tmsymbol_list( nl, d->name );
+		nl = append_tmsymbol_list( nl, d->name->sym );
 		break;
 
 	    case TAGDsTuple:
@@ -1487,7 +1487,7 @@ static tmstring fntuplelist( const_tmstring_list sl )
         const_ds d = allds->arr[ix];
 	switch( d->tag ){
 	    case TAGDsTuple:
-		nl = append_tmsymbol_list( nl, d->name );
+		nl = append_tmsymbol_list( nl, d->name->sym );
 		break;
 
 	    case TAGDsConstructorBase:
@@ -1525,7 +1525,7 @@ static tmstring fnclasslist( const_tmstring_list sl )
 		break;
 
 	    case TAGDsClass:
-		nl = append_tmsymbol_list( nl, d->name );
+		nl = append_tmsymbol_list( nl, d->name->sym );
 		break;
 
 	}
@@ -1557,7 +1557,7 @@ static tmstring fnaliases( const_tmstring_list sl )
 		break;
 
 	    case TAGDsAlias:
-		nl = append_tmsymbol_list( nl, d->name );
+		nl = append_tmsymbol_list( nl, d->name->sym );
 		break;
 
 	}

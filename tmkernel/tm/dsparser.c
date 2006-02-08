@@ -68,11 +68,11 @@ static tmsymbol_list add_inherit_list( tmsymbol_list l, tmsymbol s )
 static ds_list add_constructor_list( ds_list l, const_ds c )
 {
     unsigned int ix;
-    const_tmsymbol cnm = c->name;
+    const_origsymbol cnm = c->name;
 
     for( ix=0; ix<l->sz; ix++ ){
-	if( cnm == l->arr[ix]->name ){
-	    (void) sprintf( errarg, "'%s'", cnm->name );
+	if( cnm->sym == l->arr[ix]->name->sym ){
+	    (void) sprintf( errarg, "'%s'", cnm->sym->name );
 	    yyerror( "double use of constructor name" );
 	    return l;
 	}
@@ -99,14 +99,14 @@ static ds merge_cons_types( const_ds a, const_ds b )
     for( ix=0; ix<ilb->sz; ix++ ){
 	ila = add_inherit_list( ila, ilb->arr[ix] );
     }
-    return to_ds( new_DsConstructorBase( a->name, ila, tmsymbol_listNIL, la ) );
+    return to_ds( new_DsConstructorBase( rdup_origsymbol( a->name ), ila, tmsymbol_listNIL, la ) );
 }
 
 /* Given a type 't', a constructor name 'cnm' and a type name
  * 'tnm' to which the constructor belongs, ensure that if 't' is a constructor
  * type, 'cnm' does not occur in it.
  */
-static void ckcname_type( const_ds t, const_tmsymbol cnm, const_tmsymbol tnm )
+static void ckcname_type( const_ds t, const_tmsymbol cnm, const_origsymbol tnm )
 {
     tmsymbol_list cl;
 
@@ -114,9 +114,9 @@ static void ckcname_type( const_ds t, const_tmsymbol cnm, const_tmsymbol tnm )
 	return;
     }
     cl = to_const_DsConstructorBase(t)->constructors;
-    if( member_tmsymbol_list( tnm, cl ) ){
-	(void) sprintf( errpos, "type %s", tnm->name );
-	(void) sprintf( errarg, "'%s' (in type %s)", cnm->name, t->name->name );
+    if( member_tmsymbol_list( tnm->sym, cl ) ){
+	(void) sprintf( errpos, "type %s", tnm->sym->name );
+	(void) sprintf( errarg, "'%s' (in type %s)", cnm->name, t->name->sym->name );
 	error( "constructor already defined" );
     }
 }
@@ -125,7 +125,7 @@ static void ckcname_type( const_ds t, const_tmsymbol cnm, const_tmsymbol tnm )
  * 'tnm' to which the constructor belongs, ensure that 'cnm' does not
  * occur in any of the constructor types of 'l'.
  */
-static void ckcname( const_ds_list l, const_tmsymbol cnm, const_tmsymbol tnm )
+static void ckcname( const_ds_list l, const_tmsymbol cnm, const_origsymbol tnm )
 {
     unsigned int ix;
 
@@ -142,7 +142,7 @@ static void ckcnames( const_ds_list l, const_ds t )
 {
     tmsymbol_list cl;
     unsigned int ix;
-    tmsymbol tnm;
+    origsymbol tnm;
 
     if( t->tag != TAGDsConstructorBase ){
 	return;
@@ -164,13 +164,13 @@ static void ckcnames( const_ds_list l, const_ds t )
  */
 static ds_list add_ds_list( ds_list l, ds t )
 {
-    tmsymbol nm;	/* Name of the new type. */
+    origsymbol nm;	/* Name of the new type. */
     unsigned int ix;	/* Index of any previous def'n of it. */
     ds old;		/* The old type definition. */
     ds nw;		/* The type constructed from two constr. def'ns. */
 
     nm = t->name;
-    ix = find_type_ix( l, nm );
+    ix = find_type_ix( l, nm->sym );
     if( ix<l->sz ){
 	old = l->arr[ix];
 	if( old->tag == TAGDsConstructorBase && t->tag == TAGDsConstructorBase ){
@@ -179,7 +179,7 @@ static ds_list add_ds_list( ds_list l, ds t )
 	    l = append_ds_list( l, nw );
 	}
 	else {
-	    (void) sprintf( errarg, "'%s'", nm->name );
+	    (void) sprintf( errarg, "'%s'", nm->sym->name );
 	    yyerror( "redefinition of type" );
 	}
     }
@@ -300,7 +300,7 @@ static bool parse_constructor( tmsymbol super, tmsymbol p_nm, ds *cp )
 	return FALSE;
     }
     *cp = (ds) new_DsConstructor(
-	nm,
+	new_origsymbol( nm, make_origin() ),
 	append_tmsymbol_list( new_tmsymbol_list(), super ),
 	tmsymbol_listNIL,
 	fl
@@ -324,7 +324,7 @@ static bool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
 	    *clp = append_ds_list(
 		*clp,
 		(ds) new_DsConstructor(
-		    nm,
+                    new_origsymbol( nm, make_origin() ),
 		    append_tmsymbol_list( new_tmsymbol_list(), super ),
 		    tmsymbol_listNIL,
 		    new_Field_list()
@@ -396,13 +396,13 @@ static bool parse_constructor_type( tmsymbol nm, ds_list *tp )
     ok = parse_constructor_list( nm, cnm, &cl );
     members = new_tmsymbol_list();
     for( ix=0; ix<cl->sz; ix++ ){
-	tmsymbol mnm = cl->arr[ix]->name;
+	tmsymbol mnm = cl->arr[ix]->name->sym;
 
 	members = append_tmsymbol_list( members, mnm );
     }
     *tp = append_ds_list(
 	new_ds_list(),
-	(ds) new_DsConstructorBase( nm, inherits, tmsymbol_listNIL, members )
+	(ds) new_DsConstructorBase( new_origsymbol( nm, make_origin() ), inherits, tmsymbol_listNIL, members )
     );
     *tp = concat_ds_list( *tp, cl );
     return ok;
@@ -494,7 +494,7 @@ static bool parse_tuple_type( tmsymbol nm, ds *tp )
 	yyerror( "')' expected" );
     }
     cktuple( nm, body, inherits );
-    *tp = to_ds( new_DsTuple( nm, inherits, tmsymbol_listNIL, body ) );
+    *tp = to_ds( new_DsTuple( new_origsymbol( nm, make_origin() ), inherits, tmsymbol_listNIL, body ) );
     return TRUE;
 }
 
@@ -645,7 +645,7 @@ static ds_list create_subtype( tmsymbol nm, tmsymbol super, const classComponent
     update_class_info( nm, &inherits, &fields, &types, comp, &isvirtual );
     types = append_ds_list(
 	types,
-	to_ds( new_DsClass( nm, inherits, tmsymbol_listNIL, fields, isvirtual ) )
+	to_ds( new_DsClass( new_origsymbol( nm, make_origin() ), inherits, tmsymbol_listNIL, fields, isvirtual ) )
     );
     return types;
 
@@ -718,7 +718,7 @@ static ds_list normalize_class( tmsymbol nm, const classComponent_list ccl, tmbo
     }
     types = append_ds_list(
 	types,
-	to_ds( new_DsClass( nm, inherits, tmsymbol_listNIL, fields, isvirtual ) )
+	to_ds( new_DsClass( new_origsymbol( nm, make_origin() ), inherits, tmsymbol_listNIL, fields, isvirtual ) )
     );
     return types;
 }
@@ -787,7 +787,7 @@ static bool parse_ds( ds_list *dl )
 	    next_token();
 	    ok = parse_Type( &t );
 	    if( ok ){
-		ds nw = to_ds( new_DsAlias( nm, new_tmsymbol_list(), tmsymbol_listNIL, t ) );
+		ds nw = to_ds( new_DsAlias( new_origsymbol( nm, make_origin() ), new_tmsymbol_list(), tmsymbol_listNIL, t ) );
 
 		*dl = new_ds_list();
 		*dl = append_ds_list( *dl, nw );

@@ -98,6 +98,7 @@
 .append wantdefs rdup_origin
 ..
 .append wantdefs new_origsymbol
+.append wantdefs rdup_origsymbol
 .append wantdefs new_origsymbol_list
 ..
 .append wantdefs new_tmsymbol_list
