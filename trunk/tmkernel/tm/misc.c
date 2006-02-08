@@ -122,7 +122,7 @@ unsigned int find_field_ix( const_Field_list fl, const char *nm )
     for( ix = 0; ix < fl->sz; ix++ ){
 	const_Field f = fl->arr[ix];
 
-	if( strcmp( f->name->name, nm ) == 0 ){
+	if( strcmp( f->name->sym->name, nm ) == 0 ){
 	    return ix;
 	}
     }
@@ -370,7 +370,7 @@ void collect_fields( tmsymbol_list *fields, const_ds_list types, const char *typ
 	for( ix=0; ix<el->sz; ix++ ){
 	    const_Field e = el->arr[ix];
 
-	    *fields = append_tmsymbol_list( *fields, e->name );
+	    *fields = append_tmsymbol_list( *fields, e->name->sym );
 	}
     }
 }
