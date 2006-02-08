@@ -15,6 +15,7 @@
 .append wantdefs delete_ds_list
 .append wantdefs append_ds_list
 .append wantdefs concat_ds_list
+.append wantdefs insertlist_ds_list
 .append wantdefs rfre_ds_list
 .append wantdefs print_ds_list
 ..

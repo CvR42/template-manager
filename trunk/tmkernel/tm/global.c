@@ -19,10 +19,7 @@ FILE *tracestream = 0;
 FILE *statstream = 0;
 
 tmstring tplfilename = tmstringNIL;
-unsigned int tpllineno = 0;
 tmstring dsfilename = tmstringNIL;
-FILE *dsfile;
-unsigned int dslineno = 0;
 ds_list allds;
 tmstring_list searchpath = tmstring_listNIL;
 
@@ -34,5 +31,4 @@ int maintr = FALSE;
 int prstat = FALSE;
 int sevaltr = FALSE;
 int vartr = FALSE;
-int lextr = FALSE;
 int noerrorline = FALSE;

@@ -1,24 +1,24 @@
 testin: statements outside a case ignored
 testin: second .default block ignored
-testin: variable not found: iserniet
-testin: missing close bracket: ')'
-testin: no case matches, and there is no .default: value 'bla'
-testin: A switch command requires exactly one parameter: it has 2 parameters
+testin: variable 'iserniet' not found
+testin: missing close bracket ')'
+testin: no case matches value 'bla', and there is no .default
+testin: A switch command requires exactly one parameter, but this one has 2 parameters
 testin: stride cannot be negative or zero
 testin: too few parameter for `for' command
 testin: too few parameter for `for' command
 testin: too few parameter for `for' command
-testin: malformed number: 'a'
-testin: malformed number: 'a'
+testin: malformed number `a'
+testin: malformed number `a'
 testin: stride cannot be negative or zero
-testsub: variable not found: blablabla
-testsub: variable not found: blablabla
+testsub: variable 'blablabla' not found
+testsub: variable 'blablabla' not found
 
  error message line
  this is a message line
-testin: malformed number: 'a'
-testin: malformed number: 'a'
-testin: 'subtract' requires exactly two parameters: not 1
+testin: malformed number `a'
+testin: malformed number `a'
+testin: 'subtract' requires exactly two parameters, not 1
 testin: 'max' requires at least one parameter
 testin: 'min' requires at least one parameter
 testin: 'if' requires at least a condition expression
@@ -34,42 +34,42 @@ testin: 'leftstr' requires a non-negative length
 testin: 'leftstr' requires at least one parameter
 testin: 'rightstr' requires a non-negative length
 testin: 'rightstr' requires at least one parameter
-testin: tochar: character code out of range: character code -1
-testin: tochar: character code out of range: character code 256
+testin: tochar: character code -1 out of range
+testin: tochar: character code 256 out of range
 testin: 'tr': no new characters given
 testin: 'tr': no old characters given
 testin: 'tr': the strings of old and new characters must have the same length
-testin: 'defined' requires exactly one parameter: not 0
-testin: 'defined' requires exactly one parameter: not 2
-testin: 'isinenv' requires exactly one parameter: not 0
+testin: 'defined' requires exactly one parameter, not 0
+testin: 'defined' requires exactly one parameter, not 2
+testin: 'isinenv' requires exactly one parameter, not 0
 testin: no separator
 testin: no separator
 testin: bad expression
 testin: bad expression
-testin: missing close bracket: ']'
+testin: missing close bracket ']'
 testin: bad expression
-testin: bad expression: a
+testin: bad expression 'a'
 testin: division by zero
 testin: modulus by zero
-testin: no such macro: 'submacro'
-testin: wrong number of parameters: 1 instead of 2 (macro 'test')
-testin: wrong number of parameters: 3 instead of 2 (macro 'test')
-testin: no such macro: 'iserniet'
+testin: macro 'submacro' does not exist
+testin: wrong number of parameters for macro 'test': 1 instead of 2
+testin: wrong number of parameters for macro 'test': 3 instead of 2
+testin: macro 'iserniet' does not exist
 testin: no macro name given
-testin: wrong number of parameters: 0 instead of 2 (macro 'test')
-testin: wrong number of parameters: 2 instead of 1 (macro 'tv')
+testin: wrong number of parameters for macro 'test': 0 instead of 2
+testin: wrong number of parameters for macro `tv': 2 instead of 1
 testin: no macro name given
-testin: wrong number of parameters: 0 instead of 1 (macro 'tv')
+testin: wrong number of parameters for macro `tv': 0 instead of 1
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
 testin: no output allowed in expression macro
-testin: 'matchmacro' requires exactly one parameter: not 0
+testin: 'matchmacro' requires exactly one parameter, not 0
 testin: bad regular expression: Unmatched '('
-testin: 'definedmacro' requires exactly one parameter: not 0
-testin: 'definedmacro' requires exactly one parameter: not 2
-testin: 'matchvar' requires exactly one parameter: not 0
+testin: 'definedmacro' requires exactly one parameter, not 0
+testin: 'definedmacro' requires exactly one parameter, not 2
+testin: 'matchvar' requires exactly one parameter, not 0
 testin: .split: no '=' found
 testin: .split: no variables
 errors detected, program aborted

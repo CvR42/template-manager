@@ -28,17 +28,14 @@ void cktuple( const_tmsymbol nm, const_Field_list fields, const_tmsymbol_list in
 	for( iy=ix+1; iy<fields->sz; iy++ ){
 	    const_Field fy = fields->arr[iy];
 
-	    if( fy->name == fnm ){
-		sprintf( errpos, "in type '%s'", nm->name );
-		sprintf( errarg, "'%s'", fnm->sym->name );
-		error( "double use of field name" );
+	    if( fy->name->sym == fnm->sym ){
+		origsymbol_error( fy->name, "double use of field name in type `%s'", nm->name );
 		return;
 	    }
 	}
     }
     if( member_tmsymbol_list( nm, inherits ) ){
-	sprintf( errpos, "in type '%s'", nm->name );
-	error( "Type inherits itself" );
+	error( "Type `%s' inherits itself", nm->name );
 	return;
     }
     return;
@@ -65,8 +62,7 @@ static bool check_ds_inheritance(
         return ok;
     }
     if( visited[theds] ){
-	sprintf( errpos, "type '%s'", me->name->sym->name );
-	error( "circular inheritance/alias hierarchy" );
+	origsymbol_error( me->name, "circular inheritance/alias hierarchy in type" );
 	accepted[theds] = TRUE;		/* Break the circle to allow further checks. */
 	return FALSE;
     }
@@ -107,8 +103,7 @@ bool check_ds_list( const_ds_list dl )
 	    const_origsymbol nmy = dl->arr[iy]->name;
 
 	    if( nmx->sym == nmy->sym ){
-		sprintf( errarg, "type '%s'", nmx->sym->name );
-		error( "Double definition" );
+		origsymbol_error( nmy, "Double definition" );
 		ok = FALSE;
 		break;
 	    }

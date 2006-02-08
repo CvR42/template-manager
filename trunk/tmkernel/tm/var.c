@@ -168,9 +168,9 @@ const char *match_vars( const char *pat, tmstring_list *matches )
  */
 void setmacro(
     const char *nm,
-    const char *fnm,
-    const tmstring_list fpl,
-    const tplelm_list body
+    const_origin org,
+    const_tmstring_list pl,
+    const_tplelm_list body
 )
 {
     unsigned int hv;
@@ -187,10 +187,10 @@ void setmacro(
     }
     hv = hashval( nm );
     nwmacro = new_macro(
+        rdup_origin( org ),
 	ctxlvl,
 	rdup_tmstring( nm ),
-	rdup_tmstring( fnm ),
-	rdup_tmstring_list( fpl ),
+	rdup_tmstring_list( pl ),
 	rdup_tplelm_list( body )
     );
     macros[hv] = insert_macro_list( macros[hv], 0, nwmacro ); 

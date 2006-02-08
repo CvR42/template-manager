@@ -18,6 +18,7 @@ origsymbol == ( sym:tmsymbol, org:origin );
 || The list of inheritors of this type is a memoize of a lengthy
 || and frequently used calculation.
 ds = { name:origsymbol, inherits:[tmsymbol], inheritors:[tmsymbol] } +
+    DsInclude: { fnm:tmstring } |
     DsConstructorBase: { constructors:[tmsymbol] } |
     DsTuple: { fields:[Field] } |
     DsClass: { fields:[Field], isvirtual:tmbool } |
@@ -40,9 +41,9 @@ Field == ( name:origsymbol, type:Type );
 
 || The internal representation of a macro.
 macro == (
+    org:origin,         || The origin of the macro
     lvl:tmuint,		|| The context level
     name:tmstring,	|| The name of the macro
-    orgfile:tmstring,	|| In which file was it defined
     fpl:[tmstring],	|| List of formal parameters
     body:[tplelm]	|| The body of the macro
 );
@@ -56,7 +57,7 @@ var == (
 
 Switchcase == ( cases:tmstring, action:[tplelm] );
 
-tplelm = { lno:tmuint } +
+tplelm = { org:origin } +
     Plain: { line:tmstring } |
     For: { parms:tmstring, body:[tplelm] } |
     Foreach: { felist:tmstring, body:[tplelm] } |
