@@ -1862,15 +1862,15 @@ static tmstring fninheritors( const_tmstring_list sl )
 static tmstring fnallfields( const_tmstring_list sl )
 {
     tmstring ans;
-    tmstring_list nl;
+    tmsymbol_list nl;
     unsigned int ix;
 
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_all_fields( &nl, allds, sl->arr[ix] );
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1878,15 +1878,15 @@ static tmstring fnallfields( const_tmstring_list sl )
 static tmstring fnfields( const_tmstring_list sl )
 {
     tmstring ans;
-    tmstring_list nl;
+    tmsymbol_list nl;
     unsigned int ix;
 
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     for( ix=0; ix<sl->sz; ix++ ){
 	collect_fields( &nl, allds, sl->arr[ix] );
     }
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 
@@ -1975,13 +1975,13 @@ static tmstring fnalltypes( const_tmstring_list tl )
     }
     nl = new_tmstring_list();
     for( tix=0; tix<tl->sz; tix++ ){
-	tmstring_list fields = new_tmstring_list();
+	tmsymbol_list fields = new_tmsymbol_list();
 	const_tmstring tnm = tl->arr[tix];
 	unsigned int fix;
 
 	collect_all_fields( &fields, allds, tnm );
 	for( fix=0; fix<fields->sz; fix++ ){
-	    const Field e = find_field( allds, tnm, fields->arr[fix] );
+	    const Field e = find_field( allds, tnm, fields->arr[fix]->name );
 
 	    /* Since we only enumerate the fields we know exist for this
 	     * type, this should never fail.
@@ -1992,7 +1992,7 @@ static tmstring fnalltypes( const_tmstring_list tl )
 		make_typename( pre, suff, e->type )
 	    );
 	}
-	rfre_tmstring_list( fields );
+	rfre_tmsymbol_list( fields );
     }
     ans = flatstrings( nl );
     rfre_tmstring_list( nl );
@@ -2112,7 +2112,7 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 	visited[ix] = TRUE;
 	if( !is_blocked_type( blocking, tnm ) ){
 	    tmstring_list inheritors;
-	    tmstring_list fieldnames;
+	    tmsymbol_list fieldnames;
 	    const_ds d = allds->arr[ix];
 	    unsigned int tix;
 
@@ -2122,16 +2122,16 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 		tl = update_reach( tl, visited, blocking, inheritors->arr[tix] );
 	    }
 	    rfre_tmstring_list( inheritors );
-	    fieldnames = new_tmstring_list();
+	    fieldnames = new_tmsymbol_list();
 	    collect_all_fields( &fieldnames, allds, tnm );
 	    for( tix=0; tix<fieldnames->sz; tix++ ){
-		Field f = find_field( allds, tnm, fieldnames->arr[tix] );
+		Field f = find_field( allds, tnm, fieldnames->arr[tix]->name );
 
 		if( f != FieldNIL ){
 		    tl = update_reach_Type( tl, visited, blocking, f->type );
 		}
 	    }
-	    rfre_tmstring_list( fieldnames );
+	    rfre_tmsymbol_list( fieldnames );
 	    switch( d->tag ){
 		case TAGDsAlias:
 		    tl = update_reach_Type( tl, visited, blocking, to_const_DsAlias(d)->type );
@@ -2306,7 +2306,7 @@ static tmstring fncelmlist( const_tmstring_list sl )
     const_ds d;
     tmstring_list cl;
     tmstring ans;
-    tmstring_list nl;
+    tmsymbol_list nl;
 
     if( sl->sz != 2 ){
 	line_error( "'celmlist' requires two parameters" );
@@ -2324,10 +2324,10 @@ static tmstring fncelmlist( const_tmstring_list sl )
 	sprintf( errarg, "constructor '%s', type '%s'", sl->arr[1], sl->arr[0] );
 	line_error( "not a member of this constructor type" );
     }
-    nl = new_tmstring_list();
+    nl = new_tmsymbol_list();
     collect_fields( &nl, allds, sl->arr[1] );
-    ans = flatstrings( nl );
-    rfre_tmstring_list( nl );
+    ans = flatsymbols( nl );
+    rfre_tmsymbol_list( nl );
     return ans;
 }
 

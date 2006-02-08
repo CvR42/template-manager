@@ -122,7 +122,7 @@ unsigned int find_field_ix( const_Field_list fl, const char *nm )
     for( ix = 0; ix < fl->sz; ix++ ){
 	const_Field f = fl->arr[ix];
 
-	if( strcmp( f->name, nm ) == 0 ){
+	if( strcmp( f->name->name, nm ) == 0 ){
 	    return ix;
 	}
     }
@@ -336,7 +336,7 @@ ds_list zap_memoized_inheritors( ds_list types )
  * Constructor types in the inherit tree are considered to have an
  * empty field list.
  */
-void collect_fields( tmstring_list *fields, const_ds_list types, const char *type )
+void collect_fields( tmsymbol_list *fields, const_ds_list types, const char *type )
 {
     unsigned int ix;
     Field_list el = Field_listNIL;
@@ -370,21 +370,9 @@ void collect_fields( tmstring_list *fields, const_ds_list types, const char *typ
 	for( ix=0; ix<el->sz; ix++ ){
 	    const_Field e = el->arr[ix];
 
-	    *fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
+	    *fields = append_tmsymbol_list( *fields, e->name );
 	}
     }
-}
-
-/* Given a pointer to a string list 'fields', a list of types 'types'
- * and a type name 'type', collect into '*fields' the fields that are
- * inherited by this type, and the fields of this type, in depth-first order.
- * Constructor types in the inherit tree are considered to have an
- * empty field list, but may of course inherit from other classes.
- */
-void collect_all_fields( tmstring_list *fields, const_ds_list types, const char *type )
-{
-    collect_inherited_fields( fields, types, type );
-    collect_fields( fields, types, type );
 }
 
 /* Given a pointer to a string list 'fields', a list of types 'types'
@@ -393,7 +381,7 @@ void collect_all_fields( tmstring_list *fields, const_ds_list types, const char 
  * Constructor types in the inherit tree are considered to have an
  * empty field list, but may of course inherit from other classes.
  */
-void collect_inherited_fields( tmstring_list *fields, const_ds_list types, const char *type )
+void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const char *type )
 {
     tmstring_list inherits;
     unsigned int ix;
@@ -405,6 +393,18 @@ void collect_inherited_fields( tmstring_list *fields, const_ds_list types, const
     for( ix=0; ix<inherits->sz; ix++ ){
 	collect_all_fields( fields, types, inherits->arr[ix] );
     }
+}
+
+/* Given a pointer to a string list 'fields', a list of types 'types'
+ * and a type name 'type', collect into '*fields' the fields that are
+ * inherited by this type, and the fields of this type, in depth-first order.
+ * Constructor types in the inherit tree are considered to have an
+ * empty field list, but may of course inherit from other classes.
+ */
+void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const char *type )
+{
+    collect_inherited_fields( fields, types, type );
+    collect_fields( fields, types, type );
 }
 
 /* Given a description 'desc' and a list of tmstrings 'l', check
@@ -423,6 +423,31 @@ bool check_double_strings( const char *msg, const_tmstring_list l )
 	    tmstring sb = l->arr[ixb];
 	    if( strcmp( sa, sb ) == 0 ){
 		sprintf( errarg, "'%s'", sa );
+		error( msg );
+		ok = FALSE;
+	    }
+	}
+    }
+    return ok;
+}
+
+/* Given a description 'desc' and a list of tmsymbols 'l', check
+ * that the given list of tmsymbols does not contain duplicate entries.
+ */
+bool check_double_symbols( const char *msg, const_tmsymbol_list l )
+{
+    unsigned int ixa;
+    unsigned int ixb;
+    bool ok = TRUE;
+
+    for( ixa=0; ixa<l->sz; ixa++ ){
+	tmsymbol sa = l->arr[ixa];
+
+	for( ixb=ixa+1; ixb<l->sz; ixb++ ){
+	    tmsymbol sb = l->arr[ixb];
+
+	    if( sa == sb ){
+		sprintf( errarg, "'%s'", sa->name );
 		error( msg );
 		ok = FALSE;
 	    }

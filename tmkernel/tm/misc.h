@@ -18,9 +18,10 @@ extern void collect_subclasses( tmstring_list *res, const_ds_list types, const_t
 extern void collect_superclasses( tmstring_list *res, const_ds_list types, const char *type );
 extern void collect_inheritors( tmstring_list *res, const_ds_list types, const_tmstring type );
 
-extern void collect_all_fields( tmstring_list *fields, const_ds_list types, const char *type );
-extern void collect_inherited_fields( tmstring_list *fields, const_ds_list types, const char *type );
-extern void collect_fields( tmstring_list *fields, const_ds_list types, const char *type );
+extern void collect_fields( tmsymbol_list *fields, const_ds_list types, const char *type );
+extern void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const char *type );
+extern void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const char *type );
 
 extern bool check_double_strings( const char *msg, const_tmstring_list l );
+extern bool check_double_symbols( const char *msg, const_tmsymbol_list l );
 extern ds_list zap_memoized_inheritors( ds_list types );
