@@ -87,7 +87,7 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
     unsigned int ix;
     unsigned int hv;
 
-    if( prev_types_ix<types->sz && ( types->arr[prev_types_ix]->name == t ) ){
+    if( prev_types_ix<types->sz && ( types->arr[prev_types_ix]->name->sym == t ) ){
 	return prev_types_ix;
     }
     if( t == tmsymbolNIL ){
@@ -95,14 +95,14 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
     }
     hv = types_hashval( t->name );
     ix = types_hash[hv];
-    if( ix<types->sz && types->arr[ix]->name == t ){
+    if( ix<types->sz && types->arr[ix]->name->sym == t ){
 	prev_types_ix = ix;
 	return ix;
     }
     for( ix = 0; ix < types->sz; ix++ ){
 	const_ds d = types->arr[ix];
 
-	if( d->name == t ){
+	if( d->name->sym == t ){
 	    prev_types_ix = ix;
 	    types_hash[hv] = ix;
 	    return ix;
@@ -314,7 +314,7 @@ void collect_inheritors( tmsymbol_list *res, const_ds_list types, tmsymbol type 
 	const_tmsymbol_list inherits = d->inherits;
 
 	if( inherits != tmsymbol_listNIL && member_tmsymbol_list( type, inherits ) ){
-	    tmsymbol nm = d->name;
+	    tmsymbol nm = d->name->sym;
 
 	    mine = append_tmsymbol_list( mine, nm );
 	}

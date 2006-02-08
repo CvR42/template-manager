@@ -65,7 +65,7 @@ static bool check_ds_inheritance(
         return ok;
     }
     if( visited[theds] ){
-	sprintf( errpos, "type '%s'", me->name->name );
+	sprintf( errpos, "type '%s'", me->name->sym->name );
 	error( "circular inheritance/alias hierarchy" );
 	accepted[theds] = TRUE;		/* Break the circle to allow further checks. */
 	return FALSE;
@@ -101,13 +101,13 @@ bool check_ds_list( const_ds_list dl )
     /* First check on double definition of a type. */
     for( ix=0; ix<dl->sz; ix++ ){
 	unsigned int iy;
-	const_tmsymbol nmx = dl->arr[ix]->name;
+	const_origsymbol nmx = dl->arr[ix]->name;
 
 	for( iy=ix+1; iy<dl->sz; iy++ ){
-	    const_tmsymbol nmy = dl->arr[iy]->name;
+	    const_origsymbol nmy = dl->arr[iy]->name;
 
-	    if( nmx == nmy ){
-		sprintf( errarg, "type '%s'", nmx->name );
+	    if( nmx->sym == nmy->sym ){
+		sprintf( errarg, "type '%s'", nmx->sym->name );
 		error( "Double definition" );
 		ok = FALSE;
 		break;
@@ -143,7 +143,7 @@ bool check_ds_list( const_ds_list dl )
 	return ok;
     }
     for( ix=0; ix<dl->sz; ix++ ){
-	tmsymbol nmx = dl->arr[ix]->name;
+	tmsymbol nmx = dl->arr[ix]->name->sym;
 	char msg[200];
 	tmsymbol_list tl = new_tmsymbol_list();
 
