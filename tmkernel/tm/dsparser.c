@@ -97,7 +97,7 @@ static ds merge_cons_types( const_ds a, const_ds b )
  * 'tnm' to which the constructor belongs, ensure that if 't' is a constructor
  * type, 'cnm' does not occur in it.
  */
-static void ckcname_type( const_ds t, const_tmsymbol cnm, const_origsymbol tnm )
+static void check_constructor_name_type( const_ds t, const_tmsymbol cnm, const_origsymbol tnm )
 {
     tmsymbol_list cl;
 
@@ -114,12 +114,12 @@ static void ckcname_type( const_ds t, const_tmsymbol cnm, const_origsymbol tnm )
  * 'tnm' to which the constructor belongs, ensure that 'cnm' does not
  * occur in any of the constructor types of 'l'.
  */
-static void ckcname( const_ds_list l, const_tmsymbol cnm, const_origsymbol tnm )
+static void check_constructor_name( const_ds_list l, const_tmsymbol cnm, const_origsymbol tnm )
 {
     unsigned int ix;
 
     for( ix=0; ix<l->sz; ix++ ){
-	ckcname_type( l->arr[ix], cnm, tnm );
+	check_constructor_name_type( l->arr[ix], cnm, tnm );
     }
 }
 
@@ -127,7 +127,7 @@ static void ckcname( const_ds_list l, const_tmsymbol cnm, const_origsymbol tnm )
  * constructor type, it does not contain the same constructor names
  * as in previous constructor types.
  */
-static void ckcnames( const_ds_list l, const_ds t )
+static void check_constructor_names( const_ds_list l, const_ds t )
 {
     tmsymbol_list cl;
     unsigned int ix;
@@ -139,7 +139,7 @@ static void ckcnames( const_ds_list l, const_ds t )
     cl = to_const_DsConstructorBase(t)->constructors;
     tnm = t->name;
     for( ix=0; ix<cl->sz; ix++ ){
-	ckcname( l, cl->arr[ix], tnm );
+	check_constructor_name( l, cl->arr[ix], tnm );
     }
 }
 
@@ -179,7 +179,7 @@ static ds_list add_ds_list( ds_list l, ds t )
 	}
     }
     else {
-	ckcnames( l, t );
+	check_constructor_names( l, t );
 	l = append_ds_list( l, rdup_ds( t ) );
     }
     return l;

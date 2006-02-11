@@ -3,7 +3,7 @@
 /* Structure to describe debugging flags. */
 typedef struct _cvr_db_flags {
     const char flagchar;	/* char to switch the flag on */
-    int *flagadr;		/* pointer to the flag */
+    tmbool *flagadr;		/* pointer to the flag */
     const char *flagdescr;	/* description string */
 } dbflag;
 
