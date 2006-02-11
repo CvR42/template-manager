@@ -42,11 +42,12 @@ OKSTATUS=`cat $STATUSFILE`
 if [ -e $FLAGSFILE ]; then
     SLFLAGS="$SLFLAGS `cat $FLAGSFILE`"
 fi
+CMD="$TM -o $OUTFILE -e $TESTERRFILE $SLFLAGS $FILE"
 if [ $VERBOSE = 1 ]; then
-    echo sl $SLFLAGS $FILE
+    echo $CMD
 fi
 FAIL=0
-$TM $SLFLAGS $FILE -o $OUTFILE 2> $TESTERRFILE
+$CMD
 STATUS=$?
 if [ $STATUS != $OKSTATUS ]; then
     echo "Running $TM returned status code $STATUS instead of $OKSTATUS"

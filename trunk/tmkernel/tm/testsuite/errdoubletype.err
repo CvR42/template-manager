@@ -1,0 +1,4 @@
+errdoubletype.ds:4: redefinition of type
+orig == ( file:filename_string, line:int );
+                                          ^
+errors detected, program aborted
