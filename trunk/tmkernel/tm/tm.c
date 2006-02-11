@@ -33,7 +33,7 @@ static FILE *tplfile;
 static tmstring outfilename;	/* Possible output redirection file. */
 static tmstring errfilename;	/* Possible error redirection file. */
 
-static int mylextr;
+static tmbool mylextr;
 
 /* Table of debugging flags plus associated information.
 
