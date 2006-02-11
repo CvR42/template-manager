@@ -3,8 +3,6 @@
  * Evaluate template expressions.
  */
 
-#include "config.h"
-
 /* Standard UNIX libraries and expressions */
 #include <stdio.h>
 #include <ctype.h>
@@ -16,11 +14,9 @@
 #include "tmdefs.h"
 
 #include "tmcode.h"
-#include "tmstring.h"
 #include "error.h"
 #include "tmexpr.h"
 #include "global.h"
-#include "misc.h"
 
 static const char *evalbool( const_origin org, const char *x, long *vp );
 

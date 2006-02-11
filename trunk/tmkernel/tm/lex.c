@@ -3,17 +3,14 @@
  * Lexical analyzer for Tm datastructure definitions.
  */
 
-#include "config.h"
 #include <ctype.h>
 #include <tmc.h>
 
 #include "tmdefs.h"
 #include "tmcode.h"
-#include "tmstring.h"
 #include "error.h"
 #include "global.h"
 #include "lex.h"
-#include "misc.h"
 
 YYSTYPE yylval;
 
@@ -30,7 +27,7 @@ static unsigned int oldlineix = 0;
 static unsigned int lexlineno = 0;
 static tmstring lexfilename = tmstringNIL;
 static FILE *lexfile;	/* file to read from. */
-static bool lextr = FALSE;
+static tmbool lextr = TMFALSE;
 
 /******************************************************
  *            SCANNING TREES                          *

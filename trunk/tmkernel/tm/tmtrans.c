@@ -4,8 +4,6 @@
  * description.
  */
 
-#include "config.h"
-
 /* Standard UNIX libraries */
 #include <stdio.h>
 #include <ctype.h>
@@ -20,7 +18,6 @@
 #include "tmexpr.h"
 #include "error.h"
 #include "global.h"
-#include "tmpath.h"
 #include "misc.h"
 #include "tmtrans.h"
 #include "var.h"

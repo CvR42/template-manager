@@ -29,6 +29,7 @@ PROG = tm
 
 CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION) -g
 LDFLAGS	      = $(CFLAGS)
+LINTFLAGS = $(IPATH)
 
 TM            = tm
 

@@ -3,12 +3,10 @@
  * Variable and macro management.
  */
 
-#include "config.h"
-
 /* standard UNIX libraries */
 #include <stdio.h>
 
-/* tm library definitions */
+/* Tm library definitions */
 #include <tmc.h>
 
 /* local definitions */
