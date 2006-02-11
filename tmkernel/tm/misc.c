@@ -172,7 +172,7 @@ bool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l )
     return FALSE;
 }
 
-Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm )
+static Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm )
 {
     unsigned int ix;
 
