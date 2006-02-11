@@ -416,29 +416,6 @@ void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const_tmsym
     collect_fields( fields, types, type );
 }
 
-/* Given a description 'desc' and a list of tmstrings 'l', check
- * that the given list of tmstrings does not contain duplicate entries.
- */
-static bool check_double_strings( const char *msg, const_tmstring_list l )
-{
-    unsigned int ixa;
-    unsigned int ixb;
-    bool ok = TRUE;
-
-    for( ixa=0; ixa<l->sz; ixa++ ){
-	tmstring sa = l->arr[ixa];
-
-	for( ixb=ixa+1; ixb<l->sz; ixb++ ){
-	    tmstring sb = l->arr[ixb];
-	    if( strcmp( sa, sb ) == 0 ){
-		error( "%s: `%s'", msg, sa );
-		ok = FALSE;
-	    }
-	}
-    }
-    return ok;
-}
-
 /* Given a description 'desc' and a list of tmsymbols 'l', check
  * that the given list of tmsymbols does not contain duplicate entries.
  */
