@@ -49,7 +49,7 @@ macro == (
 );
 
 || The internal representation of a variable.
-var == (
+variable == (
     lvl:tmuint,		|| The context level
     name:tmstring,	|| The name of the variable
     val:tmstring	|| The value of the variable
