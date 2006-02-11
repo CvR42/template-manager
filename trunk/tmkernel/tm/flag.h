@@ -9,6 +9,5 @@ typedef struct _cvr_db_flags {
 
 #define dbflagNIL (dbflag *)0
 
-extern const dbflag *finddbflag( int c, const dbflag *flagtab );
-extern void setdbflags( const char *s, const dbflag *flagtab, int val );
+extern void setdbflags( const char *s, const dbflag *flagtab, tmbool val );
 extern void helpdbflags( FILE *f, const dbflag *flagtab );

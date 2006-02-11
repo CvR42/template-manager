@@ -3,8 +3,6 @@
  * Global variables.
  */
 
-#include "config.h"
-
 #include <time.h>
 #include <stdio.h>
 
@@ -12,7 +10,6 @@
 
 #include "tmdefs.h"
 #include "tmcode.h"
-#include "tmstring.h"
 #include "global.h"
 
 FILE *tracestream = 0;

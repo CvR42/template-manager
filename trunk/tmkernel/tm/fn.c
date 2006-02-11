@@ -3,8 +3,6 @@
  * Handle function expressions.
  */
 
-#include "config.h"
-
 /* Standard UNIX libraries and functions */
 #include <stdio.h>
 #include <ctype.h>

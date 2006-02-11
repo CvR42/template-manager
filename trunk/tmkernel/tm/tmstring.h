@@ -12,7 +12,6 @@ extern char *newintstr( int n );
 extern char *newuintstr( tmuint n );
 extern tmstring_list chopstring( const_origin org, const char *p );
 extern tmstring sepstrings( const_tmstring_list sl, const char *sep );
-extern tmstring sepsymbols( const_tmsymbol_list sl, const char *sep );
 extern tmstring flatstrings( const_tmstring_list sl );
 extern tmstring flatsymbols( const_tmsymbol_list sl );
 extern bool isfalsestr( const_tmstring s );

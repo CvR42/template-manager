@@ -2,7 +2,7 @@
  *
  * Various low-level routines.
  */
-#include "config.h"
+
 #include <stdio.h>
 #include <tmc.h>
 #include <errno.h>
@@ -113,7 +113,7 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
  * Return the index of that field in the list, or fl->sz if not
  * found.
  */ 
-unsigned int find_field_ix( const_Field_list fl, const_tmsymbol nm )
+static unsigned int find_field_ix( const_Field_list fl, const_tmsymbol nm )
 {
     unsigned int ix;
 
@@ -390,7 +390,7 @@ void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol 
  * Constructor types in the inherit tree are considered to have an
  * empty field list, but may of course inherit from other classes.
  */
-void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type )
+static void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type )
 {
     tmsymbol_list inherits;
     unsigned int ix;
@@ -419,7 +419,7 @@ void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const_tmsym
 /* Given a description 'desc' and a list of tmstrings 'l', check
  * that the given list of tmstrings does not contain duplicate entries.
  */
-bool check_double_strings( const char *msg, const_tmstring_list l )
+static bool check_double_strings( const char *msg, const_tmstring_list l )
 {
     unsigned int ixa;
     unsigned int ixb;

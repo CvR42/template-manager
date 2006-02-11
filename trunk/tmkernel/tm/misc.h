@@ -4,7 +4,6 @@
  */
 
 extern unsigned int find_type_ix( const_ds_list types, const_tmsymbol t );
-extern unsigned int find_field_ix( const_Field_list fl, const_tmsymbol nm );
 extern FILE *ckfopen( const char *nm, const char *acc );
 extern void ckfreopen( const char *nm, const char *acc, FILE *f );
 extern bool member_tmsymbol_list( const_tmsymbol s, const_tmsymbol_list l );
@@ -20,9 +19,7 @@ extern void collect_superclasses( tmsymbol_list *res, const_ds_list types, tmsym
 extern void collect_inheritors( tmsymbol_list *res, const_ds_list types, tmsymbol type );
 
 extern void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type );
-extern void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type );
 extern void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type );
 
-extern bool check_double_strings( const char *msg, const_tmstring_list l );
 extern bool check_double_symbols( const char *msg, const_tmsymbol_list l );
 extern ds_list zap_memoized_inheritors( ds_list types );
