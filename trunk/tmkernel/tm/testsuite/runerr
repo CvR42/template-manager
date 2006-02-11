@@ -24,7 +24,7 @@ if [ x$FILE = x ]; then
     echo "No file specified"
     exit 2
 fi
-BASENAME=`basename $FILE .rl`
+BASENAME=`basename $FILE .t`
 OUTFILE=$BASENAME.hs
 ERRFILE=$BASENAME.err
 TESTERRFILE=$BASENAME.testerr
