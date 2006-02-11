@@ -63,13 +63,13 @@
 .append wantdefs stat_$(basename)
 .append wantdefs get_balance_$(basename)
 ..
-.append wantdefs new_var
-.append wantdefs new_var_list
-.append wantdefs append_var_list
-.append wantdefs delete_var_list
-.append wantdefs insert_var_list
-.append wantdefs rfre_var_list
-.append wantdefs insert_var_list
+.append wantdefs new_variable
+.append wantdefs new_variable_list
+.append wantdefs append_variable_list
+.append wantdefs delete_variable_list
+.append wantdefs insert_variable_list
+.append wantdefs rfre_variable_list
+.append wantdefs insert_variable_list
 ..
 .append wantdefs new_macro
 .append wantdefs rfre_macro

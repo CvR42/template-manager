@@ -35,7 +35,7 @@
  *    Datastructures                                  *    
  ******************************************************/
 
-static var_list variables[HASHWIDTH];
+static variable_list variables[HASHWIDTH];
 static macro_list macros[HASHWIDTH];
 
 static unsigned int ctxlvl;
@@ -66,7 +66,7 @@ static unsigned int hashval( const char *s )
  ******************************************************/
 
 /* Search in current context level 'lvl' for macro with name 'nm'.
-   Return pointer to variable, or varNIL if not found.
+   Return pointer to variable, or variableNIL if not found.
  */
 static bool findlocmacro(
     const char *nm,
@@ -93,7 +93,7 @@ static bool findlocmacro(
 }
 
 /* Search in all contexts for variable with name 'nm'. Return pointer to
-   struct macro of variable, or varNIL if not found.
+   struct macro of variable, or variableNIL if not found.
  */
 macro findmacro( const char *nm )
 {
@@ -147,10 +147,10 @@ const char *match_vars( const char *pat, tmstring_list *matches )
     }
     for( hv=0; hv<HASHWIDTH; hv++ ){
 	unsigned int ix;
-	var_list l = variables[hv];
+	const_variable_list l = variables[hv];
 
 	for( ix=0; ix<l->sz; ix++ ){
-	    var m = l->arr[ix];
+	    const_variable m = l->arr[ix];
 
 	    if( ref_exec( m->name ) ){
 		*matches = append_tmstring_list(
@@ -201,13 +201,13 @@ void setmacro(
  ******************************************************/
 
 /* Search in current context level 'lvl' for variable with name 'nm'.
-   Return pointer to struct var of variable, or varNIL if not found.
+   Return pointer to struct variable of variable, or variableNIL if not found.
  */
-static var findlocvar( const char *nm )
+static variable findlocvar( const char *nm )
 {
-    var_list l;
+    variable_list l;
     unsigned int hv;
-    var v;
+    variable v;
     unsigned int ix;
 
     hv = hashval( nm );
@@ -218,18 +218,18 @@ static var findlocvar( const char *nm )
 	    return v;
 	}
     }
-    return varNIL;
+    return variableNIL;
 }
 
 /* Search in all contexts for variable with name 'nm'. Return pointer to
-   struct var of variable, or varNIL if not found.
+   struct variable of variable, or variableNIL if not found.
  */
-static var findvar( const char *nm )
+static variable findvar( const char *nm )
 {
-    var_list l;
+    variable_list l;
     unsigned int hv;
     unsigned int ix;
-    var v;
+    variable v;
 
     hv = hashval( nm );
     l = variables[hv];
@@ -237,7 +237,7 @@ static var findvar( const char *nm )
 	v = l->arr[ix];
 	if( strcmp( nm, v->name ) == 0 ) return v;
     }
-    return varNIL;
+    return variableNIL;
 }
 
 /* Add a variable 'nm' with value 'v' to the known variables.
@@ -247,7 +247,7 @@ static var findvar( const char *nm )
 void setvar( const char *nm, const char *v )
 {
     unsigned int hv;
-    var nwvar;
+    variable nwvar;
 
     if( vartr ){
 	if( nm[0] == '\r' ){
@@ -258,14 +258,14 @@ void setvar( const char *nm, const char *v )
 	}
     }
     nwvar = findlocvar( nm );
-    if( nwvar != varNIL ){
+    if( nwvar != variableNIL ){
 	fre_tmstring( nwvar->val );
 	nwvar->val = new_tmstring( v );
 	return;
     }
     hv = hashval( nm );
-    nwvar = new_var( ctxlvl, new_tmstring( nm ), new_tmstring( v ) );
-    variables[hv] = insert_var_list( variables[hv], 0, nwvar ); 
+    nwvar = new_variable( ctxlvl, new_tmstring( nm ), new_tmstring( v ) );
+    variables[hv] = insert_variable_list( variables[hv], 0, nwvar ); 
 }
 
 /* Given the hash value of a variable, and the name of the variable,
@@ -273,14 +273,14 @@ void setvar( const char *nm, const char *v )
  */
 static void zapvar( const unsigned int hv, const char *nm )
 {
-    var_list vl;
+    variable_list vl;
     unsigned int ix;
 
     vl = variables[hv];
     ix = 0;
     while( ix<vl->sz ){
 	if( strcmp( vl->arr[ix]->name, nm ) == 0 ){
-	    vl = delete_var_list( vl, ix );
+	    vl = delete_variable_list( vl, ix );
 	}
 	else {
 	    ix++;
@@ -296,21 +296,21 @@ static void zapvar( const unsigned int hv, const char *nm )
 void globalsetvar( const char *nm, const char *v )
 {
     unsigned int hv;
-    var nwvar;
+    variable nwvar;
 
     if( vartr ){
 	fprintf( tracestream, "global set: %s = '%s'\n", nm, v );
     }
     nwvar = findlocvar( nm );
-    if( nwvar != varNIL ){
+    if( nwvar != variableNIL ){
 	fre_tmstring( nwvar->val );
 	nwvar->val = new_tmstring( v );
 	return;
     }
     hv = hashval( nm );
     zapvar( hv, nm );
-    nwvar = new_var( 0, new_tmstring( nm ), new_tmstring( v ) );
-    variables[hv] = append_var_list( variables[hv], nwvar ); 
+    nwvar = new_variable( 0, new_tmstring( nm ), new_tmstring( v ) );
+    variables[hv] = append_variable_list( variables[hv], nwvar ); 
 }
 
 /* Start a new variable context. */
@@ -328,7 +328,7 @@ void flushvar( void )
     unsigned int hv;
 
     for( hv=0; hv<HASHWIDTH; hv++ ){
-        var_list vl;
+        variable_list vl;
         macro_list ml;
         unsigned int ix;
 
@@ -336,7 +336,7 @@ void flushvar( void )
 	ix = 0;
 	while( ix<vl->sz ){
 	    if( vl->arr[ix]->lvl>=ctxlvl ){
-		vl = delete_var_list( vl, ix );
+		vl = delete_variable_list( vl, ix );
 	    }
 	    else {
 		ix++;
@@ -365,9 +365,9 @@ void flushvar( void )
  */
 tmstring getvar( const char *nm )
 {
-    var v = findvar( nm );
+    variable v = findvar( nm );
 
-    if( v != varNIL ){
+    if( v != variableNIL ){
 	if( vartr )
 	    fprintf( tracestream, "found: %s = '%s' (ctx=%u)\n", nm, v->val, v->lvl );
 	return v->val;
@@ -381,9 +381,9 @@ tmstring getvar( const char *nm )
  */
 tmstring getretval( void )
 {
-    var v = findlocvar( RETVALNAME );
+    variable v = findlocvar( RETVALNAME );
 
-    if( v != varNIL ){
+    if( v != variableNIL ){
 	if( vartr ){
 	    fprintf(
 		tracestream,
@@ -404,13 +404,13 @@ tmstring getretval( void )
  *    initialization                                  *
  ******************************************************/
 
-/* Initialize 'var' routines. */
+/* Initialize 'variable' routines. */
 void init_var(void )
 {
     unsigned int i;
 
     for( i=0; i<HASHWIDTH; i++ ){
-	variables[i] = new_var_list();
+	variables[i] = new_variable_list();
     }
     ctxlvl = 0;
     for( i=0; i<HASHWIDTH; i++ ){
@@ -418,7 +418,7 @@ void init_var(void )
     }
 }
 
-/* Terminate 'var' routines. */
+/* Terminate 'variable' routines. */
 void end_var( void )
 {
     unsigned int i;
@@ -431,7 +431,7 @@ void end_var( void )
 	);
     }
     for( i=0; i<HASHWIDTH; i++ ){
-	rfre_var_list( variables[i] );
+	rfre_variable_list( variables[i] );
     }
     for( i=0; i<HASHWIDTH; i++ ){
 	rfre_macro_list( macros[i] );
