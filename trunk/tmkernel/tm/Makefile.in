@@ -138,14 +138,17 @@ uninstall:
 distclean:
 	rm -f $(OBJS) $(JUNK) $(PROG)
 	rm -f config.status config.cache config.h
+	cd testsuite && make distclean
 
 empty:
 	rm -f $(OBJS) $(JUNK) $(PROG)
 	rm -f config.h
 	rm -f $(PRECIOUSJUNK)
+	cd testsuite && make empty
 
 clean:
 	rm -f $(OBJS) $(GENFILES) $(JUNK)
+	cd testsuite && make clean
 
 tmcode.h: tmcode.ht tm.ds tmspec.t
 	tm tm.ds tmcode.ht > tmcode.h
@@ -165,15 +168,14 @@ man:
 version.h: ../version.h
 	cp ../version.h version.h
 
-check: testin sub.ds test.ds testsub goodout gooderr goodrdir $(TM)
-	-./tm -dn -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
-	diff testout goodout
-	diff testerr gooderr
-	diff testrdir goodrdir
+check: 
+	cd testsuite && make check
 
-tests: check
+tests:
+	cd testsuite && make tests
 
-test: check
+test:
+	cd testsuite && make test
 
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -196,7 +198,6 @@ stats: empty
 
 genstats: $(GENSRCS) $(GENHDRS)
 	wc -l $(GENSRCS) $(GENHDRS)
-
  
 # Configure-related rules.
 
