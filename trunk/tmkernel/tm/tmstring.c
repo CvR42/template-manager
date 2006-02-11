@@ -79,9 +79,16 @@ const char *scanword( const_origin org, const char *s, char **w )
     return s;
 }
 
-/***************************************************************
- *   parameter parsing                                         *
- ***************************************************************/
+/* Given a tmstring 's', ensure that it does not contain an other
+   parameter, or else complain.
+ */
+static void cknopar( const_origin org, const char *s )
+{
+    while( isspace( *s ) ) s++;
+    if( *s != '\0' ){
+	origin_error( org, "excess function parameters: `%s'", s );
+    }
+}
 
 /* Given a parameter tmstring 'p' and a pointer to a tmstring pointer
    'p1', ensure that 'p' contains exactly one parameter and create
@@ -100,17 +107,6 @@ void scan1par( const_origin org, const char *pl, char **p1 )
 /***************************************************************
  *   error handling                                            *
  ***************************************************************/
-
-/* Given a tmstring 's', ensure that it does not contain an other
-   parameter, or else complain.
- */
-void cknopar( const_origin org, const char *s )
-{
-    while( isspace( *s ) ) s++;
-    if( *s != '\0' ){
-	origin_error( org, "excess function parameters: `%s'", s );
-    }
-}
 
 /* Given a tmstring 's', ensure that it is a correct number,
    or else complain.

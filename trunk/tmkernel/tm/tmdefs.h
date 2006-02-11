@@ -38,9 +38,6 @@ typedef int bool;
 /* size of buffer for integer string */
 #define NUMBUFSIZE 40
 
-/* size of file copy buffer. */
-#define CPBUFSIZE 2000
-
 /* The name of the variable wherein return values are stored.
  * This is not only ment to be funny: this name can not be used
  * by the user for a variable name.

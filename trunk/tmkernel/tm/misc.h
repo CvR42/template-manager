@@ -11,7 +11,6 @@ extern bool member_tmstring_list( const_tmstring s, const_tmstring_list l );
 extern bool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l );
 
 extern Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm );
-extern Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm );
 
 extern tmsymbol_list extract_inherits( const_ds_list types, const_tmsymbol type );
 extern void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type );

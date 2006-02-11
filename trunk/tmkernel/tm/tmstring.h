@@ -5,7 +5,6 @@
 
 extern const char *scanword( const_origin org, const char *s, char **w );
 extern void scan1par( const_origin org, const char *pl, char **p1 );
-extern void cknopar( const_origin org, const char *s );
 extern bool cknumpar( const_origin org, const char *n );
 extern char *newboolstr( bool b );
 extern char *newintstr( int n );
