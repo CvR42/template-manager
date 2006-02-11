@@ -480,6 +480,10 @@ void end_lex( void )
     TM_FREE( ungetbuf );
     ungetbuflen = 0;
     ungetbufix = 0;
+    if( lexfilename != tmstringNIL ){
+        rfre_tmstring( lexfilename );
+        lexfilename = tmstringNIL;
+    }
 }
 
 /* Give allocation statistics of lex routines. */
