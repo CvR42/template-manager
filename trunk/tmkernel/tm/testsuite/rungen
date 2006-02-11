@@ -1,0 +1,109 @@
+#!/bin/sh
+#
+# Run a test that is supposed to succeed and generate certain code.
+
+TMFLAGS=
+
+# Places of executables
+TM=../tm
+VERBOSE=0
+FORCEV=0
+FILE=
+export SLPATH
+
+for f; do
+    case "$f" in
+	-v)
+	    VERBOSE=1;;
+
+	-f)
+	    FORCEV=1;;
+
+	-*)
+	    echo "unknown option '$f'"; exit 2 ;;
+
+	*)
+	    FILE=$f ;;
+    esac
+done
+
+if [ x$FILE = x ]; then
+    echo "No file specified"
+    exit 2
+fi
+BASENAME=`basename $FILE .rl`
+OUTFILE=$BASENAME.out
+ERRFILE=$BASENAME.err
+TESTOUTFILE=$BASENAME.testout
+TESTERRFILE=$BASENAME.testerr
+FLAGSFILE=$BASENAME.flags
+STATUSFILE=$BASENAME.status
+PROFFILE=$BASENAME.gprof
+if [ ! -e $ERRFILE ]; then
+    echo "Creating default (=empty) error reference file '$ERRFILE'"
+    touch $ERRFILE
+fi
+if [ ! -e $OUTFILE ]; then
+    echo "Creating default (=empty) reference file '$OUTFILE'"
+    touch $OUTFILE
+fi
+if [ -e $FLAGSFILE ]; then
+    TMFLAGS="$TMFLAGS `cat $FLAGSFILE`"
+fi
+if [ ! -e $STATUSFILE ]; then
+    OKSTATUS=0
+else
+    OKSTATUS=`cat $STATUSFILE`
+fi
+if [ $VERBOSE = 1 ]; then
+    echo $TM $TMFLAGS $FILE
+fi
+FAIL=0
+$TM $TMFLAGS $FILE -o $TESTOUTFILE 2> $TESTERRFILE
+COMPILESTATUS=$?
+if [ $COMPILESTATUS != $OKSTATUS ]; then
+    echo "Compilation returned status code $COMPILESTATUS instead of $OKSTATUS"
+    echo "If you think the status code should be $COMPILESTATUS, update with:"
+    echo "    echo $COMPILESTATUS >! $STATUSFILE"
+    FAIL=1
+fi
+CMD="diff $TESTERRFILE $ERRFILE"
+if [ $VERBOSE = 1 ]; then
+    echo $CMD
+fi
+$CMD
+STATUS=$?
+if [ $STATUS != 0 ]; then
+    echo "ruler error messages differ from reference."
+    echo "If you think the reference file is wrong, update with:"
+    echo "    cp $TESTERRFILE $ERRFILE"
+    FAIL=1
+fi
+CMD="diff $TESTOUTFILE $OUTFILE"
+if [ $VERBOSE = 1 ]; then
+    echo $CMD
+fi
+$CMD
+STATUS=$?
+if [ $STATUS != 0 ]; then
+    if [ $FAIL = 0 ]; then
+	if [ $FORCEV = 1 ]; then
+	    cp $TESTOUTFILE $OUTFILE
+	    echo "File $OUTFILE has been updated"
+	else
+	    echo "Output differs from reference."
+	    echo "If you think the reference file is wrong, update with:"
+	    echo "    cp $TESTOUTFILE $OUTFILE"
+	    FAIL=1
+	fi
+    fi
+fi
+if [ $FAIL = 1 ]; then
+    exit 1
+fi
+# Put aside any profile that has been created during this run
+if [ -e gmon.out ]; then
+    mv gmon.out $PROFFILE
+fi
+rm -f $TESTOUTFILE $TESTERRFILE
+exit 0
