@@ -31,7 +31,7 @@ if [ x$FILE = x ]; then
     echo "No file specified"
     exit 2
 fi
-BASENAME=`basename $FILE .rl`
+BASENAME=`basename $FILE .t`
 OUTFILE=$BASENAME.out
 ERRFILE=$BASENAME.err
 TESTOUTFILE=$BASENAME.testout
@@ -55,11 +55,12 @@ if [ ! -e $STATUSFILE ]; then
 else
     OKSTATUS=`cat $STATUSFILE`
 fi
+CMD="$TM -o $TESTOUTFILE -e $TESTERRFILE $TMFLAGS $FILE"
 if [ $VERBOSE = 1 ]; then
-    echo $TM $TMFLAGS $FILE
+    echo $CMD
 fi
 FAIL=0
-$TM $TMFLAGS $FILE -o $TESTOUTFILE 2> $TESTERRFILE
+$CMD
 COMPILESTATUS=$?
 if [ $COMPILESTATUS != $OKSTATUS ]; then
     echo "Compilation returned status code $COMPILESTATUS instead of $OKSTATUS"
