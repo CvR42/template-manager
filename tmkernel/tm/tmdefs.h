@@ -26,8 +26,8 @@ typedef int bool;
 
 #define CHARNIL (char *)0
 
-#define TRUE 1
-#define FALSE 0
+#define TRUE TMTRUE
+#define FALSE TMFALSE
 
 /* increment in dynamically growing string buffer size */
 #define STRSTEP 20

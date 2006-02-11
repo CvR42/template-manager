@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <tmc.h>
 
-#include "config.h"
 #include "tmdefs.h"
 #include "tmcode.h"
 #include "error.h"

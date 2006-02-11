@@ -6,17 +6,13 @@
 #include <assert.h>
 #include <time.h>
 
-#include "config.h"
-
 #include "tmdefs.h"
 
 #include <tmc.h>
 
 #include "flag.h"
 #include "tmcode.h"
-#include "tmstring.h"
 #include "error.h"
-#include "fn.h"
 #include "lex.h"
 #include "dsparser.h"
 #include "misc.h"

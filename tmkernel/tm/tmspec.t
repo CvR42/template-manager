@@ -38,14 +38,11 @@
 .append wantdefs append_Field_list
 .append wantdefs concat_Field_list
 .append wantdefs rdup_Field_list
-.append wantdefs rfre_Field_list
 ..
 .append wantdefs new_tmstring_list
 .append wantdefs rfre_tmstring_list
 .append wantdefs rdup_tmstring_list
-.append wantdefs print_tmstring_list
 .append wantdefs append_tmstring_list
-.append wantdefs concat_tmstring_list
 .append wantdefs setroom_tmstring_list
 .append wantdefs delete_tmstring_list
 .append wantdefs extract_tmstring_list
@@ -54,7 +51,6 @@
 ..
 .append wantdefs ${prefix new_ ${subclasses tplelm}}
 .append wantdefs new_tplelm_list
-.append wantdefs rfre_tplelm
 .append wantdefs rfre_tplelm_list
 .append wantdefs rdup_tplelm_list
 .append wantdefs rdup_tplelm
@@ -72,7 +68,6 @@
 .append wantdefs insert_variable_list
 ..
 .append wantdefs new_macro
-.append wantdefs rfre_macro
 .append wantdefs new_macro_list
 .append wantdefs rfre_macro_list
 .append wantdefs delete_macro_list
@@ -100,7 +95,6 @@
 ..
 .append wantdefs new_origsymbol
 .append wantdefs rdup_origsymbol
-.append wantdefs new_origsymbol_list
 ..
 .append wantdefs new_tmsymbol_list
 .append wantdefs append_tmsymbol_list

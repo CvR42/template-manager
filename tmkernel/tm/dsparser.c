@@ -3,14 +3,10 @@
  * A recursive descend parser for Tm datastructure definitions.
  */
 
-#include "config.h"
 #include "tmdefs.h"
-#include <assert.h>
-#include <ctype.h>
 #include <tmc.h>
 
 #include "tmcode.h"
-#include "tmstring.h"
 #include "error.h"
 #include "global.h"
 #include "lex.h"
@@ -812,7 +808,7 @@ static bool parse_ds( ds_list *dl )
 	case TILDEQ:
 	{
 	    classComponent_list nw;
-	    bool isvirtual = (curr_token == TILDEQ);
+	    tmbool isvirtual = (curr_token == TILDEQ);
 
 	    next_token();
 	    ok = parse_class_components( &nw );
@@ -894,18 +890,18 @@ ds_list parse_ds_file( const char *fnm )
     ds_list ans;
     FILE *dsfile;
     unsigned int ix = 0;
-    tmstring dsfilename;
+    tmstring ds_filename;
 
     if( fnm == tmstringNIL ){
 	/* No file name specified. */
 	return new_ds_list();
     }
-    dsfilename = search_file( searchpath, fnm, PATHSEPSTR, "r" );
-    if( dsfilename == tmstringNIL ){
+    ds_filename = search_file( searchpath, fnm, PATHSEPSTR, "r" );
+    if( ds_filename == tmstringNIL ){
 	internal_error( "file `%s' not found", fnm );
     }
-    dsfile = ckfopen( dsfilename, "r" );
-    set_lexfile( dsfile, dsfilename );
+    dsfile = ckfopen( ds_filename, "r" );
+    set_lexfile( dsfile, ds_filename );
     next_token();
     ans = parse_ds_list();
     if( curr_token!=LEXEOF ){
@@ -915,7 +911,7 @@ ds_list parse_ds_file( const char *fnm )
 	}
     }
     fclose( dsfile );
-    rfre_tmstring( dsfilename );
+    rfre_tmstring( ds_filename );
 
     /* Now expand any includes. */
     while( ix<ans->sz ){

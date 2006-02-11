@@ -13,7 +13,6 @@
 #include "tmstring.h"
 #include "misc.h"
 #include "error.h"
-#include "config.h"
 
 /* Given a pointer to a tmstring 's' and a pointer to a character pointer 'w',
  * scan the tmstring for a 'word'.
@@ -243,7 +242,7 @@ tmstring flatstrings( const_tmstring_list sl )
  * the total length of the required tmstring is
  *  sum(<all joined tmstrings>) + (n-1)*strlen(sep)
  */
-tmstring sepsymbols( const_tmsymbol_list sl, const char *sep )
+static tmstring sepsymbols( const_tmsymbol_list sl, const char *sep )
 {
     const char *cp;	/* pointer in copied tmstrings  */
     char *cs;		/* tmstring under construction */
