@@ -1,0 +1,36 @@
+// First switch on everything reasonable and unreasonable
++fsc		// Assume string constants are const char *
+//+fpn		// Warn about the use of ptr parms without NULL checking
+// Suppress warnings we currently don't want to handle.
++e914		// Implicit adjustment of fn ret value from type to type
++e931		// Both sides have side effects
++e973		// Unary operator in macro not parenthesized
++e936		// Old-style fn defn
++e937
++e938
++e939
++e940
++e941
++e942
++e944
++e950
++e1902
++e1905
++e1907
++e1909
++e1919
++e1920
++e1929
++e1930
++e1931
++e1933
+-e537		// Repeated include file
+-e731		// boolean in == or !=
+-e788		// Enum value handled by 'default' of switch.
+-e817		// line too large
+-e935		// int within struct
+-e1717		// Empty prototype, assumed (void)
+-e1730		// struct/class inconsistency.
+-e1904		// Old-style C comment
+-e1923		// <macro> val could become const variable.
+-e1924		// C-style cast
