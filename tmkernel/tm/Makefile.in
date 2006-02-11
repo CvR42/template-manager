@@ -91,6 +91,8 @@ TMOUTPUT = tmcode.c tmcode.h
 
 GENFILES = $(TMOUTPUT) tmpath.c version.h
 
+lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
+	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
 
 JUNK          = y.output lint testerr testout testrdir index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
