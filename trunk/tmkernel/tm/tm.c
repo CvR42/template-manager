@@ -263,6 +263,7 @@ int main( int argc, char **argv )
     TMPRINTSTATE *st;
     int lev;
     char buf[10];
+    int exitcode = 0;
 
     tracestream = stderr;
     statstream = stderr;
@@ -311,11 +312,13 @@ int main( int argc, char **argv )
     rfre_tmstring( errfilename );
     rfre_tmstring_list( searchpath );
     rfre_tmstring( active_libpath );
+    flush_tmsymbol();
     end_var();
     errcheck();
     if( get_balance_tm() != 0 || get_balance_tmstring() != 0 ){
 	fprintf( statstream, "Object allocation not balanced.\n" );
 	prstat = TRUE;
+        exitcode = 1;
     }
     if( prstat ){
 	stat_tm( statstream );
@@ -324,6 +327,6 @@ int main( int argc, char **argv )
 	report_lognew( statstream );
     }
     flush_lognew();
-    exit( 0 );
-    return 0;
+    exit( exitcode );
+    return exitcode;
 }
