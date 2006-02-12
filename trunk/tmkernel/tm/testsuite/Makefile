@@ -1,13 +1,15 @@
 # File: $Id$
 
-ERRTESTSSL = $(wildcard err*.t)
+ERRTESTTPL = $(wildcard err*.t)
 
-GENTESTSSL = $(wildcard gen*.t)
+DSERRTESTTPL = $(wildcard dserr*.t)
 
-TESTSSL = $(ERRTESTSSL) $(GENTESTSSL)
+GENTESTTPL = $(wildcard gen*.t)
+
+TESTTPL = $(ERRTESTTPL) $(GENTESTTPL) $(DSERRTESTTPL)
 
 # A representative output file for each class of test
-DONEFILES = $(TESTSSL:%.t=%.done)
+DONEFILES = $(TESTTPL:%.t=%.done)
 
 JUNK = *.done *.testout *.testerr *.exe dist.lst
 
@@ -17,7 +19,7 @@ MAKEFILE = Makefile
 
 SCRIPTS = runerr rungen runall
 
-TESTFILES = $(wildcard *.flags *.err *.t *.out err*.status gen*.status vfy*.status)
+TESTFILES = $(wildcard *.flags *.err *.t *.out err*.status gen*.status dserr*.status)
 
 DISTFILES = $(MAKEFILE) $(TESTFILES) $(SCRIPTS) .cvsignore
 
@@ -29,6 +31,10 @@ REFFILES = ../tm
 
 # Rules to make the .done file of each catagory: run the 'run' script
 # of the class, and after that touch the .done file
+
+dserr%.done: dserr%.t runerr
+	./rundserr $<
+	touch $@
 
 err%.done: err%.t runerr
 	./runerr $<
