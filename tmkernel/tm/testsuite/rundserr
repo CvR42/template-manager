@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# Run a test on a data structure file that is supposed to fail.
+
+# Places of executables
+TM=../tm
+VERBOSE=0
+FILE=
+
+for f; do
+    case "$f" in
+	-v)
+	    VERBOSE=1;;
+
+	-*)
+	    echo "unknown option '$f'"; exit 2 ;;
+
+	*)
+	    FILE=$f ;;
+    esac
+done
+
+if [ x$FILE = x ]; then
+    echo "No file specified"
+    exit 2
+fi
+BASENAME=`basename $FILE .t`
+OUTFILE=$BASENAME.hs
+ERRFILE=$BASENAME.err
+TESTERRFILE=$BASENAME.testerr
+STATUSFILE=$BASENAME.status
+FLAGSFILE=$BASENAME.flags
+if [ ! -e $ERRFILE ]; then
+    echo "Creating default (=empty) error reference file '$ERRFILE'"
+    touch $ERRFILE
+fi
+if [ ! -e $STATUSFILE ]; then
+    echo "Creating default status file '$STATUSFILE'"
+    echo "1" > $STATUSFILE
+fi
+OKSTATUS=`cat $STATUSFILE`
+if [ -e $FLAGSFILE ]; then
+    SLFLAGS="$SLFLAGS `cat $FLAGSFILE`"
+fi
+CMD="$TM -o $OUTFILE -e $TESTERRFILE $SLFLAGS $FILE empty.t"
+if [ $VERBOSE = 1 ]; then
+    echo $CMD
+fi
+FAIL=0
+$CMD
+STATUS=$?
+if [ $STATUS != $OKSTATUS ]; then
+    echo "Running $TM returned status code $STATUS instead of $OKSTATUS"
+    echo "If you think the status code should be $STATUS, update with:"
+    echo "    echo $STATUS >! $STATUSFILE"
+    FAIL=1
+fi
+CMD="diff $TESTERRFILE $ERRFILE"
+if [ $VERBOSE = 1 ]; then
+    echo $CMD
+fi
+$CMD
+STATUS=$?
+if [ $STATUS != 0 ]; then
+    echo "Error output differs from reference."
+    if [ $FAIL = 0 ]; then
+	echo "If you think the reference is wrong, update with:"
+	echo "    cp $TESTERRFILE $ERRFILE"
+    fi
+    FAIL=1
+fi
+if [ $FAIL = 1 ]; then
+    exit 1
+fi
+rm -f $OUTFILE $TESTERRFILE
+exit 0
