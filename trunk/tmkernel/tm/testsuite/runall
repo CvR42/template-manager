@@ -99,6 +99,10 @@ for f in $TESTS; do
 	    ./runerr $VERBOSE $f
 	    RES=$?
 	    ;;
+	dserr*)
+	    ./rundserr $VERBOSE $f
+	    RES=$?
+	    ;;
 
 	gen*)
 	    ./rungen $FORCEFLAG $VERBOSE $f
