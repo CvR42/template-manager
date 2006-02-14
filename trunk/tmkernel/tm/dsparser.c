@@ -55,12 +55,15 @@ static ds_list add_constructor_list( ds_list l, const_ds c )
     const_origsymbol cnm = c->name;
 
     for( ix=0; ix<l->sz; ix++ ){
-	if( cnm->sym == l->arr[ix]->name->sym ){
+        const_origsymbol nm = l->arr[ix]->name;
+
+	if( cnm->sym == nm->sym ){
 #if 0
             /* FIXME: enable again. */
 	    (void) sprintf( errarg, "'%s'", cnm->sym->name );
 #endif
 	    parserror( "double use of constructor name" );
+            origin_error( nm->org, " ... previous definition" );
 	    return l;
 	}
     }
@@ -223,8 +226,9 @@ static bool parse_Type( Type *tp )
 static bool parse_field( Field *fp )
 {
     tmsymbol elmname;
-    bool ok;
-    Type t;
+    bool ok = TRUE;
+    Type t = TypeNIL;
+    bool recovery = FALSE;
 
     if( curr_token!=NAME ){
 	return FALSE;
@@ -233,10 +237,14 @@ static bool parse_field( Field *fp )
     next_token();
     if( curr_token!=COLON ){
 	parserror( "':' expected" );
-	return FALSE;
+        recovery = TRUE;
     }
-    next_token();
-    ok = parse_Type( &t );
+    else {
+        next_token();
+    }
+    if( (!recovery) || curr_token == LSBRAC || curr_token == NAME ){
+        ok = parse_Type( &t );
+    }
     *fp = new_Field( new_origsymbol( elmname, make_origin() ), t );
     return ok;
 }
