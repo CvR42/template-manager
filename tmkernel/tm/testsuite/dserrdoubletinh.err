@@ -1,0 +1,4 @@
+dserrdoubletinh.t:5: duplicate inheritance
+t == orig + orig + ( a:int );
+            ^^^^
+errors detected, program aborted
