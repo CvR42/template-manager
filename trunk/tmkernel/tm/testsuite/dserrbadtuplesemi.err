@@ -1,0 +1,4 @@
+dserrbadtuplesemi.t:2: ';' expected
+t == ( a:[int] )
+                 ^
+errors detected, program aborted
