@@ -1,0 +1,4 @@
+dserrwrongtypeop.t:1: '(' expected
+t == { a:int };
+     ^
+errors detected, program aborted
