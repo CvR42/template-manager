@@ -847,12 +847,10 @@ static bool parse_ds( ds_list *dl )
 	    }
 	    next_token();
 	}
-	if( curr_token==SEMI ){
-	    next_token();
-	}
-	return ok;
+        /* We've (hopefully) recovered from the error, so say everythink ok. */
+        *dl = new_ds_list();
     }
-    return ok;
+    return TRUE;
 }
 
 /* Parse datastructure definitions until you don't understand
