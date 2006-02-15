@@ -1,0 +1,4 @@
+dserrbadtuple2.t:1: '+' expected
+t == C a:int;
+       ^
+errors detected, program aborted
