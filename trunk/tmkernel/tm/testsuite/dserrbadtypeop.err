@@ -1,0 +1,4 @@
+dserrbadtypeop.t:1: '=', '~=', '::=' or '==' expected
+t += ( a:int );
+  ^
+errors detected, program aborted
