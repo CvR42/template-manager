@@ -746,9 +746,6 @@ static bool parse_ds( ds_list *dl )
 		}
 		next_token();
 	    }
-	    if( curr_token == SEMI ){
-		next_token();
-	    }
 	    return TRUE;
 	}
 	fnm = yylval.parstring;
@@ -871,6 +868,7 @@ static ds_list parse_ds_list( void )
 	ok = parse_ds( &nw );
 	if( !ok ){
 	    parserror( "datastructure definition expected" );
+            next_token();
 	    return dl;
 	}
 	for( ix=0; ix<nw->sz; ix++ ){
@@ -912,7 +910,6 @@ ds_list parse_ds_file( const char *fnm )
     next_token();
     ans = parse_ds_list();
     if( curr_token!=LEXEOF ){
-	parserror( "extra tokens in included file ignored" );
 	while( curr_token!=LEXEOF ){
 	    next_token();
 	}
