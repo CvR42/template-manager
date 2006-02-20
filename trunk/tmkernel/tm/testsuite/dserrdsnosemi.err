@@ -1,0 +1,4 @@
+dserrdsnosemi.t:4: ';' expected
+orig == ( file:filename_string, line:int )
+                                           ^
+errors detected, program aborted

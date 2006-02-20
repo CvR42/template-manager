@@ -1,0 +1,4 @@
+dserrbadinclude.t:3: file name string expected
+%include test;
+         ^^^^
+errors detected, program aborted
