@@ -43,7 +43,7 @@ struct sctnode {
     struct sctnode *next;	/* next possibility in list */
     int sctchar;		/* char to match            */
     struct sctnode *sub;	/* subtree to use on match. */
-    bool valid;			/* is acceptable token?     */
+    tmbool valid;			/* is acceptable token?     */
     lextok tokval;		/* token value for yacc     */
     const char *toknm;		/* token name for debugging */
 };
@@ -219,7 +219,7 @@ origin make_origin()
 static void show_parse_context( FILE *f )
 {
     unsigned int ix;
-    bool shown = FALSE;
+    tmbool shown = FALSE;
 
     fputs( linebuf, f );
     if( oldlineix>lineix ){
@@ -254,10 +254,10 @@ void parserror( const char *message )
    sequences with a '\\', but no newlines. The '"' around
    the string are stripped.
  */
-static bool scan_string( tmstring *s )
+static tmbool scan_string( tmstring *s )
 {
     int c;
-    bool done;
+    tmbool done;
     tmstring bufp;
     unsigned int ix;
     unsigned int sz;
@@ -311,7 +311,7 @@ static bool scan_string( tmstring *s )
    Fill '*tokval' with the token value, and '*toknm' with the name
    of the token. Return TRUE if this is successful, else return FALSE.
  */
-static bool scan_token(
+static tmbool scan_token(
     const struct sctnode *tree,
     char *buf,
     lextok *tokval,
@@ -350,7 +350,7 @@ static bool scan_token(
    this is successful, else return FALSE.
    A symbol is of the form [a-zA-Z_][a-zA-Z0-9_]*.
  */
-static bool scan_symbol( char *buf )
+static tmbool scan_symbol( char *buf )
 {
     int c;
 

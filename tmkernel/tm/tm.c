@@ -82,7 +82,7 @@ static const char helptext[] =
 /* Scan command line arguments and options as passed by 'argc' and 'argv'. */
 static void scanargs( int argc, char **argv, tmstring lp )
 {
-    int printusage = FALSE;
+    tmbool printusage = FALSE;
     int exitcode = 0;
     int op;
     tmstring tplfnm;
