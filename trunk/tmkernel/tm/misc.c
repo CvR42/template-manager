@@ -130,7 +130,7 @@ static unsigned int find_field_ix( const_Field_list fl, const_tmsymbol nm )
 /* Search for tmsymbol 's' in the list 'l' and return TRUE if
    found or FALSE otherwise.
  */
-bool member_tmsymbol_list( const_tmsymbol s, const_tmsymbol_list l )
+tmbool member_tmsymbol_list( const_tmsymbol s, const_tmsymbol_list l )
 {
     unsigned int sno;
 
@@ -145,7 +145,7 @@ bool member_tmsymbol_list( const_tmsymbol s, const_tmsymbol_list l )
 /* Search for tmstring 's' in the list 'l' and return TRUE if
    found or FALSE otherwise.
  */
-bool member_tmstring_list( const_tmstring s, const_tmstring_list l )
+tmbool member_tmstring_list( const_tmstring s, const_tmstring_list l )
 {
     unsigned int sno;
 
@@ -160,7 +160,7 @@ bool member_tmstring_list( const_tmstring s, const_tmstring_list l )
 /* Search for all symbols 'sl' in the list 'l' and return TRUE if
  * any of them occurs in 'l', or FALSE otherwise.
  */
-bool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l )
+tmbool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l )
 {
     unsigned int ix;
 
@@ -419,11 +419,11 @@ void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const_tmsym
 /* Given a description 'desc' and a list of tmsymbols 'l', check
  * that the given list of tmsymbols does not contain duplicate entries.
  */
-bool check_double_symbols( const char *msg, const_tmsymbol_list l )
+tmbool check_double_symbols( const char *msg, const_tmsymbol_list l )
 {
     unsigned int ixa;
     unsigned int ixb;
-    bool ok = TRUE;
+    tmbool ok = TRUE;
 
     for( ixa=0; ixa<l->sz; ixa++ ){
 	tmsymbol sa = l->arr[ixa];

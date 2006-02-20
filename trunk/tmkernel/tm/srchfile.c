@@ -1,6 +1,5 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include <stdio.h>
 #include <tmc.h>
 

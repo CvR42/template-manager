@@ -18,7 +18,7 @@
 static lextok curr_token;
 
 /* Forward declarations. */
-static bool parse_class_components( classComponent_list *clp );
+static tmbool parse_class_components( classComponent_list *clp );
 static void update_class_info(
     tmsymbol nm,
     tmsymbol_list *inherits,
@@ -194,9 +194,9 @@ static void next_token( void )
  * '*tp' to the constructed field. Return TRUE if you have constructed
  * a valid field.
  */
-static bool parse_Type( Type *tp )
+static tmbool parse_Type( Type *tp )
 {
-    bool ok;
+    tmbool ok;
 
     if( curr_token==LSBRAC ){
 	next_token();
@@ -223,12 +223,12 @@ static bool parse_Type( Type *tp )
 }
 
 /* Try to parse a field. Return TRUE iff you have a valid field. */
-static bool parse_field( Field *fp )
+static tmbool parse_field( Field *fp )
 {
     tmsymbol elmname;
-    bool ok = TRUE;
+    tmbool ok = TRUE;
     Type t = TypeNIL;
-    bool recovery = FALSE;
+    tmbool recovery = FALSE;
 
     if( curr_token!=NAME ){
 	return FALSE;
@@ -255,9 +255,9 @@ static bool parse_field( Field *fp )
  *
  * Return TRUE iff you have a valid constructor body.
  */
-static bool parse_Field_list( Field_list *flp )
+static tmbool parse_Field_list( Field_list *flp )
 {
-    bool ok;
+    tmbool ok;
     Field nw;
 
     *flp = new_Field_list();
@@ -277,9 +277,9 @@ static bool parse_Field_list( Field_list *flp )
  * of, the name of the construcotr (if it isn't empty), try to parse a
  * constructor. Return TRUE iff this succeeded.
  */
-static bool parse_constructor( tmsymbol super, tmsymbol p_nm, ds *cp )
+static tmbool parse_constructor( tmsymbol super, tmsymbol p_nm, ds *cp )
 {
-    bool ok;
+    tmbool ok;
     Field_list fl;
     tmsymbol nm;
 
@@ -312,9 +312,9 @@ static bool parse_constructor( tmsymbol super, tmsymbol p_nm, ds *cp )
  * try to parse a list of constructors up to (but not including)
  * the final ';'. Return TRUE if you have a valid constructor list.
  */
-static bool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
+static tmbool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
 {
-    bool ok;
+    tmbool ok;
     ds nw;
 
     *clp = new_ds_list();
@@ -368,9 +368,9 @@ static bool parse_constructor_list( tmsymbol super, tmsymbol nm, ds_list *clp )
  * of a constructor definition, up to (but not including) the final ';'.
  * Return TRUE if this succeeded, and set *tp to the parsed constructor.
  */
-static bool parse_constructor_type( tmsymbol nm, ds_list *tp )
+static tmbool parse_constructor_type( tmsymbol nm, ds_list *tp )
 {
-    bool ok;
+    tmbool ok;
     ds_list cl;
     tmsymbol_list inherits;
     tmsymbol cnm = tmsymbolNIL;
@@ -411,9 +411,9 @@ static bool parse_constructor_type( tmsymbol nm, ds_list *tp )
  *
  * Return TRUE iff you have a valid tuple or class body.
  */
-static bool parse_tuplebody( Field_list *flp )
+static tmbool parse_tuplebody( Field_list *flp )
 {
-    bool ok;
+    tmbool ok;
     Field nw;
 
     *flp = new_Field_list();
@@ -455,9 +455,9 @@ static bool parse_tuplebody( Field_list *flp )
 /* Given a type name 'nm', try to parse a tuple definition. Return
  * TRUE iff you have a valid tuple.
  */
-static bool parse_tuple_type( tmsymbol nm, ds *tp )
+static tmbool parse_tuple_type( tmsymbol nm, ds *tp )
 {
-    bool ok;
+    tmbool ok;
     Field_list body;
     tmsymbol_list inherits;
 
@@ -502,9 +502,9 @@ static bool parse_tuple_type( tmsymbol nm, ds *tp )
  *
  * Do not try to eat the '+' that separates components.
  */
-static bool parse_class_component( classComponent *cp )
+static tmbool parse_class_component( classComponent *cp )
 {
-    bool ok;
+    tmbool ok;
     classComponent res;
 
     if( curr_token == LCBRAC ){
@@ -603,9 +603,9 @@ static bool parse_class_component( classComponent *cp )
 /* Given a pointer to a list of class components, try to parse
  * a class type definition. Return TRUE if you have a valid class type.
  */
-static bool parse_class_components( classComponent_list *clp )
+static tmbool parse_class_components( classComponent_list *clp )
 {
-    bool ok;
+    tmbool ok;
     classComponent_list cl;
     classComponent cc;
 
@@ -728,10 +728,10 @@ static ds_list normalize_class( tmsymbol nm, const classComponent_list ccl, tmbo
  * When an include is given, all the data structures encountered in
  * the included file are appended. That's why the ds list is passed.
  */
-static bool parse_ds( ds_list *dl )
+static tmbool parse_ds( ds_list *dl )
 {
     tmsymbol nm;
-    bool ok;
+    tmbool ok;
 
     if( curr_token==INCLUDE ){
 	tmstring fnm;
@@ -857,7 +857,7 @@ static ds_list parse_ds_list( void )
 {
     ds_list dl;
     ds_list nw;
-    bool ok;
+    tmbool ok;
     unsigned int ix;
 
     dl = new_ds_list();

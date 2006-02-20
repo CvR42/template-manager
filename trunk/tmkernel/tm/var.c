@@ -66,7 +66,7 @@ static unsigned int hashval( const char *s )
 /* Search in current context level 'lvl' for macro with name 'nm'.
    Return pointer to variable, or variableNIL if not found.
  */
-static bool findlocmacro(
+static tmbool findlocmacro(
     const char *nm,
     unsigned int *hvp,
     unsigned int *ixp
@@ -173,7 +173,7 @@ void setmacro(
 {
     unsigned int hv;
     macro nwmacro;
-    bool found;
+    tmbool found;
     unsigned int ix;
 
     if( vartr ){
