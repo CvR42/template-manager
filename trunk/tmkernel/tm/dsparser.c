@@ -904,7 +904,8 @@ ds_list parse_ds_file( const char *fnm )
     }
     ds_filename = search_file( searchpath, fnm, PATHSEPSTR, "r" );
     if( ds_filename == tmstringNIL ){
-	internal_error( "file `%s' not found", fnm );
+	error( "file `%s' not found", fnm );
+        return new_ds_list();
     }
     dsfile = ckfopen( ds_filename, "r" );
     set_lexfile( dsfile, ds_filename );
