@@ -1,4 +1,4 @@
-.TH TM 1 "ESPRIT 881 (FORFUN)"
+.TH TM 1 "Vrije Universiteit"
 .UC
 .SH NAME
 tm \- interface code generator
@@ -12,11 +12,15 @@ tm \- interface code generator
 .B \-h
 ] [
 .B \-o <file>
-] [
-.B \-v
 ]
 [
 .B \-I<path>
+]
+[
+.B \-s<var>[=<val>]
+]
+[
+.B \-v
 ]
 [dsfile]
 [infile]
@@ -30,8 +34,6 @@ and a template file
 .I infile
 containing templates of code to generate and inclusion
 commands for standard templates.
-] [
-.B \-e <file>
 .PP
 If no template file is given,
 .I tm
@@ -40,7 +42,7 @@ If no data structure file is given,
 .I tm
 assumes an empty data structure file.
 Template and data structure files are searched for in the current directory,
-in a standard Tm library, and in additional directories specified
+in a standard Tm library directory, and in additional directories specified
 with the
 .I \-I
 option.
@@ -60,6 +62,10 @@ and some version information.
 .IP \-I
 Specify an additional directory to search for template and data structure
 files.
+.IP \-s<var>
+Set the template variable <var> to the empty string.
+.IP \-s<var>=<val>
+Set the template variable <var> to value <val>.
 .IP \-o<file>
 Write the output to the given file. By default it is written to stdout.
 .IP \-v
@@ -72,8 +78,8 @@ default this variable is 0.
 .SH "SEE ALSO"
 C. van Reeuwijk,
 .I
-tm user manual (2nd edition),
-Delft University of Technology.
+Tm user manual,
+Vrije Universiteit.
 .SH BUGS
 Very few standard libraries actually use the
 .B verbose
