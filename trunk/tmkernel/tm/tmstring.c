@@ -111,7 +111,7 @@ void scan1par( const_origin org, const char *pl, char **p1 )
 /* Given a tmstring 's', ensure that it is a correct number,
    or else complain.
  */
-bool cknumpar( const_origin org, const char *n )
+tmbool cknumpar( const_origin org, const char *n )
 {
     const char *s = n;
 
@@ -135,7 +135,7 @@ bool cknumpar( const_origin org, const char *n )
 }
 
 /* Return a new "1" or "0" tmstring reflecting the value of boolean 'b'. */
-char *newboolstr( bool b )
+char *newboolstr( tmbool b )
 {
     return new_tmstring( ( b ? "1" : "0" ) );
 }
@@ -280,7 +280,7 @@ tmstring flatsymbols( const_tmsymbol_list sl )
 }
 
 /* Return TRUE if this tmstring represents FALSE. */
-bool isfalsestr( const_tmstring s )
+tmbool isfalsestr( const_tmstring s )
 {
     const char *p = s;
 
@@ -295,7 +295,7 @@ bool isfalsestr( const_tmstring s )
 }
 
 /* Return TRUE if this tmstring does not represent FALSE. */
-bool istruestr( const_tmstring s )
+tmbool istruestr( const_tmstring s )
 {
     const char *p = s;
 

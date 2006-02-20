@@ -26,7 +26,7 @@
 #include "srchfile.h"
 
 /* Forward declarations. */
-static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list blocking, const Type t );
+static Type_list update_reach_Type( Type_list tl, tmbool *visited, Type_list blocking, const Type t );
 
 /* Given a list prefix 'pre' and suffix 'suff', and a type 't',
  * return the element type of this type, or tmstringNIL if there is none.
@@ -254,7 +254,7 @@ static tmstring fnmod( const_origin org, const_tmstring_list sl )
 /* < */
 static tmstring fnless( const_origin org, const_tmstring_list sl )
 {
-    bool b;
+    tmbool b;
 
     if( sl->sz != 2 ){
 	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
@@ -269,7 +269,7 @@ static tmstring fnless( const_origin org, const_tmstring_list sl )
 /* <= */
 static tmstring fnlesseq( const_origin org, const_tmstring_list sl )
 {
-    bool b;
+    tmbool b;
 
     if( sl->sz != 2 ){
 	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
@@ -284,7 +284,7 @@ static tmstring fnlesseq( const_origin org, const_tmstring_list sl )
 /* > */
 static tmstring fngreater( const_origin org, const_tmstring_list sl )
 {
-    bool b;
+    tmbool b;
 
     if( sl->sz != 2 ){
 	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
@@ -299,7 +299,7 @@ static tmstring fngreater( const_origin org, const_tmstring_list sl )
 /* >= */
 static tmstring fngreatereq( const_origin org, const_tmstring_list sl )
 {
-    bool b;
+    tmbool b;
 
     if( sl->sz != 2 ){
 	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
@@ -314,7 +314,7 @@ static tmstring fngreatereq( const_origin org, const_tmstring_list sl )
 /* == */
 static tmstring fneq( const_origin org, const_tmstring_list sl )
 {
-    bool b;
+    tmbool b;
 
     if( sl->sz != 2 ){
 	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
@@ -329,7 +329,7 @@ static tmstring fneq( const_origin org, const_tmstring_list sl )
 /* != */
 static tmstring fnneq( const_origin org, const_tmstring_list sl )
 {
-    bool b;
+    tmbool b;
 
     if( sl->sz != 2 ){
 	origin_error( org, "comparison requires exactly two parameters, not %u", sl->sz );
@@ -725,7 +725,7 @@ static tmstring fnmember( const_origin org, const_tmstring_list sl )
 {
     unsigned int ix;
     tmstring estr;
-    bool found = FALSE;
+    tmbool found = FALSE;
 
     if( sl->sz<1 ){
 	origin_error( org, "'member' requires at least one parameter" );
@@ -924,7 +924,7 @@ static tmstring fncomm( const_origin org, const_tmstring_list sl )
     nl = new_tmstring_list();
     for( aix=0; aix<sepix; aix++ ){
         tmstring tofind = sl->arr[aix];
-        bool takeit = FALSE;
+        tmbool takeit = FALSE;
 
 	for( bix=sepix+1; bix<sl->sz; bix++ ){
 	    if( strcmp( tofind, sl->arr[bix] ) == 0 ){
@@ -961,7 +961,7 @@ static tmstring fnexcl( const_origin org, const_tmstring_list sl )
     nl = new_tmstring_list();
     for( aix=0; aix<sepix; aix++ ){
         tmstring tofind = sl->arr[aix];
-        bool takeit = TRUE;
+        tmbool takeit = TRUE;
 
 	for( bix=sepix+1; bix<sl->sz; bix++ ){
 	    if( strcmp( tofind, sl->arr[bix] ) == 0 ){
@@ -1168,7 +1168,7 @@ static tmstring fnif( const_origin org, const_tmstring_list sl )
 /* and */
 static tmstring fnand( const_origin org, const_tmstring_list sl )
 {
-    bool flag = TRUE;
+    tmbool flag = TRUE;
     unsigned int ix;
 
     (void) org;
@@ -1182,7 +1182,7 @@ static tmstring fnand( const_origin org, const_tmstring_list sl )
 /* or */
 static tmstring fnor( const_origin org, const_tmstring_list sl )
 {
-    bool flag = FALSE;
+    tmbool flag = FALSE;
     unsigned int ix;
 
     (void) org;
@@ -1196,7 +1196,7 @@ static tmstring fnor( const_origin org, const_tmstring_list sl )
 /* not */
 static tmstring fnnot( const_origin org, const_tmstring_list sl )
 {
-    bool a;
+    tmbool a;
 
     (void) org;
     if( sl->sz < 1 ){
@@ -1582,9 +1582,9 @@ static ds findtype( const_origin org, ds_list dl, const_tmstring t )
     return dl->arr[ix];
 }
 
-static bool is_virtual( ds_list types, const_tmstring type )
+static tmbool is_virtual( ds_list types, const_tmstring type )
 {
-    bool ans = FALSE;
+    tmbool ans = FALSE;
     unsigned int ix;
 
     ix = find_type_ix( types, add_tmsymbol( type ) );
@@ -1614,7 +1614,7 @@ static bool is_virtual( ds_list types, const_tmstring type )
 /* Given a type name, return TRUE if the type is virtual. */
 static tmstring fnisvirtual( const_origin org, const_tmstring_list sl )
 {
-    bool ans = FALSE;
+    tmbool ans = FALSE;
 
     if( sl->sz == 1 ){
 	ans = is_virtual( allds, sl->arr[0] );
@@ -2081,7 +2081,7 @@ static Type_list add_Type_list( Type_list tl, Type t )
     return append_Type_list( tl, t );
 }
 
-static bool member_Type_list( Type_list tl, const_Type t )
+static tmbool member_Type_list( Type_list tl, const_Type t )
 {
     unsigned int ix;
 
@@ -2095,7 +2095,7 @@ static bool member_Type_list( Type_list tl, const_Type t )
     return FALSE;
 }
 
-static bool is_blocked_type( Type_list tl, tmsymbol t )
+static tmbool is_blocked_type( Type_list tl, tmsymbol t )
 {
     unsigned int ix;
 
@@ -2112,7 +2112,7 @@ static bool is_blocked_type( Type_list tl, tmsymbol t )
 /* Given a list of type 'tl', an array of 'visited' flags and a type name,
  * update the list of types with the reach of this type.
  */
-static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, tmsymbol tnm )
+static Type_list update_reach( Type_list tl, tmbool *visited, Type_list blocking, tmsymbol tnm )
 {
     const unsigned int ix = find_type_ix( allds, tnm );
     Type t;
@@ -2168,13 +2168,13 @@ static Type_list update_reach( Type_list tl, bool *visited, Type_list blocking, 
 /* Given a list of types 'tl', an array of 'visited' flags and a type 't',
  * update the list of types with the reach of this type.
  */
-static Type_list update_reach_Type( Type_list tl, bool *visited, Type_list blocking, const Type t )
+static Type_list update_reach_Type( Type_list tl, tmbool *visited, Type_list blocking, const Type t )
 {
     unsigned int level;
 
     for( level=1; level<=t->level; level++ ){
 	Type dt = rdup_Type( t );
-	bool is_blocked;
+	tmbool is_blocked;
 
 	dt->level = level;
 	is_blocked = member_Type_list( blocking, dt );
@@ -2201,18 +2201,18 @@ static tmstring fnreach( const_origin org, const_tmstring_list pl )
     unsigned int ix;
     Type_list tl;
     tmstring ans;
-    bool *visited;
+    tmbool *visited;
     Type_list blocking;
     unsigned int sz;
     const char *pre;
     const char *suff;
-    bool in_blocking;
+    tmbool in_blocking;
 
     (void) org;
     sz = allds->sz;
     tl = new_Type_list();
     blocking = new_Type_list();
-    visited = TM_MALLOC( bool *, sizeof(bool)*sz );
+    visited = TM_MALLOC( tmbool *, sizeof(tmbool)*sz );
     if( visited == NULL ){                          
         return new_tmstring( "" );
     }
@@ -2450,7 +2450,7 @@ static tmstring fnctypellev( const_origin org, const_tmstring_list sl )
  * List types depend on their element types; for nested types this
  * applies transitively.
  */
-static bool depends_on( const char *pre, const char *suff, const_tmsymbol t, const_tmsymbol_list tl )
+static tmbool depends_on( const char *pre, const char *suff, const_tmsymbol t, const_tmsymbol_list tl )
 {
     unsigned int ix;
     const_ds d;
@@ -2572,7 +2572,7 @@ static tmstring fndepsort( const_origin org, const_tmstring_list real_sl )
     }
     nl = new_tmsymbol_list();
     while( sl->sz!=0 ){
-	bool found = FALSE;
+	tmbool found = FALSE;
 	unsigned int ix = 0;
 	unsigned int foundix = 0;
 
@@ -2610,7 +2610,7 @@ static tmstring fndepsort( const_origin org, const_tmstring_list real_sl )
  * List types depend on their element types; for nested types this
  * applies transitively.
  */
-static bool inherit_depends_on( const_tmstring t, const_tmstring_list tl )
+static tmbool inherit_depends_on( const_tmstring t, const_tmstring_list tl )
 {
     unsigned int ix;
     tmsymbol_list inherits;
@@ -2643,7 +2643,7 @@ static tmstring fninheritsort( const_origin org, const_tmstring_list real_sl )
 
     nl = new_tmstring_list();
     while( sl->sz!=0 ){
-        bool found = FALSE;
+        tmbool found = FALSE;
         unsigned int ix = 0;
         unsigned int foundix = 0;
         tmstring t;
@@ -2707,7 +2707,7 @@ static tmstring fndefined( const_origin org, const_tmstring_list sl )
 
     if( sl->sz != 1 ){
 	origin_error( org, "'defined' requires exactly one parameter, not %u", sl->sz );
-	return newboolstr( 0 );
+	return newboolstr( TMFALSE );
     }
     v = getvar( sl->arr[0] );
     return newboolstr( v != CHARNIL );
@@ -2720,7 +2720,7 @@ static tmstring fndefinedmacro( const_origin org, const_tmstring_list sl )
 
     if( sl->sz != 1 ){
 	origin_error( org, "'definedmacro' requires exactly one parameter, not %u", sl->sz );
-	return newboolstr( 0 );
+	return newboolstr( TMFALSE );
     }
     v = findmacro( sl->arr[0] );
     return newboolstr( v != macroNIL );

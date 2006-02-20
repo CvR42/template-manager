@@ -1249,7 +1249,7 @@ static void doif( const_If tpl, FILE *outfile )
 {
     char *is;
     char *os;
-    bool cond;
+    tmbool cond;
 
     is = tpl->cond;
     os = alevalto( tpl->org, &is, '\0' );
@@ -1263,7 +1263,7 @@ static void doif( const_If tpl, FILE *outfile )
     }
 }
 
-static bool matches_tmstring( const_origin org, const_tmstring word, const_tmstring pattern )
+static tmbool matches_tmstring( const_origin org, const_tmstring word, const_tmstring pattern )
 {
     const char *errm = ref_comp( pattern );
     if( errm != NULL ){
@@ -1273,7 +1273,7 @@ static bool matches_tmstring( const_origin org, const_tmstring word, const_tmstr
     return ref_exec( word );
 }
 
-static bool matches_tmstring_list( const_origin org, const_tmstring word, const_tmstring_list patterns )
+static tmbool matches_tmstring_list( const_origin org, const_tmstring word, const_tmstring_list patterns )
 {
     unsigned int i;
 
@@ -1290,7 +1290,7 @@ static void doswitch( const_Switch tpl, FILE *outfile )
 {
     char *is;
     char *os;
-    bool visited = FALSE;
+    tmbool visited = FALSE;
     tmstring_list sl;
     unsigned int ix;
     const_Switchcase_list cases;
@@ -1427,7 +1427,7 @@ static void dofor( const_For tpl, FILE *outfile )
 static void dowhile( const_While tpl, FILE *outfile )
 {
     for(;;){
-        bool done;
+        tmbool done;
         char *is;
         char *os;
 

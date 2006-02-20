@@ -19,7 +19,7 @@
 
 static char errpos[ERRARGLEN] = "";
 
-static bool goterr = FALSE;
+static tmbool goterr = FALSE;
 
 /* Given an origin filename and line number, fill 'errpos' with that
  * origin info.

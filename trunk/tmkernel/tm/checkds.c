@@ -44,17 +44,17 @@ void cktuple( const_tmsymbol nm, const_Field_list fields, const_tmsymbol_list in
  * a list of visited flags and a list of accepted flags, check the
  * data structure with the given index for circular inheritances.
  */
-static bool check_ds_inheritance(
+static tmbool check_ds_inheritance(
  const_ds_list dl,
  unsigned int theds,
- bool *visited,
- bool *accepted
+ tmbool *visited,
+ tmbool *accepted
 )
 {
     tmsymbol_list supers;	/* The list of superclasses. */
     unsigned int ix;
     const_ds me = dl->arr[theds];
-    bool ok = TRUE;
+    tmbool ok = TRUE;
 
     assert( theds<dl->sz );
     if( accepted[theds] ){
@@ -84,13 +84,13 @@ static bool check_ds_inheritance(
 /* Given a list of datastructure definitions, ensure that it does not
  * contain circular inheritances.
  */
-bool check_ds_list( const_ds_list dl )
+tmbool check_ds_list( const_ds_list dl )
 {
-    bool *visited;	/* The data structures currently under examination */
-    bool *accepted;	/* The data structures that already passed the test. */
+    tmbool *visited;	/* The data structures currently under examination */
+    tmbool *accepted;	/* The data structures that already passed the test. */
     unsigned int ix;
     unsigned int sz;
-    bool ok;
+    tmbool ok;
 
     ok = TRUE;
     /* First check on double definition of a type. */
@@ -113,12 +113,12 @@ bool check_ds_list( const_ds_list dl )
 	return ok;
     }
     sz = dl->sz;
-    visited = TM_MALLOC( bool *, sizeof(bool)*sz );
+    visited = TM_MALLOC( tmbool *, sizeof(tmbool)*sz );
     if( visited == NULL ){
         /* No room. Don't report it; the check is not that important anyway.  */
         return ok;
     }
-    accepted = TM_MALLOC( bool *, sizeof(bool)*sz );
+    accepted = TM_MALLOC( tmbool *, sizeof(tmbool)*sz );
     if( accepted == NULL ){
         /* No room. Don't report it; the check is not that important anyway. */
         TM_FREE( visited );
