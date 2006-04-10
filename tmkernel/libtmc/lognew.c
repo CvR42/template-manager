@@ -1,6 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Log new_ and fre_ actions and their origin in the users' code.
+ * All rights reserved.
+ */
+
+/* file: newlog.c
+   Log new_ and fre_ actions and their origin in the users' code.
  */
 
 #include "config.h"
@@ -56,15 +61,6 @@ static long search_plist( const tm_neutralp p )
 }
 
 static void print_plist( FILE *f )
-{
-    size_t ix;
-
-    for( ix=0l; ix<plistsz; ix++ ){
-	fprintf( f, "%s(%d) p=%p\n", plist[ix].file, plist[ix].line, plist[ix].ptr );
-    }
-}
-
-static void print_simple_plist( FILE *f )
 {
     size_t ix;
 
@@ -201,7 +197,7 @@ static void print_idlist( FILE *f )
     prcnt = 0l;
     for( ix=0l; ix<idsz; ix++ ){
 	if( idlist[ix].line>=0l ){
-	    fprintf( f, "%s(%d) id=%lu\n", idlist[ix].u.filenm, idlist[ix].line, (unsigned long) ix );
+	    fprintf( f, "%s(%d)\n", idlist[ix].u.filenm, idlist[ix].line );
 	    prcnt++;
 	}
     }
@@ -239,26 +235,6 @@ void report_lognew( FILE *f )
     }
 }
 
-/* Print the remaining entries in the new log to file 'f'. */
-void simple_report_lognew( FILE *f )
-{
-    if( plistsz>0 || idcnt>0 ){
-	fputs( "lognew: pending blocks:\n", f );
-    }
-    if( plistofl ){
-	fputs( "lognew: pointer list overflow.\n", f );
-    }
-    else {
-	print_simple_plist( f );
-    }
-    if( idofl ){
-	fputs( "lognew: id list overflow.\n", f );
-    }
-    else {
-	print_idlist( f );
-    }
-}
-
 /* Flush the log. */
 void flush_lognew( void )
 {
@@ -267,12 +243,8 @@ void flush_lognew( void )
     idsz = 0;
     idfree = -1;
     idofl = 0;
-    if( idlist != 0 ){
-	TM_FREE( idlist );
-    }
-    if( plist != 0 ){
-	TM_FREE( plist );
-    }
+    TM_FREE( idlist );
+    TM_FREE( plist );
     idlist = (id *)0;
     plist = (ptrlog *)0;
     plistsz = 0;

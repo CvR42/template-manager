@@ -1,12 +1,17 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * fre_tmstring() version that is used when LOGNEW is activated.
+ * All rights reserved.
+ */
+
+/* file: nlfrestr.c
+   fre_tmstring() version that is used when LOGNEW is activated.
  */
 
 #include "config.h"
 #include "tmc.h"
 
-/* De-allocate space for tmstring 's', and report it to lognew. */
+/* de-allocate space for tmstring 's', and report it to lognew. */
 void fre_tmstring_lognew( tmstring s )
 {
     if( s==NULL ){

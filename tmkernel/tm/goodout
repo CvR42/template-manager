@@ -11,7 +11,6 @@ VARIABLES:
 '$' '.' '"'
 unknownvariable: 'bla bla bla'
 'z y x z y x'
-a "a
 ----
 Special variables:
 dollar: '$'
@@ -49,36 +48,6 @@ d: 3
 e: default
 f: default
 ----
-aap: 1
-aap: 3
-boek: 1
-ccc: default
-daf: 2
-daf: 3
-eend: default
-fado: default
-----
-
-for:
----
-v = 0
-v = 1
-v = 2
-v = 3
-v = 4
---
-v = 0
-v = 2
-v = 4
---
---
---
---
---
---
---
---
----
 
 insert:
 ----
@@ -228,7 +197,7 @@ Filename access functions:
 ----
 dsfilename: 'test.ds'
 tplfilename: 'testin'
-tpllineno: '302'
+tpllineno: '243'
 1 bla
 testsub
 ----
@@ -262,7 +231,7 @@ inherits:
 inheritors:  
 superclasses:  
 subclasses:  
-reach: [] [iserniet] [string int thing_list Thing thing sublevel_list SubNamed subNamedlist thing_list_list SubNamedlistlist sublevel sublevel_list_list Top Toptuple TopNone toplevel]
+reach:  iserniet
 conslist:   
 fields:   
 allfields:   
@@ -860,14 +829,9 @@ String manipulation functions:
 strpad: 'bla   ' 'abc' 'blawowwowwo'
 strpad: '00000' ''
 strlen: '6' '0' '0'
-leftstr: 'abc' 'abc ABC' ''
-leftstr: 'abcdef' ''  ''
-rightstr: 'def' 'def DEF' ''
-rightstr: 'abcdef' ''  ''
 strindex: '3' '0'
 toupper: 'BLA' 'BLA BLA BLA' ''
 tolower: 'bla' 'bla bla bla' ''
-tochar: '!' 'ABC~' '' ''
 capitalize: 'Bla' 'BLA Bla Bla' ''
 tr: 'ble ere e Ab vever vevor' '' '' ''
 tr: 'string list words [a   a]'
@@ -875,7 +839,7 @@ tr: 'string list words [a   a]'
 
 Miscellaneous functions:
 ----
-1 0 0 0
+1 0 0
 isinenv: [0] [1] [0]
 ----
 
@@ -909,7 +873,6 @@ Integer expressions
 '-12' '12'
 '0' '28'
 '313' '5040' '1' '3'
-Left binding operators: '0' '2' '1'
 <: '1' '0' '1' '0' '0'
 <=: '1' '0' '1' '0' '1'
 >: '0' '1' '0' '1' '0'
@@ -974,7 +937,7 @@ Left binding operators: '0' '2' '1'
 
 12
 '0' '12' '
-'0' '1' '1'
+'0' '0' '0'
 
 Buffer size test.
 Create a list with 2k worth elements.
@@ -1032,12 +995,9 @@ v:[toplevelv]
 []
 []
 gv: 1, ngv: 1 gl: [123], ngl: [123]
-gs1: [w] gs2: [x y z] ngs1: [w] ngs2: [x y z]
 gv: 2, ngv: 1 gl: [123 test], ngl: [123]
-gs1: [a] gs2: [b c d] ngs1: [w] ngs2: [x y z]
 matchmacro: 'testglobal test tv' '' ''
-definedmacro: '1' '0' '0' '0'
-matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff gs1 i var gs2 l bad op libpath pass t av test2 msg v test1 tmvers x ngl y gv pats z wildstring unknownvariable pathsep ngs1 ngs2 yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
+matchvar: 'verbose listpre path lst a b ngv c fn gl kernel-version e listsuff i var l bad op libpath pass t av test2 msg v test1 tmvers ngl gv pats z wildstring unknownvariable pathsep yes' '' 'verbose listpre kernel-version e test2 test1 tmvers unknownvariable pathsep yes'
 ----
 
 Eval
@@ -1061,10 +1021,3 @@ Test time formatting
 04/26/1970 17:46:40
 03/03/1973 09:46:40
 09/09/2001 01:46:40
-
--- .split --
-'a b' -> v1: 'a' v2: 'b'
-'a b c' -> v1: 'a' v2: 'b c'
-'a' -> v1: 'a' v2: ''
-'a b c d e f' -> v1: 'a' v2: 'b c d e f'
-'' -> v1: '' v2: ''

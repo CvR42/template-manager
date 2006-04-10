@@ -1,4 +1,10 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: lnfscwrd.c
  * 
  * Handle 'fscan_<type>' for type 'tmword'.
  * Version for use with lognew.
@@ -9,7 +15,7 @@
 #include "tmc.h"
 
 /* Try to read a tmword in the buffer 'buf'. Give an error
- * message if this is not successful. 
+   message if this is not successful. 
  */
 int fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
 {

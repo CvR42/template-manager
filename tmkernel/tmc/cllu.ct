@@ -9,6 +9,12 @@
 .. The following variables must be set in tm:
 .. basename:     the name of the module. used to generate stat_..
 .. wantdefs:     the names of the wanted definitions.
+..  OR
+.. alldefs:      All code.
+..
+.. The following C pre-processor variables may be defined:
+.. FATAL(msg)    If you want to supply a fatal error handler to print 'msg'.
+..               A default is provided.
 ..
 /*** WARNING: THIS IS GENERATED CODE. ***/
 
@@ -23,6 +29,10 @@
  */
 
 static char tm_srcfile[] = __FILE__;
+
+#ifndef FATAL
+#define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
+#endif
 
 /* Error strings. */
 .if ${len $(need_fscan_list)}
@@ -67,7 +77,6 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 
 .if ${len ${virtual $(need_new)}}
 /* virtual: ${prefix new_ ${virtual $(need_new)}} */
-
 .endif
 .foreach t ${nonvirtual $(need_new)}
 .if ${member $t $(want_new)}
@@ -292,12 +301,12 @@ $(stat)void rfre_$t_list( $t_list l )
 /* Append $t 'b' after list of $t 'a'. */
 $(stat)$t_list append_$t_list( $t_list a, $t b )
 {
-    $t tl = a;
+    $t tl;
 
-    b->${call linkname $t} = $tNIL;
-    if( tl == $tNIL ){
+    if( a == $tNIL ){
 	return b;
     }
+    tl = a;
     while( tl->${call linkname $t} != $tNIL ) tl = tl->${call linkname $t};
     tl->${call linkname $t} = b;
     return a;
@@ -443,65 +452,20 @@ $(stat)$t_list insertlist_$t_list( $t_list la, unsigned int p, $t_list lb )
 /* Delete element at position 'p' in list 'l'. */
 $(stat)$t_list delete_$t_list( $t_list l, const unsigned int p )
 {
-    $t_list res = l;
-    $t_list *prev = &res;
-    unsigned int ix;
+    $t_list nl;
 
-    for( ix=0; ix<p; ix++ ){
-	if( l == $t_listNIL ){
-	    return res;
-	}
-	prev = &l->${call linkname $t};
-	l = l->${call linkname $t};
-    }
-    (*prev) = l->${call linkname $t};
-    rfre_$t( l );
-    return res;
-}
-
-.endforeach
-.endif
-.if ${len $(need_deletelist_list)}
-/************************************************
- *    deletelist_<type>_list routines               *
- ************************************************/
-
-.call ansi_static deletelist_list "$$t_list deletelist_$$t_list( $$t_list, unsigned int, unsigned int )"
-.foreach t $(need_deletelist_list)
-.if ${member $t $(want_deletelist_list)}
-.set stat
-.else
-.set stat "static "
-.endif
-/* delete elements at positions 'from' to 'to' in list 'l'. */
-$(stat)$t_list deletelist_$t_list( $t_list l, const unsigned int from, unsigned int to )
-{
-    $t_list res = l;
-    $t_list *prev = &res;
-    unsigned int n;
-    unsigned int ix;
-
-    if( from>to ){
+    if( l == $t_listNIL ){
 	return l;
     }
-    for( ix=0; ix<from; ix++ ){
-	if( l == $t_listNIL ){
-	    return res;
-	}
-	prev = &l->${call linkname $t};
-	l = l->${call linkname $t};
-    }
-    for( n=from; n<to; n++ ){
-	$t_list nl;
-
-	if( l == $t_listNIL ){
-	    break;
-	}
-	nl = (*prev) = l->${call linkname $t};
+    if( p == 0 ){
+	nl = l->${call linkname $t};
 	rfre_$t( l );
-	l = nl;
     }
-    return res;
+    else {
+	nl = l;
+	nl->${call linkname $t} = delete_$t_list( l->${call linkname $t}, (p-1) );
+    }
+    return nl;
 }
 
 .endforeach
@@ -691,30 +655,30 @@ $(stat)void print_$t_list( TMPRINTSTATE * st, const $t_list l )
 $(stat)void fprint_$t( FILE *f, const $t t )
 {
     if( t == $tNIL ){
-	(void) fputs( "@ ", f );
+	fputs( "@ ", f );
 	return;
     }
 .if ${member $t ${tuplelist}}
-    (void) putc( '(', f );
+    putc( '(', f );
 .set first 1
 .foreach e ${allfields $t}
 .if $(first)
 .set first 0
 .else
-    (void) fputs( ",\n", f );
+    fputs( ",\n", f );
 .endif
     fprint_${type $t $e}( f, t->$e );
 .endforeach
-    (void) fputs( ")\n", f );
+    fputs( ")\n", f );
 .else
-    (void) putc( '(', f );
+    putc( '(', f );
 .if ${len ${subclasses $t}}
     switch( t->tag ){
 .foreach c ${subclasses $t}
 	case TAG$c:
-	    (void) fputs( "$c", f );
+	    fputs( "$c", f );
 .foreach e ${allfields $c}
-	    (void) putc( ' ', f );
+	    putc( ' ', f );
 	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
 	    break;
@@ -724,7 +688,7 @@ $(stat)void fprint_$t( FILE *f, const $t t )
 	    FATALTAG( t->tag );
     }
 .endif
-    (void) fputs( ")\n", f );
+    fputs( ")\n", f );
 .endif 
 }
 
@@ -740,15 +704,15 @@ $(stat)void fprint_$t_list( FILE *f, const $t_list l )
 {
     $t_list p = l;
 
-    (void) putc( '[', f );
+    putc( '[', f );
     while( p!=$t_listNIL ){
 	fprint_$t( f, p );
 	p = p->${call linkname $t};
 	if( p!=$tNIL ){
-	    (void) putc( ',', f );
+	    putc( ',', f );
 	}
     }
-    (void) fputs( "]\n", f );
+    fputs( "]\n", f );
 }
 
 .endforeach
@@ -1055,105 +1019,6 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 
 .endforeach
 /*********************************************************
- *    isequal_<type> and isequal_<type>_list routines            *
- *********************************************************/
-
-.call ansi_static isequal_list "tmbool isequal_$$t_list( const $$t_list, const $$t_list )"
-.call ansi_static isequal "tmbool isequal_$$t( const $$t, const $$t )"
-
-.foreach t $(need_isequal)
-.if ${member $t $(want_isequal)}
-.set stat
-.else
-.set stat "static "
-.endif
-.if ${member $t ${tuplelist}}
-.. isequal tuple
-/* Compare two $t tuples. */
-$(stat)tmbool isequal_$t( const $t a, const $t b )
-{
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return TMTRUE;
-    }
-    if( a == $tNIL || b == $tNIL ){
-	return TMFALSE;
-    }
-.foreach e ${allfields $t}
-    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
-	return TMFALSE;
-    }
-.endforeach
-    return TMTRUE;
-}
-
-.else
-.. isequal constructor
-/* Compare two $t constructors */
-$(stat)tmbool isequal_$t( const $t a, const $t b )
-{
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return TMTRUE;
-    }
-    if( a == $tNIL || b == $tNIL ){
-	return TMFALSE;
-    }
-.if ${len ${subclasses $t}}
-    if( a->tag != b->tag ){
-	return TMFALSE;
-    }
-    switch( a->tag )
-    {
-.foreach c ${subclasses $t}
-	case TAG$c:
-.foreach e ${allfields $c}
-	    if( !isequal_${type $c $e}( to_$c(a)->$e, to_$c(b)->$e ) ){
-		return TMFALSE;
-	    }
-.endforeach
-	    break;
-
-.endforeach
-	    default:
-		FATALTAG( a->tag );
-    }
-.endif
-    return TMTRUE;
-}
-
-.endif
-.endforeach
-.foreach t $(need_isequal_list)
-.if ${member $t $(want_isequal_list)}
-.set stat
-.else
-.set stat "static "
-.endif
-/* Compare two $t lists. */
-$(stat)tmbool isequal_$t_list( const $t_list a, const $t_list b )
-{
-    $t_list ap = a;
-    $t_list bp = b;
-
-    for(;;){
-	if( ap == bp ){
-	    break;
-	}
-	if( ap==$tNIL || bp==$tNIL ){
-	    return TMFALSE;
-	}
-	if( !isequal_$t( ap, bp ) ){
-	    return TMFALSE;
-	}
-	ap = ap->${call linkname $t};
-	bp = bp->${call linkname $t};
-    }
-    return TMTRUE;
-}
-
-.endforeach
-/*********************************************************
  *    fscan_<type> and fscan_<type>_list routines        *
  *********************************************************/
 
@@ -1212,7 +1077,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return 0;
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     err = tm_fneedc( f, '(' );
     if( err ){
 	return 1;
@@ -1226,8 +1091,8 @@ $(stat)int fscan_$t( FILE *f, $t *p )
 	err = tm_fneedc( f, ',' );
     }
 .endif
-    if( fscan_${type $t $e}( f, &l_$e ) ){
-	return 1;
+    if( !err ){
+	err = fscan_${type $t $e}( f, &l_$e );
     }
 .endforeach
     *p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
@@ -1263,7 +1128,7 @@ $(stat)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     if( tm_fscancons( f, tm_word, $(maxlen) ) ){
 	return 1;
     }
@@ -1336,10 +1201,12 @@ $(stat)int fscan_$t_list( FILE *f, $t_list *p )
     int n;
     int c;
     $t nw;
+    int err;
 
     *p = new_$t_list();
     n = tm_fscanopenbrac( f );
-    if( tm_fneedc( f, '[' ) ){
+    err = tm_fneedc( f, '[' );
+    if( err ){
 	return 1;
     }
     if( tm_fscanspace( f ) ){
@@ -1353,12 +1220,13 @@ $(stat)int fscan_$t_list( FILE *f, $t_list *p )
     if( c == ']' ){
 	return 0;
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     for(;;){
-	if( fscan_$t( f, &nw ) ){
+	err = fscan_$t( f, &nw );
+	*p = append_$t_list( *p, nw );
+	if( err ){
 	    return 1;
 	}
-	*p = append_$t_list( *p, nw );
 	if( tm_fscanspace( f ) ){
 	    return 1;
 	}
@@ -1368,7 +1236,7 @@ $(stat)int fscan_$t_list( FILE *f, $t_list *p )
 	    return 1;
 	}
 	if( c != ',' ){
-	    (void) ungetc( c, f );
+	    ungetc( c, f );
 	    break;
 	}
     }

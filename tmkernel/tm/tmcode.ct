@@ -3,8 +3,10 @@
 ..
 .. All rights reserved.
 ..
-.. file: $Id$
+.. file: tmcode.ct
 /* file: tmcode.c */
+
+#include "config.h"
 
 /* Standard UNIX libraries */
 #include <stdio.h>

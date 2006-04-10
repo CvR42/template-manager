@@ -15,7 +15,6 @@
 .append wantdefs delete_ds_list
 .append wantdefs append_ds_list
 .append wantdefs concat_ds_list
-.append wantdefs insertlist_ds_list
 .append wantdefs rfre_ds_list
 .append wantdefs print_ds_list
 ..
@@ -38,19 +37,22 @@
 .append wantdefs append_Field_list
 .append wantdefs concat_Field_list
 .append wantdefs rdup_Field_list
+.append wantdefs rfre_Field_list
 ..
 .append wantdefs new_tmstring_list
 .append wantdefs rfre_tmstring_list
 .append wantdefs rdup_tmstring_list
+.append wantdefs print_tmstring_list
 .append wantdefs append_tmstring_list
+.append wantdefs concat_tmstring_list
 .append wantdefs setroom_tmstring_list
 .append wantdefs delete_tmstring_list
 .append wantdefs extract_tmstring_list
-.append wantdefs extractlist_tmstring_list
 .append wantdefs insert_tmstring_list
 ..
 .append wantdefs ${prefix new_ ${subclasses tplelm}}
 .append wantdefs new_tplelm_list
+.append wantdefs rfre_tplelm
 .append wantdefs rfre_tplelm_list
 .append wantdefs rdup_tplelm_list
 .append wantdefs rdup_tplelm
@@ -59,15 +61,16 @@
 .append wantdefs stat_$(basename)
 .append wantdefs get_balance_$(basename)
 ..
-.append wantdefs new_variable
-.append wantdefs new_variable_list
-.append wantdefs append_variable_list
-.append wantdefs delete_variable_list
-.append wantdefs insert_variable_list
-.append wantdefs rfre_variable_list
-.append wantdefs insert_variable_list
+.append wantdefs new_var
+.append wantdefs new_var_list
+.append wantdefs append_var_list
+.append wantdefs delete_var_list
+.append wantdefs insert_var_list
+.append wantdefs rfre_var_list
+.append wantdefs insert_var_list
 ..
 .append wantdefs new_macro
+.append wantdefs rfre_macro
 .append wantdefs new_macro_list
 .append wantdefs rfre_macro_list
 .append wantdefs delete_macro_list
@@ -88,19 +91,3 @@
 .append wantdefs new_Switchcase
 .append wantdefs new_Switchcase_list
 .append wantdefs append_Switchcase_list
-..
-.append wantdefs new_origin
-.append wantdefs rfre_origin
-.append wantdefs rdup_origin
-..
-.append wantdefs new_origsymbol
-.append wantdefs rdup_origsymbol
-..
-.append wantdefs new_tmsymbol_list
-.append wantdefs append_tmsymbol_list
-.append wantdefs rfre_tmsymbol_list
-.append wantdefs rdup_tmsymbol_list
-.append wantdefs extract_tmsymbol_list
-.append wantdefs concat_tmsymbol_list
-.append wantdefs setroom_tmsymbol_list
-.append wantdefs delete_tmsymbol_list

@@ -4,7 +4,7 @@
 .. All rights reserved.
 ..
 .. file: calu.ct
-.. Tm C support. Variant: array lists.
+.. tm C support. Variant: array lists, union constructors.
 ..
 .. The following variables must be set in tm:
 .. basename:     the name of the module. used to generate stat_..
@@ -25,8 +25,8 @@
 
    template file:      ${tplfilename}
    datastructure file: ${dsfilename}
-   Tm version:         $(tmvers)
-   Tm kernel version:  $(kernel-version)
+   tm version:         $(tmvers)
+   tm kernel version:  $(kernel-version)
  */
 
 #ifndef FIRSTROOM
@@ -51,7 +51,7 @@ static char tm_srcfile[] = __FILE__;
 #endif
 
 /* Error strings. */
-.if ${len $(need_delete_list) ${len $(need_deletelist_list)} $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
+.if ${len $(need_delete_list) $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
 static char tm_nilptr[] = "NIL pointer";
 .endif
 .if ${len ${comm $(need_fscan) "" ${ctypelist} ${classlist}}}
@@ -605,6 +605,10 @@ $(stic_$t)void print_$t( TMPRINTSTATE *st, const $t t )
 .endforeach
     tm_closetuple( st );
 .case constructorbase class
+    if( t == $tNIL ){
+	tm_printword( st, "@" );
+	return;
+    }
     tm_opencons( st );
 .if ${len ${nonvirtual $t ${subclasses $t}}}
     switch( t->tag ){
@@ -672,10 +676,10 @@ $(stic_$t)void print_$t_list( TMPRINTSTATE *st, const $t_list l )
 $(stic_$t)void fprint_$t( FILE *f, const $t t )
 {
     if( t == $tNIL ){
-	(void) fputs( "@ ", f );
+	fputs( "@ ", f );
 	return;
     }
-    (void) putc( '(', f );
+    putc( '(', f );
 .switch ${metatype $t}
 .case alias
 .error Internal error: alias $t still present.
@@ -685,7 +689,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .if $(first)
 .set first 0
 .else
-    (void) fputs( ",\n", f );
+    fputs( ",\n", f );
 .endif
     fprint_${type $t $e}( f, t->$e );
 .endforeach
@@ -694,9 +698,9 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
     switch( t->tag ){
 .foreach c ${nonvirtual ${subclasses $t}}
 	case TAG$c:
-	    (void) fputs( "$c", f );
+	    fputs( "$c", f );
 .foreach e ${allfields $c}
-	    (void) putc( ' ', f );
+	    putc( ' ', f );
 	    fprint_${type $c $e}( f, to_$c(t)->$e );
 .endforeach
 	    break;
@@ -708,7 +712,7 @@ $(stic_$t)void fprint_$t( FILE *f, const $t t )
 .endif
 .case constructor
 .endswitch
-    (void) fputs( ")\n", f );
+    fputs( ")\n", f );
 }
 
 .endforeach
@@ -725,17 +729,17 @@ $(stic_$t)void fprint_$t_list( FILE *f, const $t_list l )
     unsigned int ix;
 
     if( l == $t_listNIL ){
-	(void) fputs( "@ ", f );
+	fputs( "@ ", f );
 	return;
     }
-    (void) putc( '[', f );
+    putc( '[', f );
     for( ix=0; ix<l->sz; ix++ ){
 	if( ix!=0 ){
-	    (void) fputc( ',', f );
+	    fputc( ',', f );
 	}
 	fprint_$t( f, l->arr[ix] );
     }
-    (void) fputs( "]\n", f );
+    fputs( "]\n", f );
 }
 
 .endforeach
@@ -818,8 +822,8 @@ $(stic_$t)$t rdup_$t( const $t e )
 	    FATALTAG( e->tag );
     }
 .else
-    (void) e;
 #ifdef LOGNEW
+    (void) e;
     (void) _f;
     (void) _l;
 #endif
@@ -1075,113 +1079,6 @@ $(stat)int cmp_$t_list( const $t_list a, const $t_list b )
 
 .endforeach
 .endif
-.if ${len $(need_isequal) $(need_isequal_list)}
-/**************************************************
- *    Comparison routines.                        *
- **************************************************/
-
-.. Forward declarations
-.call ansi_static isequal_list "tmbool isequal_$$t_list( const $$t_list, const $$t_list )"
-.call ansi_static isequal "tmbool isequal_$$t( const $$t, const $$t )"
-.foreach t $(need_isequal)
-.if ${member $t $(want_isequal)}
-.set stat
-.else
-.set stat "static "
-.endif
-/* Compare two $t ${metatype $t}. */
-$(stat)tmbool isequal_$t( const $t a, const $t b )
-{
-.switch ${metatype $t}
-.case alias
-.error Internal error: alias $t still present.
-.case tuple
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return TMTRUE;
-    }
-    if( a == $tNIL || b == $tNIL ){
-	return TMFALSE;
-    }
-.foreach e ${allfields $t}
-    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
-	return TMFALSE;
-    }
-.endforeach
-    return TMTRUE;
-.case constructor constructorbase class
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return TMTRUE;
-    }
-    if( a == $tNIL || b == $tNIL ){
-	return TMFALSE;
-    }
-    if( a->tag != b->tag ){
-	return TMFALSE;
-    }
-.if ${len ${subclasses $t}}
-    switch( a->tag )
-    {
-.foreach c ${subclasses $t}
-	case TAG$c:
-.foreach e ${allfields $c}
-	    if( !isequal_${type $c $e}( to_$c(a)->$e, to_$c(b)->$e ) ){
-		return TMFALSE;
-	    }
-.endforeach
-	    break;
-
-.endforeach
-	    default:
-		FATALTAG( a->tag );
-    }
-.else
-.if ${isvirtual $t}
-.else
-.foreach e ${allfields $t}
-    if( !isequal_${type $t $e}( a->$e, b->$e ) ){
-	return TMFALSE;
-    }
-.endforeach
-.endif
-.endif
-    return TMTRUE;
-.endswitch
-}
-
-.endforeach
-.foreach t $(need_isequal_list)
-.if ${member $t $(want_isequal_list)}
-.set stat
-.else
-.set stat "static "
-.endif
-/* Compare two $t lists. */
-$(stat)tmbool isequal_$t_list( const $t_list a, const $t_list b )
-{
-    unsigned int ix;
-
-.. A small optimization, but also takes care of NIL.
-    if( a == b ){
-	return TMTRUE;
-    }
-    if( a == $t_listNIL || b == $t_listNIL ){
-	return TMFALSE;
-    }
-    if( a->sz != b->sz ){
-	return TMFALSE;
-    }
-    for( ix=0; ix<a->sz; ix++ ){
-	if( !isequal_$t( a->arr[ix], b->arr[ix] ) ){
-	    return TMFALSE;
-	}
-    }
-    return TMTRUE;
-}
-
-.endforeach
-.endif
 .if ${len $(need_fscan) $(need_fscan_list)}
 /**************************************************
  *    Scan routines.                              *
@@ -1248,7 +1145,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return 0;
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     err = tm_fneedc( f, '(' );
     if( err ){
 	return 1;
@@ -1300,7 +1197,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     if( tm_fscancons( f, tm_word, $(maxlen) ) ){
 	return 1;
     }
@@ -1373,6 +1270,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     int c;
     int n;
     $t nw;
+    int err = 0;
 
     *p = $t_listNIL;
     n = tm_fscanopenbrac( f );
@@ -1383,7 +1281,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     if( tm_fneedc( f, '[' ) ){
 	return 1;
     }
@@ -1399,13 +1297,13 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
 	(void) strcpy( tm_errmsg, tm_badeof );
 	return 1;
     }
-    (void) ungetc( c, f );
+    ungetc( c, f );
     for(;;){
-	if( fscan_$t( f, &nw ) ){
-	    return 1;
+	if( !err ){
+	    err = fscan_$t( f, &nw );
 	}
 	*p = append_$t_list( *p, nw );
-	if( tm_fscanspace( f ) ){
+	if( err || tm_fscanspace( f ) ){
 	    return 1;
 	}
 	c = getc( f );
@@ -1414,7 +1312,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
 	    return 1;
 	}
 	if( c != ',' ){
-	    (void) ungetc( c, f );
+	    ungetc( c, f );
 	    break;
 	}
     }
@@ -1455,47 +1353,6 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
     for( ix=pos; ix<l->sz; ix++ ){
 	l->arr[ix] = l->arr[ix+1];
     }
-    return l;
-}
-
-.endforeach
-.endif
-.if ${len $(need_deletelist_list)}
-/**************************************************
- *    deletelist_<type>_list routines                 *
- **************************************************/
-
-.call ansi_static deletelist_list "$$t_list deletelist_$$t_list( $$t_list, const unsigned int, const unsigned int )"
-.foreach t $(need_deletelist_list)
-.set stic_$t "static "
-.endforeach
-.foreach t $(want_deletelist_list)
-.set stic_$t
-.endforeach
-.foreach t $(need_deletelist_list)
-/* delete '$t' elements at positions 'from' to 'to' in list 'l'. */
-$(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int to )
-{
-    unsigned int ix;
-    unsigned int shift;
-
-    if( l == $t_listNIL ){
-	FATAL( tm_nilptr );
-    }
-    if( to>=l->sz ){
-	to = l->sz;
-    }
-    if( from>to ){
-	return l;
-    }
-    for( ix=from; ix<to; ix++ ){
-	rfre_$t( l->arr[ix] );
-    }
-    shift = to-from;
-    for( ix=from; (ix+shift)<l->sz; ix++ ){
-	l->arr[ix] = l->arr[ix+shift];
-    }
-    l->sz -= shift;
     return l;
 }
 

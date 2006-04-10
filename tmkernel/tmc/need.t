@@ -4,6 +4,7 @@
 .. All rights reserved.
 ..
 .. File: need.t
+.. CvR
 ..
 .. Analysis of required code for given set of routines.
 .. Given a list of wanted routines and ds definitions in the variable
@@ -42,15 +43,6 @@
 .set notwantdefs
 .endif
 ..
-.. Now check for forbidden field names.
-.foreach t ${typelist}
-. set fields = ${fields $t}
-. if ${member tag $(fields)}
-.  error "Error: type $t contains reserved field name 'tag'"
-.  set bad 1
-. endif
-.endforeach
-..
 .if $(bad)
 . exit 1
 .endif
@@ -60,10 +52,10 @@
 .set listsuff _list
 ..
 .. Define the list of definition classes
-.set groups      ds cmp isequal new fre rfre rdup print fprint fscan
+.set groups      ds cmp new fre rfre rdup print fprint fscan
 .. These are only useful for lists.
 .set listgroups append concat slice setroom insert delete reverse extract
-.append listgroups extractlist insertlist deletelist
+.append listgroups extractlist insertlist
 .append groups $(listgroups)
 .set misccode stat_$(basename) get_balance_$(basename) flush_$(basename)
 .if ${eq $(template) ald}
@@ -114,7 +106,7 @@
 .set want_ds_list ${filt (*)_list & $(wantdefs)}
 .set wantdefs ${excl $(wantdefs) "" $(want_ds_list)}
 .if ${len $(wantdefs)}
-. error Cannot handle definition: $(wantdefs)
+. error Can't handle definition: $(wantdefs)
 . exit 1
 .endif
 ..
@@ -215,16 +207,6 @@
 .endif
 .endmacro
 ..
-.. ** isequal **
-.macro req_isequal l
-.call require ds "$l"
-.call require isequal "${delisttypes $l}"
-.call require isequal "${types ${singletypes $l} ${subclasses $l}}"
-.if ${eq $(template) tmc}
-.call require isequal "${nonvirtual ${subclasses $l}}"
-.endif
-.endmacro
-..
 .. ** append **
 .macro req_append l
 .call require setroom "$l"
@@ -265,12 +247,6 @@
 ..
 .. ** delete **
 .macro req_delete l
-.call require rfre "${delisttypes $l}"
-.call require ds "$l"
-.endmacro
-..
-.. ** deletelist **
-.macro req_deletelist l
 .call require rfre "${delisttypes $l}"
 .call require ds "$l"
 .endmacro

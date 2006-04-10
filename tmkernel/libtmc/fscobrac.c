@@ -1,4 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: fscobrac.c
+ * CvR
  *
  * Handling of open brackets around constructors
  * and lists.
@@ -9,8 +16,9 @@
 #include "tmc.h"
 
 /* Skip all `isspace()' characters, and count the open brackets (`(')
- * that you encounter up to the first other character. Return the number
- * of open brackets found.
+   that you encounter up to the first other character. Return the number
+   of open brackets found.
+ *
  */
 int tm_fscanopenbrac( FILE *f )
 {

@@ -5,8 +5,6 @@
 
 MAKEFILE = Makefile
 
-WEBDIR = $(HOME)/website/software/Tm
-
 # Top level LaTeX file containing the \include commands.
 TOPFILE = main
 
@@ -17,12 +15,10 @@ TM = tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
-CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l \
-  calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c \
-  oksubst.clc
-EXAMPLEFILES = append.xt foreach.xt for.xt if.xt macro.xt var.xt cmp.xt \
-  arith.xt boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt \
-  eval.xt math.xt linemacro.xt setfn.xt switch.xt unalias.xt time.xt
+CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c oksubst.clc
+EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
+  boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
+  linemacro.xt setfn.xt switch.xt unalias.xt time.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex command.tex tmc.tex intro.tex \
@@ -39,11 +35,9 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(TOPFILE).toc dist.lst title.c
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
-	    $(CALCDEMO) javagrammar.sty pds.pdf README \
-            goodwords main.bib pdstitle.sty plot.ds .cvsignore \
-	    title.ct title.ds ch.sh cast.t alias.ds
-
-all: $(TOPFILE).pdf
+	    $(CALCDEMO) \
+            goodwords main.bib main.ps plot.ds \
+	    title.ct title.ds ch.sh cast.t
 
 help:
 	@echo Possible targets:
@@ -57,7 +51,9 @@ help:
 	@echo 'spell   - Run spelling check.'
 	@echo 'sort    - Sort spelling goodwords.'
 
-fast: $(TOPFILE).pdf
+all: $(TOPFILE).ps
+
+fast: $(TOPFILE).dvi
 
 test:
 	@echo "Nothing to test"
@@ -66,11 +62,11 @@ install:
 	@echo "Nothing to install"
 
 # The dependency rules as implemented by latex
-$(TOPFILE).pdf : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
-	pdflatex $(TOPFILE)
+$(TOPFILE).dvi : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
+	latex $(TOPFILE)
 	makeindex $(TOPFILE)
-	pdflatex $(TOPFILE)
-	-fgrep 'get cross-references rig' $(TOPFILE).log && pdflatex $(TOPFILE)
+	latex $(TOPFILE)
+	-fgrep 'get cross-references rig' $(TOPFILE).log && latex $(TOPFILE)
 
 $(TOPFILE).ps: $(TOPFILE).dvi
 	dvips $(TOPFILE)
@@ -88,10 +84,10 @@ spell: $(SPELLFILES)
 $(SPELLFILES): sort
 
 unalias.out: unalias.xt alias.ds
-	$(TM) alias.ds unalias.xt > $*.out
+	tm alias.ds unalias.xt > $*.out
 
 .xt.out: plot.ds
-	$(TM) plot.ds $< > $*.out
+	tm plot.ds $< > $*.out
 
 clean:
 	rm -f $(JUNK) $(SPELLFILES)
@@ -109,40 +105,25 @@ distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 demo.c : plot.ds demo.ct democonf.t
-	$(TM) plot.ds demo.ct | expand > demo.c
+	tm plot.ds demo.ct | expand > demo.c
 
 demo.h : plot.ds demo.ht democonf.t
-	$(TM) plot.ds demo.ht | expand > demo.h
+	tm plot.ds demo.ht | expand > demo.h
 
 subst.c : calc.ds subst.ct
-	$(TM) calc.ds subst.ct | expand > subst.c
+	tm calc.ds subst.ct | expand > subst.c
 
 calc.c : calc.ds calc.ct calcconf.t
-	$(TM) calc.ds calc.ct | expand > calc.c
+	tm calc.ds calc.ct | expand > calc.c
 
 calc.h : calc.ds calc.ht calcconf.t
-	$(TM) calc.ds calc.ht | expand > calc.h
+	tm calc.ds calc.ht | expand > calc.h
 
 title.c: title.ct title.ds
-	$(TM) title.ds title.ct > title.c
+	tm title.ds title.ct > title.c
 
 t: $(CALCDEMO) $(EXAMPLEOUTFILES)
 	echo $(CALCDEMO) $(EXAMPLEOUTFILES)
-
-%.ps: %.dvi
-	dvips $<
-
-tm-manual.ps: $(TOPFILE).ps
-	cp $(TOPFILE).ps tm-manual.ps
-
-%.ps.gz: %.ps
-	cp $< __tmp.ps
-	gzip -9 __tmp.ps
-	mv __tmp.ps.gz $*.ps.gz
-
-docinstall: tm-manual.ps tm-manual.ps.gz
-	cp tm-manual.ps $(WEBDIR)
-	cp tm-manual.ps.gz $(WEBDIR)
 
 main.dvi: $(CALCDEMO)
 main.dvi: title.c

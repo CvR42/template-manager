@@ -1,17 +1,20 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
+ * All rights reserved.
  */
 
 #include "config.h"
 #include "tmc.h"
 
-int fscan_tmulong( FILE *f, tmulong *p )
+int fscan_ulong( FILE *f, ulong *p )
 {
-    int brac = tm_fscanopenbrac( f );
+    int brac;
 
     *p = 0;
+    brac = tm_fscanopenbrac( f );
     if( fscanf( f, "%lu", p ) != 1 ){
-	(void) strcpy( tm_errmsg, "tmulong expected" );
+	(void) strcpy( tm_errmsg, "unsigned long expected" );
 	return 1;
     }
     return tm_fscanclosebrac( f, brac );

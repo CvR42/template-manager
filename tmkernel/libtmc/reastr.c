@@ -1,6 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Reallocate tmstring size.
+ * All rights reserved.
+ */
+
+/* file: reastr.c
+   Reallocate tmstring size.
  */
 
 #include <ctype.h>

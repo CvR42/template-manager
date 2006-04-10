@@ -21,15 +21,13 @@ LOCALMAN = @prefix@/man
 LIBS = @LIBS@ ../libtmc/libtmc.a
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
-UNINSTALL = rm -f
 
 # -I flags for  .h files
 IPATH = -I../libtmc -I$(LOCALINCLUDE)
 PROG = tm
 
-CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION) -g
+CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION)
 LDFLAGS	      = $(CFLAGS)
-LINTFLAGS = $(IPATH)
 
 TM            = tm
 
@@ -82,6 +80,8 @@ GENSRCS = tmcode.c tmpath.c
 
 DEPENDSRC = $(NORMALSRCS) $(GENSRCS)
 
+# The more obvious 'OBJS = $(SRCS:.c=.o)' causes a core dump
+# in make (!) on HPUX 9.0. It's a jungle out there.
 NORMALOBJS = $(NORMALSRCS:.c=.o)
 GENOBJS = $(GENSRCS:.c=.o)
 OBJS = $(GENOBJS) $(NORMALOBJS)
@@ -90,12 +90,12 @@ SRCS = $(NORMALSRCS) $(GENSRCS)
 
 TMOUTPUT = tmcode.c tmcode.h
 
-GENFILES = $(TMOUTPUT) tmpath.c version.h
+GENFILES = $(TMOUTPUT) tmpath.c
 
-JUNK          = y.output lint testerr testout testrdir index.sed \
+
+JUNK          = sedlint y.output lint testerr testout index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
-		config.log distlist
-PRECIOUSJUNK = sedlint
+		config.log version.h distlist
 
 FOREIGNFILES = tmtos.prj makefile.tc config.htc makefile.tos config.hts
 
@@ -109,8 +109,6 @@ DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) \
     $(TMOUTPUT) $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES)
 
 
-all: $(PROG)
-
 help :
 	@echo " Possible make targets:"
 	@echo "all		Create local running programs."
@@ -122,8 +120,7 @@ help :
 	@echo "doc		Format documentation."
 	@echo "man		Format manual pages."
 
-lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
-	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
+all: $(PROG)
 
 $(PROG): $(OBJS)
 	$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) -o $(PROG)
@@ -132,23 +129,16 @@ install: $(PROG)
 	-$(INSTALL) -d $(LOCALBIN)
 	$(INSTALL) $(PROG) $(LOCALBIN)/$(PROG)
 
-uninstall:
-	$(UNINSTALL) $(LOCALBIN)/$(PROG)
-
 distclean:
 	rm -f $(OBJS) $(JUNK) $(PROG)
 	rm -f config.status config.cache config.h
-	cd testsuite && make distclean
 
 empty:
 	rm -f $(OBJS) $(JUNK) $(PROG)
-	rm -f config.h
-	rm -f $(PRECIOUSJUNK)
-	cd testsuite && make empty
+	rm -f config.status config.cache config.h
 
 clean:
 	rm -f $(OBJS) $(GENFILES) $(JUNK)
-	cd testsuite && make clean
 
 tmcode.h: tmcode.ht tm.ds tmspec.t
 	tm tm.ds tmcode.ht > tmcode.h
@@ -168,14 +158,11 @@ man:
 version.h: ../version.h
 	cp ../version.h version.h
 
-check: 
-	cd testsuite && make check
-
-tests:
-	cd testsuite && make tests
-
-test:
-	cd testsuite && make test
+check: testin sub.ds test.ds testsub goodout gooderr $(TM)
+	-./tm -dn -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
+	diff testout goodout
+	diff testerr gooderr
+	diff testrdir goodrdir
 
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -183,40 +170,23 @@ distfiles: $(MAKEFILE)
 distlist: $(MAKEFILE)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
-depend: $(DEPENDFILE)
+gfiles: $(GENSRCS) $(GENHDRS)
 
-# TODO: this only works if the compiler knows the -MM flag, which
-# is realistically only the GNU compiler. There is no nice solution:
-# some other compilers may have a different flag for this, or otherwise
-# it may be possible to use the GNU compiler just to compute the
-# dependencies.
-$(DEPENDFILE): $(DEPENDSRC) $(GENFILES)
-	$(CC) -MM $(IPATH) $(DEPENDSRC) > $(DEPENDFILE)
+depend: gfiles createdepend
+
+createdepend: $(DEPENDFILE)
+	$(CC) -MM $(DEPENDSRC) > $(DEPENDFILE)
+
+$(DEPENDFILE):
+	touch $(DEPENDFILE)
 
 stats: empty
 	wc -l *.c *.h
 
 genstats: $(GENSRCS) $(GENHDRS)
 	wc -l $(GENSRCS) $(GENHDRS)
- 
-# Configure-related rules.
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile config.h: Makefile.in config.status config.hin
-	./config.status
-
-JUNK += config.log config.cache
-PRECIOUSJUNK += config.status configure
 
 -include $(DEPENDFILE)
-
-###
-
 checkds.o: checkds.c config.h tmdefs.h error.h tmcode.h misc.h \
  checkds.h
 refex.o: refex.c config.h tmdefs.h refex.h

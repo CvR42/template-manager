@@ -1,4 +1,8 @@
-/* File: $Id$ */
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
 
 #include "config.h"
 #include "tmc.h"
@@ -15,7 +19,7 @@ tmtext new_tmtext_nolognew( void )
 
     newcnt_tmtext++;
     t = TM_MALLOC( tmtext, sizeof( *t ) );
-    t->arr = TM_MALLOC( tmtextptr, sizeof( unsigned char )*STARTROOM );
+    t->arr = TM_MALLOC( tmtextptr, sizeof( uchar )*STARTROOM );
     t->room = STARTROOM;
     t->curpos = 0;
     t->sz = 0;

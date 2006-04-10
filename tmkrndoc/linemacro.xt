@@ -1,7 +1,7 @@
 .. Given a enum name 'nm' and a list of names 'l', generate
 .. a C enum type with globally unique identifiers.
-.. The macro uses a global variable 'tagval' to keep track of
-.. the used tag values.
+.. The macro uses a global variable 'tagval' to keep track of the
+.. used tag values.
 .set tagval 0
 .macro gen_tags nm l
 /* Enum type '$(nm)'. */

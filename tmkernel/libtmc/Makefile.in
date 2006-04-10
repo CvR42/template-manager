@@ -23,7 +23,6 @@ CC = @CC@
 RANLIB=@RANLIB@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
-UNINSTALL_DATA=rm -f
 
 DBUGFLAGS = -g -DLOGNEW -DSTAT
 
@@ -45,8 +44,6 @@ TESTFILES = testin goodout gooderr $(TESTSRCS)
 JUNK  = testprog testerr testout tmp core mon.out gmon.out \
 	tags makelog log dist.lst config.log
 
-PRECIOUSJUNK = 
-
 SRCS	= $(LIBSRCS) $(TESTSRCS)
 
 HDRS = tmc.h
@@ -62,7 +59,6 @@ LIBSRCS	 = \
                 errmsg.c \
                 escstr.c \
                 fatal.c \
-                badcast.c \
                 fneedc.c \
                 fprdbl.c \
                 fprint.c \
@@ -97,7 +93,6 @@ LIBSRCS	 = \
                 fscul.c \
                 fscushrt.c \
                 fscwrd.c \
-                ietxt.c \
                 insblock.c \
                 instext.c \
                 lncrstr.c \
@@ -158,7 +153,7 @@ MAKEFILE = Makefile
 FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
     config.hts makefile.tos
 
-CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
+CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
 DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
@@ -194,16 +189,11 @@ check: testprog testin
 	diff testout goodout
 	diff testerr gooderr
 
-install: $(LIBNAME) $(INSTHFILES)
+install: $(LIBNAME)
 	-$(INSTALL) -d $(LOCALLIB)
 	-$(INSTALL) -d $(LOCALINCLUDE)
 	$(INSTALL_DATA) $(LIBNAME) $(LOCALLIB)/$(LIBNAME)
-	$(RANLIB) $(LOCALLIB)/$(LIBNAME)
 	$(INSTALL_DATA) $(INSTHFILES) $(LOCALINCLUDE)
-
-uninstall:
-	$(UNINSTALL_DATA) $(LOCALLIB)/$(LIBNAME)
-	$(UNINSTALL_DATA) $(LOCALINCLUDE)
 
 tags: $(LIBSRCS) $(TESTSRCS)
 	ctags $(LIBSRCS) $(TESTSRCS)
@@ -219,7 +209,7 @@ distclean:
 empty:
 	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
 	rm -f $(LIBNAME) testprog
-	rm -f $(PRECIOUSJUNK)
+	rm -f cconfig.log config.status config.cache
 
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -230,25 +220,50 @@ distlist: $(DISTFILES)
 .c.o:
 	$(CC) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
 
-# TODO: do something better here
 depend:
-	echo "Nothing is done"
-
-
-# Configure-related rules.
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile: Makefile.in config.status
-	./config.status
-
-JUNK += config.log config.cache
-PRECIOUSJUNK += config.status configure
+	mkmf -f $(MAKEFILE)
 
 ###
-$(LIBOBJS): tmc.h config.h
-$(TESTOBJS): tmc.h config.h
+badtag.o: tmc.h config.h
+cmpdbl.o: tmc.h config.h
+errmsg.o: tmc.h config.h
+escstr.o: tmc.h config.h
+fatal.o: tmc.h config.h
+fneedc.o: tmc.h config.h
+fprdbl.o: tmc.h config.h
+fprint.o: tmc.h config.h
+fprsshrt.o: tmc.h config.h
+fprstr.o: tmc.h config.h
+fprsym.o: tmc.h config.h
+fprushrt.o: tmc.h config.h
+fsccbrac.o: tmc.h config.h
+fsccons.o: tmc.h config.h
+fscdbl.o: tmc.h config.h
+fscescc.o: tmc.h config.h
+fscflt.o: tmc.h config.h
+fscint.o: tmc.h config.h
+fscobrac.o: tmc.h config.h
+fscspace.o: tmc.h config.h
+fscsshrt.o: tmc.h config.h
+fscstr.o: tmc.h config.h
+fscushrt.o: tmc.h config.h
+lognew.o: tmc.h config.h
+newstr.o: tmc.h config.h
+lnfrestr.o: tmc.h config.h
+lnfscstr.o: tmc.h config.h
+lnnewstr.o: tmc.h config.h
+noroom.o: tmc.h config.h
+prdbl.o: tmc.h config.h
+print.o: tmc.h config.h
+propt.o: tmc.h config.h
+prsshrt.o: tmc.h config.h
+prstr.o: tmc.h config.h
+prsym.o: tmc.h config.h
+prushrt.o: tmc.h config.h
+symbol.o: tmc.h config.h
+testprog.o: tmc.h config.h
+tmcalloc.o: tmc.h config.h
+tmmalloc.o: tmc.h config.h
+tmreallc.o: tmc.h config.h
+t2s.o: tmc.h config.h
+lnt2s.o: tmc.h config.h

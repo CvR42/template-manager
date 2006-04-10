@@ -10,6 +10,7 @@
    and write it out again in pretty-printed format.
  */
 
+#include "config.h"
 #include <stdio.h>
 #include <tmc.h>
 #include <stdlib.h>
@@ -84,10 +85,6 @@ int main( void )
     rfre_toplevel_list( dscopy );	/* put something in caches */
     dscopy = rdup_toplevel_list( ds );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
-	fprintf( stderr, "cmp of copy and original does not yield 0??\n" );
-	exit( 1 );
-    }
-    if( !isequal_toplevel_list( ds, dscopy ) ){
 	fprintf( stderr, "Copy not equal to original??\n" );
 	exit( 1 );
     }
@@ -174,24 +171,6 @@ int main( void )
 	exit( 1 );
     }
 #ifdef CODEtmc
-    ds = insert_toplevel_list( ds, 0, to_toplevel( new_TopNone() ) );
-    ds = insert_toplevel_list( ds, 0, to_toplevel( new_TopNone() ) );
-    ds = insert_toplevel_list( ds, 0, to_toplevel( new_TopNone() ) );
-#else
-    ds = insert_toplevel_list( ds, 0, new_TopNone() );
-    ds = insert_toplevel_list( ds, 0, new_TopNone() );
-    ds = insert_toplevel_list( ds, 0, new_TopNone() );
-#endif
-    if( isequal_toplevel_list( ds, dscopy ) ){
-	fprintf( stderr, "Inserts fail?\n" );
-	exit( 1 );
-    }
-    ds = deletelist_toplevel_list( ds, 0, 3 );
-    if( !isequal_toplevel_list( ds, dscopy ) ){
-	fprintf( stderr, "deletelist does not affect datastructure?\n" );
-	exit( 1 );
-    }
-#ifdef CODEtmc
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
 #endif
 #ifdef CODEalu
@@ -249,6 +228,5 @@ int main( void )
     fclose( infile );
     fclose( outfile );
     exit( 0 );
-    /* UNREACHABLE */
     return 0;
 }

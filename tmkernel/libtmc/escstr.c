@@ -1,12 +1,14 @@
-/* File: $Id$
- *
- * Tm - an interface code generator.
+/* Tm - an interface code generator.
  * Author: C. van Reeuwijk.
  *
  * All rights reserved.
  */
 
-/* Convert a character to an escape sequence suitable for use in a string.  */
+/* File: escstr.c
+ * Last modified: CvR
+ *
+ * Convert a character to an escape sequence suitable for use in a string.
+ */
 
 /* The header of this library */
 #include "config.h"
@@ -22,7 +24,7 @@ static char escchar_buf[6];
  * The returned pointer points to a static buffer that is overwritten
  * upon the next invocation of the function.
  */
-char *tm_escapestring( const unsigned int code )
+const char *tm_escapestring( const unsigned int code )
 {
     char *p = escchar_buf;
     const unsigned int code1 = code & 0xff;

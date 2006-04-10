@@ -19,8 +19,8 @@ typedef struct { int x, y; char c; } foo;
 \par
 This does not imply that it is easy to transfer data in these records
 and structures from one language to the other.
-Facilities that are provided for this purpose, like \texttt{get} and
-\texttt{put} in {\Pascal} and \texttt{fread} and \texttt{fwrite} in {\C} are useless,
+Facilities that are provided for this purpose, like {\tt get} and
+{\tt put} in Pascal and {\tt fread} and {\tt fwrite} in {\C} are useless,
 and may even cause problems if data is transferred between different
 implementations of the same language.
 \par
@@ -42,7 +42,7 @@ It can also generate code to read the textual representation into
 internal data structures, and code to write these internal data structures
 to the textual representation.
 \par
-At the moment, {\Tm} can generate code for {\C}, Lisp, {\Miranda} and {\Pascal}.
+At the moment, {\Tm} can generate code for {\C}, Lisp, {\Miranda} and Pascal.
 Code generation for any other language is easily added,
 because the generation is based on \defn{templates}:
 source texts for the target programming language
@@ -54,9 +54,9 @@ interspersed with text substitution and repetition commands for {\Tm}.
 \input{flow.tex}
 \end{center}
 \caption{\label{f.flow}The flow of data through {\Tm}.
-Given a data structure description file (a \texttt{.ds} file) and
-a template file (in this figure a \texttt{.ct} file), {\Tm} produces
-an output file (in this figure a \texttt{.c} file).
+Given a data structure description file (a {\tt .ds} file) and
+a template file (in this figure a {\tt .ct} file), {\Tm} produces
+an output file (in this figure a {\tt .c} file).
 }
 \end{figure}
 This document is a reference manual for template manager itself, and the
@@ -82,11 +82,11 @@ Section~\ref{s.tmc} describes the C template and support library.
 \section{Terminology}
 A few notes on the used terminology:
 {\Tm} is given a data structure file and a file
----called the \emph{template file}\index{template file}---
+---called the {\em template file}\index{template file}---
 containing source code and text substitution commands.
 From these files a source file for the target language is generated.
-This is called \emph{translation}\index{translation}.
-Target languages are supported by providing \emph{standard templates} \/for
+This is called {\em translation}\index{translation}.
+Target languages are supported by providing {\em standard templates} \/for
 them.
 \section{Used abbreviations}
 In this manual the following shorthand notations are used:
@@ -94,11 +94,11 @@ In this manual the following shorthand notations are used:
 \index{abbreviations|(}
 \begin{flushleft}
 \begin{tabular}{ll}
-\texttt{<type>} \index{type@\texttt{<type>}} & A type.  \\
-\texttt{<fieldtype>} \index{fieldtype@\texttt{<fieldtype>}} & The type of a field.  \\
-\texttt{<fieldname>} \index{fieldname@\texttt{<fieldname>}} & The name of a field.  \\
-\texttt{<something>} \index{something@\texttt{<something>}} & The actual contents of this fragment are not important.  \\
-\texttt{<basename>} \index{basename@\texttt{<basename>}} & Fill in the value of {\Tm} variable \texttt{basename}. \\
+{\tt <type>} \index{type@{\tt <type>}} & A type.  \\
+{\tt <fieldtype>} \index{fieldtype@{\tt <fieldtype>}} & The type of a field.  \\
+{\tt <fieldname>} \index{fieldname@{\tt <fieldname>}} & The name of a field.  \\
+{\tt <something>} \index{something@{\tt <something>}} & The actual contents of this fragment are not important.  \\
+{\tt <basename>} \index{basename@{\tt <basename>}} & Fill in the value of {\Tm} variable {\tt basename}. \\
 \end{tabular}
 \end{flushleft}
 

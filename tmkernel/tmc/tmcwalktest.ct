@@ -85,6 +85,7 @@ $(indent)$(var) = ($(nowtype)) add_$(type)_walker( to_$(type)( $(var) ), n );
 
 #include <tmc.h>
 
+#include "config.h"
 #include "tmccode.h"
 
 typedef expr foldexpr;

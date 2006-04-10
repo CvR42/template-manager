@@ -1,9 +1,14 @@
-/* File $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Extern routines for variable and macro management.
+ * All rights reserved.
  */
 
-extern void setmacro( const char *nm, const_origin org, const_tmstring_list pl, const_tplelm_list body );
+/* File var.h
+ * extern routines for variable and macro management.
+ */
+
+extern void setmacro( const char *nm, const char *fnm, const tmstring_list pl, const tplelm_list body );
 extern macro findmacro( const char *nm );
 extern void setvar( const char *nm, const char *v );
 extern void globalsetvar( const char *nm, const char *v );

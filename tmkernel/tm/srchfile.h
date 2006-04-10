@@ -1,7 +1,7 @@
-/* File: $Id$ */
+/* File: srchfile.h */
 
 extern tmstring search_file(
-    const_tmstring_list path,
+    const tmstring_list path,
     const char *fnm,
     const char *sep,
     const char *mode

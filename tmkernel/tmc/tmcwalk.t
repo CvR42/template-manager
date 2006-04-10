@@ -1,14 +1,11 @@
-.. File: tmcwalk.t
-..
-.. Generate a treewalker, that, given a set of starting nodes and a
-.. set of nodes to visit, generates code that ensures that all instances
-.. of the node type are visited.
+.. Given a list of starting types and a list of types to reach, calculate
+.. the list of types that must be visited to reach all targets
 .set listpre
 .set listsuff _list
 .set err 0
 .foreach m generate_walker_declaration generate_walker_signature generate_descent_call
-.if ${not ${definedmacro $m}}
-.error Macro $m not defined
+.if ${not ${len ${matchmacro $m}}}
+.error No macro $m defined
 .set err 1
 .endif
 .endforeach
@@ -16,14 +13,12 @@
 .exit 1
 .endif
 .foreach m generate_walker_locals generate_walker_return generate_empty_walker_body
-.if ${not ${definedmacro $m}}
+.if ${not ${len ${matchmacro $m}}}
 .macro $m indent var t
 .endmacro
 .endif
 .endforeach
 ..
-.. Given a list of starting types and a list of types to reach, calculate
-.. the list of types that must be visited to reach all targets
 .macro calc_treewalk starts targets
 .set res
 .set types ${reach $(starts)}
@@ -95,7 +90,6 @@
 .foreach tor ${inheritors $t}
 .set l ${comm $(tor) ${subclasses $(tor)} "" $(visit_types)}
 .if ${len $l}
-.. There are subclasses to consider.
 .foreach i $(tor) ${subclasses $(tor)}
 .if ${not ${isvirtual $i}}
         case TAG$i:
@@ -118,7 +112,7 @@
             break;
 
 .endif
-.. TODO: enumerate the cases that are not handled.
+.. TODO: enumerate the cases that aren't handled.
 	default:
 	    break;
 

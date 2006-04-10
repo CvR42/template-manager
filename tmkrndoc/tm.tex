@@ -2,26 +2,26 @@
 \label{s.tm}
 The standard modules for the various languages are implemented
 with the text substitution language described in this section.
-
+\par
 One should only use the text substitution language directly if the available
 modules do not meet the requirements,
 since writing in this language is not exactly a pleasure.
 The casual user of {\Tm} is expected to use only the standard modules that
 are included in the {\Tm} package.
 For this purpose it is sufficient to know
-the \texttt{.include} command (to invoke the modules),
-the \texttt{.insert} command (to insert configuration files),
-the \texttt{.set} command (to set some parameters for the modules),
-and the \texttt{..} command (to add comments to the {\Tm} input).
+the {\tt .include} command (to invoke the modules),
+the {\tt .insert} command (to insert configuration files),
+the {\tt .set} command (to set some parameters for the modules),
+and the {\tt ..} command (to add comments to the {\Tm} input).
 \section{Conventions}
-Boolean functions return the string \texttt{0} for
-\textit{false} or the string \texttt{1} for \textit{true}.
+Boolean functions return the string `{\tt 0}' for
+{\it false} or the string `{\tt 1}' for {\it true}.
 At places where a boolean expression is expected,
-the string \texttt{0} is \textit{false},
-all other strings are \textit{true}.
-
+the string `{\tt 0}' is {\it false},
+all other strings are {\it true}.
+\par
 A \defn{number} is a string of digits with an optional sign before it.
-
+\par
 A \defn{word} is either a string of non-blank characters, or a string of
 arbitrary characters surrounded by double quotes. A quoted string
 must end before the end of the line, and it may not contain
@@ -36,7 +36,7 @@ word
 \end{verbatim}
 \end{showfile}
 \section{Line commands}
-Each time a dot (`\texttt{.}') is encountered as the first character of a line,
+Each time a dot (`{\tt .}') is encountered as the first character of a line,
 that line is interpreted as a {\Tm} line command.
 If the second character of the line is also a dot,
 the line is comment, and is completely ignored.
@@ -45,39 +45,31 @@ Otherwise the first word after the dot
 is interpreted as the line command,
 and the remainder of the line is interpreted as a list of parameters.
 The list of parameters is evaluated each time the command is executed.
-Evaluation of the parameters does \emph{not} occur for termination commands
-(\texttt{.endif}, \texttt{.endforeach}, \texttt{.endwhile}, etc.).
-
+Evaluation of the parameters does {\em not} occur for termination commands
+({\tt .endif}, {\tt .endforeach}, {\tt .endwhile}, etc.).
 \subsection{Assignment}
 \label{s.assignment}
-When execution starts, a \emph{global variable context} is created.
-Assignment adds new variable values to this context, or modifies
-existing ones. Similarly, macro definitions are registered in this context.
-When a macro is invoked, or a \texttt{.include} command is executed,
-a new variable context is created, and assignments and macro
-definitions modify the most recently created context.  Upon completion
-of the macro, or termination of the \verb'.include', its context
-is destroyed, and the old value of a variable or macro (if it has
-one in the old context) is visible again.  This means that it usually
-is not necessary to worry about side-effects of macros or included
-files.
-
-\begin{sloppypar}
+Assignment statements modify the value of a variable. In most of these
+statements, the new value is stored in the current \defn{context}.
+A context is created upon invocation of a macro, or the execution of a
+\verb'.include' command. Upon completion of the macro, or termination
+of the \verb'.include', the context is destroyed, and the old value of
+a variable (if it has a value in the old context) is visible again.
+This means that it usually is not necessary to worry about side-effects
+of macros or included files.
+\par
 Since in some cases it is desirable to allow side-effects, the
-\verb'.globalappend', \verb'.globalset', and \verb'.globalsplit'
-commands are provided.  These commands remove all current values
-of a variable from all contexts, and store the new value in the
-outermost context. As a result the new value is visible in all
-contexts. There is no equivalent command for macro definitions; until now
-no useful application for this has emerged.
-\end{sloppypar}
+\verb'.globalappend' and \verb'.globalset' commands are provided.
+These commands remove all current values of a variable from all
+contexts, and store the new value in the outermost context. As a result
+the new value is visible in all contexts.
 \begin{verbatim}
 .set <var> <val>..<val>
 \end{verbatim}
 \begin{desc}
 \index{.set@\verb+.set+}
-Set variable \texttt{<var>} to the given list of values.
-The new value of \texttt{<var>} is visible in the current context.
+Set variable {\tt <var>} to the given list of values.
+The new value of the variable is visible in the current context.
 \end{desc}
 \begin{verbatim}
 .append <var> <val>..<val>
@@ -85,8 +77,8 @@ The new value of \texttt{<var>} is visible in the current context.
 \begin{desc}
 \index{.append@\verb+.append+}
 Append the given list of values after the current values of variable
-\texttt{<var>}.
-The new value of \texttt{<var>} is visible in the current context.
+{\tt <var>}.
+The new value of the variable is visible in the current context.
 For example:
 \begin{showfile}
 \verbatiminput{append.xt}
@@ -96,51 +88,21 @@ will produce:
 \verbatiminput{append.out}
 \end{showfile}
 \end{desc}
-
-\begin{verbatim}
-.split <var1>..<varn> = <val1>..<valn>
-\end{verbatim}
-\begin{desc}
-\index{.split@\verb+.split+}
-Set variable \texttt{<var1>} to value \texttt{<val1>}, variable
-\texttt{<var2>} to value \texttt{<val2>}, and so on. The list of
-variables and the list of values is separated by a word \texttt{=}
-(a single equal sign). Every \texttt{.split} command must contain such
-a separator. The first such occurence of the separator indicates
-the end of the list of variables, and the beginning of the list of
-values. The new value of the variables is visible in the current context.
-
-There must be at least be one variable. If there are fewer values
-than variables, the remaining variables are set to the empty string. If
-there are more values than variables, the last variable gets all
-remaining values.
-
-For example:
-\begin{showfile}
-\verbatiminput{split.xt}
-\end{showfile}
-will produce:
-\begin{showfile}
-\verbatiminput{split.out}
-\end{showfile}
-\end{desc}
-
 \begin{verbatim}
 .globalappend <var> <val> <val> <val>
-.globalset <var> <val>..<val>
-.globalsplit <var1>..<varn> = <val1>..<valn>
 \end{verbatim}
 \begin{desc}
-\index{.globalsplit@\verb+.globalsplit+}
-\index{.globalset@\verb+.globalset+}
-\index{.globalappend@\verb+.globalappend+}
-Equivalent to \texttt{.append}, \texttt{.set}, and \texttt{.split}
-respectively, except that the global (outermost) context is updated,
-and all occurences of the variables in other contexts are erased.
-As a result, the new values of the variables are visible in \emph{all}
-context.
+Append the given list of values after the current value of variable
+\verb'<var>'. The new value of the variable visible in {\em all}
+variable contexts.
 \end{desc}
-
+\begin{verbatim}
+.globalset <expr>
+\end{verbatim}
+\begin{desc}
+Set variable \verb'<var>' to the given list of values.  The new value
+of the variable visible to {\em all} variable contexts.
+\end{desc}
 \subsection{Datastructure modification}
 These commands directly modify the data structures that have been
 read in from the data structure file. There is no way to revert the
@@ -150,7 +112,7 @@ changes.
 \end{verbatim}
 \begin{desc}
 \index{.rename@\verb+.rename+}
-Rename all occurrences of type \verb'<old>' to type \verb'<new>' at
+Rename all occurences of type \verb'<old>' to type \verb'<new>' at
 all places where types occur: in type definitions, inheritances,
 and fields.
 
@@ -163,7 +125,7 @@ nor is it allowed to introduce inheritance cycles.
 \begin{desc}
 \index{.deletetype@\verb+.deletetype+}
 Delete the definitions of all given types. Deletion requests for
-non-existing types are silently ignored.
+non-existing types is silently ignored.
 \end{desc}
 For example, these commands can be used to remove alias types from
 data structures. Given the following data structure definition file
@@ -178,29 +140,26 @@ Will produce the following output.
 \begin{showfile}
 \verbatiminput{unalias.out}
 \end{showfile}
-
 \subsection{Flow control}
 \begin{verbatim}
 .exit <n>
 \end{verbatim}
 \begin{desc}
 \index{.exit@\verb+.exit+}
-Stop {\Tm} immediately with exit code \texttt{<n>}.
+Stop {\Tm} immediately with exit code {\tt <n>}.
 This is usually used to halt upon fatal errors in a template.
 \end{desc}
 \begin{verbatim}
 .foreach <var> <val>..<val>
-.endforeach
 \end{verbatim}
 \begin{desc}
 \index{.foreach@\verb+.foreach+}
-\index{.endforeach@\verb+.endforeach+}
-Set variable \texttt{<var>} to each of the values \texttt{<val>} and do a
+Set variable {\tt <var>} to each of the values {\tt <val>} and do a
 translation of all following lines up to the next unbalanced
-\texttt{.endforeach} for each of these values of \texttt{<var>}.
+{\tt .endforeach} for each of these values of {\tt <var>}.
 The new value of the variable is only visible in the current context.
-See \S\ref{s.assignment} for a discussion of contexts.
-
+See section~\ref{s.assignment} for a discussion of contexts.
+\par
 For example:
 \begin{showfile}
 \verbatiminput{foreach.xt}
@@ -210,56 +169,22 @@ will produce:
 \verbatiminput{foreach.out}
 \end{showfile}
 \end{desc}
-
-\begin{verbatim}
-.for <var> <start> <end> [<stride>]
-.endfor
-\end{verbatim}
-\begin{desc}
-\index{.for@\verb+.for+}
-\index{.endfor@\verb+.endfor+}
-Set variable \texttt{<var>} to the value \texttt{<start>}, and as
-long as \texttt{<var>} is smaller than \texttt{<end>}, repeatedly
-translate all following lines up to the next unbalanced \texttt{.endfor}.
-After each iteration, increment the value of \texttt{<var>} with
-the value \texttt{<stride>}, or with 1 if no stride is specified.
-The new value of the variable is only visible in the current context.
-See \S\ref{s.assignment} for a discussion of contexts.
-
-The values \texttt{<start>}, \texttt{<end>}, and \texttt{<stride>}
-(if specified), must be numerical.  They are evaluated once: at the
-moment that the \texttt{.for} command is encountered.  The stride
-must be 1 or greater.
-
-For example:
-\begin{showfile}
-\verbatiminput{for.xt}
-\end{showfile}
-will produce:
-\begin{showfile}
-\verbatiminput{for.out}
-\end{showfile}
-\end{desc}
 \begin{verbatim}
 .if <expr>
-.else
-.endif
 \end{verbatim}
 \begin{desc}
 \index{.if@\verb+.if+}
-\index{.else@\verb+.else+}
-\index{.endif@\verb+.endif+}
-Evaluate \texttt{<expr>}.
-If \texttt{<expr>} is \textit{true},
+Evaluate {\tt <expr>}.
+If {\tt <expr>} is {\it true},
 translate the following lines up to the next unbalanced
-\texttt{.else} or \texttt{.endif}
-and if relevant skip all lines between \texttt{.else} and \texttt{.endif}.
+{\tt .else} or {\tt .endif}
+and if relevant skip all lines between {\tt .else} and {\tt .endif}.
 
-If \texttt{<expr>} is \textit{false},
+If {\tt <expr>} is {\it false},
 only translate all lines between the following unbalanced
-\texttt{.else} and \texttt{.endif}.
-If no \texttt{.else} is encountered, no translation is done.
-
+{\tt .else} and {\tt .endif}.
+If no {\tt .else} is encountered, no translation is done.
+\par
 For example:
 \begin{showfile}
 \verbatiminput{if.xt}
@@ -276,30 +201,20 @@ will produce:
 .endswitch
 \end{verbatim}
 \begin{desc}
-\index{.switch@\verb+.switch+}
-\index{.case@\verb+.case+}
-\index{.default@\verb+.default+}
-\index{.endswitch@\verb+.endswitch+}
 Evaluate the parameter of the \verb'.switch' expression; the result
 should be a single word. Evaluate all \verb'.case' lines from top
-to bottom, and if one of the words of a \verb'.case' line matches
-the word of the \verb'.switch' statement, execute the lines of that case.
+to bottom, and if the list of words of a \verb'.case' line contains
+the word that is switched on, execute the lines of that case.
 Execution stops at the next \verb'.case' or \verb'.default' line,
 or at the \verb'.endswitch' line.
 
-The words of the \verb'.case' lines may contain regular
-expressions, see \S\ref{s.regex} for details.
-
-A word in the \verb'.switch' may match several \verb'.case'
-lines. All of these cases will be executed.
 If the list of cases is exhausted, but no case has been executed,
-execute the statement in the \texttt{.default} section, or generate
-an error if there is no \texttt{.default} section.
+execute the statement in the \verb'.default' section, if it exists.
 
-The list of words of a \verb'.case' statement may contain any number of words,
+The list of words of a case statement may contain any number of words,
 including no words at all. There can be at most one \verb'.default'
-section.
-
+section. Note that more than one case can be executed for a switch value.
+\par
 For example:
 \begin{showfile}
 \verbatiminput{switch.xt}
@@ -311,42 +226,40 @@ will produce:
 \end{desc}
 \begin{verbatim}
 .while <expr>
-.endwhile
 \end{verbatim}
 \begin{desc}
 \index{.while@\verb+.while+}
-\index{.endwhile@\verb+.endwhile+}
-Evaluate \texttt{<expr>} and translate the subsequent lines up to the next
-unbalanced \texttt{.endwhile} if \texttt{<expr>} is \textit{true}.
-Repeat this until \texttt{<expr>} is \textit{false}.
+Evaluate {\tt <expr>} and translate the subsequent lines up to the next
+unbalanced {\tt .endwhile} if {\tt <expr>} is {\it true}.
+Repeat this until {\tt <expr>} is {\it false}.
 \end{desc}
-
 \subsection{File inclusion and redirection}
 \begin{verbatim}
 .error <line>
 \end{verbatim}
 \begin{desc}
 \index{.error@\verb+.error+}
-Write \texttt{<line>} to the error output stream.  This is useful
-for error messages or debugging.
+Write {\tt <line>} to the error output stream.
+This is useful for debugging or error messages.
 \end{desc}
 \begin{verbatim}
 .include <filename>
 \end{verbatim}
 \begin{desc}
 \index{.include@\verb+.include+}
-Use the {\Tm} commands in \texttt{<filename>} as if they were inserted at
+Use the {\Tm} commands in {\tt <filename>} as if they were inserted at
 this position.
-It is not allowed to leave commands unterminated in \texttt{<filename>}.
-Nested \texttt{.include} or \texttt{.insert} commands can occur to an arbitrary depth.
+It is not allowed to leave commands unterminated in {\tt <filename>}.
+Nested {\tt .include} or {\tt .insert} commands can occur to an arbitrary depth.
 No checking is done on recursion!
 All changes to variables that are done in this module are invisible after
-the \texttt{.include} has terminated.
-
+the {\tt .include} has terminated.
+\par
 Before a \verb'.include' file is executed, a new variable context is
 created. This variable context is destroyed upon completion of execution
-of the file. This behaviour is useful for code generation modules.
-
+of the file. This behaviour is useful for the invocation of standard
+translation modules.
+\par
 If the file cannot be opened, {\Tm} searches a list of directories for it.
 By default this list contains the directory of the variable
 \verb+libpath+, but the user may supply additional directories with the
@@ -357,18 +270,18 @@ By default this list contains the directory of the variable
 \end{verbatim}
 \begin{desc}
 \index{.insert@\verb+.insert+}
-Use the {\Tm} commands in \texttt{<filename>} as if they were inserted at
+Use the {\Tm} commands in {\tt <filename>} as if they were inserted at
 this position.
-It is not allowed to leave commands unterminated in \texttt{<filename>}.
-Nested \texttt{.include} or \texttt{.insert}
+It is not allowed to leave commands unterminated in {\tt <filename>}.
+Nested {\tt .include} or {\tt .insert}
 commands can occur to an arbitrary depth.
 No checking is done on recursion!
-
-The variable settings that are done in an \texttt{.insert}
+\par
+The variable settings that are done in an {\tt .insert}
 file remain visible outside the file.
 This is useful for configuration files or other files that
 must make global changes to variables.
-
+\par
 If the file cannot be opened, {\Tm} searches a list of directories for it.
 By default this list contains the directory of the variable
 \verb+libpath+, but the user may supply additional directories with the
@@ -376,48 +289,42 @@ By default this list contains the directory of the variable
 \end{desc}
 \begin{verbatim}
 .redirect <filename>
-.endredirect
 \end{verbatim}
 \begin{desc}
 \index{.redirect@\verb+.redirect+}
-\index{.endredirect@\verb+.endredirect+}
-Redirect the output up to the balancing \verb'.endredirect' to the
-given file.  The parameter list of the \verb'.redirect' command
-must evaluate to exactly one filename.  Any existing contents of the
-file is overwritten without warning.
+Redirect the output up to the balancing \verb'.endredirect' to the given
+file.
+The parameter list of the \verb'.redirect' command must evaluate to
+exactly one filename.
+The old contents of the file is overwritten without warning.
 \end{desc}
 \begin{verbatim}
 .appendfile <filename>
-.endappendfile
 \end{verbatim}
 \begin{desc}
 \index{.appendfile@\verb+.appendfile+}
-\index{.endappendfile@\verb+.endappendfile+}
 Append the output up to the balancing \verb'.endappendfile' to the given
 file. The parameter list of the \verb'.appendfile' command must evaluate
 to exactly one filename. If the file does not exist it is created.
 \end{desc}
-
 \subsection{Macros}
 \begin{verbatim}
 .call <macro> <parm>..<parm>
 \end{verbatim}
 \begin{desc}
-\index{.call@\verb+.call+}
-Invoke macro \verb+<macro>+ with the given list of parameters.
-Before execution of the macro, the formal parameters of the macro
-are set to the values in the parameter list of this \texttt{.call}.
-The number of parameters must match the number of formal parameters,
-or else an error message is given. To pass a list of words to a
-single formal parameter, surround it with double quotes.  Before a
-macro is executed, a new execution context is created. This context
-is destroyed upon completion of the macro.
-
-During execution of the macro, \verb+.return+ commands may be given
-to record a return value for the macro, but in the \verb+.call+
-command this value is ignored.  If you want to use the return value,
-use the \verb+${call <macro> <parm>..<parm>}+ form instead.
-
+Invoke macro \verb+<macro>+ with the given list of parameters. Before
+execution of the macro, the formal parameters of the macro are set to
+the values in the parameter list. The number of parameters must match the
+number of formal parameters, or else an error message is given. To pass
+a list of words to a formal parameter, surround it with double quotes.
+Before a macro is executed, a new execution context is created. This
+context is destroyed upon completion of the macro.
+\par
+During execution of the macro, \verb+.return+ commands may be given to
+record a return value for the macro, but in the \verb+.call+ command this
+value is ignored.  If you want to use it, use the
+\verb+${call <macro> <parm>..<parm>}+ form instead.
+\par
 For example:
 \begin{showfile}
 \verbatiminput{linemacro.xt}
@@ -427,27 +334,21 @@ will produce:
 \verbatiminput{linemacro.out}
 \end{showfile}
 \end{desc}
-
 \begin{verbatim}
 .macro <name> <parm>..<parm>
-.endmacro
 \end{verbatim}
 \begin{desc}
-\index{.macro@\verb+.macro+}
-\index{.endmacro@\verb+.endmacro+}
-Define a new macro \verb+<name>+ with the given list of formal
-parameters.  Any previous macro of this name is replaced by the new
-definition.  The macro is added to the most recently activated
-context, similar to a variable set by the \texttt{.set} command.
+Define a new macro \verb+<name>+ with the given list of formal parameters.
+Any previous macro of this name is replaced by the new definition.
 The body of the macro consists of the lines after the
 \verb+.macro+ up to the next unbalanced \verb+.endmacro+.
 A macro may contain any {\Tm} command, including other \verb+.macro+
 definitions.
 Macros may return a list of words (see the \verb+.return+ command),
 and may be invoked with the line command \verb+.call+ or an expression
-of the form \verb+${call <macro> parm..parm}+.  See the description
-of these commands for further details.
-
+of the form \verb+${call <macro> parm..parm}+.
+See the description of these commands for further details.
+\par
 For example (a \verb'$[]' expression evaluates a numerical expression):
 \begin{showfile}
 \verbatiminput{macro.xt}
@@ -458,9 +359,9 @@ will produce:
 \end{showfile}
 Note that the variable \verb'n' retains the value it had before the
 invocations of the macro, because all changes to \verb'n' that are
-done in the macro are removed upon completion of the macro.  Only
-by using the \verb'.globalset', \verb'.globalappend', or the
-\texttt{.globalsplit} command the change can be made permanent.
+done in the macro are removed upon completion of the macro.
+Only by using the \verb'.globalset' or \verb'.globalappend' command
+the change can be made permanent.
 \end{desc}
 \begin{verbatim}
 .return <val>..<val>
@@ -468,21 +369,23 @@ by using the \verb'.globalset', \verb'.globalappend', or the
 \begin{desc}
 Record the given values as return value of the current macro.
 Any previous return value is replaced by this one.
-Contrary to the \texttt{return} command in {\C}, this \verb+.return+
-command does \emph{not} terminate execution of the macro.
-
+Contrary to the {\tt return} command in {\C}, this \verb+.return+
+command does {\em not} terminate execution of the macro.
+\par
 See the example shown for the \verb'.macro' command for an example of the
 use of the \verb'.return' command.
 \end{desc}
 \section{Variables}
-Variables are referenced with the expression \texttt{\$(<varname>)}
-or optionally \texttt{\$<letter>} for single character variables.
-Each time the characters \texttt{\$(} are encountered, the evaluated
-string up to the next unbalanced \texttt{)} is interpreted as the
-name of a variable.  If \texttt{\$<letter>} or \texttt{\$<digit>}
-is encountered it is interpreted as a reference to a variable with
-name \texttt{<letter>} or \texttt{<digit>} respectively.
-
+Variables are referenced with the expression
+{\tt \$(<varname>)} or optionally {\tt \$<letter>} for single character
+variables.
+Each time the characters `{\tt \$(}' are encountered,
+the evaluated string up to the next unbalanced `{\tt )}' 
+is interpreted as the name of a variable.
+If `{\tt \$<letter>}' or `{\tt \$<digit>}' is encountered it is interpreted as
+a reference to a variable with name `{\tt <letter>}' or {\tt <digit>}
+respectively.
+\par
 For example:
 \begin{showfile}
 \verbatiminput{var.xt}
@@ -491,64 +394,63 @@ will produce:
 \begin{showfile}
 \verbatiminput{var.out}
 \end{showfile}
-Note that the result for \verb+$bla+ is \texttt{+la}, since the
-variable `\texttt{b}' is referenced, not the variable \texttt{bla}.
-
-If the characters \texttt{\$\{} are encountered the evaluated string up to
-the next unbalanced \texttt{\}} is interpreted as a function invocation,
+Note that the result for `\verb+$bla+' is `{\tt +la}', since the
+variable `{\tt b}' is referenced, not the variable `{\tt bla}'.
+\par
+If the characters `{\tt \$\{}' are encountered the evaluated string up to
+the next unbalanced `{\tt \}}' is interpreted as a function invocation,
 and the result of that function replaces the invocation string,
-see \S\ref{s.fn}.
-
-If the characters \texttt{\$[} are encountered the evaluated string up
-to the next unbalanced \texttt{]} is interpreted as an integer expression,
+see section~\ref{s.fn}.
+If the characters `{\tt \$[}' are encountered the evaluated string up
+to the next unbalanced `{\tt ]}' is interpreted as an integer expression,
 and the result of the evaluation of that expression replaces the expression,
-see \S\ref{s.intexpr}.
-
-If any other character is encountered after the \texttt{\$},
+see section~\ref{s.intexpr}.
+If any other character is encountered after the `{\tt \$}',
 it is copied literally.
-
+\par
 The following variables are predefined:
-
+\par
 \begin{desctab}
-\item[\texttt{libpath}]\index{libpath@\texttt{libpath}}
+{\tt libpath}\index{libpath@{\tt libpath}}
+&
 The absolute directory path of the library of standard modules.
 This may differ between installations,
 so use this variable to locate the library, or let {\Tm} locate
 it using its search path.
-By default {\Tm} uses a built-in path, but you can change this by setting
+By default Tm uses a built-in path, but you can change this by setting
 the environment variable TMLIBPATH\index{TMLIBPATH@\verb'TMLIBPATH'}.
-
-\item[\texttt{pathsep}]\index{pathsep@\texttt{pathsep}}
+\\
+{\tt pathsep}\index{pathsep@{\tt pathsep}}
+&
 The character used as separation character between elements in a directory
 path. This is operating system dependent.
-
-\item[\texttt{kernel-version}]\index{kernel-version@\texttt{kernel-version}}\index{version!Tm kernel version number}
+\\
+{\tt kernel-version}\index{kernel-version@{\tt kernel-version}}\index{version!Tm kernel version number}
 \index{Tm kernel!version number}
+&
 The version number of the {\Tm} kernel, of which {\Tm} itself is a part.
-
-\item[\texttt{templatefile}]\index{templatefile@\texttt{templatefile}}
-The name of the current template file. This is either the template file
-specified at the command line, or the most recent file of a \texttt{.insert}
-or \texttt{.include} command.
-
-\item[\texttt{tmvers}]\index{tmvers@\texttt{tmvers}}\index{version!Tm version number}
+\\
+{\tt tmvers}\index{tmvers@{\tt tmvers}}\index{version!Tm version number}
 \index{Tm!version number}
+&
 The version number of {\Tm} itself.
 Not that this version number is different from the version number of the
 kernel, of which {\Tm} is a part.
-\texttt{tmvers} is an integer, and is used in templates to determine whether
+{\tt tmvers} is an integer, and is used in templates to determine whether
 the version of {\Tm} that is executing the template is recent enough.
-\texttt{tmkernel-version} is a string, and is used to label the generated
+{\tt tmkernel-version} is a string, and is used to label the generated
 code.
-
-\item[\texttt{verbose}]\index{verbose@\texttt{verbose}}
-The verbose flag.  It is \textit{true} if the flag \texttt{-v} has
-been given at the command line, else \textit{false}.  \end{desctab}
-
-The variables \texttt{listpre} and \texttt{listsuff} are used by the functions
+\\
+{\tt verbose}\index{verbose@{\tt verbose}}
+&
+The verbose flag.
+It is {\it true} if the flag {\tt -v} has been given at the command line,
+else {\it false}.
+\end{desctab}
+\par
+The variables {\tt listpre} and {\tt listsuff} are used by the functions
 \verb+mklist+, \verb+stemname+ and \verb+deptype+ to construct list type
 names from elements names or vice versa.
-
 \section{Functions}
 \label{s.fn}
 Functions are invoked with the expression
@@ -557,51 +459,56 @@ Functions are invoked with the expression
 ${<fnname> <par>..<par>}
 \end{verbatim}
 \end{showfile}
-Each time the characters \texttt{\$\{} are encountered,
-the string up to the next unbalanced \texttt{\}} is evaluated,
+Each time the characters `{\tt \$\{}' are encountered,
+the string up to the next unbalanced `{\tt \}}' is evaluated,
 and the resulting string is
 interpreted as a function invocation consisting of a function with the name
-\texttt{<fnname>} possibly followed by a number of parameter words.
-
-We now list the functions that are supported.
-
+{\tt <fnname>} possibly followed by a number of parameter words.
 \subsection{Comparison functions}
 Most comparison functions only work on numbers---and will complain if they
-get anything else than a number---but \texttt{eq} and \texttt{neq} work on strings.
-Do \emph{not} compare numbers with these functions
-since this is not safe (for example, to these functions `\texttt{0}'
-is different from `\texttt{00}').
-
+get anything else than a number---but {\tt eq} and {\tt neq} work on strings.
+Do {\it not} compare numbers with these functions
+since this is not safe (to these functions `{\tt 0}'
+is different from `{\tt 00}').
+\par
 \begin{desctab}
-\item[\texttt{eq sa sb}]\index{eq@\texttt{eq}}
-Return \textit{true} if the string $\verb'sa' = \verb'sb'$.
+{\tt eq sa sb}\index{eq@{\tt eq}}
+&
+Return {\it true} if the string $\verb'sa' = \verb'sb'$.
 Strings are equal if they are of the same length and are have the
 same character at the same position in the string.
-To compare numbers use \texttt{==}.
-
-\item[\texttt{neq sa sb}]\index{neq@\texttt{neq}}
-Return \textit{true} if the string $\texttt{sa} \not= \texttt{sb}$.
+To compare numbers use {\tt ==}.
+\\
+{\tt neq sa sb}\index{neq@{\tt neq}}
+&
+Return {\it true} if the string ${\tt sa} \not= {\tt sb}$.
 To compare numbers use \verb'!='.
-
-\item[\texttt{== na nb}\index{==@\texttt{==}}]
-Return \textit{true} if $\texttt{na} = \texttt{nb}$.
-To compare strings use \texttt{eq}.
-
-\item[\texttt{!= na nb}\index{"!=@\texttt{"!=}}]
-Return \textit{true} if $\texttt{na} \not= \texttt{nb}$.
-To compare strings use \texttt{neq}.
-
-\item[\texttt{< na nb}\index{<@\texttt{<}}]
-Return \textit{true} if $\texttt{na} < \texttt{nb}$.
-
-\item[\texttt{<= na nb}\index{<=@\texttt{<=}}]
-Return \textit{true} if $\texttt{na} \leq \texttt{nb}$.
-
-\item[\texttt{> na nb}\index{>@\texttt{>}}]
-Return \textit{true} if $\texttt{na} > \texttt{nb}$.
-
-\item[\texttt{>= na nb}\index{>=@\texttt{>=}}]
-Return \textit{true} if $\texttt{na} \geq \texttt{nb}$.
+\\
+{\tt == na nb}\index{==@{\tt ==}}
+&
+Return {\it true} if ${\tt na} = {\tt nb}$.
+To compare strings use {\tt eq}.
+\\
+\verb'!= na nb'\index{"!=@{\tt "!=}}
+&
+Return {\it true} if ${\tt na} \not= {\tt nb}$.
+To compare strings use {\tt neq}.
+\\
+{\tt < na nb}\index{<@{\tt <}}
+&
+Return {\it true} if ${\tt na} < {\tt nb}$.
+\\
+{\tt <= na nb}\index{<=@{\tt <=}}
+&
+Return {\it true} if ${\tt na} \leq {\tt nb}$.
+\\
+{\tt > na nb}\index{>@{\tt >}}
+&
+Return {\it true} if ${\tt na} > {\tt nb}$.
+\\
+{\tt >= na nb}\index{>=@{\tt >=}}
+&
+Return {\it true} if ${\tt na} \geq {\tt nb}$.
 \end{desctab}
 For example:
 \begin{showfile}
@@ -611,36 +518,41 @@ will produce:
 \begin{showfile}
 \verbatiminput{cmp.out}
 \end{showfile}
-
 \subsection{Arithmetic functions}
-All arithmetic functions only work on numbers, and will produce an
-error on other input.
-
+All arithmetic functions only work on numbers.
+\par
 \nopagebreak
 \begin{desctab}
-\item[\texttt{+ n1..nn}\index{+@\texttt{+}}]
-Return $\texttt{n1} + \cdots + \texttt{nn}$.
+{\tt + n1..nn}\index{+@{\tt +}}
+&
+Return ${\tt n1} + \cdots + {\tt nn}$.
 The sum of an empty list is 0.
-
-\item[\texttt{- na nb}\index{-@\texttt{-}}]
-Return $\texttt{na} - \texttt{nb}$.
-
-\item[\texttt{* n1..nn}\index{*@\texttt{*}}]
-Return $\texttt{n1} \times \cdots \times \texttt{nn}$.
+\\
+{\tt - na nb}\index{-@{\tt -}}
+&
+Return ${\tt na} - {\tt nb}$.
+\\
+{\tt * n1..nn}\index{*@{\tt *}}
+&
+Return ${\tt n1} \times \cdots \times {\tt nn}$.
 The product of an empty list is 1.
-
-\item[\texttt{/ na nb}\index{/@\texttt{/}}]
-Return $\texttt{na} / \texttt{nb}$.
-
-\item[\texttt{\% na nb}]\index{"%@\verb+%+}
-Return the remainder of the division of \texttt{na} by \texttt{nb}.
-
-\item[\texttt{max n1..nn}\index{max@\texttt{max}}]
-Return the maximum of $\texttt{n1} \cdots \texttt{nn}$.
+\\
+{\tt / na nb}\index{/@{\tt /}}
+&
+Return ${\tt na} / {\tt nb}$.
+\\
+{\tt \% na nb}\index{"%@\verb+%+}
+&
+Return the remainder of the division of {\tt na} by {\tt nb}.
+\\
+{\tt max n1..nn}\index{max@{\tt max}}
+&
+Return the maximum of ${\tt n1} \cdots {\tt nn}$.
 The list must contain at least 1 element.
-
-\item[\texttt{min n1..nn}\index{min@\texttt{min}}]
-Return the minimum of $\texttt{n1} \cdots \texttt{nn}$.
+\\
+{\tt min n1..nn}\index{min@{\tt min}}
+&
+Return the minimum of ${\tt n1} \cdots {\tt nn}$.
 The list must contain at least 1 element.
 \end{desctab}
 For example:
@@ -651,29 +563,32 @@ will produce:
 \begin{showfile}
 \verbatiminput{arith.out}
 \end{showfile}
-
 \subsection{Boolean functions}
 \nopagebreak
-
+\par
 \begin{desctab}
-\item[\texttt{and b1..bn}\index{and@\texttt{and}}]
-Return \textit{true} if all of \texttt{b1} {\ldots} \texttt{bn} are \textit{true},
-or else \textit{false}.
-The \texttt{and} of an empty list is \textit{true}.
-
-\item[\texttt{not b}\index{not@\texttt{not}}]
-Return \textit{true} if \texttt{b} is \textit{false}, or else \textit{true}.
-
-\item[\texttt{or b1..bn}\index{or@\texttt{or}}]
-Return \textit{true} if one of \texttt{b1}
-{\ldots} \texttt{bn} is \textit{true},
-or else \textit{false}.
-The \texttt{or} of an empty list is \textit{false}.
-
-\item[\texttt{if cond a b}]
-Evaluate the expression \texttt{cond}, and if it is \textit{true}, return
-\texttt{a}, else return \texttt{b}.
-If \texttt{a} or \texttt{b} are absent, an empty string is assumed.
+{\tt and b1..bn}\index{and@{\tt and}}
+&
+Return {\it true} if all of {\tt b1} {\ldots} {\tt bn} are {\it true},
+or else {\it false}.
+The {\tt and} of an empty list is {\it true}.
+\\
+{\tt not b}\index{not@{\tt not}}
+&
+Return {\it true} if {\tt b} is {\it false}, or else {\it true}.
+\\
+{\tt or b1..bn}\index{or@{\tt or}}
+&
+Return {\it true} if one of {\tt b1}
+{\ldots} {\tt bn} is {\it true},
+or else {\it false}.
+The {\tt or} of an empty list is {\it false}.
+\\
+{\tt if cond a b}
+&
+Evaluate the expression {\tt cond}, and if it is {\it true}, return
+{\tt a}, else return {\tt b}.
+If {\tt a} or {\tt b} are absent, an empty string is assumed.
 \end{desctab}
 For example:
 \begin{showfile}
@@ -683,50 +598,43 @@ will produce:
 \begin{showfile}
 \verbatiminput{boolean.out}
 \end{showfile}
-
 \subsection{String functions}
+\nopagebreak
 \begin{desctab}
-\item[\texttt{capitalize e..e}\index{capitalize@\texttt{capitalize}}]
+{\tt capitalize e..e}\index{capitalize@{\tt capitalize}}
+&
 Return the given words with the first character of each word converted
 to upper case.
-
-\item[\texttt{leftstr n w..w}\index{leftstr@\texttt{leftstr}}]
-Return the left \texttt{n} characters of each word \texttt{w}.  If
-a word has less than \texttt{n} characters, return the entire word.
-
-\item[\texttt{rightstr n w..w}\index{rightstr@\texttt{rightstr}}]
-Return the right \texttt{n} characters of each word \texttt{w}.  If
-a word has less than \texttt{n} characters, return the entire word.
-
-\item[\texttt{strpad w len pw}\index{strpad@\texttt{strpad}}]
-Return word \texttt{w} made to length \texttt{len} either by
-truncation or padding at the end with copies of \texttt{pw}.
-
-\item[\texttt{strlen w}\index{strlen@\texttt{strlen}}]
-Return the number of characters in word \texttt{w}.
-
-\item[\texttt{strindex c w}\index{strindex@\texttt{strindex}}]
-Return the index of the first occurrence of character \texttt{c}
-in word \texttt{w}, counting from 1, or 0 if \texttt{c} does not
-occur in \texttt{w}.
-
-\item[\texttt{tochar c..c}\index{tochar@\texttt{tochar}}]
-Given a list of numbers representing ASCII character codes \verb'c',
-return a string containing these characters.
-
-\item[\texttt{tolower e..e}\index{tolower@\texttt{tolower}}]
+\\
+{\tt strpad w len pw}\index{strpad@{\tt strpad}}
+&
+Return word {\tt w} made to length {\tt len} either by truncation or padding
+at the end with copies of {\tt pw}.
+\\
+{\tt strlen w}\index{strlen@{\tt strlen}}
+&
+Return the number of characters in word {\tt w}.
+\\
+{\tt strindex c w}\index{strindex@{\tt strindex}}
+&
+Return the index of the first occurrence of character {\tt c} in word {\tt w},
+counting from 1, or 0 if {\tt c} does not occur in {\tt w}.
+\\
+{\tt tolower e..e}\index{tolower@{\tt tolower}}
+&
 Return the given words with all upper case characters converted to lower case.
-
-\item[\texttt{toupper e..e}\index{toupper@\texttt{toupper}}]
-Return the given words with all lower case characters
-converted to upper case.
-
-\item[\texttt{tr o n e..e}\index{tr@\texttt{tr}}]
-Given a string of old characters \texttt{o}, a string of new characters
-\texttt{n}, and a list of words \texttt{e}, return all \texttt{e},
-with all characters occuring in \texttt{o} replaced with the
-corresponding character in \texttt{n}.  The strings \texttt{o} and
-\texttt{n} must be of the same length.
+\\
+{\tt toupper e..e}\index{toupper@{\tt toupper}}
+&
+Return the given words \verb'e' with all lower case characters converted to upper case.
+\\
+{\tt tr o n e..e}\index{tr@{\tt tr}}
+&
+Given a string of old characters \verb'o', a list of new characters \verb'n',
+and a list of words \verb'e',
+return all \verb'e', with all characters occuring in \verb'o' replaced
+with the corresponding character in \verb'n'.
+The strings \verb'o' and \verb'n' must be of the same length.
 \end{desctab}
 For example:
 \begin{showfile}
@@ -736,55 +644,65 @@ will produce:
 \begin{showfile}
 \verbatiminput{textfn.out}
 \end{showfile}
-
 \subsection{List manipulation functions}
-
+\par
 \begin{desctab}
-\item[\texttt{index w e..e}]\index{index@\texttt{index}}
-Search for the first occurrence of word \texttt{w} in the list of elements.
+{\tt index w e..e}\index{index@{\tt index}}
+&
+Search for the first occurrence of word {\tt w} in the list of elements.
 Return the index of that position counting from 1 upwards,
-or 0 if \texttt{w} does not occur in the list.
-
-\item[\texttt{member w e..e}]\index{member@\texttt{member}}
-Return \textit{true} if word \verb'w' occurs in the list of elements,
-or \textit{false} if it does not.
-
-\item[\texttt{shift e..e}]\index{shift@\texttt{shift}}
+or 0 if {\tt w} does not occur in the list.
+\\
+{\tt member w e..e}\index{member@{\tt member}}
+&
+Return {\it true} if word \verb'w' occurs in the list of elements,
+or {\it false} if it does not.
+\\
+{\tt shift e..e}\index{shift@{\tt shift}}
+&
 Return the given list with the first element deleted.
-The \texttt{shift} of an empty list is empty.
-
-\item[\texttt{first e..e}]\index{first@\texttt{first}}
+The {\tt shift} of an empty list is empty.
+\\
+{\tt first e..e}\index{first@{\tt first}}
+&
 Return the first element of the given list.
 The first element of an empty list is empty.
-
-\item[\texttt{seplist s e..e}]\index{seplist@\texttt{seplist}}
-Given a separator \texttt{s} and a list of elements, create a new string
+\\
+{\tt seplist s e..e}\index{seplist@{\tt seplist}}
+&
+Given a separator {\tt s} and a list of elements, create a new string
 that consists of all the elements in the list separated by a copy of
-\texttt{s}.  \emph{Note}: in contrast to other functions that return a list,
-the elements in the new list are \emph{only} separated by the given
+{\tt s}.  {\em Note}: in contrast to other functions that return a list,
+the elements in the new list are {\em only} separated by the given
 separator; no additional spaces are added.
-
-\item[\texttt{prefix pf e..e}]\index{prefix@\texttt{prefix}}
-Given a prefix \texttt{pf} and a list of elements,
+\\
+{\tt prefix pf e..e}\index{prefix@{\tt prefix}}
+&
+Given a prefix {\tt pf} and a list of elements,
 create a new list that
-consists of all the elements in the list prefixed by a copy of \texttt{pf}.
-
-\item[\texttt{suffix sf e..e}]\index{suffix@\texttt{suffix}}
-Given a suffix \texttt{sf} and a list of elements,
+consists of all the elements in the list prefixed by a copy of {\tt pf}.
+\\
+{\tt suffix sf e..e}\index{suffix@{\tt suffix}}
+&
+Given a suffix {\tt sf} and a list of elements,
 create a new list that
-consists of all the elements in the list suffixed by a copy of \texttt{sf}.
-
-\item[\texttt{len e..e}]\index{len@\texttt{len}}
+consists of all the elements in the list suffixed by a copy of {\tt sf}.
+\\
+{\tt len e..e}\index{len@{\tt len}}
+&
 Return the number of elements in the given list.
-
-\item[\texttt{sort e..e}]\index{sort@\texttt{sort}}
+\\
+{\tt sort e..e}\index{sort@{\tt sort}}
+&
 Return a copy of the given list that is lexicographically sorted.
-
-\item[\texttt{sizesort e..e}]\index{sizesort@\texttt{sizesort}}
+\\
+{\tt sizesort e..e}\index{sizesort@{\tt sizesort}}
+&
 Return a copy of the given list that is sorted from smallest to largest
 word. If two words are equally long, they are sorted lexicographically.
-
-\item[\texttt{rev e..e}]\index{rev@\texttt{rev}}
+\\
+{\tt rev e..e}\index{rev@{\tt rev}}
+&
 Reverse the elements in the list.
 \end{desctab}
 For example:
@@ -795,37 +713,39 @@ will produce:
 \begin{showfile}
 \verbatiminput{listfn.out}
 \end{showfile}
-
 \subsection{Set operations}
 \nopagebreak
 These functions implement common operations on sets,
 although they do not require sets as parameters.
 However, if the input lists are not sets, some of the operations do not
 result in a set.
-
-Note that \texttt{comm} and \texttt{excl} require a separator between
+\par
+Note that {\tt comm} and {\tt excl} require a separator between
 two groups of parameters, that cannot be used as a list element.
-For this the empty string (`\texttt{""}') is chosen,
+For this the empty string (`{\tt ""}') is chosen,
 since it is unlikely that this will occur in a set.
 However, this means that the empty string cannot occur in a set.
-
+\par
 \begin{desctab}
-\item[\texttt{comm a "" b}]\index{comm@\texttt{comm}}
-Both \texttt{a} and \texttt{b} are lists of elements.
-Return all elements in \texttt{a} that also occur in \texttt{b}.
+{\tt comm a "" b}\index{comm@{\tt comm}}
+&
+Both {\tt a} and {\tt b} are lists of elements.
+Return a copy of all elements in {\tt a} that also occur in {\tt b}.
 This can be used as a `set intersection' operation.
-
-\item[\texttt{excl a "" b}]\index{excl@\texttt{excl}}
-Both \texttt{a} and \texttt{b} are lists of elements.
-Return all elements in \texttt{a} that do not occur in \texttt{b}.
+\\
+{\tt excl a "" b}\index{excl@{\tt excl}}
+&
+Both {\tt a} and {\tt b} are lists of elements.
+Return a copy of all elements in {\tt a} that do not occur in {\tt b}.
 This can be used as a `set difference' operation.
-
-\item[\texttt{uniq e1..en}]\index{uniq@\texttt{uniq}}
+\\
+{\tt uniq e1..en}\index{uniq@{\tt uniq}}
+&
 Return a copy of the given list that is lexicographically sorted,
 and where all duplicate elements are deleted.
 This function can be used as a `set union' operation, and to convert
 an arbitrary list to a set.
-
+\\
 \end{desctab}
 For example:
 \begin{showfile}
@@ -835,91 +755,90 @@ will produce:
 \begin{showfile}
 \verbatiminput{setfn.out}
 \end{showfile}
-
 \subsection{Regular expressions}
 \label{s.regex}
 The regular expressions in {\Tm} are based on the regular expressions
 used in {\Unix} shells.  A pattern must match the entire string.
 The following meta-characters are recognized:
-
+\par
 \begin{desctab}
-\item[\texttt{?}]
-Matches any character.
-
-\item[\texttt{$\backslash$}]
+\verb'?' & Matches any character.  \\
+\verb'\'
+&
 Matches the character following it.
 It is used as an escape character for all
 meta-characters, including itself. When used
 in a set (see below), it is treated as an ordinary character.
-
-\item[\texttt{[set]}]
+\\
+{\tt [set]}
+&
 Matches one of the characters in the set.
 If the first character in the set is `\verb!^!',
-it matches a character \emph{not} in the set. A shorthand like
+it matches a character {\em not} in the set. A shorthand like
 \verb!a-z! is used to specify a set of
 characters \verb!a! up to \verb!z!, inclusive. The special
 characters `\verb!]!' and `\verb!-!' have no special
 meaning if they appear as the first characters in the set.
-
+\par
 Examples:
-
+\par
 \begin{tabular}{ll}
 \verb![a-z]! & Any lower case alpha. \\
 \verb![^]-]! & Any char except `\verb!]!' and `\verb!-!'. \\
 \verb![^A-Z]! & Any char except upper case alpha. \\
 \verb![a-zA-Z]! & Any alpha.
 \end{tabular}
-
-\item[\texttt{*}]
+\\
+\verb!*!
+&
 Matches the longest possible span of zero or more arbitrary characters.
-
-\item[\texttt{(form)}]
-Matches what \texttt{form} matches,
+\\
+\verb!(form)!
+&
+Matches what {\tt form} matches,
 and assigns the matching pattern to one of the numbered patterns.
 The patterns are numbered from left to right by their opening bracket.
 \end{desctab}
-
+\par
 When patterns are substituted the substitution string can also have
 some meta-characters:
 
 \begin{desctab}
-
-\item[\texttt{\&}]
-Is replaced by the entire matched pattern.
-
-\item[\texttt{$\backslash$d}]
+\par
+\verb!&! & Is replaced by the entire matched pattern.  \\
+\verb!\d!
+&
 Where \verb'd' is a digit,
-is replaced by numbered pattern number `\texttt{d}' as matched by
-`\texttt{(form)}'.
+is replaced by numbered pattern number `{\tt d}' as matched by
+`{\tt (form)}'.
 If the numbered pattern was not assigned in the original string,
 it is empty. \verb!\0! is replaced by the entire matched pattern.
-
-\item[\texttt{$\backslash$\&}]
-Is replaced by `\verb!&!'.
-
-\item[\texttt{$\backslash\backslash$}]
-Is replaced by `\verb!\!'.
+\\
+\verb!\&! & Is replaced by `\verb!&!'.  \\
+\verb!\\! & Is replaced by `\verb!\!'. \\
 \end{desctab}
-
-The following functions use these regular expressions.
+\par
 \begin{desctab}
-\item[\texttt{filt ps pr e..e}]\index{filt@\texttt{filt}}
-Given a search pattern \texttt{ps} and a replacement pattern \texttt{pr},
-try to match all elements \texttt{e} with \texttt{ps},
-and for each matching element return a copy of \texttt{pr}
-with the proper substitutions for any \texttt{\&} and \verb!\d!.
-
-\item[\texttt{rmlist pat e..e}]\index{rmlist@\texttt{rmlist}}
-Remove all elements matching \texttt{pat} from the list.
-
-\item[\texttt{subs ps pr e..e}]\index{subs@\texttt{subs}}
-Given a search pattern \texttt{ps} and a replacement pattern \texttt{pr},
-copy all elements \texttt{e},
-and replace all elements matching \texttt{ps} with \texttt{pr}
-with the proper substitutions for any \texttt{\&} and \verb!\d!.
-All elements that do not match \texttt{ps} are copied without change.
+\\
+{\tt filt ps pr e..e}\index{filt@{\tt filt}}
+&
+Given a search pattern {\tt ps} and a replacement pattern {\tt pr},
+try to match all elements {\tt e} with {\tt ps},
+and for each matching element return a copy of {\tt pr}
+with the proper substitutions for any {\tt \&} and \verb!\d!.
+\\
+{\tt rmlist pat e..e}\index{rmlist@{\tt rmlist}}
+&
+Remove all elements matching {\tt pat} from the list.
+\\
+{\tt subs ps pr e..e}\index{subs@{\tt subs}}
+&
+Given a search pattern {\tt ps} and a replacement pattern {\tt pr},
+copy all elements {\tt e},
+and replace all elements matching {\tt ps} with {\tt pr}
+with the proper substitutions for any {\tt \&} and \verb!\d!.
+All elements that do not match {\tt ps} are copied without change.
 \end{desctab}
-
 For example:
 \begin{showfile}
 \verbatiminput{regex.xt}
@@ -928,65 +847,74 @@ will produce:
 \begin{showfile}
 \verbatiminput{regex.out}
 \end{showfile}
-
 \subsection{Environment access functions}
 \index{environment access|(}
 \nopagebreak
-
+\par
 \begin{desctab}
-\item[\texttt{getenv nm}]\index{getenv@\texttt{getenv}}
-Return the value of environment variable \texttt{nm}.
+{\tt getenv nm}\index{getenv@{\tt getenv}}
+&
+Return the value of environment variable {\tt nm}.
 If the variable does not exist an empty string is returned.
-
-\item[\texttt{isinenv nm}]\index{isinenv@\texttt{isinenv}}
-Determine whether environment variable \texttt{nm} exists.
-Return \textit{true} if it exists, or \textit{false} \/if it does not.
-
-\item[\texttt{dsfilename}]\index{dsfilename@\texttt{dsfilename}}
+\\
+{\tt isinenv nm}\index{isinenv@{\tt isinenv}}
+&
+Determine whether environment variable {\tt nm} exists.
+Return {\it true} if it exists, or {\it false} \/if it does not.
+\\
+{\tt dsfilename}\index{dsfilename@{\tt dsfilename}}
+&
 Return the name of the file that describes the data structures.
-
-\item[\texttt{searchfile fn..fn}]\index{searchfile@\texttt{searchfile}}
-Given a list of file names, return a list of full names files that
-have been located using the search path, see the function
-{\verb+searchpath+}.
-
+\\
+{\tt searchfile fn..fn}\index{searchfile@{\tt searchfile}}
+&
+Given a list of file names,
+return a list
+of full names files that have been located using the search path,
+see the function {\verb+searchpath+}.
+\par
 If a file can not be found in the search path,
 the string \verb+?+ (a single question mark) is returned for that
 file name.
-
-\item[\texttt{searchpath}]\index{searchpath@\texttt{searchpath}}
+\\
+{\tt searchpath}\index{searchpath@{\tt searchpath}}
+&
 Return the search path for \verb+.include+ and \verb+.insert+ files.
-By default, the search path contains the directory the variable
-\verb+libpath+ is set to.  If additional directories are specified
-with the \verb+-I+ option, they are appended to the list.
-
-\item[\texttt{tplfilename}]\index{tplfilename@\texttt{tplfilename}}
+By default,
+the search path contains 
+the directory the variable \verb+libpath+ is set to.
+If additional
+directories are specified with the \verb+-I+ option,
+they are appended to the list.
+\\
+{\tt tplfilename}\index{tplfilename@{\tt tplfilename}}
+&
 Return the name of the current template file.
-
-\item[\texttt{tpllineno}]\index{tpllineno@\texttt{tpllineno}}
+\\
+{\tt tpllineno}\index{tpllineno@{\tt tpllineno}}
+&
 Return the current line number in the current template file.
-
-\item[\texttt{matchvar pat}]\index{matchvar@\texttt{machvar}}
-Given a regular expression as defined in \S\ref{s.regex},
+\\
+{\tt matchvar pat}\index{matchvar@{\tt machvar}}
+&
+Given a regular expression as defined in section~\ref{s.regex},
 return a list of all variables that match this regular expression.
 In particular, \verb'${matchvar *}' will return a list of all
 variables. The order of the returned list is arbitrary.
-
-\item[\texttt{matchmacro pat}]\index{matchmacro@\texttt{machmacro}}
-Given a regular expression as defined in \S\ref{s.regex},
+\\
+{\tt matchmacro pat}\index{matchmacro@{\tt machmacro}}
+&
+Given a regular expression as defined in section~\ref{s.regex},
 return a list of all macros that match this regular expression.
 In particular, \verb'${matchmacro *}' will return a list of all
 macros. The order of the returned list is arbitrary.
-
-\item[\texttt{defined v}]\index{defined@\texttt{defined}}
-Return \textit{true} if variable \texttt{v} is defined,
-or \textit{false} otherwise.
-
-\item[\texttt{definedmacro m}]\index{definedmacro@\texttt{definedmacro}}
-Return \textit{true} if macro \texttt{m} is defined,
-or \textit{false} otherwise.
+\\
+{\tt defined v}\index{defined@{\tt defined}}
+&
+Return {\it true} if variable {\tt v} is defined,
+or {\it false} otherwise.
 \end{desctab}
-
+\par
 For example:
 \begin{showfile}
 \begin{verbatim}
@@ -1000,20 +928,21 @@ may produce (depending on the value of the \verb+SHELL+ environment variable):
 \end{verbatim}
 \end{showfile}
 \index{environment access|)}
-
 \subsection{Time functions}
 \index{time functions|(}
 \nopagebreak
-
+\par
 \begin{desctab}
-\item[\texttt{now}]\index{now@\texttt{now}}
+{\tt now}\index{now@{\tt now}}
+&
 Return the current time as an integer number of seconds from the epoch
 (system-dependent, but usually 1 jan 1970 00:00:00),
 similar to the function \verb'time()' in the standard {\C} library.
-
-\item[\texttt{formattime time fmt}]\index{formattime@\texttt{formattime}}
+\\
+{\tt formattime time fmt}\index{formattime@{\tt formattime}}
+&
 Given a time in an integer number of seconds from the epoch, (as returned
-by the function \texttt{now}), return a formatted string for this time. The
+by the function {\tt now}), return a formatted string for this time. The
 format string has the same syntax as for the function \verb'strftime()'
 in the {\C} library. That is, all characters are copied to the output
 string, except for the following character sequences, which are replaced
@@ -1044,22 +973,22 @@ by the listed string:
 \verb'%%' & \verb'%' \\
 \end{tabular}
 \end{center}
-
-By the default (if \texttt{<fmt>} is not given),
-the format string \verb'%a %b %Y %H:%M:%S' is used.
-
-\item[\texttt{processortime}]\index{processortime@\texttt{processortime}}
+\par
+By the default the format string \verb'%a %b %Y %H:%M:%S' is used.
+\\
+{\tt processortime}\index{processortime@{\tt processortime}}
+&
 Return the current amount of processor time that has been consumed by the
 program as an integer number of milliseconds. Note that this is {\em
 not} the elapsed time.
-
+\par
 Internally, the function \verb'clock()' from the standard {\C} library is
-used. Although the returned time has a \emph{resolution} of milliseconds,
-it may have a much worse \emph{accuracy}. The accuracy is system-dependent,
+used. Although the returned time has a {\em resolution} of milliseconds,
+it may have a much worse {\em accuracy}. The accuracy is system-dependent,
 but typically there is an error of about 10ms.
-
+\\
 \end{desctab}
-
+\par
 For example, the input file:
 \begin{showfile}
 \verbatiminput{time.xt}
@@ -1071,97 +1000,107 @@ could produce (depending on time and processor speed) the following output:
 \index{time functions|)}
 \subsection{Data structure access functions}
 \begin{desctab}
-\item[\texttt{classlist}]\index{classlist@\texttt{classlist}}
-Return the list of \emph{class} types defined in the data structure file.
-
-\item[\texttt{conslist t..t}]\index{conslist@\texttt{conslist}}
+{\tt classlist}\index{classlist@{\tt classlist}}
+&
+Return the list of {\em class} types defined in the data structure file.
+\\
+{\tt conslist t..t}\index{conslist@{\tt conslist}}
+&
 Given a list of types \verb't', return the list of constructors of
 each type.  If a type is not a constructor base type, and empty list
 is returned for that type.
-
-\item[\texttt{ctypelist}]\index{ctypelist@\texttt{ctypelist}}
-Return the list of \emph{constructor} types defined in the data structure file.
-
-\item[\texttt{fields t..t}]\index{fields@\texttt{fields}}
-Given a list of types \texttt{t}, return the list of field names of each type.
-Fields in superclasses of this type are \emph{not} listed.
-
-\item[\texttt{allfields t..t}]\index{allfields@\texttt{allfields}}
-Given a list of types \texttt{t}, return the list of field names of each type,
+\\
+{\tt ctypelist}\index{ctypelist@{\tt ctypelist}}
+&
+Return the list of {\em constructor} types defined in the data structure file.
+\\
+{\tt fields t..t}\index{fields@{\tt fields}}
+&
+Given a list of types {\tt t}, return the list of field names of each type.
+Fields in superclasses of this type are {\em not} listed.
+\\
+{\tt allfields t..t}\index{allfields@{\tt allfields}}
+&
+Given a list of types {\tt t}, return the list of field names of each type,
 including inherited fields.
 The fields are ordered `height first', so that the fields of
 superclasses are listed before the fields of their inheritors.
-
-\item[\texttt{isvirtual t}]\index{isvirtual@\texttt{isvirtual}}
-Given a type \texttt{t}, return \texttt{1} if the type is virtual, or
-\texttt{0} if it is not. A type is virtual if it is a constructor base
+\\
+{\tt isvirtual t}\index{isvirtual@{\tt isvirtual}}
+&
+Given a type {\tt t}, return {\tt 1} if the type is virtual, or
+{\tt 0} if it is not. A type is virtual if it is a constructor base
 type, if it is a class type containing a labeled component, or if it
 is a class type defined as virtual (with the \verb'~=' operator).
-
-\item[\texttt{metatype t..t}]\index{metatype@\texttt{metatype}}
-Given a list of types \texttt{t}, return the metatype of each type.
-If \texttt{t} is defined in the datastructure definition file,
-return one of the strings \texttt{class}, \texttt{tuple},
-\texttt{constructor}, \texttt{constructorbase}, or \texttt{alias}.
-If \texttt{t} has the prefix \texttt{listpre} and the suffix
-\texttt{listsuff}, return the string \texttt{list}; in all other
-cases return the string \texttt{atom}.
-
-\item[\texttt{tuplelist}]\index{tuplelist@\texttt{tuplelist}}
-Return the list of \emph{tuple} types defined in the data structure file.
-
-\item[\texttt{type t e}]\index{type@\texttt{type}}
-Given a type \texttt{t} and a field name \texttt{e}, construct the proper
+\\
+{\tt metatype t..t}\index{metatype@{\tt metatype}}
+&
+Given a list of types {\tt t}, return the metatype of each type.
+If {\tt t} is defined in the
+datastructure definition file, return one of the strings {\tt class},
+{\tt tuple}, {\tt constructor}, {\tt constructorbase}, or {\tt alias}.
+If {\tt t} has the prefix {\tt listpre} and the suffix {\tt listsuff},
+return the string {\tt list}; in all other cases return the string {\tt atom}.
+\\
+{\tt tuplelist}\index{tuplelist@{\tt tuplelist}}
+&
+Return the list of {\em tuple} types defined in the data structure file.
+\\
+{\tt type t e}\index{type@{\tt type}}
+&
+Given a type {\tt t} and a field name {\tt e}, construct the proper
 name of this type from the type name and list level of this field.
 The list type name is constructed by prefixing the type name with the
-correct number of copies of \texttt{listpre}, and suffixing the
-type name with the correct number of copies of \texttt{listsuff}.
+correct number of copies of {\tt listpre}, and suffixing the
+type name with the correct number of copies of {\tt listsuff}.
 This function is equivalent with the expression
-\begin{verbatim}
-${mklist ${typelevel $t $e} ${typename $t $e}}
-\end{verbatim}
-
-Field \texttt{e} may belong to the given type or one of the superclasses
+\verb'${mklist ${typelevel $t $e} ${typename $t $e}}'.
+\par
+Field {\tt e} may belong to the given type or one of the superclasses
 of the type.
-
-\item[\texttt{types t..t}]\index{types@\texttt{types}}
+\\
+{\tt types t..t}\index{types@{\tt types}}
+&
 Given a list of types, return the proper type names of the fields of
-these types. The types of inherited fields are \emph{not} returned.
+these types. The types of inherited fields are {\em not} returned.
 The proper type names are constructed as described for the function
-\texttt{type}.
+{\tt type}.
 The types are returned in such an order that they match up with the
-field names in the order returned by \texttt{fields}.
-
-\item[\texttt{alltypes t..t}]\index{alltypes@\texttt{alltypes}}
+field names in the order returned by {\tt fields}.
+\\
+{\tt alltypes t..t}\index{alltypes@{\tt alltypes}}
+&
 Given a list of types, return the proper type names of the fields of
 these types, including those of inherited fields.
 The proper type names are constructed as described for the function
-\texttt{type}.
+{\tt type}.
 The types are returned in such an order that they match up with the
-field names in the order returned by \texttt{allfields}.
-
-\item[\texttt{typelevel t e}]\index{typelevel@\texttt{typelevel}}
-Given a type \texttt{t} and a field name \texttt{e}, return return the level
+field names in the order returned by {\tt allfields}.
+\\
+{\tt typelevel t e}\index{typelevel@{\tt typelevel}}
+&
+Given a type {\tt t} and a field name {\tt e}, return return the level
 of list bracketing of the field. Thus, a field of type \verb't' has list
 level 0, a field of type \verb'[t]' has list level 1, and so on.
-
-Field \texttt{e} may belong to the given type or one of the superclasses
+\par
+Field {\tt e} may belong to the given type or one of the superclasses
 of the type.
-
-\item[\texttt{typelist}]\index{typelist@\texttt{typelist}}
+\\
+{\tt typelist}\index{typelist@{\tt typelist}}
+&
 Return the list of types defined in the data structure file.
-
-\item[\texttt{typename t e}]\index{typename@\texttt{typename}}
-Given a type \texttt{t} and a field name \texttt{e}, return the
-type of that field.
-
-Field \texttt{e} may belong to the given type, or to one of the
-superclasses of the type.
-
+\\
+{\tt typename t e}\index{typename@{\tt typename}}
+&
+Given a type {\tt t} and a field name {\tt e}, return the type of that field.
+\par
+Field {\tt e} may belong to the given type, or to one of the superclasses
+of the type.
+\\
 \end{desctab}
 For example, given the data structure definitions:
 \begin{showfile}
-\verbatiminput{plot.ds}
+\verbatiminput{fnds.xt}
 \end{showfile}
 and the template:
 \begin{showfile}
@@ -1171,16 +1110,18 @@ the following output is produced:
 \begin{showfile}
 \verbatiminput{fnds.out}
 \end{showfile}
-
 \subsection{Alias functions}
 These functions are used to access alias types.
 \begin{desctab}
-\item[\texttt{aliases}]\index{aliases@\texttt{aliases}}
+{\tt aliases}\index{aliases@{\tt aliases}}
+&
 Return the list of alias types defined in the data structure file.
-
-\item[\texttt{alias t..t}]\index{alias@\texttt{alias}}
+\\
+{\tt alias t..t}\index{alias@{\tt alias}}
+&
 Apply the alias definitions to the given types. For each type, if no alias
 type is defined, return the type itself, else return the alias of the type.
+\\
 \end{desctab}
 For example, given the data structure definitions shown on page
 \pageref{plotds} and the following input file:
@@ -1191,30 +1132,33 @@ the following output is produced:
 \begin{showfile}
 \verbatiminput{aliasfn.out}
 \end{showfile}
-
 \subsection{Class inquiry functions}
 The functions listed below all access the inheritance information
 of the defined types.
 \begin{desctab}
-\item[\texttt{inherits t..t}]\index{inherits@\texttt{inherits}}
-Given a list of types, return the list of types this type inherits
-directly.
-
+{\tt inherits t..t}\index{inherits@{\tt inherits}}
+&
+Given a list of types, return the list of types this type inherits directly.
+\par
 If a type is inherited by several types, it will be listed several times.
-
-\item[\texttt{inheritors t..t}]\index{inheritors@\texttt{inheritors}}
-Given a list of types, return the list of types that inherit directly
-from this type.
-
-\item[\texttt{subclasses t..t}]\index{subclasses@\texttt{subclasses}}
-Given a list of types, return the list of types that inherit directly
-or indirectly from these types.
-
-\item[\texttt{superclasses t..t}]\index{superclasses@\texttt{superclasses}}
-Given a list of types, return the list of types this type inherits
-directly or indirectly.
-
+\\
+{\tt inheritors t..t}\index{inheritors@{\tt inheritors}}
+&
+Given a list of types,
+return the list of types that inherit directly from this type.
+\\
+{\tt subclasses t..t}\index{subclasses@{\tt subclasses}}
+&
+Given a list of types,
+return the list of types that inherit directly or indirectly from these types.
+\\
+{\tt superclasses t..t}\index{superclasses@{\tt superclasses}}
+&
+Given a list of types, return the list of types this type inherits directly
+or indirectly.
+\par
 If a type is inherited by several types, it will be listed several times.
+\\
 \end{desctab}
 For example:
 \begin{showfile}
@@ -1224,66 +1168,75 @@ will produce (assuming the data structure definitions of page \pageref{plotds}):
 \begin{showfile}
 \verbatiminput{fnclass.out}
 \end{showfile}
-
 \subsection{Code generation service functions}
 These functions implement some of the complicated operations that
 are necessary during code generation. 
-
+\par
 One definition must be introduced:
-A type $t$ \defn{depends} on a type $s$ if $s$
+A type $t$ {\em depends} on a type $s$ if $s$
 is used in at least one of the elements of $t$,
 or if $t$ has a type in one of its elements that depends on $s$.
 Also,
 a list of a type depends on that type.
 Primitive types depend on nothing.
-
+\par
 For example:
-in the data structure on page \pageref{plotds} type \texttt{plot}
-depends on the single types \texttt{xypoint}, \texttt{int}, and \texttt{num},
-and on the list types \texttt{[xypoint]} and \texttt{[num]}.
-
+in the data structure on page \pageref{plotds} type {\tt plot}
+depends on the single types {\tt xypoint}, {\tt int}, and {\tt num},
+and on the list types {\tt [xypoint]} and {\tt [num]}.
+\par
 Several functions in this group refer to the {\Tm} variables \verb+listpre+
 and \verb+listsuff+ for a prefix and a suffix respectively to construct
 a list name from a single type name.
 If one of these variables is not defined, an empty string is assumed.
-
+\par
 \begin{desctab}
-\item[\texttt{depsort t..t}]\index{depsort@\texttt{depsort}}
-Given a list of types, rearrange them so that all types that contain
-a certain type are placed after the type itself.  Thus, if a type
-\texttt{ta} uses a type \texttt{tb}, \texttt{tb} will be placed
-before \texttt{ta}; this is in effect a topological sort.  The
-function will complain about circularities.
-
+{\tt depsort t..t}\index{depsort@{\tt depsort}}
+&
+Given a list of types,
+rearrange them so that all types that contain a certain type
+are placed after the type itself.
+Thus, if a type {\tt ta} uses a type {\tt tb}, {\tt tb} will
+be placed before {\tt ta};
+this is in effect a topological sort.
+The function will complain about circularities.
+\par
 List types are considered to contain their element type.
-
+\par
 The function does not consider inheritance relations.
-
-\item[\texttt{inheritsort t..t}]\index{inheritsort@\texttt{inheritsort}}
-Given a list of types, rearrange them so that all types that all
-types are placed after the types they inherit from.
-
-\item[\texttt{delisttypes t..t}]\index{delisttypes@\texttt{delisttypes}}
+\\
+{\tt inheritsort t..t}\index{inheritsort@{\tt inheritsort}}
+&
+Given a list of types,
+rearrange them so that all types that all types are placed after
+the types they inherit from.
+\\
+{\tt delisttypes t..t}\index{delisttypes@{\tt delisttypes}}
+&
 Given a list of types, return a list of the element types of the list types
-by removing the list prefix \texttt{listpre} the list suffix \texttt{listsuff}.
+by removing the list prefix {\tt listpre} the list suffix {\tt listsuff}.
 For types that don't have this prefix and suffix nothing is returned.
-
-\item[\texttt{listtypes t..t}]\index{listtypes@\texttt{listtypes}}
+\\
+{\tt listtypes t..t}\index{listtypes@{\tt listtypes}}
+&
 Given a list of types, return a list of all types that are prefixed
-by \texttt{listpre} and suffixed by \texttt{listsuff}.
-
-\item[\texttt{mklist n e..e}]\index{mklist@\texttt{mklist}}
-Given a list level \texttt{n} and a list of type names \texttt{e}, construct
+by {\tt listpre} and suffixed by {\tt listsuff}.
+\\
+{\tt mklist n e..e}\index{mklist@{\tt mklist}}
+&
+Given a list level {\tt n} and a list of type names {\tt e}, construct
 for each type a list name for the given list level by prefixing each
-type name with \texttt{n} copies of \verb+listpre+ and suffixing each type
-name with \texttt{n} copies of \verb+listsuff+.
-
-\item[\texttt{singletypes t..t}]\index{singletypes@\texttt{singletypes}}
+type name with {\tt n} copies of \verb+listpre+ and suffixing each type
+name with {\tt n} copies of \verb+listsuff+.
+\\
+{\tt singletypes t..t}\index{singletypes@{\tt singletypes}}
+&
 Given a list of types, return a list of all types that are not prefixed
-by \texttt{listpre} or are not suffixed by \texttt{listsuff}.
-
-\item[\texttt{stemname t..t}]\index{stemname@\texttt{stemname}}
-Given a list of list type names \texttt{t},
+by {\tt listpre} or are not suffixed by {\tt listsuff}.
+\\
+{\tt stemname t..t}\index{stemname@{\tt stemname}}
+&
+Given a list of list type names {\tt t},
 return a list of stem names.
 All pairs of list prefixes and suffices are stripped from all
 the type names.
@@ -1291,32 +1244,29 @@ The list prefix is taken from the variable \verb+listpre+,
 the list suffix is taken from the variable \verb+listsuff+.
 If both are empty the list is returned unchanged, and an error
 is emitted.
-
-\item[\texttt{virtual t..t}]\index{virtual@\texttt{virtual}}
-Given a list of types \texttt{t}, return all types that are virtual.
-
-\item[\texttt{nonvirtual t..t}]\index{nonvirtual@\texttt{nonvirtual}}
-Given a list of types \texttt{t}, return all types that are not virtual.
-
-\item[\texttt{reach t..t "" b..b}]\index{reach@\texttt{reach}}
-Given a list of types \texttt{t}, and a list of blocking types \texttt{b},
-return all types that can be reached from
-the types \texttt{t} without visiting any of the types \texttt{b}.
-The list of starting types and the list of blocking types is separated
-by an empty string (\texttt{""}). If there is no empty string, there are
-no blocking types.
-
-The \defn{direct reach} of a class, tuple, constructor
+\\
+{\tt virtual t..t}\index{virtual@{\tt virtual}}
+&
+Given a list of types {\tt t}, return all types that are virtual.
+\\
+{\tt nonvirtual t..t}\index{nonvirtual@{\tt nonvirtual}}
+&
+Given a list of types {\tt t}, return all types that are not virtual.
+\\
+{\tt reach t..t}\index{reach@{\tt reach}}
+&
+Given a list of types {\tt t}, return all types that can be reached from
+these types. The \defn{direct reach} of a class, tuple, constructor
 or constructor-base type are the types of its fields and inheritors;
 the direct reach of a list type is its element type, the direct reach
 of an alias type is the target type of the alias, and the direct reach
 of an atomic type is empty.
-
+\par
 The \defn{reach} of a type is the union of the type itself, the direct
 reach of the type, and the reach of the types in the direct reach of
 the type.  In other words, the reach is the transitive closure of the
 direct reach.
-
+\\
 \end{desctab}
 For example:
 \begin{showfile}
@@ -1326,82 +1276,93 @@ will produce (assuming the data structure definitions of page \pageref{plotds}):
 \begin{showfile}
 \verbatiminput{service.out}
 \end{showfile}
-
 \subsection{Obsolete data structure access functions}
-
+\par
 These functions have been used in previous version of {\Tm} to retrieve
 information about the data structures.
 They have been replaced by the functions in the previous sections,
 and should not be used in new templates.
 \begin{desctab}
-\item[\texttt{ttypeclass t e}]\index{ttypeclass@\texttt{ttypeclass}}
-Given a type \texttt{t} and a field name \texttt{e}, return the type class
-of that field.  Possible type classes are \texttt{single} and \texttt{list}
+{\tt ttypeclass t e}\index{ttypeclass@{\tt ttypeclass}}
+&
+Given a type {\tt t} and a field name {\tt e}, return the type class
+of that field.  Possible type classes are {\tt single} and {\tt list}
 for a single element and a list of elements respectively.
-
-Field \texttt{e} may belong to the given type or one of the superclasses
+\par
+Field {\tt e} may belong to the given type or one of the superclasses
 of the type.
-
+\par
 This function is obsolete; use \verb'typelevel' instead.
-
-\item[\texttt{ttypelist}]\index{ttypelist@\texttt{ttypelist}}
-Equivalent to \texttt{tuplelist}.
-
-\item[\texttt{telmlist t}]\index{telmlist@\texttt{telmlist}}
-Equivalent to \texttt{field}.
-
-\item[\texttt{ttypeclass t e}]\index{ttypeclass@\texttt{ttypeclass}}
-Equivalent to \texttt{typeclass}.
-
-\item[\texttt{ttypellev t e}]\index{ttypellev@\texttt{ttypellev}}
-Equivalent to \texttt{typelevel}.
-
-\item[\texttt{ttypename t e}]\index{ttypename@\texttt{ttypename}}
-Equivalent to \texttt{typename}.
-
-\item[\texttt{celmlist t c [inherited]}]\index{celmlist@\texttt{celmlist}}
-Given a constructor type \texttt{t}, and a constructor name \texttt{c},
+\\
+{\tt ttypelist}\index{ttypelist@{\tt ttypelist}}
+&
+Equivalent to {\tt tuplelist}.
+\\
+{\tt telmlist t}\index{telmlist@{\tt telmlist}}
+&
+Equivalent to {\tt field}.
+\\
+{\tt ttypeclass t e}\index{ttypeclass@{\tt ttypeclass}}
+&
+Equivalent to {\tt typeclass}.
+\\
+{\tt ttypellev t e}\index{ttypellev@{\tt ttypellev}}
+&
+Equivalent to {\tt typelevel}.
+\\
+{\tt ttypename t e}\index{ttypename@{\tt ttypename}}
+&
+Equivalent to {\tt typename}.
+\\
+{\tt celmlist t c [inherited]}\index{celmlist@{\tt celmlist}}
+&
+Given a constructor type {\tt t}, and a constructor name {\tt c},
 return the list of element names of that constructor.
-If \texttt{t} is a tuple type, an error message is given.
-
+If {\tt t} is a tuple type, an error message is given.
+\par
 If a third parameter is given, and this parameter is the string
-\texttt{inherited}, the fields of the superclasses of this constructor are also
+{\tt inherited}, the fields of the superclasses of this constructor are also
 listed. The fields are ordered `height first', so that the fields of
 superclasses are listed before the fields of the types that inherit these
 superclasses.
-
+\par
 This function is obsolete; use \verb'${fields c}' instead.
-
-\item[\texttt{ctypeclass t c e}]\index{ctypeclass@\texttt{ctypeclass}}
-Given a constructor type \texttt{t}, a constructor \texttt{c} and a constructor
-element name \texttt{e}, return the type class of that element.  Possible
-type classes are \texttt{single} and \texttt{list} for a single element and
-a list of elements respectively.  If \texttt{t} is a tuple type, an error
+\\
+{\tt ctypeclass t c e}\index{ctypeclass@{\tt ctypeclass}}
+&
+Given a constructor type {\tt t}, a constructor {\tt c} and a constructor
+element name {\tt e}, return the type class of that element.  Possible
+type classes are {\tt single} and {\tt list} for a single element and
+a list of elements respectively.  If {\tt t} is a tuple type, an error
 message is given.
-
+\par
 This function is obsolete; use \verb'${typeclass c}' instead.
-\item[\texttt{ctypellev t c e}]\index{ctypellev@\texttt{ctypellev}}
-Given a type \texttt{t}, a constructor \texttt{c} and a constructor element name
-\texttt{e}, return return the level of list bracketing of the element. Thus,
+\\
+{\tt ctypellev t c e}\index{ctypellev@{\tt ctypellev}}
+&
+Given a type {\tt t}, a constructor {\tt c} and a constructor element name
+{\tt e}, return return the level of list bracketing of the element. Thus,
 an element of type \verb't' has list level 0, an element of type
-\verb'[t]' has list level 1, and so on.  If \texttt{t} is a tuple type,
+\verb'[t]' has list level 1, and so on.  If {\tt t} is a tuple type,
 an error message is given.
-
+\par
 This function is obsolete; use \verb'${typelevel c}' instead.
-
-\item[\texttt{ctypename t c e}]\index{ctypename@\texttt{ctypename}}
-Given a type \texttt{t},
-a constructor \texttt{c}
-and a constructor element name \texttt{e},
+\\
+{\tt ctypename t c e}\index{ctypename@{\tt ctypename}}
+&
+Given a type {\tt t},
+a constructor {\tt c}
+and a constructor element name {\tt e},
 return the type of that element.
-If \texttt{t} is not a constructor base type, an error message is given.
-
+If {\tt t} is not a constructor base type, an error message is given.
+\par
 This function is obsolete; use \verb'${typename c}' instead.
+\\
 \end{desctab}
-
 \subsection{Deferred evaluation}
 \begin{desctab}
-\item[\texttt{call m p1..pn}]\index{call@\texttt{call}}
+{\tt call m p1..pn}\index{call@{\tt call}}
+&
 Given a macro name \verb+m+ and a list of parameters \verb+p1..pn+,
 invoke macro with the given list of parameters.
 Before execution,
@@ -1421,10 +1382,12 @@ The macro is not allowed to generate output, and therefore may only contain
 line commands.
 If you want to generate output, 
 use the \verb+.call <macro> <parm>..<parm>+ form instead.
-
-\item[\texttt{eval e1..en}]\index{eval@\texttt{eval}}
+\\
+{\tt eval e1..en}\index{eval@{\tt eval}}
+&
 Given a list of expressions \verb+e1..en+, evaluate all expressions,
 and return them in a list.
+\\
 \end{desctab}
 For example:
 \begin{showfile}
@@ -1434,7 +1397,6 @@ will produce:
 \begin{showfile}
 \verbatiminput{eval.out}
 \end{showfile}
-
 \section{Arithmetic expressions}
 \label{s.intexpr}
 \index{arithmetic expressions|(}
@@ -1444,8 +1406,8 @@ Arithmetic expressions have the form
 $[<expr>]
 \end{verbatim}
 \end{showfile}
-Each time the characters `\texttt{\$[}' are encountered,
-the string up to the next unbalanced `\texttt{]}' is evaluated,
+Each time the characters `{\tt \$[}' are encountered,
+the string up to the next unbalanced `{\tt ]}' is evaluated,
 and the resulting string is
 interpreted as an integer expression.
 The following operators are available, where the number in the first column
@@ -1475,11 +1437,8 @@ priority & symbol & function \\
 The integer `0' represents `false',
 all other integers represent `true'.
 Boolean operators always return `true' as `1'.
-The binary operators \verb'+', \verb'-', \verb'*', \verb'/', and \verb'%' are
-left binding. That is:
-\[ a\ {\rm op}\ b\ {\rm op}\ c = (a\ {\rm op}\ b)\ {\rm op}\ c \]
-The remaining binary operators are right binding.
-That is:
+Binary operators are right binding.
+That is,
 \[ a\ {\rm op}\ b\ {\rm op}\ c = a\ {\rm op}\ (b\ {\rm op}\ c) \]
 For example:
 \begin{showfile}

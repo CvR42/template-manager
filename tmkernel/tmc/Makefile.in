@@ -19,7 +19,6 @@ LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
 LOCALMAN = @prefix@/man
 TMPFILE = @prefix@/tmp4242
-UNINSTALL_DATA = rm -f
 
 # System dependent flags for compilation with debugging
 DBUGFLAGS = -g -DLOGNEW -DSTAT
@@ -37,31 +36,26 @@ TMCLIB = ../libtmc/libtmc.a
 
 LIBS = @LIBS@ $(TMCLIB)
 
-LINTFLAGS = -i$(LOCALINCLUDE) -i../libtmc
-
 MAKEFILE = Makefile
 
 DOC = README
 
 JUNK = tmp core makelog testerr testout alutest llutest config.log \
        gmon.out log alutest.c llutest.c dist.lst distlist tmctest.c \
-       alutest.c llutest.c tmctest tmcwalktest tmcanalyzetest aldtest \
-       $(OBJS) $(TMOUT)
-PRECIOUSJUNK =
+       alutest.c llutest.c tmctest tmcwalktest aldtest
 
 TESTFILES = \
     cltest.ds test.ds xxtest.c \
     tmcokerr tmcokout tmctesti tmcspec.t tmccode.ct tmccode.ht \
     aluokerr aluokout alutesti aluspec.t alucode.ct alucode.ht \
     lluokerr lluokout llutesti lluspec.t llucode.ct llucode.ht \
-    tmcwalktest.ct tmcanalyzetest.ct tmcwalkin tmcwalkok \
-    tmcanalyzein tmcanalyzeok
+    tmcwalktest.ct tmcwalkin tmcwalkok
 
 FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
 
 # Files for configuration
-CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
+CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
@@ -69,7 +63,7 @@ DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 TMMODULES     = tmc.ct tmc.ht \
 		calu.ct calu.ht \
                 cllu.ct cllu.ht \
-                need.t tmcanalyze.t tmcwalk.t \
+                need.t tmcwalk.t \
 		macros.t tmcid.t aluid.t lluid.t
 
 LLUTMSRCS     = llucode.c 
@@ -95,19 +89,16 @@ TMCTESTOBJS   = tmctest.o tmccode.o
 TMCWALKTESTSRCS = tmcwalktest.c tmccode.c
 TMCWALKTESTOBJS = $(TMCWALKTESTSRCS:.c=.o)
 
-TMCANALYZETESTSRCS = tmcanalyzetest.c tmccode.c
-TMCANALYZETESTOBJS = $(TMCANALYZETESTSRCS:.c=.o)
-
 ALUTESTSRCS   = alutest.c alucode.c
 ALUTESTHDRS   = alucode.h
 ALUTESTOBJS   = alutest.o alucode.o
 
-OBJS = $(TMCWALKTESTOBJS) $(TMCANALIZETESTOBJS) tmccode.o alutest.o alucode.o alutest.o llucode.o \
+OBJS = $(TMCWALKTESTOBJS) tmccode.o alutest.o alucode.o alutest.o llucode.o \
  llutest.o tmctest.o
 
 # These sources are generated from tm templates.
 TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h \
- tmcwalktest.c tmcanalyzetest.c
+ tmcwalktest.c
 
 help :
 	@echo " Possible make targets:"
@@ -119,13 +110,13 @@ help :
 	@echo "check		Run tests."
 
 #
-all: tmctest llutest alutest tmcwalktest tmcanalyzetest
+all: tmctest llutest alutest tmcwalktest
 
 # Add rules for the programs themselves here.
 
-test: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
+test: tmctestrun llutestrun alutestrun tmcwalktestrun
 
-check: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
+check: tmctestrun llutestrun alutestrun tmcwalktestrun
 
 tmcwalktest: $(TMCWALKTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCWALKTESTOBJS) $(LIBS) -o tmcwalktest
@@ -133,13 +124,6 @@ tmcwalktest: $(TMCWALKTESTOBJS)
 tmcwalktestrun: tmcwalktest tmcwalkin tmcwalkok
 	./tmcwalktest
 	diff testout tmcwalkok
-
-tmcanalyzetest: $(TMCANALYZETESTOBJS)
-	$(LINKER) $(LDFLAGS) $(TMCANALYZETESTOBJS) $(LIBS) -o tmcanalyzetest
-
-tmcanalyzetestrun: tmcanalyzetest tmcanalyzein tmcanalyzeok
-	./tmcanalyzetest
-	diff testout tmcanalyzeok
 
 tmctest: $(TMCTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCTESTOBJS) $(LIBS) -o tmctest
@@ -149,7 +133,7 @@ tmctestrun: tmctest tmctesti tmcokout tmcokerr
 	diff testout tmcokout
 	diff testerr tmcokerr
 
-tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t tmcanalyze.t
+tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t
 	-$(INSTALL) -d $(LOCALLIB)
 	cat macros.t tmcid.t need.t tmc.ct > $(TMPFILE)
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/tmc.ct
@@ -157,13 +141,6 @@ tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t tmcanalyze.t
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/tmc.ht
 	rm -f $(TMPFILE)
 	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.t
-	$(INSTALL_DATA) tmcanalyze.t $(LOCALLIB)/tmcanalyze.t
-
-tmcuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmc.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmc.ht
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmcwalk.t
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmcanalyze.t
 
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
@@ -181,10 +158,6 @@ aluinstall: need.t calu.ct calu.ht aluid.t
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/calu.ht
 	rm -f $(TMPFILE)
 
-aluuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/calu.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/calu.ht
-
 llutest:     $(LLUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(LLUTESTOBJS) $(LIBS) -o llutest
 
@@ -201,22 +174,16 @@ lluinstall: need.t cllu.ct cllu.ht lluid.t
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/cllu.ht
 	rm -f $(TMPFILE)
 
-lluuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/cllu.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/cllu.ht
-
 install: tmcinstall lluinstall aluinstall
 
-uninstall: tmcuninstall lluuninstall aluuninstall
-
 clean:
-	rm -f $(JUNK)
+	rm -f $(JUNK) $(OBJS) $(TMOUT)
 
 distclean:
-	rm -f $(JUNK) $(PRECIOUSJUNK) config.h
+	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
 
 empty:
-	rm -f $(JUNK) $(PRECIOUSJUNK) config.h
+	rm -f $(JUNK) $(OBJS) $(TMOUT) config.cache config.status config.h
 
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -224,32 +191,28 @@ distfiles:
 distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
-# TODO: do something smarter here.
 depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS)
-	echo "Nothing is done"
+	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
 
-tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t $(TM)
+tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t
 	$(TM) cltest.ds tmcwalktest.ct > tmcwalktest.c
 
-tmcanalyzetest.c: tmcanalyzetest.ct cltest.ds tmcanalyze.t $(TM)
-	$(TM) cltest.ds tmcanalyzetest.ct > tmcanalyzetest.c
-
-tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t $(TM)
+tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
 	$(TM) cltest.ds tmccode.ct > tmccode.c
 
-tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t tmcid.t $(TM)
+tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
 	$(TM) cltest.ds tmccode.ht > tmccode.h
 
-alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t $(TM)
+alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ct > alucode.c
 
-alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t $(TM)
+alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ht > alucode.h
 
-llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t $(TM)
+llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ct > llucode.c
 
-llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t $(TM)
+llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ht > llucode.h
 
 tmctest.c: xxtest.c
@@ -261,42 +224,8 @@ alutest.c: xxtest.c
 llutest.c: xxtest.c
 	sed -e 's/XXX/llu/' xxtest.c > llutest.c
 
-lint: tmcwalktest.lint tmcanalyzetest.lint tmctest.lint alutest.lint llutest.lint
-
-LINTRUN = lint -zero co-gnu fnprop suppress $(LINTFLAGS)
-
-tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h
-	$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
-
-tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h
-	$(LINTRUN) tmcanalyzetest.c tmccode.c > tmcanalyzetest.lint
-
-tmctest.lint: tmctest.c tmccode.c tmccode.h
-	$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
-
-alutest.lint: alutest.c alucode.c alucode.h
-	$(LINTRUN) alutest.c alucode.c > alutest.lint
-
-llutest.lint: llutest.c llucode.c llucode.h
-	$(LINTRUN) llutest.c llucode.c > llutest.lint
-
 stats:
 	wc -l $(TMMODULES)
-
-
-# Configure-related rules.
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile: Makefile.in config.status
-	./config.status
-
-JUNK += config.log config.cache
-PRECIOUSJUNK += config.status configure
 
 ###
 tmccode.o: tmccode.h config.h
@@ -306,4 +235,3 @@ alutest.o: alucode.h config.h
 llucode.o: llucode.h config.h
 llutest.o: llucode.h config.h
 tmcwalktest.o: tmccode.h config.h
-tmcanalyzetest.o: tmccode.h config.h

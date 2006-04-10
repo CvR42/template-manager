@@ -1,10 +1,13 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
  */
 
 #include "config.h"
 #include "tmc.h"
 
-int fscan_tmuchar( FILE *f, tmuchar *p )
+int fscan_uchar( FILE *f, uchar *p )
 {
     int brac;
     int code;
@@ -17,7 +20,7 @@ int fscan_tmuchar( FILE *f, tmuchar *p )
     if( tm_fscanescapedchar( f, &code ) ){
 	return 1;
     }
-    *p = (tmuchar) code;
+    *p = (uchar) code;
     if( tm_fneedc( f, '\'' ) ){
 	return 1;
     }

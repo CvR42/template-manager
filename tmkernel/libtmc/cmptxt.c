@@ -1,18 +1,16 @@
-/* File: $Id$
- *
- * Tm - an interface code generator.
+/* Tm - an interface code generator.
  * Author: C. van Reeuwijk.
  *
  * All rights reserved.
  */
 
-/* File: cmptxt.c */
+/* File: cmpdbl.c */
 
 #include "config.h"
 #include "tmc.h"
 
 /* Compare two texts. */
-int cmp_tmtext( const const_tmtext a, const const_tmtext b )
+int cmp_tmtext( const tmtext a, const tmtext b )
 {
     long sz;
     long i;

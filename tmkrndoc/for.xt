@@ -1,3 +1,0 @@
-.for e 0 5 2
-value of e is `$e'
-.endfor

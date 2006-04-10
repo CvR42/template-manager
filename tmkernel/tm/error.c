@@ -1,241 +1,121 @@
-/* File: $Id$
- *
+/* file: error.c
  * Error handling.
  */
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-
-#include <tmc.h>
-
-#include "tmdefs.h"
 #include "config.h"
+#include "tmdefs.h"
+#include <tmc.h>
+#include <string.h>
 #include "tmcode.h"
-#include "error.h"
+#include "tmstring.h"
 #include "global.h"
+#include "error.h"
 
-#define ERRARGLEN 256
-
-static char errpos[ERRARGLEN] = "";
-
-static tmbool goterr = FALSE;
-
-/* Given an origin filename and line number, fill 'errpos' with that
- * origin info.
- */
-static void fileline_errpos( const char *fnm, unsigned int lineno )
-{
-    if( noerrorline ){
-        sprintf( errpos, "%s", fnm );
-    }
-    else {
-        sprintf( errpos, "%s:%u", fnm, lineno );
-    }
-}
-
-/* Given an origin 'org', fill 'errpos' with the origin info from 'org'. */
-static void orig_errpos( const_origin org )
-{
-    if( org != originNIL ){
-        fileline_errpos( org->file->name, org->line );
-    }
-}
-
-/* Given an origsymbol 'org', fill 'errpos' with the origin and symbol info from 'org'. */
-static void origsymbol_errpos( const_origsymbol s )
-{
-    const_origin org;
-
-    if( s == origsymbolNIL ){
-        return;
-    }
-    org = s->org;
-    if( org == originNIL ){
-        sprintf( errpos, "%s", s->sym->name );
-    }
-    else {
-        if( noerrorline ){
-            sprintf( errpos, "%s: %s", org->file->name, s->sym->name );
-        }
-        else {
-            sprintf( errpos, "%s:%u: %s", org->file->name, org->line, s->sym->name );
-        }
-    }
-}
-
-/* Central handler for all error and warning printing routines. */
-static void vmessage( const char *prefix, const char *msg, va_list args )
-{
-    if( errpos[0] != '\0' ){
-        fputs( errpos, stderr );
-        fputs( ": ", stderr );
-    }
-    if( prefix != NULL ){
-        fputs( prefix, stderr );
-        fputs( ": ", stderr );
-    }
-    (void) vfprintf( stderr, msg, args );
-    fputs( "\n", stderr );
-    errpos[0] = '\0';
-}
-
-/* Central handler of all error printing routines. */
-static void verror( const char *msg, va_list args )
-{
-    vmessage( NULL, msg, args );
-    goterr = TRUE;
-}
-
-#if 0
-/* Central handler of all warning printing routines. */
-static void vwarning( const char *msg, va_list args )
-{
-    vmessage( "Warning", msg, args );
-}
+#if !HAVE_STRERROR
+extern int sys_nerr;
+extern const char *sys_errlist[];
 #endif
 
-/* Central handler of all internal error printing routines. */
-static void vinternal( const char *msg, va_list args )
+char errpos[ERRARGLEN];
+char errarg[ERRARGLEN];
+
+static bool goterror;      /* true if a general error has occurred */
+
+/******************************************************
+ *            ERROR HANDLERS                          *
+ ******************************************************/
+
+/* Initialize error handling routines. */
+void init_error( void )
 {
-    vmessage( "Internal error", msg, args );
-    exit( 2 );
+   errarg[0] = '\0';
+   errpos[0] = '\0';
+   goterror = FALSE;
 }
 
-/* General error printing routine: print error message 'msg' possibly preceded
- * by string in 'errpos'.
- *
- * Set a flag to indicate an error has occurred. If the function
- * errcheck() is called, it will cause an exit( 1 ) if 'goterr' is now
- * true.
+/* General error printing routine: print error message possibly preceded
+   by string in 'errpos', and possibly followed by string in 'errarg'.
+   Set flag 'goterror' to indicate an error has occurred. At the next call to
+   errcheck() this flag will be checked, and the program will be stopped if
+   it was set.
  */
-void error( const char *msg, ... )
+static void printerror( const char *msg )
 {
-    va_list args;
-
-    va_start( args, msg );
-    verror( msg, args );
-    va_end( args );
+    if( errpos[0] != '\0' ) fprintf( stderr, "%s: ", errpos );
+    fputs( msg, stderr );
+    if( errarg[0] != '\0' ) fprintf( stderr, ": %s", errarg );
+    fputs( "\n", stderr );
+    errarg[0] = '\0';
+    errpos[0] = '\0';
+    goterror = TRUE;
 }
 
-/* Handle an internal error. */
-void internal_error( const char *msg, ... )
+/* Print error message 'msg'. */
+void error( const char *msg )
 {
-    va_list args;
-
-    va_start( args, msg );
-    vinternal( msg, args );
-    va_end( args );
+    printerror( msg );
 }
 
-/* Given an origin 'org' and a message 'msg', fill errpos 
- * with the position of the symbol, and generate an
- * internal error message 'msg'.
+/* Print error message 'msg' and stop immediately. */
+void fatal( const char *msg )
+{
+    printerror( msg );
+    exit( 1 );
+}
+
+/* System error handler. */
+void sys_error( int no )
+{
+#if HAVE_STRERROR
+    printerror( strerror( no ) );
+#else
+    if( no>sys_nerr ){
+	(void) sprintf( errarg, "%d", no );
+	printerror( "unknown system error" );
+    }
+    else {
+	printerror( sys_errlist[no] );
+    }
+#endif
+}
+
+/* Error handler that supplies line number and file name from the
+   global variables 'tpllineno' and 'tplfilename'.
  */
-void origin_internal_error( const_origin org, const char *msg, ... )
+void line_error( const char *msg )
 {
-    va_list args;
-
-    orig_errpos( org );
-    va_start( args, msg );
-    vinternal( msg, args );
-    va_end( args );
+    if( tplfilename == CHARNIL ){
+	if( noerrorline ){
+	    errpos[0] = '\0';
+	}
+	else {
+	    (void) sprintf( errpos, "(%d)", tpllineno );
+	}
+    }
+    else {
+	if( noerrorline ){
+	    (void) sprintf( errpos, "%s", tplfilename );
+	}
+	else {
+	    (void) sprintf( errpos, "%s(%d)", tplfilename, tpllineno );
+	}
+    }
+    error( msg );
 }
 
-/* Given an origsymbol 's' and a message 'msg', fill errpos
- * with the position of the symbol, and generate an
- * internal error message 'msg'.
+/* Internal error handler. Print the given message 'msg'
+   with given position in the source: file name and line number.
  */
-void origsymbol_internal_error( const_origsymbol s, const char *msg, ... )
+void docrash( const char *file, int line, const char *msg )
 {
-    va_list args;
-
-    va_start( args, msg );
-    origsymbol_errpos( s );
-    vinternal( msg, args );
-    va_end( args );
+   (void) sprintf( errpos, "internal error at %s(%d)", file, line );
+   error( msg );
 }
 
-/* Check if 'goterr' flag is set, and do exit(1) if it is. */
+/* Check if 'goterror' flag is set, and do exit(1) if it is. */
 void errcheck( void )
 {
-    if( goterr ){
-        fprintf( stderr, "errors detected, program aborted\n" );
-	exit( 1 );
-    }
-}
-
-/* Returns true iff there has been an error. */
-bool error_seen()
-{
-    return goterr;
-}
-
-/* Given a filename, a line number, and a message 'msg', 
- * generate an error message.
- */
-void fileline_error( const char *nm, unsigned int lineno, const char *msg, ... )
-{
-    va_list args;
-
-    fileline_errpos( nm, lineno );
-    va_start( args, msg );
-    verror( msg, args );
-    va_end( args );
-}
-
-/* Given an origsymbol 's' and a message 'msg', fill errpos
- * with the position of the symbol, and generate error
- * message 'msg'.
- */
-void origin_error( const_origin s, const char *msg, ... )
-{
-    va_list args;
-
-    orig_errpos( s );
-    va_start( args, msg );
-    verror( msg, args );
-    va_end( args );
-}
-
-/* Given an origsymbol 's' and a message 'msg', fill errpos
- * with the position of the symbol, and generate error
- * message 'msg'.
- */
-void origsymbol_error( const_origsymbol s, const char *msg, ... )
-{
-    va_list args;
-
-    va_start( args, msg );
-    origsymbol_errpos( s );
-    verror( msg, args );
-    va_end( args );
-}
-
-#ifndef HAVE_STRERROR
-/* On some systems (notably SunOS 4.1.4), there isn't a strerror function,
- * so provide one.
- */
-static const char *strerror( int no )
-{
-    if( no>sys_nerr ){
-	// TODO: somehow convey the error number.
-	return "unknown system error";
-    }
-    else {
-	return sys_errlist[no];
-    }
-}
-#endif
-
-/* System error handler.  */
-void sys_error( int no, const char *msg, ... )
-{
-    va_list args;
-
-    va_start( args, msg );
-    fputs( strerror( no ), stderr );
-    fputs( ": ", stderr );
-    verror( msg, args );
-    va_end( args );
+   if( !goterror ) return;
+   error( "errors detected, program aborted" );
+   exit( 1 );
 }

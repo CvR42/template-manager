@@ -1,4 +1,10 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: refex.c
  *
  * File-style regular expression pattern matching and replacement
  *
@@ -45,6 +51,7 @@
  *              The tagged forms are numbered starting from 1.
  */
 
+#include "config.h"
 #include <stdio.h>
 #include "tmdefs.h"
 #include "refex.h"
@@ -70,7 +77,7 @@ typedef enum en_dfacode {
 
 #define MAXCHR	128
 #define CHRBIT	8
-#define BITBLK	(MAXCHR/CHRBIT)
+#define BITBLK	MAXCHR/CHRBIT
 #define BLKIND	0170
 #define BITIND	07
 

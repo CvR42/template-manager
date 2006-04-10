@@ -8,7 +8,7 @@ Top                 :    207 allocated,    205 freed.<-
 TopEmptyCons        :      0 allocated,      0 freed.
 TopEmptyTuple       :      0 allocated,      0 freed.
 TopEnum             :      0 allocated,      0 freed.
-TopNone             :    626 allocated,    621 freed.<-
+TopNone             :    623 allocated,    618 freed.<-
 TopTuple            :    207 allocated,    205 freed.<-
 emptytuple          :      0 allocated,      0 freed.
 label               :      1 allocated,      1 freed.
@@ -19,53 +19,53 @@ subtuple_list       :      0 allocated,      0 freed.
 thing_list          :    621 allocated,    615 freed.<-
 toplevel_list       :    107 allocated,    106 freed.<-
 lognew: pending blocks:
-alutest.c(220) id=27
-alutest.c(220) id=53
-alutest.c(220) id=54
-alutest.c(220) id=56
-alutest.c(220) id=57
-alutest.c(220) id=58
-alutest.c(220) id=59
-alutest.c(220) id=60
-alutest.c(220) id=61
-alutest.c(220) id=62
-alutest.c(220) id=63
-alutest.c(220) id=64
-alutest.c(220) id=65
-alutest.c(220) id=66
-alutest.c(220) id=67
-alutest.c(220) id=68
-alutest.c(220) id=69
-alutest.c(220) id=70
-alutest.c(220) id=71
-alutest.c(220) id=72
-alutest.c(220) id=73
-alutest.c(220) id=74
-alutest.c(220) id=75
-alutest.c(220) id=76
-alutest.c(220) id=77
-alutest.c(220) id=78
-alutest.c(220) id=79
-alutest.c(220) id=80
-alutest.c(220) id=81
-alutest.c(220) id=82
-alutest.c(220) id=83
-alutest.c(220) id=84
-alutest.c(220) id=85
-alutest.c(220) id=86
-alutest.c(220) id=87
-alutest.c(220) id=88
-alutest.c(220) id=89
-alutest.c(220) id=90
-alutest.c(220) id=91
-alutest.c(220) id=92
-alutest.c(220) id=93
-alutest.c(220) id=94
-alutest.c(220) id=95
-alutest.c(220) id=96
-alutest.c(220) id=97
-alutest.c(220) id=98
-alutest.c(220) id=99
-alutest.c(220) id=100
-alutest.c(220) id=101
-alutest.c(220) id=102
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)
+alutest.c(199)

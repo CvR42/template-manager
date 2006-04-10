@@ -1,82 +1,4 @@
-New in version 2.2.0 ???
-
-- regular expressions in .switch cases.
-- Added the .split and .globalsplit statements.
-- Added the 'tochar' template function.
-- Added the 'leftstr' and 'rightstr' template functions.
-- Lots of const correctness.
-- Fixed an obscure bug in the append_ function in the llu template.
-
-New in version 2.1.0 Tue Feb 22 17:34:14 CET 2005
-
-- In libtmc, made cmp_tmsymbol() use strcmp(), since ordering based on
-  pointer value is non-portable.
-- Some changes to the Tm macro language:
-  * Added a 'for' command in the Tm macro language.
-  * Changed the '-' and '/' operator in '$[]'
-    expressions to be left binding.  Thus, $[3-2-1] is now equivalent to
-    $[(3-2)-1]. This is more in line with standard mathematical practice.
-  * Division by zero in template expressions is now detected.
-- Fixed a bug in constructor/classname parsing in fscan_<type>
-  support function in libtmc.
-- cmp_tmsymbol() now uses strcmp instead of comparing pointers.
-- Even more bracketing in macros in headers.
-
-
-New in version 2.0.11
-
-- Makefiles now have an 'uninstall' rule.
-
-
-New in version 2.0.10
-
-- Made Tm compatible with MacOS X.
-- Fixed a bug in the tmc.ct template that caused incorrect extractlist_
-functions.
-
-
-New in version 2.0.9
-
-- Better lognew reporting.
-
-
-New in version 2.0.8
-
-- Added the missing function isequal_tmbool.
-- Added a new function deletelist_<type>_list that deletes an
-entire span of elements from a list.
-
-
-New in version 2.0.7
-
-- Fixed a minor bug in the 'append' function of the linked-list library.
-
-New in version 2.0.6
-
-- Added a new function to the template: isequal_<type>().
-- I have given up on the types 'uint', 'ulong', etc. Some systems
-define them, some don't, and it is a gigantic mess to find this out.
-They are now called 'tmuint' and 'tmulong'.
-- Refined the README text.
-
-New in version 2.0.5
-
-- For some reason the new const declarations still caused lots of
-warnings. They should now be fixed.
-
-New in version 2.0.4
-
-- More functions in the C template are now declared with const_
-prefix.
-
-
-New in version 2.0.3
-
-- The C template now also generates a const_ variant of each type.
-This allows variables and parameters to be declared const-correctly.
-
-
-New in version 2.0.1
+New version 2.0.1
 
 - The software is now compiled with -O6 if gcc is used.
 
@@ -88,11 +10,9 @@ New in version 2.0.1
 - Fixed a bug the C Tm library function to read a string, that might leave
 the terminating '\0' of that string beyond the allocated room.
 
-
-New in version 2.0
+New version 2.0
 
 - No significant changes.
-
 
 New Version 2.0 beta 29
 

@@ -43,17 +43,9 @@ typedef struct str_$t *$t;
 .endforeach
 
 .foreach t ${comm $(need_ds) "" ${ctypelist}}
-.set l ${conslist $t}
-.if ${len $l}
+.if ${len ${conslist $t}}
 typedef enum en_tags_$t {
-.set lastelm ${first ${rev $l}}
-.foreach e $l
-.if ${eq $e $(lastelm)}
-    TAG$e
-.else
-    TAG$e,
-.endif
-.endforeach
+    ${seplist ", " ${prefix TAG ${conslist $t}}}
 } tags_$t;
 .else
 typedef int tags_$t;
@@ -133,6 +125,9 @@ struct str_$t {
 .endswitch
 
 .endforeach
+.foreach t $(need_ds_list)
+#define $t_listNIL ($t_list)0
+.endforeach
 
 .. new_<type> routines
 #ifdef LOGNEW
@@ -183,7 +178,7 @@ struct str_$t {
 .append tl ${type $t $e}
 .endforeach
 #ifdef LOGNEW
-extern $t real_new_$t( ${suffix "," $(tl)} const char *, int );
+extern $t real_new_$t( ${suffix "," $(tl)} const char *, const int );
 #else
 .if ${== ${len $(tl)} 0}
 .set tl void
@@ -197,7 +192,7 @@ extern $t new_$t( ${seplist ", " $(tl)} );
 .append tl ${type $c $e}
 .endforeach
 #ifdef LOGNEW
-extern $t real_new_$c( ${suffix "," $(tl)} const char *, int );
+extern $t real_new_$c( ${suffix "," $(tl)} const char *, const int );
 #else
 .if ${== ${len $(tl)} 0}
 .set tl void
@@ -252,27 +247,22 @@ extern $t_list reverse_$t_list( $t_list );
 ..
 .. insert_<type>_list() routines.
 .foreach t $(want_insert_list)
-extern $t_list insert_$t_list( $t_list, unsigned int, $t  );
+extern $t_list insert_$t_list( $t_list, const unsigned int, $t  );
 .endforeach
 ..
 .. insertlist_<type>_list() routines.
 .foreach t $(want_insertlist_list)
-extern $t_list insertlist_$t_list( $t_list, unsigned int, $t_list  );
+extern $t_list insertlist_$t_list( $t_list, const unsigned int, $t_list  );
 .endforeach
 ..
 .. delete_<type>_list() routines.
 .foreach t $(want_delete_list)
-extern $t_list delete_$t_list( $t_list, unsigned int );
-.endforeach
-..
-.. deletelist_<type>_list() routines.
-.foreach t $(want_deletelist_list)
-extern $t_list deletelist_$t_list( $t_list, unsigned int, unsigned int );
+extern $t_list delete_$t_list( $t_list, const unsigned int );
 .endforeach
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( $t_list, unsigned int, $t *, int * );
+extern $t_list extract_$t_list( $t_list, const unsigned int, $t *, int * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.
@@ -283,9 +273,9 @@ extern $t_list extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list
 .. slice_<type>_list routines
 .foreach t $(want_slice_list)
 #ifdef LOGNEW
-$t_list real_slice_$t_list( const $t_list, unsigned int, unsigned int, const char *, int );
+$t_list real_slice_$t_list( const $t_list, const unsigned int, const unsigned int, const char *, const int );
 #else
-$t_list slice_$t_list( const $t_list, unsigned int, unsigned int );
+$t_list slice_$t_list( const $t_list, const unsigned int, const unsigned int );
 #endif
 .endforeach
 ..
@@ -309,10 +299,10 @@ extern void fprint_$t_list( FILE *, const $t_list );
 .if ${len $(want_rdup) $(want_rdup_list)}
 #ifdef LOGNEW
 .foreach t $(want_rdup)
-extern $t real_rdup_$t( const $t, const char *_f, int _l );
+extern $t real_rdup_$t( const $t, const char *_f, const int _l );
 .endforeach
 .foreach t $(want_rdup_list)
-extern $t_list real_rdup_$t_list( const $t_list, const char *_f, int _l );
+extern $t_list real_rdup_$t_list( const $t_list, const char *_f, const int _l );
 .endforeach
 #else
 .foreach t $(want_rdup)
@@ -328,10 +318,10 @@ extern $t_list rdup_$t_list( const $t_list );
 .if ${len $(want_fscan) $(want_fscan_list)}
 #ifdef LOGNEW
 .foreach t $(want_fscan)
-extern int real_fscan_$t( FILE *, $t *, const char *, int );
+extern int real_fscan_$t( FILE *, $t *, const char *, const int );
 .endforeach
 .foreach t $(want_fscan_list)
-extern int real_fscan_$t_list( FILE *, $t_list *, const char *, int );
+extern int real_fscan_$t_list( FILE *, $t_list *, const char *, const int );
 .endforeach
 #else
 .foreach t $(want_fscan)
@@ -349,14 +339,6 @@ extern int cmp_$t( const $t, const $t );
 .endforeach
 .foreach t $(want_cmp_list)
 extern int cmp_$t_list( const $t_list, const $t_list );
-.endforeach
-..
-.. isequal_<type>() routines
-.foreach t $(want_isequal)
-extern tmbool isequal_$t( const $t, const $t );
-.endforeach
-.foreach t $(want_isequal_list)
-extern tmbool isequal_$t_list( const $t_list, const $t_list );
 .endforeach
 ..
 .. Misc. functions.

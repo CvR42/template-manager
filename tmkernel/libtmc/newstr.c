@@ -1,6 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * String manipulation routines.
+ * All rights reserved.
+ */
+
+/* file: newstr.c
+   String manipulation routines.
  */
 
 /* other standard UNIX functions */

@@ -1,4 +1,10 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: testprog.c
  *
  * Test of library programs.
  */
@@ -112,20 +118,20 @@ static void test_cons( TMPRINTSTATE *st )
     tm_closecons( st );
 }
 
-/* Test of print_tmulong() and fscan_tmulong(): read and write
+/* Test of print_ulong() and fscan_ulong(): read and write
    long's until one with value 42 is encountered.
  */
-static void test_tmulong( TMPRINTSTATE *st )
+static void test_ulong( TMPRINTSTATE *st )
 {
-    tmulong ul;
+    ulong ul;
 
     tm_opencons( st );
-    tm_printword( st, "tmulongtest" );
+    tm_printword( st, "Ulongtest" );
     do {
-	if( fscan_tmulong( infile, &ul ) ){
+	if( fscan_ulong( infile, &ul ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmulong( st, ul );
+	print_ulong( st, ul );
     } while( ul != 42 );
     tm_closecons( st );
 }
@@ -148,38 +154,38 @@ static void test_long( TMPRINTSTATE *st )
     tm_closecons( st );
 }
 
-/* Test of print_tmshort() and fscan_tmshort(): read and write tmshort's until
+/* Test of print_sshrt() and fscan_sshrt(): read and write sshrt's until
    one with value -1 is encountered.
  */
-static void test_tmshort( TMPRINTSTATE *st )
+static void test_sshrt( TMPRINTSTATE *st )
 {
-    tmshort i;
+    sshrt i;
 
     tm_opencons( st );
-    tm_printword( st, "tmshorttest" );
+    tm_printword( st, "Sshrttest" );
     do {
-	if( fscan_tmshort( infile, &i ) ){
+	if( fscan_sshrt( infile, &i ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmshort( st, i );
+	print_sshrt( st, i );
     } while( i != -1 );
     tm_closecons( st );
 }
 
-/* Test of print_tmushort() and fscan_tmushort(): read and write
+/* Test of print_ushrt() and fscan_ushrt(): read and write
    unsigned's until one with value 42 is encountered.
  */
-static void test_tmushort( TMPRINTSTATE *st )
+static void test_ushrt( TMPRINTSTATE *st )
 {
-    tmushort u;
+    ushrt u;
 
     tm_opencons( st );
-    tm_printword( st, "tmushorttest" );
+    tm_printword( st, "Ushrttest" );
     do {
-	if( fscan_tmushort( infile, &u ) ){
+	if( fscan_ushrt( infile, &u ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmushort( st, u );
+	print_ushrt( st, u );
     } while( u != 42 );
     tm_closecons( st );
 }
@@ -202,56 +208,56 @@ static void test_int( TMPRINTSTATE *st )
     tm_closecons( st );
 }
 
-/* Test of print_tmuint() and fscan_tmuint(): read and write
+/* Test of print_uint() and fscan_uint(): read and write
    unsigned's until one with value 42 is encountered.
  */
-static void test_tmuint( TMPRINTSTATE *st )
+static void test_uint( TMPRINTSTATE *st )
 {
-    tmuint u;
+    uint u;
 
     tm_opencons( st );
     tm_printword( st, "Unsignedtest" );
     do {
-	if( fscan_tmuint( infile, &u ) ){
+	if( fscan_uint( infile, &u ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmuint( st, u );
+	print_uint( st, u );
     } while( u != 42 );
     tm_closecons( st );
 }
 
-/* Test of print_tmschar() and fscan_tmschar(): read and write tmschar's until
+/* Test of print_schar() and fscan_schar(): read and write schar's until
    one with value 'q' is encountered.
  */
-static void test_tmschar( TMPRINTSTATE *st )
+static void test_schar( TMPRINTSTATE *st )
 {
-    tmschar c;
+    schar c;
 
     tm_opencons( st );
-    tm_printword( st, "tmschartest" );
+    tm_printword( st, "Schartest" );
     do {
-	if( fscan_tmschar( infile, &c ) ){
+	if( fscan_schar( infile, &c ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmschar( st, c );
+	print_schar( st, c );
     } while( c != 'q' );
     tm_closecons( st );
 }
 
-/* Test of print_tmuchar() and fscan_tmuchar(): read and write tmuchar's until
+/* Test of print_uchar() and fscan_uchar(): read and write uchar's until
    one with value 'q' is encountered.
  */
-static void test_tmuchar( TMPRINTSTATE *st )
+static void test_uchar( TMPRINTSTATE *st )
 {
-    tmuchar c;
+    uchar c;
 
     tm_opencons( st );
-    tm_printword( st, "tmuchartest" );
+    tm_printword( st, "Uchartest" );
     do {
-	if( fscan_tmuchar( infile, &c ) ){
+	if( fscan_uchar( infile, &c ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
 	}
-	print_tmuchar( st, c );
+	print_uchar( st, c );
     } while( c != 'q' );
     tm_closecons( st );
 }
@@ -413,9 +419,6 @@ static void test_tmtext( TMPRINTSTATE *st )
     if( cmp_tmtext( t, t2 ) != 0 ){
 	bad( "rdup_tmtext() failed" );
     }
-    if( !isequal_tmtext( t, t2 ) ){
-	bad( "rdup_tmtext() failed" );
-    }
     rfre_tmtext( t );
     t = t2;
     print_tmtext( st, t );
@@ -513,57 +516,57 @@ static void test_tmbool( TMPRINTSTATE *st )
     tm_closecons( st );
 }
 
-/* Test of fprint_tmuchar() */
-static void ftest_tmuchar( FILE *f )
+/* Test of fprint_uchar() */
+static void ftest_uchar( FILE *f )
 {
-    fputs( "fprint_tmuchar: [", f );
-    fprint_tmuchar( f, 'a' );
+    fputs( "fprint_uchar: [", f );
+    fprint_uchar( f, 'a' );
     fputs( " ", f );
-    fprint_tmuchar( f, ' ' );
+    fprint_uchar( f, ' ' );
     fputs( " ", f );
-    fprint_tmuchar( f, (tmuchar) 129 );
+    fprint_uchar( f, (uchar) 129 );
     fputs( " ", f );
-    fprint_tmuchar( f, '\0' );
+    fprint_uchar( f, '\0' );
     fputs( "]\n", f );
 }
 
-/* Test of fprint_tmschar() */
-static void ftest_tmschar( FILE *f )
+/* Test of fprint_schar() */
+static void ftest_schar( FILE *f )
 {
-    fputs( "fprint_tmschar: [", f );
-    fprint_tmschar( f, 'a' );
+    fputs( "fprint_schar: [", f );
+    fprint_schar( f, 'a' );
     fputs( " ", f );
-    fprint_tmschar( f, ' ' );
+    fprint_schar( f, ' ' );
     fputs( " ", f );
-    fprint_tmschar( f, (tmschar) -2 );
+    fprint_schar( f, (schar) -2 );
     fputs( " ", f );
-    fprint_tmschar( f, (tmschar) 129 );
+    fprint_schar( f, (schar) 129 );
     fputs( " ", f );
-    fprint_tmschar( f, '\0' );
+    fprint_schar( f, '\0' );
     fputs( "]\n", f );
 }
 
-/* Test of fprint_tmshort() */
-static void ftest_tmshort( FILE *f )
+/* Test of fprint_sshrt() */
+static void ftest_sshrt( FILE *f )
 {
-    fputs( "fprint_tmshort: [", f );
-    fprint_tmshort( f, 12 );
+    fputs( "fprint_sshrt: [", f );
+    fprint_sshrt( f, 12 );
     fputs( " ", f );
-    fprint_tmshort( f, 0 );
+    fprint_sshrt( f, 0 );
     fputs( " ", f );
-    fprint_tmshort( f, -42 );
+    fprint_sshrt( f, -42 );
     fputs( "]\n", f );
 }
 
-/* Test of fprint_tmuint() */
-static void ftest_tmushort( FILE *f )
+/* Test of fprint_uint() */
+static void ftest_ushrt( FILE *f )
 {
-    fputs( "fprint_tmushort: [", f );
-    fprint_tmushort( f, 12 );
+    fputs( "fprint_ushrt: [", f );
+    fprint_ushrt( f, 12 );
     fputs( " ", f );
-    fprint_tmushort( f, 0 );
+    fprint_ushrt( f, 0 );
     fputs( " ", f );
-    fprint_tmushort( f, 42 );
+    fprint_ushrt( f, 42 );
     fputs( "]\n", f );
 }
 
@@ -579,15 +582,15 @@ static void ftest_int( FILE *f )
     fputs( "]\n", f );
 }
 
-/* Test of fprint_tmuint() */
-static void ftest_tmuint( FILE *f )
+/* Test of fprint_uint() */
+static void ftest_uint( FILE *f )
 {
-    fputs( "fprint_tmuint: [", f );
-    fprint_tmuint( f, 12 );
+    fputs( "fprint_uint: [", f );
+    fprint_uint( f, 12 );
     fputs( " ", f );
-    fprint_tmuint( f, 0 );
+    fprint_uint( f, 0 );
     fputs( " ", f );
-    fprint_tmuint( f, 42 );
+    fprint_uint( f, 42 );
     fputs( "]\n", f );
 }
 
@@ -603,15 +606,15 @@ static void ftest_long( FILE *f )
     fputs( "]\n", f );
 }
 
-/* Test of fprint_tmulong() */
-static void ftest_tmulong( FILE *f )
+/* Test of fprint_ulong() */
+static void ftest_ulong( FILE *f )
 {
-    fputs( "fprint_tmulong: [", f );
-    fprint_tmulong( f, 12 );
+    fputs( "fprint_ulong: [", f );
+    fprint_ulong( f, 12 );
     fputs( " ", f );
-    fprint_tmulong( f, 0 );
+    fprint_ulong( f, 0 );
     fputs( " ", f );
-    fprint_tmulong( f, 123442 );
+    fprint_ulong( f, 123442 );
     fputs( "]\n", f );
 }
 
@@ -644,38 +647,21 @@ static void test_tmsymbol( void )
 {
     tmsymbol a;
     tmsymbol b;
-    tmsymbol realb;
     tmsymbol t;
     tmsymbol g1;
     tmsymbol g2;
 
     a = add_tmsymbol( "a" );
     b = add_tmsymbol( "a" );
-    realb = add_tmsymbol( "b" );
     if( a != b ){
 	bad( "equal tmsymbols do not compare equal" );
     }
-    realb = add_tmsymbol( "b" );
-    if( a == realb ){
+    b = add_tmsymbol( "b" );
+    if( a == b ){
 	bad( "unequal tmsymbols compare equal" );
-    }
-    if( !isequal_tmsymbol( a, b ) ){
-	bad( "equal tmsymbols compare unequal" );
-    }
-    if( isequal_tmsymbol( a, realb ) ){
-	bad( "unequal tmsymbols compare equal" );
-    }
-    if( cmp_tmsymbol( a, b )!=0 ){
-	bad( "unexpected ordering of tmsymbols" );
-    }
-    if( cmp_tmsymbol( a, realb )>=0 ){
-	bad( "unexpected ordering of tmsymbols" );
-    }
-    if( cmp_tmsymbol( realb, a )<=0 ){
-	bad( "unexpected ordering of tmsymbols" );
     }
     g1 = gen_tmsymbol( "base" );
-    if( g1 == a || g1 == realb ){
+    if( g1 == a || g1 == b ){
 	bad( "gensym tmsymbol is equal to existing tmsymbol" );
     }
     t = find_tmsymbol( "a" );
@@ -691,13 +677,17 @@ static void test_tmsymbol( void )
 	bad( "non-existing tmsymbol found" );
     }
     g2 = gen_tmsymbol( "base" );
-    if( g2 == a || g2 == realb || g2 == g1 ){
+    if( g2 == a || g2 == b || g2 == g1 ){
 	bad( "gensym tmsymbol is equal to existing tmsymbol" );
     }
     flush_tmsymbol();
 }
 
+#ifdef __MSDOS__
+long huge idlist[TESTARRAYSIZE];
+#else
 long idlist[TESTARRAYSIZE];
+#endif
 
 int main( void )
 {
@@ -724,28 +714,28 @@ int main( void )
     test_printopt( st );
     test_brac( st );
     test_cons( st );
-    test_tmschar( st );
-    test_tmuchar( st );
-    test_tmshort( st );
-    test_tmushort( st );
+    test_schar( st );
+    test_uchar( st );
+    test_sshrt( st );
+    test_ushrt( st );
     test_int( st );
-    test_tmuint( st );
+    test_uint( st );
     test_long( st );
-    test_tmulong( st );
+    test_ulong( st );
     test_double();
     test_float();
     test_tmstring( st );
     test_tmword( st );
     test_tmtext( st );
     test_tmbool( st );
-    ftest_tmschar( outfile );
-    ftest_tmuchar( outfile );
-    ftest_tmshort( outfile );
-    ftest_tmushort( outfile );
+    ftest_schar( outfile );
+    ftest_uchar( outfile );
+    ftest_sshrt( outfile );
+    ftest_ushrt( outfile );
     ftest_int( outfile );
-    ftest_tmuint( outfile );
+    ftest_uint( outfile );
     ftest_long( outfile );
-    ftest_tmulong( outfile );
+    ftest_ulong( outfile );
     ftest_tmstring( outfile );
     ftest_tmword( outfile );
     lev = tm_endprint( st );
@@ -775,7 +765,7 @@ int main( void )
     for( ix=1; ix<49; ix++ ){
 	tm_fre_logid( idlist[ix] );
     }
-    simple_report_lognew( stderr );
+    report_lognew( stderr );
     flush_lognew();
     fflush( outfile );		/* Just to be sure.. */
     tm_fatal( __FILE__, __LINE__, "test of 'tm_fatal'" );

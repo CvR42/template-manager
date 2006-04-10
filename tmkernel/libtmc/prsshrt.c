@@ -1,9 +1,13 @@
-/* File: $Id$ */
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
 
 #include "tmc.h"
 #include "config.h"
 
-void print_tmshort( TMPRINTSTATE *st, const tmshort i )
+void print_sshrt( TMPRINTSTATE *st, const sshrt i )
 {
     char buf[sizeof(int)*8];
 

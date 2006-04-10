@@ -1,6 +1,4 @@
-/* File: $Id$
- *
- * Tm - an interface code generator.
+/* Tm - an interface code generator.
  * Author: C. van Reeuwijk.
  *
  * All rights reserved.
@@ -15,10 +13,10 @@ int cmp_string_tmtext( const char *s, const tmtext t )
     long ix;
 
     for( ix=0; ix<t->sz; ix++ ){
-	if( *s == '\0' || ((unsigned char) *s)<((unsigned char) t->arr[ix]) ){
+	if( *s == '\0' || ((uchar) *s)<((uchar) t->arr[ix]) ){
 	    return -1;
 	}
-	if( ((unsigned char) *s)>((unsigned char) t->arr[ix]) ){
+	if( ((uchar) *s)>((uchar) t->arr[ix]) ){
 	    return 1;
 	}
 	s++;

@@ -5,6 +5,8 @@
 
 .. File: alucode.ct
 
+#include "config.h"
+
 /* Standard UNIX libraries */
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +17,8 @@
 
 /* Local definitions */
 #include "alucode.h"
+
+#define CACHESZ 20
 
 .insert aluspec.t
 .insert macros.t

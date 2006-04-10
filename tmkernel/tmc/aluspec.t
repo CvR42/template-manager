@@ -33,7 +33,6 @@
 .append wantdefs rfre_toplevel
 .append wantdefs rdup_toplevel_list
 .append wantdefs concat_toplevel_list
-.append wantdefs deletelist_toplevel_list
 .append wantdefs fprint_toplevel_list
 .append wantdefs fprint_toplevel_list_list_list
 .append wantdefs fprint_toplevel_list
@@ -41,7 +40,6 @@
 .append wantdefs rfre_toplevel_list
 .append wantdefs print_toplevel_list
 .append wantdefs cmp_toplevel_list
-.append wantdefs isequal_toplevel_list
 .append wantdefs stat_$(basename)
 .append wantdefs get_balance_$(basename)
 .append wantdefs flush_$(basename)
