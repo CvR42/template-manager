@@ -1,8 +1,0 @@
-testprog.ttp
-.c [-DLOGNEW]
-=
-PCSTART.O
-testprog.c
-tmc.prj
-pcfltlib.lib
-PCSTDLIB.LIB

@@ -1,7 +1,0 @@
-..File: demo.ct
-..Demonstration of use of standard C modules
-#include <tmc.h>
-#include "demo.h"
-
-.insert democonf.t
-.include calu.ct

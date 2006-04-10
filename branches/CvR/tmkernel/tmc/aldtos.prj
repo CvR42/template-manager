@@ -1,9 +1,0 @@
-aldtest.tos
-.c [-DLOGNEW -DSTAT -W-stv]
-=
-PCSTART.O
-aldcode.c
-aldtest.c
-tmc.lib
-pcfltlib.lib
-PCSTDLIB.LIB
