@@ -4,6 +4,8 @@
  * description.
  */
 
+#include "config.h"
+
 /* Standard UNIX libraries */
 #include <stdio.h>
 #include <ctype.h>
@@ -18,15 +20,12 @@
 #include "tmexpr.h"
 #include "error.h"
 #include "global.h"
+#include "tmpath.h"
 #include "misc.h"
 #include "tmtrans.h"
 #include "var.h"
-#include "checkds.h"
-#include "refex.h"
 #include "srchfile.h"
-
-/* Forward declaration */
-static void internal_translate( FILE *infile, const char *filenm, FILE *outfile );
+#include "checkds.h"
 
 /* tags for command table */
 typedef enum en_tmcommands {
@@ -52,7 +51,6 @@ typedef enum en_tmcommands {
     FOREACH,
     GLOBALAPPEND,
     GLOBALSET,
-    GLOBALSPLIT,
     IF,
     INCLUDE,
     INSERT,
@@ -61,7 +59,6 @@ typedef enum en_tmcommands {
     RENAME,
     RETURN,
     SET,
-    SPLIT,
     SWITCH,
     WHILE
 } tmcommand;
@@ -87,8 +84,8 @@ static struct dotcom dotcomlist[] = {
     { "deletetype", DELETETYPE },
     { "else", ELSE },
     { "endappendfile", ENDAPPENDFILE },
-    { "endfor", ENDFOR },
     { "endforeach", ENDFOREACH },
+    { "endfor", ENDFOR },
     { "endif", ENDIF },
     { "endmacro", ENDMACRO },
     { "endredirect", ENDREDIRECT },
@@ -100,7 +97,6 @@ static struct dotcom dotcomlist[] = {
     { "foreach", FOREACH },
     { "globalappend", GLOBALAPPEND },
     { "globalset", GLOBALSET },
-    { "globalsplit", GLOBALSPLIT },
     { "if", IF },
     { "include", INCLUDE },
     { "insert", INSERT },
@@ -109,7 +105,6 @@ static struct dotcom dotcomlist[] = {
     { "rename", RENAME },
     { "return", RETURN },
     { "set", SET },
-    { "split", SPLIT },
     { "switch", SWITCH },
     { "while", WHILE },
     { "", SET }		/* end of table mark */
@@ -135,21 +130,34 @@ static const char *comname( tmcommand com )
 /* Generate error messages for unbalance in the .<command> and
    .end<command> pairs.
  */
-static void unbalance( const char *filenm, unsigned int firstlno, unsigned int lno, tmcommand isterm, tmcommand needterm )
+static void unbalance( int lno, tmcommand isterm, tmcommand needterm )
 {
     if( isterm == needterm ){
 	return;    /* just for safety */
     }
-    if( needterm == EOFLINE ){
-        fileline_error( filenm, firstlno, "got `.%s', but there is nothing to terminate", comname( isterm ) );
+    if( needterm != EOFLINE ){
+	if( isterm != EOFLINE ){
+	    sprintf( errarg, "unbalanced command at %s(%d)", tplfilename, lno );
+	    line_error( "unexpected dot command" );
+	}
+	else {
+	    sprintf(
+		errarg,
+		"unterminated command at %s(%d)",
+		tplfilename,
+		lno
+	    );
+	    line_error( "unexpected end of file" );
+	}
     }
     else {
-        if( isterm == EOFLINE ){
-            fileline_error( filenm, firstlno, "'.%s' is not terminated", comname( needterm ) );
-        }
-        else {
-            fileline_error( filenm, lno, "line %d requires '.%s', but this is '.%s'", firstlno, comname( needterm ), comname( isterm ) );
-        }
+	sprintf(
+	    errarg,
+	    "expected %s, but got %s",
+	    comname( needterm ),
+	    comname( isterm )
+	);
+	line_error( "unexpected termination command" );
     }
 }
 
@@ -161,19 +169,21 @@ typedef enum en_switchstate {
  * from these statements, by searching for the 'case' and 'default'
  * lines.
  */
-static Switch construct_switch( origin org, const char *swval, tplelm_list el )
+static tplelm construct_switch( int lno, const char *swval, tplelm_list el )
 {
     unsigned int ix;
     tplelm_list block;
-    tplelm_list deflt = tplelm_listNIL;
+    tplelm_list deflt;
     Switchcase_list cases;
     switchstate state = SWS_NONE;
-    tmstring val = tmstringNIL;
+    tmstring val;
 
     block = new_tplelm_list();
     cases = new_Switchcase_list();
+    deflt = tplelm_listNIL;
+    val = tmstringNIL;
     for( ix=0; ix<el->sz; ix++ ){
-	const_tplelm e = el->arr[ix];
+	const tplelm e = el->arr[ix];
 
 	switch( e->tag ){
 	    case TAGCase:
@@ -181,7 +191,11 @@ static Switch construct_switch( origin org, const char *swval, tplelm_list el )
 		switch( state ){
 		    case SWS_NONE:
 			if( block->sz != 0 ){
-			    origin_error( block->arr[0]->org, "statements outside a case ignored" );
+			    int oldtpllineno = tpllineno;
+
+			    tpllineno = lno+1;
+			    line_error( "statements outside a case ignored" );
+			    tpllineno = oldtpllineno;
 			    rfre_tplelm_list( block );
 			    block = new_tplelm_list();
 			}
@@ -197,7 +211,7 @@ static Switch construct_switch( origin org, const char *swval, tplelm_list el )
 
 		    case SWS_DEFAULT:
 			if( deflt != tplelm_listNIL ){
-			    origin_error( block->arr[0]->org, "second .default block ignored" );
+			    line_error( "second .default block ignored" );
 			    rfre_tplelm_list( block );
 			}
 			else {
@@ -208,20 +222,23 @@ static Switch construct_switch( origin org, const char *swval, tplelm_list el )
 		}
 		if( e->tag == TAGCase ){
 		    state = SWS_CASE;
-		    val = to_const_Case(e)->val;
+		    val = to_Case(e)->val;
 		}
 		else {
 		    state = SWS_DEFAULT;
 		}
-                break;
 
 	    default:
 		block = append_tplelm_list( block, rdup_tplelm( el->arr[ix] ) );
 		break;
 	}
     }
+    /* We know the caller puts an empty case statement at the end, so
+     * this block is guaranteed to contain only that. Throw away
+     * without checking. Yes, this is not elegant.
+     */
     rfre_tplelm_list( block );
-    return new_Switch( org, rdup_tmstring( swval ), cases, deflt );
+    return (tplelm) new_Switch( lno, rdup_tmstring( swval ), cases, deflt );
 }
 
 /* Given a file 'f' and a pointer to an int 'endcom', read all lines from
@@ -240,14 +257,17 @@ static Switch construct_switch( origin org, const char *swval, tplelm_list el )
    Return the list of template elements, and set *endcom to the end command
    that caused termination.
  */
-static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endcom, unsigned int *lineno )
+static tplelm_list readtemplate( FILE *f, tmcommand *endcom )
 {
     char *com;
     const char *p;
+    tplelm_list e1;
+    tplelm_list e2;
     struct dotcom *cp;
     tplelm te;
     tplelm_list tel;
     tmcommand subendcom;
+    int firstlno;
     size_t inbufsz;
     unsigned int bufix;
     char *inbuf;
@@ -269,10 +289,10 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
 		break;
 	    }
 	    if( c != '\r' ){
-		inbuf[bufix++] = (char) c;
+		inbuf[bufix++] = c;
 	    }
 	}
-	(*lineno)++;
+	tpllineno++;
 	if( c == EOF && bufix == 0 ){
 	    *endcom = EOFLINE;
 	    TM_FREE( inbuf );
@@ -280,25 +300,20 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
 	}
 	else if( inbuf[0] == LCOMCHAR ){
 	    if( inbuf[1] != LCOMCHAR ){
-                /* Not a comment  */
-                origin org = new_origin( add_tmsymbol( filenm ), *lineno );
-		p = scanword( org, inbuf+1, &com );
+		p = scanword( inbuf+1, &com );
 		if( com == CHARNIL ){
 		    com = new_tmstring( "" );
 		}
 		cp = dotcomlist;
 		while( strcmp( com, cp->dotcomname ) != 0 ){
 		    if( cp->dotcomname[0] == '\0' ){
-			origin_error( org, "unknown dot command '%s'", com );
-                        rfre_origin( org );
-                        /* FIXME: that's a bit rude! */
+			strcpy( errarg, com );
+			line_error( "unknown dot command" );
 			exit( 1 );
 		    }
 		    cp++;
 		}
 		fre_tmstring( com );
-
-                /* cp now points to the descriptor of this command. */
 		switch( cp->dotcomtag ){
 		    case ELSE:
 		    case ENDAPPENDFILE:
@@ -311,208 +326,178 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
 		    case ENDWHILE:
 		    case EOFLINE:
 			*endcom = cp->dotcomtag;
-                        rfre_origin( org );
 			TM_FREE( inbuf );
 			return tel;
 
 		    case CASE:
-			te = to_tplelm( new_Case( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Case( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case DEFAULT:
-			te = to_tplelm( new_Default( org ) );
+			te = (tplelm) new_Default( tpllineno );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case SWITCH:
 		    {
-			unsigned int firstlno = *lineno;
-			tplelm_list el = readtemplate( f, filenm, &subendcom, lineno );
+			tplelm_list el;
 
+			firstlno = tpllineno;
+			el = readtemplate( f, &subendcom );
 			if( subendcom != ENDSWITCH ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDSWITCH );
+			    unbalance( firstlno, subendcom, ENDSWITCH );
 			}
 			el = append_tplelm_list(
 			    el,
-			    to_tplelm( new_Case( 0, new_tmstring( "" ) ) )
+			    (tplelm) new_Case( 0, new_tmstring( "" ) )
 			);
-			te = to_tplelm( construct_switch( org, p, el ) );
+			te = construct_switch( firstlno, p, el );
 			tel = append_tplelm_list( tel, te );
 			rfre_tplelm_list( el );
 			break;
 		    }
 
 		    case IF:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
-                        tplelm_list e2;
-
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom == ELSE ){
-			    e2 = readtemplate( f, filenm, &subendcom, lineno );
+			    e2 = readtemplate( f, &subendcom );
 			}
 			else {
 			    e2 = new_tplelm_list();
 			}
 			if( subendcom != ENDIF ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDIF );
+			    unbalance( firstlno, subendcom, ENDIF );
 			}
-			te = to_tplelm( new_If( org, new_tmstring( p ), e1, e2 ) );
+			te = (tplelm) new_If( firstlno, new_tmstring( p ), e1, e2 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case FOREACH:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom != ENDFOREACH ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDFOREACH );
+			    unbalance( firstlno, subendcom, ENDFOREACH );
 			}
-			te = to_tplelm( new_Foreach( org, new_tmstring( p ), e1 ) );
+			te = (tplelm) new_Foreach( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case FOR:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom != ENDFOR ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDFOR );
+			    unbalance( firstlno, subendcom, ENDFOR );
 			}
-			te = to_tplelm( new_For( org, new_tmstring( p ), e1 ) );
+			te = (tplelm) new_For( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case WHILE:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
-
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom != ENDWHILE ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDWHILE );
+			    unbalance( firstlno, subendcom, ENDWHILE );
 			}
-			te = to_tplelm( new_While( org, new_tmstring( p ), e1 ) );
+			te = (tplelm) new_While( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case MACRO:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom != ENDMACRO ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDMACRO );
+			    unbalance( firstlno, subendcom, ENDMACRO );
 			}
-			te = to_tplelm( new_Macro( org, new_tmstring( p ), e1 ) );
+			te = (tplelm) new_Macro( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case APPENDFILE:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
-
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom != ENDAPPENDFILE ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDAPPENDFILE );
+			    unbalance( firstlno, subendcom, ENDAPPENDFILE );
 			}
-			te = to_tplelm( new_Appendfile( org, new_tmstring( p ), e1 ) );
+			te = (tplelm) new_Appendfile( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case REDIRECT:
-                    {
-			unsigned int firstlno = *lineno;
-			tplelm_list e1 = readtemplate( f, filenm, &subendcom, lineno );
-
+			firstlno = tpllineno;
+			e1 = readtemplate( f, &subendcom );
 			if( subendcom != ENDREDIRECT ){
-			    unbalance( filenm, firstlno, *lineno, subendcom, ENDREDIRECT );
+			    unbalance( firstlno, subendcom, ENDREDIRECT );
 			}
-			te = to_tplelm( new_Redirect( org, new_tmstring( p ), e1 ) );
+			te = (tplelm) new_Redirect( firstlno, new_tmstring( p ), e1 );
 			tel = append_tplelm_list( tel, te );
 			break;
-                    }
 
 		    case INSERT:
-			te = to_tplelm( new_Insert( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Insert( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case INCLUDE:
-			te = to_tplelm( new_Include( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Include( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case RENAME:
-			te = to_tplelm( new_Rename( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Rename( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case SET:
-			te = to_tplelm( new_Set( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Set( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case GLOBALSET:
-			te = to_tplelm( new_GlobalSet( org, new_tmstring( p ) ) );
-			tel = append_tplelm_list( tel, te );
-			break;
-
-		    case SPLIT:
-			te = to_tplelm( new_Split( org, new_tmstring( p ) ) );
-			tel = append_tplelm_list( tel, te );
-			break;
-
-		    case GLOBALSPLIT:
-			te = to_tplelm( new_GlobalSplit( org, new_tmstring( p ) ) );
+			te = (tplelm) new_GlobalSet( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case RETURN:
-			te = to_tplelm( new_Return( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Return( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case DELETETYPE:
-			te = to_tplelm( new_DeleteType( org, new_tmstring( p ) ) );
+			te = (tplelm) new_DeleteType( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case APPEND:
-			te = to_tplelm( new_Append( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Append( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case GLOBALAPPEND:
-			te = to_tplelm( new_GlobalAppend( org, new_tmstring( p ) ) );
+			te = (tplelm) new_GlobalAppend( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case CALL:
-			te = to_tplelm( new_Call( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Call( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case EXIT:
-			te = to_tplelm( new_Exit( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Exit( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
 		    case ERROR:
-			te = to_tplelm( new_Error( org, new_tmstring( p ) ) );
+			te = (tplelm) new_Error( tpllineno, new_tmstring( p ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 		}
 	    }
 	}
 	else {
-            origin org = new_origin( add_tmsymbol( filenm ), *lineno );
-	    te = to_tplelm( new_Plain( org, new_tmstring( inbuf ) ) );
+	    te = (tplelm) new_Plain( tpllineno, new_tmstring( inbuf ) );
 	    tel = append_tplelm_list( tel, te );
 	}
     }
@@ -523,7 +508,7 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
    stop character 'sc'. Update the position of '*spi' to point to the stop
    character or '\0', and return the evaluated tmstring.
  */
-tmstring alevalto( const_origin org, char **spi, const int sc )
+tmstring alevalto( char **spi, const int sc )
 {
     tmstring si;
     tmstring cp;		/* pointer to constructed tmstring */
@@ -537,7 +522,7 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 
     si = *spi;
     cp = new_tmstring( si );
-    croom = (unsigned int) strlen( si );
+    croom = (int) strlen( si );
     six = 0;
     if( sevaltr ){
 	if( sc == '\0' ){
@@ -561,22 +546,24 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 	if( *si == ORBRAC ){
 	    si++;
 	    *spi = si;
-	    ans = alevalto( org, spi, CRBRAC );
+	    ans = alevalto( spi, CRBRAC );
 	    si = *spi;
 	    if( *si != CRBRAC ){
-		origin_error( org, "missing close bracket '%c'", CRBRAC );
+		(void) sprintf( errarg, "'%c'", CRBRAC );
+		line_error( "missing close bracket" );
 		fre_tmstring( ans );
 		continue;
 	    }
 	    si++;
 	    v = getvar( ans );
 	    if( v == CHARNIL ){
-		origin_error( org, "variable '%s' not found", ans );
+		strcpy( errarg, ans );
+		line_error( "variable not found" );
 		fre_tmstring( ans );
 		continue;
 	    }
 	    fre_tmstring( ans );
-	    len = six + (unsigned int) strlen( v ) + (unsigned int) strlen( si );
+	    len = six + (int) strlen( v ) + (int) strlen( si );
 	    if( len > croom ){
 		croom = len;
 		cp = realloc_tmstring( cp, croom+1 );
@@ -587,18 +574,19 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 	if( *si == OCBRAC ){
 	    si++;
 	    *spi = si;
-	    ans = alevalto( org, spi, CCBRAC );
+	    ans = alevalto( spi, CCBRAC );
 	    si = *spi;
 	    if( *si != CCBRAC ){
-		origin_error( org, "missing close bracket '%c'", CCBRAC );
+		(void) sprintf( errarg, "'%c'", CCBRAC );
+		line_error( "missing close bracket" );
 		fre_tmstring( ans );
 		continue;
 	    }
 	    si++;
-	    fnval = evalfn( org, ans );
+	    fnval = evalfn( ans );
 	    v = fnval;
 	    fre_tmstring( ans );
-	    len = six + (unsigned int) strlen( fnval ) + (unsigned int) strlen( si );
+	    len = six + (int) strlen( fnval ) + (int) strlen( si );
 	    if( len > croom ){
 		croom = len;
 		cp = realloc_tmstring( cp, croom+1 );
@@ -612,18 +600,19 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 	if( *si == OSBRAC ){
 	    si++;
 	    *spi = si;
-	    ans = alevalto( org, spi, CSBRAC );
+	    ans = alevalto( spi, CSBRAC );
 	    si = *spi;
 	    if( *si != CSBRAC ){
-		origin_error( org, "missing close bracket '%c'", CSBRAC );
+		(void) sprintf( errarg, "'%c'", CSBRAC );
+		line_error( "missing close bracket" );
 		fre_tmstring( ans );
 		continue;
 	    }
 	    si++;
-	    fnval = evalexpr( org, ans );
+	    fnval = evalexpr( ans );
 	    v = fnval;
 	    fre_tmstring( ans );
-	    len = six + (unsigned int) strlen( fnval ) + (unsigned int) strlen( si );
+	    len = six + (int) strlen( fnval ) + (int) strlen( si );
 	    if( len > croom ){
 		croom = len;
 		cp = realloc_tmstring( cp, croom+1 );
@@ -646,10 +635,11 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 	var1[1] = '\0';
 	v = getvar( var1 );
 	if( v == CHARNIL ){
-	    origin_error( org, "variable '%s' not found", var1 );
+	    strcpy( errarg, var1 );
+	    line_error( "variable not found" );
 	    continue;
 	}
-	len = six + (unsigned int) strlen( v ) + (unsigned int) strlen( si );
+	len = six + (int) strlen( v ) + (int) strlen( si );
 	if( len > croom ){
 	    croom = len;
 	    cp = realloc_tmstring( cp, croom+1 );
@@ -673,15 +663,15 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 /* Copy an ordinary line to the output and replace all VARCHAR
  * references with the variable.
  */
-static void doplain( const_Plain l, FILE *outfile )
+static void doplain( const tplelm l, FILE *outfile )
 {
     tmstring is;
     tmstring os;
 
-    is = l->line;
-    os = alevalto( l->org, &is, '\0' );
+    is = to_Plain(l)->line;
+    os = alevalto( &is, '\0' );
     if( outfile == NULL ){
-	origin_error( l->org, "no output allowed in expression macro" );
+	line_error( "no output allowed in expression macro" );
     }
     else {
 	fputs( os, outfile );
@@ -691,136 +681,146 @@ static void doplain( const_Plain l, FILE *outfile )
 }
 
 /* Handle 'insert' command. */
-static void doinsert( const_Insert tpl, FILE *outfile )
+static void doinsert( const tplelm tpl, FILE *outfile )
 {
     tmstring fname;
+    tmstring oldfname;
     tmstring exfname;
     FILE *infile;
     tmstring is;
     tmstring os;
 
-    is = tpl->fname;
-    os = alevalto( tpl->org, &is, '\0' );
-    scan1par( tpl->org, os, &fname );
+    is = to_Insert(tpl)->fname;
+    os = alevalto( &is, '\0' );
+    scan1par( os, &fname );
     fre_tmstring( os );
     if( fname == tmstringNIL ){
 	return;
     }
     exfname = search_file( searchpath, fname, PATHSEPSTR, "r" );
     if( exfname == tmstringNIL ){
-	origin_error( tpl->org, "file '%s' not found", fname );
+	sprintf( errarg, "'%s'", fname );
 	fre_tmstring( fname );
+	line_error( "file not found" );
 	return;
     }
     fre_tmstring( fname );
     infile = ckfopen( exfname, "r" );
-    internal_translate( infile, exfname, outfile );
+    oldfname = tplfilename;
+    tplfilename = exfname;
+    translate( infile, outfile );
     fclose( infile );
+    tplfilename = oldfname;
     fre_tmstring( exfname );
 }
 
 /* Handle 'redirect' command. */
-static void doredirect( const_Redirect e )
+static void doredirect( const tplelm e )
 {
     tmstring fname;
     FILE *outfile;
     char *is;
     char *os;
 
-    is = e->fname;
-    os = alevalto( e->org, &is, '\0' );
-    scan1par( e->org, os, &fname );
+    is = to_Redirect(e)->fname;
+    os = alevalto( &is, '\0' );
+    scan1par( os, &fname );
     fre_tmstring( os );
     if( fname == tmstringNIL ){
-	origin_error( e->org, "missing filename" );
+	line_error( "missing filename" );
 	return;
     }
     outfile = ckfopen( fname, "w" );
-    dotrans( e->body, outfile );
+    dotrans( to_Redirect(e)->body, outfile );
     fclose( outfile );
     fre_tmstring( fname );
 }
 
 /* Handle 'appendfile' command. */
-static void doappendfile( const_Appendfile e )
+static void doappendfile( const tplelm e )
 {
     tmstring fname;
     FILE *outfile;
     char *is;
     char *os;
 
-    is = e->fname;
-    os = alevalto( e->org, &is, '\0' );
-    scan1par( e->org, os, &fname );
+    is = to_Appendfile(e)->fname;
+    os = alevalto( &is, '\0' );
+    scan1par( os, &fname );
     fre_tmstring( os );
     if( fname == tmstringNIL ){
-	origin_error( e->org, "missing filename" );
+	line_error( "missing filename" );
 	return;
     }
     outfile = ckfopen( fname, "a" );
-    dotrans( e->body, outfile );
+    dotrans( to_Appendfile(e)->body, outfile );
     fclose( outfile );
     fre_tmstring( fname );
 }
 
 /* Handle 'include' command. */
-static void doinclude( const_Include tpl, FILE *outfile )
+static void doinclude( const tplelm tpl, FILE *outfile )
 {
     tmstring fname;
+    tmstring oldfname;
     tmstring exfname;
     FILE *infile;
     char *is;
     char *os;
 
-    is = tpl->fname;
-    os = alevalto( tpl->org, &is, '\0' );
-    scan1par( tpl->org, os, &fname );
+    is = to_Include(tpl)->fname;
+    os = alevalto( &is, '\0' );
+    scan1par( os, &fname );
     fre_tmstring( os );
     if( fname == tmstringNIL ){
 	return;
     }
     exfname = search_file( searchpath, fname, PATHSEPSTR, "r" );
     if( exfname == tmstringNIL ){
-	origin_error( tpl->org, "file '%s' not found", fname );
+	sprintf( errarg, "'%s'", fname );
 	fre_tmstring( fname );
+	line_error( "file not found" );
 	return;
     }
     infile = ckfopen( exfname, "r" );
+    oldfname = tplfilename;
+    tplfilename = exfname;
     newvarctx();
     setvar( "templatefile", fname );
     fre_tmstring( fname );
-    internal_translate( infile, exfname, outfile );
+    translate( infile, outfile );
     flushvar();
     fclose( infile );
+    tplfilename = oldfname;
     fre_tmstring( exfname );
 }
 
 /* Handle 'error' command. */
-static void doerror( const_Error tpl )
+static void doerror( const tplelm tpl )
 {
     char *is;
     char *os;
 
-    is = tpl->str;
-    os = alevalto( tpl->org, &is, '\0' );
+    is = to_Error(tpl)->str;
+    os = alevalto( &is, '\0' );
     fprintf( stderr, "%s\n", os );
     fre_tmstring( os );
 }
 
 /* Handle 'exit' command. */
-static void doexit( const_Exit tpl )
+static void doexit( const tplelm tpl )
 {
     char *is;
     char *os;
 
-    is = tpl->str;
-    os = alevalto( tpl->org, &is, '\0' );
+    is = to_Exit(tpl)->str;
+    os = alevalto( &is, '\0' );
     exit( atoi( os ) );
     /* freeing is no use */
 }
 
 /* Handle 'globalset' command. */
-static void doglobalset( const_GlobalSet tpl )
+static void doglobalset( const tplelm tpl )
 {
     char *is;
     char *os;
@@ -828,12 +828,12 @@ static void doglobalset( const_GlobalSet tpl )
     tmstring_list sl;
     tmstring nm;
 
-    is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_GlobalSet(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<1 ){
-	origin_error( tpl->org, "no name specified" );
+	line_error( "no name specified" );
 	rfre_tmstring_list( sl );
 	return;
     }
@@ -847,7 +847,7 @@ static void doglobalset( const_GlobalSet tpl )
 }
 
 /* Handle 'set' command. */
-static void doset( const_Set tpl )
+static void doset( const tplelm tpl )
 {
     char *is;
     char *os;
@@ -855,12 +855,12 @@ static void doset( const_Set tpl )
     tmstring_list sl;
     tmstring nm;
 
-    is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_Set(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<1 ){
-	origin_error( tpl->org, "no name specified" );
+	line_error( "no name specified" );
 	rfre_tmstring_list( sl );
 	return;
     }
@@ -873,135 +873,28 @@ static void doset( const_Set tpl )
     fre_tmstring( nm );
 }
 
-/* Handle 'split' command. */
-static void dosplit( const_Split tpl )
-{
-    tmstring val;
-    tmstring_list sl;
-    tmstring_list rest;
-    unsigned int seppos = 0;
-    unsigned int valix;
-    unsigned int varix;
-
-    char *is = tpl->line;
-    char *os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
-    fre_tmstring( os );
-
-    while( seppos<sl->sz ){
-        tmstring s = sl->arr[seppos];
-
-        if( s[0] == '=' && s[1] == '\0' ){
-            break;
-        }
-        seppos++;
-    }
-    if( seppos>=sl->sz ){
-	origin_error( tpl->org, ".split: no '=' found" );
-	rfre_tmstring_list( sl );
-	return;
-    }
-    if( seppos==0 ){
-	origin_error( tpl->org, ".split: no variables" );
-	rfre_tmstring_list( sl );
-	return;
-    }
-    valix = seppos+1;
-    varix = 0;
-
-    while( varix+1<seppos ){
-        if( valix<sl->sz ){
-            setvar( sl->arr[varix], sl->arr[valix] );
-            valix++;
-        }
-        else {
-            setvar( sl->arr[varix], "" );
-        }
-        varix++;
-    }
-    sl = extractlist_tmstring_list( sl, valix, sl->sz, &rest );
-    val = flatstrings( rest );
-    setvar( sl->arr[varix], val );
-    rfre_tmstring_list( sl );
-    rfre_tmstring_list( rest );
-    fre_tmstring( val );
-}
-
-/* Handle 'globalsplit' command. */
-static void doglobalsplit( const_GlobalSplit tpl )
-{
-    tmstring val;
-    tmstring_list sl;
-    tmstring_list rest;
-    unsigned int seppos = 0;
-    unsigned int valix;
-    unsigned int varix;
-
-    char *is = tpl->line;
-    char *os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
-    fre_tmstring( os );
-
-    while( seppos<sl->sz ){
-        tmstring s = sl->arr[seppos];
-
-        if( s[0] == '=' && s[1] == '\0' ){
-            break;
-        }
-        seppos++;
-    }
-    if( seppos>=sl->sz ){
-	origin_error( tpl->org, ".globalsplit: no '=' found" );
-	rfre_tmstring_list( sl );
-	return;
-    }
-    if( seppos==0 ){
-	origin_error( tpl->org, ".globalsplit: no variables" );
-	rfre_tmstring_list( sl );
-	return;
-    }
-    valix = seppos+1;
-    varix = 0;
-
-    while( varix+1<seppos ){
-        if( valix<sl->sz ){
-            globalsetvar( sl->arr[varix], sl->arr[valix] );
-            valix++;
-        }
-        else {
-            globalsetvar( sl->arr[varix], "" );
-        }
-        varix++;
-    }
-    sl = extractlist_tmstring_list( sl, valix, sl->sz, &rest );
-    val = flatstrings( rest );
-    globalsetvar( sl->arr[varix], val );
-    rfre_tmstring_list( rest );
-    rfre_tmstring_list( sl );
-    fre_tmstring( val );
-}
-
-/* Given a tmsymbol 's', an old type name 'old' and a new type name 'nw'.
- * replace the symbol with a copy of 'nw'  if it is equal to 'old'.
+/* Given a tmstring 's', an old type name 'old' and a new type name 'nw'.
+ * replace the string with a copy of 'nw'  if it is equal to 'old'.
  */
-static tmsymbol rename_tmsymbol( tmsymbol s, const_tmsymbol old, tmsymbol nw )
+static tmstring rename_tmstring( tmstring s, tmstring old, tmstring nw )
 {
-    if( s == old ){
-	s = nw;
+    if( strcmp( s, old ) == 0 ){
+	rfre_tmstring( s );
+	s = rdup_tmstring( nw );
     }
     return s;
 }
 
-/* Given a list of symbols, an old type name 'old' and a new
- * type name 'nw', rewrite these symbols to use the new type name
+/* Given a list of strings, an old type name 'old' and a new
+ * type name 'nw', rewrite these strings to use the new type name
  * instead of the old type name.
  */
-static tmsymbol_list rename_tmsymbol_list( tmsymbol_list dl, const_tmsymbol old, tmsymbol nw )
+static tmstring_list rename_tmstring_list( tmstring_list dl, const tmstring old, const tmstring nw )
 {
     unsigned int ix;
 
     for( ix=0; ix<dl->sz; ix++ ){
-	dl->arr[ix] = rename_tmsymbol( dl->arr[ix], old, nw );
+	dl->arr[ix] = rename_tmstring( dl->arr[ix], old, nw );
     }
     return dl;
 }
@@ -1010,9 +903,9 @@ static tmsymbol_list rename_tmsymbol_list( tmsymbol_list dl, const_tmsymbol old,
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Type rename_Type( Type t, const_tmsymbol old, tmsymbol nw )
+static Type rename_Type( Type t, const tmstring old, const tmstring nw )
 {
-    t->basetype = rename_tmsymbol( t->basetype, old, nw );
+    t->basetype = rename_tmstring( t->basetype, old, nw );
     return t;
 }
 
@@ -1020,7 +913,7 @@ static Type rename_Type( Type t, const_tmsymbol old, tmsymbol nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Field rename_Field( Field f, const_tmsymbol old, tmsymbol nw )
+static Field rename_Field( Field f, const tmstring old, const tmstring nw )
 {
     f->type = rename_Type( f->type, old, nw );
     return f;
@@ -1030,7 +923,7 @@ static Field rename_Field( Field f, const_tmsymbol old, tmsymbol nw )
  * type name 'nw', rewrite these fields to use the new type name
  * instead of the old type name.
  */
-static Field_list rename_Field_list( Field_list dl, const_tmsymbol old, tmsymbol nw )
+static Field_list rename_Field_list( Field_list dl, const tmstring old, const tmstring nw )
 {
     unsigned int ix;
 
@@ -1044,19 +937,16 @@ static Field_list rename_Field_list( Field_list dl, const_tmsymbol old, tmsymbol
  * type name 'nw', rewrite this definition to use the new name
  * instead of the old name.
  */
-static ds rename_ds( ds d, const_tmsymbol old, tmsymbol nw )
+static ds rename_ds( ds d, const tmstring old, const tmstring nw )
 {
-    d->name->sym = rename_tmsymbol( d->name->sym, old, nw );
-    d->inherits = rename_tmsymbol_list( d->inherits, old, nw );
+    d->name = rename_tmstring( d->name, old, nw );
+    d->inherits = rename_tmstring_list( d->inherits, old, nw );
     switch( d->tag ){
-        case TAGDsInclude:
-            break;
-
 	case TAGDsConstructorBase:
 	{
 	    DsConstructorBase dsub = to_DsConstructorBase( d );
 
-	    dsub->constructors = rename_tmsymbol_list( dsub->constructors, old, nw );
+	    dsub->constructors = rename_tmstring_list( dsub->constructors, old, nw );
 	    break;
 	}
 
@@ -1099,7 +989,7 @@ static ds rename_ds( ds d, const_tmsymbol old, tmsymbol nw )
  * type name 'nw', rewrite these definitions to use the new name
  * instead of the old name.
  */
-static ds_list rename_ds_list( ds_list dl, const_tmsymbol old, tmsymbol nw )
+static ds_list rename_ds_list( ds_list dl, const tmstring old, const tmstring nw )
 {
     unsigned int ix;
 
@@ -1110,40 +1000,41 @@ static ds_list rename_ds_list( ds_list dl, const_tmsymbol old, tmsymbol nw )
 }
 
 /* Handle 'rename' command. */
-static void dorename( const_Rename tpl )
+static void dorename( const tplelm tpl )
 {
     char *is;
     char *os;
     tmstring_list sl;
 
-    is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_Rename(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     rfre_tmstring( os );
     if( sl->sz != 2 ){
-	origin_error( tpl->org, "rename requires exactly two parameters" );
+	line_error( "rename requires exactly two parameters" );
 	rfre_tmstring_list( sl );
 	return;
     }
-    allds = rename_ds_list( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
+    allds = rename_ds_list( allds, sl->arr[0], sl->arr[1] );
     if( !check_ds_list( allds ) ){
-	origin_error( tpl->org, "The problems were caused by .rename of `%s' to `%s'", sl->arr[0], sl->arr[1] );
+	sprintf( errarg, "'%s'->'%s'", sl->arr[0], sl->arr[1] );
+	line_error( "The problems were caused by .rename" );
 	exit( 1 );
     }
     rfre_tmstring_list( sl );
 }
 
 /* Handle 'return' command. */
-static void doreturn( const_Return tpl )
+static void doreturn( const tplelm tpl )
 {
     char *is;
     char *os;
     tmstring val;
     tmstring_list sl;
 
-    is = tpl->retval;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_Return(tpl)->retval;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     val = flatstrings( sl );
     rfre_tmstring_list( sl );
@@ -1152,7 +1043,7 @@ static void doreturn( const_Return tpl )
 }
 
 /* Handle 'append' command. */
-static void doappend( const_Append tpl )
+static void doappend( const tplelm tpl )
 {
     char *is;
     char *os;
@@ -1160,12 +1051,12 @@ static void doappend( const_Append tpl )
     tmstring nm;
     tmstring_list sl;
 
-    is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_Append(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<1 ){
-	origin_error( tpl->org, "no name specified" );
+	line_error( "no name specified" );
 	rfre_tmstring_list( sl );
 	return;
     }
@@ -1183,7 +1074,7 @@ static void doappend( const_Append tpl )
 }
 
 /* Handle 'globalappend' command. */
-static void doglobalappend( const_GlobalAppend tpl )
+static void doglobalappend( const tplelm tpl )
 {
     char *is;
     char *os;
@@ -1191,12 +1082,12 @@ static void doglobalappend( const_GlobalAppend tpl )
     tmstring nm;
     tmstring_list sl;
 
-    is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_GlobalAppend(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<1 ){
-	origin_error( tpl->org, "no name specified" );
+	line_error( "no name specified" );
 	rfre_tmstring_list( sl );
 	return;
     }
@@ -1216,9 +1107,9 @@ static void doglobalappend( const_GlobalAppend tpl )
 /* Given a type list 'types' and a type name 'nm', delete that type from
  * the list of types.
  */
-static ds_list delete_type( ds_list types, const_tmstring nm )
+static ds_list delete_type( ds_list types, const tmstring nm )
 {
-    unsigned int ix = find_type_ix( types, add_tmsymbol( nm ) );
+    unsigned int ix = find_type_ix( types, nm );
 
     if( ix>=types->sz ){
 	return types;
@@ -1227,7 +1118,7 @@ static ds_list delete_type( ds_list types, const_tmstring nm )
 }
 
 /* Handle 'deletetype' command. */
-static void dodeletetype( const_DeleteType tpl )
+static void dodeletetype( const DeleteType tpl )
 {
     char *is;
     char *os;
@@ -1235,8 +1126,8 @@ static void dodeletetype( const_DeleteType tpl )
     unsigned int ix;
 
     is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     for( ix=0; ix<sl->sz; ix++ ){
 	allds = delete_type( allds, sl->arr[ix] );
@@ -1245,14 +1136,14 @@ static void dodeletetype( const_DeleteType tpl )
 }
 
 /* Handle 'if' command. */
-static void doif( const_If tpl, FILE *outfile )
+static void doif( const If tpl, FILE *outfile )
 {
     char *is;
     char *os;
-    tmbool cond;
+    bool cond;
 
     is = tpl->cond;
-    os = alevalto( tpl->org, &is, '\0' );
+    os = alevalto( &is, '\0' );
     cond = istruestr( os );
     fre_tmstring( os );
     if( cond ){
@@ -1263,49 +1154,28 @@ static void doif( const_If tpl, FILE *outfile )
     }
 }
 
-static tmbool matches_tmstring( const_origin org, const_tmstring word, const_tmstring pattern )
-{
-    const char *errm = ref_comp( pattern );
-    if( errm != NULL ){
-        origin_error( org, "bad regular expression: %s", errm );
-        return FALSE;
-    }
-    return ref_exec( word );
-}
-
-static tmbool matches_tmstring_list( const_origin org, const_tmstring word, const_tmstring_list patterns )
-{
-    unsigned int i;
-
-    for( i=0; i<patterns->sz; i++ ){
-        if( matches_tmstring( org, word, patterns->arr[i] ) ){
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
 /* Handle 'switch' command. */
-static void doswitch( const_Switch tpl, FILE *outfile )
+static void doswitch( const Switch tpl, FILE *outfile )
 {
     char *is;
     char *os;
-    tmbool visited = FALSE;
+    bool visited = FALSE;
     tmstring_list sl;
     unsigned int ix;
-    const_Switchcase_list cases;
+    Switchcase_list cases;
 
     is = tpl->val;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz != 1 ){
 	if( sl->sz == 0 ){
-            origin_error( tpl->org, "A switch command requires exactly one parameter, but this one has no parameters" );
+	    strcpy( errarg, "it has no parameters" );
 	}
 	else {
-            origin_error( tpl->org, "A switch command requires exactly one parameter, but this one has %u parameters", sl->sz );
+	    sprintf( errarg, "it has %u parameters", sl->sz );
 	}
+	line_error( "A switch command requires exactly one parameter" );
 	rfre_tmstring_list( sl );
 	return;
     }
@@ -1315,10 +1185,10 @@ static void doswitch( const_Switch tpl, FILE *outfile )
 	tmstring sentence;
 	tmstring_list words;
 
-	sentence = alevalto( tpl->org, &caseval, '\0' );
-	words = chopstring( tpl->org, sentence );
+	sentence = alevalto( &caseval, '\0' );
+	words = chopstring( sentence );
 	rfre_tmstring( sentence );
-	if( matches_tmstring_list( tpl->org, sl->arr[0], words ) ){
+	if( member_tmstring_list( sl->arr[0], words ) ){
 	    /* We've got a match. */
 	    dotrans( cases->arr[ix]->action, outfile );
 	    visited = TRUE;
@@ -1326,9 +1196,9 @@ static void doswitch( const_Switch tpl, FILE *outfile )
 	rfre_tmstring_list( words );
     }
     if( !visited ){
-        /* None of the cases matched; we need to do the default. */
 	if( tpl->deflt == tplelm_listNIL ){
-	    origin_error( tpl->org, "no case matches value '%s', and there is no .default", sl->arr[0] );
+	    sprintf( errarg, "value '%s'", sl->arr[0] );
+	    line_error( "no case matches, and there is no .default" );
 	}
 	else {
 	    dotrans( tpl->deflt, outfile );
@@ -1341,7 +1211,7 @@ static void doswitch( const_Switch tpl, FILE *outfile )
    Given a list of template lines, starting with a foreach command line,
    generate output lines. Handle local commands by recursion.
  */
-static void doforeach( const_Foreach tpl, FILE *outfile )
+static void doforeach( const tplelm tpl, FILE *outfile )
 {
     char *nm;
     char *is;
@@ -1349,19 +1219,19 @@ static void doforeach( const_Foreach tpl, FILE *outfile )
     unsigned int ix;
     tmstring_list sl;
 
-    is = tpl->felist;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_Foreach(tpl)->felist;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<1 ){
-	origin_error( tpl->org, "no name specified" );
+	line_error( "no name specified" );
 	rfre_tmstring_list( sl );
 	return;
     }
     nm = sl->arr[0];
     for( ix=1; ix<sl->sz; ix++ ){
 	setvar( nm, sl->arr[ix] );
-	dotrans( tpl->body, outfile );
+	dotrans( to_Foreach(tpl)->body, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -1370,7 +1240,7 @@ static void doforeach( const_Foreach tpl, FILE *outfile )
    Given a list of template lines, starting with a foreach command line,
    generate output lines. Handle local commands by recursion.
  */
-static void dofor( const_For tpl, FILE *outfile )
+static void dofor( const tplelm tpl, FILE *outfile )
 {
     char *nm;
     char *is;
@@ -1381,29 +1251,29 @@ static void dofor( const_For tpl, FILE *outfile )
     int stride = 1;
     int v;
 
-    is = tpl->parms;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_For(tpl)->parms;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<3 ){
-	origin_error( tpl->org, "too few parameter for `for' command" );
+	line_error( "too few parameter for `for' command" );
 	rfre_tmstring_list( sl );
 	return;
     }
     if( sl->sz>4 ){
-	origin_error( tpl->org, "too many parameter for `for' command" );
+	line_error( "too many parameter for `for' command" );
 	rfre_tmstring_list( sl );
 	return;
     }
-    (void) cknumpar( tpl->org, sl->arr[1] );	/* start */
+    cknumpar( sl->arr[1] );	/* start */
     start = atoi( sl->arr[1] );
-    (void) cknumpar( tpl->org, sl->arr[2] );	/* end */
+    cknumpar( sl->arr[2] );	/* end */
     end = atoi( sl->arr[2] );
     if( sl->sz == 4 ){
-	(void) cknumpar( tpl->org, sl->arr[3] );	/* stride */
+	cknumpar( sl->arr[3] );	/* stride */
 	stride = atoi( sl->arr[3] );
 	if( stride<1 ){
-	    origin_error( tpl->org, "stride cannot be negative or zero" );
+	    line_error( "stride cannot be negative or zero" );
 	    rfre_tmstring_list( sl );
 	    return;
 	}
@@ -1414,7 +1284,7 @@ static void dofor( const_For tpl, FILE *outfile )
 
 	sprintf( vstr, "%d", v );
 	setvar( nm, vstr );	/* Set the iteration variable. */
-	dotrans( tpl->body, outfile );
+	dotrans( to_Foreach(tpl)->body, outfile );
     }
     rfre_tmstring_list( sl );
 }
@@ -1424,21 +1294,21 @@ static void dofor( const_For tpl, FILE *outfile )
    generate output lines until condition is false. Handle local commands
    by recursion.
  */
-static void dowhile( const_While tpl, FILE *outfile )
+static void dowhile( const tplelm tpl, FILE *outfile )
 {
-    for(;;){
-        tmbool done;
-        char *is;
-        char *os;
+    bool done;
+    char *is;
+    char *os;
 
-	is = tpl->cond;
-	os = alevalto( tpl->org, &is, '\0' );
+    for(;;){
+	is = to_While(tpl)->cond;
+	os = alevalto( &is, '\0' );
 	done = isfalsestr( os );
 	fre_tmstring( os );
 	if( done ){
 	    return;
 	}
-	dotrans( tpl->body, outfile );
+	dotrans( to_While(tpl)->body, outfile );
     }
 }
 
@@ -1446,7 +1316,7 @@ static void dowhile( const_While tpl, FILE *outfile )
  * in separate words, copy the macro body, and store it in the
  * macro table.
  */
-static void domacro( const_Macro tpl )
+static void domacro( const Macro tpl )
 {
     char *nm;
     char *is;
@@ -1454,46 +1324,48 @@ static void domacro( const_Macro tpl )
     tmstring_list sl;
 
     is = tpl->formals;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
     if( sl->sz<1 ){
-	origin_error( tpl->org, "no macro name specified" );
+	line_error( "no macro name specified" );
 	rfre_tmstring_list( sl );
 	return;
     }
     nm = rdup_tmstring( sl->arr[0] );
     sl = delete_tmstring_list( sl, 0 );
-    setmacro( nm, tpl->org, sl, tpl->body );
+    setmacro( nm, tplfilename, sl, to_Macro(tpl)->body );
     rfre_tmstring( nm );
     rfre_tmstring_list( sl );
 }
 
 /* Handle 'call' command (calls a macro). */
-static void docall( const_Call tpl, FILE *outfile )
+static void docall( const tplelm tpl, FILE *outfile )
 {
     char *is;
     char *os;
     tmstring_list sl;
     tmstring nm;
     tmstring_list fpl;
+    tmstring oldfname;
     unsigned int ix;
-    const_macro m;
-    int valid;
+    macro m;
 
-    is = tpl->line;
-    os = alevalto( tpl->org, &is, '\0' );
-    sl = chopstring( tpl->org, os );
+    is = to_Call(tpl)->line;
+    os = alevalto( &is, '\0' );
+    sl = chopstring( os );
     fre_tmstring( os );
-    sl = extract_tmstring_list( sl, 0, &nm, &valid );
-    if( !valid ){
-	origin_error( tpl->org, "no macro name given" );
+    if( sl->sz<1 ){
+	line_error( "no macro name given" );
 	rfre_tmstring_list( sl );
 	return;
     }
+    nm = rdup_tmstring( sl->arr[0] );
+    sl = delete_tmstring_list( sl, 0 );
     m = findmacro( nm );
     if( m == macroNIL ){
-	origin_error( tpl->org, "macro '%s' does not exist", nm );
+	sprintf( errarg, "'%s'", nm );
+	line_error( "no such macro" );
 	rfre_tmstring_list( sl );
 	rfre_tmstring( nm );
 	return;
@@ -1501,23 +1373,27 @@ static void docall( const_Call tpl, FILE *outfile )
     fpl = m->fpl;
     rfre_tmstring( nm );
     if( fpl->sz != sl->sz ){
-	origin_error(
-            tpl->org,
-            "wrong number of parameters for macro '%s': %u instead of %u",
-	    m->name,
+	sprintf(
+	    errarg,
+	    "%u instead of %u (macro '%s')",
 	    sl->sz,
-	    fpl->sz
-        );
+	    fpl->sz,
+	    m->name
+	);
+	line_error( "wrong number of parameters" );
 	rfre_tmstring_list( sl );
 	return;
     }
+    oldfname = tplfilename;
+    tplfilename = m->orgfile;
     newvarctx();
-    setvar( "templatefile", m->org->file->name );
+    setvar( "templatefile", m->orgfile );
     for( ix=0; ix<sl->sz; ix++ ){
 	setvar( fpl->arr[ix], sl->arr[ix] );
     }
     dotrans( m->body, outfile );
     flushvar();
+    tplfilename = oldfname;
     rfre_tmstring_list( sl );
 }
 
@@ -1525,32 +1401,33 @@ static void docall( const_Call tpl, FILE *outfile )
    Given a list of template lines in 'tpl' generate text from them,
    and write this text to 'outfile'.
  */
-void dotrans( const_tplelm_list tpl, FILE *outfile )
+void dotrans( const tplelm_list tpl, FILE *outfile )
 {
     unsigned int ix;
+    tplelm e;
 
     for( ix=0; ix<tpl->sz; ix++ ){
-        const_tplelm e = tpl->arr[ix];
-
+	e = tpl->arr[ix];
+	tpllineno = e->lno;
 	switch( e->tag ){
 	    case TAGError:
-		doerror( to_const_Error( e ) );
+		doerror( e );
 		break;
 
 	    case TAGForeach:
-		doforeach( to_const_Foreach( e ), outfile );
+		doforeach( e, outfile );
 		break;
 
 	    case TAGFor:
-		dofor( to_const_For( e ), outfile );
+		dofor( e, outfile );
 		break;
 
 	    case TAGIf:
-		doif( to_const_If( e ), outfile );
+		doif( to_If( e ), outfile );
 		break;
 
 	    case TAGSwitch:
-		doswitch( to_const_Switch(e), outfile );
+		doswitch( to_Switch(e), outfile );
 		break;
 
 	    case TAGCase:
@@ -1558,75 +1435,67 @@ void dotrans( const_tplelm_list tpl, FILE *outfile )
 		break;
 
 	    case TAGPlain:
-		doplain( to_const_Plain( e ), outfile );
+		doplain( e, outfile );
 		break;
 
 	    case TAGRename:
-		dorename( to_const_Rename( e ) );
+		dorename( e );
 		break;
 
 	    case TAGSet:
-		doset( to_const_Set( e ) );
+		doset( e );
 		break;
 
 	    case TAGGlobalSet:
-		doglobalset( to_const_GlobalSet( e ) );
-		break;
-
-	    case TAGSplit:
-		dosplit( to_const_Split( e ) );
-		break;
-
-	    case TAGGlobalSplit:
-		doglobalsplit( to_const_GlobalSplit( e ) );
+		doglobalset( e );
 		break;
 
 	    case TAGReturn:
-		doreturn( to_const_Return( e ) );
+		doreturn( e );
 		break;
 
 	    case TAGDeleteType:
-		dodeletetype( to_const_DeleteType( e ) );
+		dodeletetype( to_DeleteType( e ) );
 		break;
 
 	    case TAGGlobalAppend:
-		doglobalappend( to_const_GlobalAppend( e ) );
+		doglobalappend( e );
 		break;
 
 	    case TAGAppend:
-		doappend( to_const_Append( e ) );
+		doappend( e );
 		break;
 
 	    case TAGRedirect:
-		doredirect( to_const_Redirect( e ) );
+		doredirect( e );
 		break;
 
 	    case TAGAppendfile:
-		doappendfile( to_const_Appendfile( e ) );
+		doappendfile( e );
 		break;
 
 	    case TAGInclude:
-		doinclude( to_const_Include( e ), outfile );
+		doinclude( e, outfile );
 		break;
 
 	    case TAGInsert:
-		doinsert( to_const_Insert( e ), outfile );
+		doinsert( e, outfile );
 		break;
 
 	    case TAGExit:
-		doexit( to_const_Exit( e ) );
+		doexit( e );
 		break;
 
 	    case TAGWhile:
-		dowhile( to_const_While( e ), outfile );
+		dowhile( e, outfile );
 		break;
 
 	    case TAGMacro:
-		domacro( to_const_Macro( e ) );
+		domacro( to_Macro( e ) );
 		break;
 
 	    case TAGCall:
-		docall( to_const_Call( e ), outfile );
+		docall( e, outfile );
 		break;
 
 	}
@@ -1641,23 +1510,17 @@ void dotrans( const_tplelm_list tpl, FILE *outfile )
  * the template from 'infile' and write the translated version to
  * 'outfile'. Neither file is opened or closed.
  */
-static void internal_translate( FILE *infile, const char *filenm, FILE *outfile )
+void translate( FILE *infile, FILE *outfile )
 {
     tplelm_list tpl;
     tmcommand endcom;
-    unsigned int lineno = 0;
 
-    tpl = readtemplate( infile, filenm, &endcom, &lineno );
+    tpllineno = 0;
+    tpl = readtemplate( infile, &endcom );
     if( endcom != EOFLINE ){
-	unbalance( filenm, lineno, lineno, endcom, EOFLINE );
+	unbalance( tpllineno, endcom, EOFLINE );
 	return;
     }
     dotrans( tpl, outfile );
     rfre_tplelm_list( tpl );
-}
-
-void translate( FILE *infile, const char *filenm, FILE *outfile )
-{
-    internal_translate( infile, filenm, outfile );
-    errcheck();
 }

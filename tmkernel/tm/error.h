@@ -1,14 +1,18 @@
-/* File: $Id$ */
+/* File: $Id$
+ *
+ * Description of exported objects of error.c.
+ */
 
-extern void internal_error( const char *msg, ... ) ATTRIBUTE_PRINTF(1,2);
-extern void origin_internal_error( const_origin org, const char *msg, ... ) ATTRIBUTE_PRINTF(2,3);
-extern void origsymbol_internal_error( const_origsymbol s, const char *msg, ... ) ATTRIBUTE_PRINTF(2,3);
+#define ERRARGLEN 80       /* max length of argument arrays below */
+extern char errpos[];      /* describes position of the error */
+extern char errarg[];      /* contains an argument to the error message */
 
-extern void error( const char *msg, ... ) ATTRIBUTE_PRINTF(1,2);
-extern void fileline_error( const char *fnm, unsigned int lineno, const char *msg, ... ) ATTRIBUTE_PRINTF(3, 4);
-extern void origin_error( const_origin s, const char *msg, ... ) ATTRIBUTE_PRINTF(2,3);
-extern void origsymbol_error( const_origsymbol s, const char *msg, ... ) ATTRIBUTE_PRINTF(2,3);
-extern void sys_error( int no, const char *msg, ... ) ATTRIBUTE_PRINTF(2,3);
-
+extern void init_error( void );
+extern void error( const char *msg );
+extern void fatal( const char *msg );
+extern void sys_error( int no );
+extern void line_error( const char *msg );
+extern void docrash( const char *file, int line, const char *msg );
 extern void errcheck( void );
-extern bool error_seen( void );
+
+#define crash(n) docrash(__FILE__, __LINE__,n)

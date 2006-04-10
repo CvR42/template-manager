@@ -3,16 +3,18 @@
  * Handle debugging flags.
  */
 
+#include "config.h"
+#include "tmdefs.h"
+
 #include <tmc.h>
 
-#include "tmdefs.h"
 #include "flag.h"
 
 /* Given a character 'c' and a flag table 'flagtab',
    return a pointer to the entry of character 'c', or return
    dbflagNIL if not found.
  */
-static const dbflag *finddbflag( int c, const dbflag *flagtab )
+const dbflag *finddbflag( int c, const dbflag *flagtab )
 {
     const dbflag *p;
 
@@ -45,7 +47,7 @@ void helpdbflags( FILE *f, const dbflag *flagtab )
    value to 'val'. The flag character '.' means that all flags must
    be set.
  */
-void setdbflags( const char *s, const dbflag *flagtab, tmbool val )
+void setdbflags( const char *s, const dbflag *flagtab, int val )
 {
     int c;
     const dbflag *e;

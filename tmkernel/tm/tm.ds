@@ -3,23 +3,14 @@
 ||
 || All rights reserved.
 
-|| An origin descriptor.
-|| This is tacked to all sorts of constructs for which it is useful
-|| to track the file and line number they started in.
-origin == ( file:tmsymbol, line:tmuint );
-
-|| A symbol with its origin.
-origsymbol == ( sym:tmsymbol, org:origin );
-
 || Structure of the datastructure itself
 || The Class type is in its canonical form. Before canonization
 || it is represented as a classComponent list.
 ||
 || The list of inheritors of this type is a memoize of a lengthy
 || and frequently used calculation.
-ds = { name:origsymbol, inherits:[tmsymbol], inheritors:[tmsymbol] } +
-    DsInclude: { fnm:tmstring } |
-    DsConstructorBase: { constructors:[tmsymbol] } |
+ds = { name:tmstring, inherits:[tmstring], inheritors:[tmstring] } +
+    DsConstructorBase: { constructors:[tmstring] } |
     DsTuple: { fields:[Field] } |
     DsClass: { fields:[Field], isvirtual:tmbool } |
     DsConstructor: { fields:[Field] } |
@@ -27,29 +18,29 @@ ds = { name:origsymbol, inherits:[tmsymbol], inheritors:[tmsymbol] } +
     ;
 
 classComponent =
-    CCSuper: { super:tmsymbol } |
+    CCSuper: { super:tmstring } |
     CCFields: { fields:[Field] } |
     CCAlternatives: { alternatives:[alternative] } |
     CCSublist:  { components:[classComponent] }
     ;
 
-alternative == ( label:tmsymbol, component:classComponent );
+alternative == ( label:tmstring, component:classComponent );
 
-Type == ( level:tmuint, basetype:tmsymbol );
+Type == ( level:tmuint, basetype:tmstring );
 
-Field == ( name:origsymbol, type:Type );
+Field == ( name:tmstring, type:Type );
 
 || The internal representation of a macro.
 macro == (
-    org:origin,         || The origin of the macro
     lvl:tmuint,		|| The context level
     name:tmstring,	|| The name of the macro
+    orgfile:tmstring,	|| In which file was it defined
     fpl:[tmstring],	|| List of formal parameters
     body:[tplelm]	|| The body of the macro
 );
 
 || The internal representation of a variable.
-variable == (
+var == (
     lvl:tmuint,		|| The context level
     name:tmstring,	|| The name of the variable
     val:tmstring	|| The value of the variable
@@ -57,7 +48,7 @@ variable == (
 
 Switchcase == ( cases:tmstring, action:[tplelm] );
 
-tplelm = { org:origin } +
+tplelm = { lno:int } +
     Plain: { line:tmstring } |
     For: { parms:tmstring, body:[tplelm] } |
     Foreach: { felist:tmstring, body:[tplelm] } |
@@ -65,10 +56,8 @@ tplelm = { org:origin } +
     If: { cond:tmstring, ifthen:[tplelm], ifelse:[tplelm] } |
     Switch: { val:tmstring, cases:[Switchcase], deflt:[tplelm] } |
     Set: { line:tmstring } |
-    Split: { line:tmstring } |
     Rename: { line:tmstring } |
     GlobalSet: { line:tmstring } |
-    GlobalSplit: { line:tmstring } |
     Append: { line:tmstring } |
     GlobalAppend: { line:tmstring } |
     DeleteType: { line:tmstring } |

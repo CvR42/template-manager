@@ -2,7 +2,7 @@
  *
  * Various low-level routines.
  */
-
+#include "config.h"
 #include <stdio.h>
 #include <tmc.h>
 #include <errno.h>
@@ -18,7 +18,8 @@ FILE *ckfopen( const char *nm, const char *acc )
     FILE *hnd = fopen( nm, acc );
 
     if( NULL == hnd ){
-	sys_error( errno, "%s", nm );
+	(void) strcpy( errarg, nm );
+	sys_error( errno );
 	exit( 1 );
     }
     return hnd;
@@ -30,7 +31,8 @@ FILE *ckfopen( const char *nm, const char *acc )
 void ckfreopen( const char *nm, const char *acc, FILE *f )
 {
     if( freopen( nm, acc, f ) == NULL ){
-	sys_error( errno, "%s", nm );
+	(void) strcpy( errarg, nm );
+	sys_error( errno );
 	exit( 1 );
     }
 }
@@ -80,27 +82,27 @@ static unsigned int types_hashval( const char *s )
  * after the change they are more likely to fail, but the result is
  * still correct.
  */ 
-unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
+unsigned int find_type_ix( const ds_list types, const char *t )
 {
     unsigned int ix;
     unsigned int hv;
 
-    if( prev_types_ix<types->sz && ( types->arr[prev_types_ix]->name->sym == t ) ){
+    if( prev_types_ix<types->sz && ( strcmp( types->arr[prev_types_ix]->name, t ) == 0 ) ){
 	return prev_types_ix;
     }
-    if( t == tmsymbolNIL ){
+    if( t == NULL ){
 	return types->sz;
     }
-    hv = types_hashval( t->name );
+    hv = types_hashval( t );
     ix = types_hash[hv];
-    if( ix<types->sz && types->arr[ix]->name->sym == t ){
+    if( ix<types->sz && ( strcmp( types->arr[ix]->name, t ) == 0 ) ){
 	prev_types_ix = ix;
 	return ix;
     }
     for( ix = 0; ix < types->sz; ix++ ){
-	const_ds d = types->arr[ix];
+	ds d = types->arr[ix];
 
-	if( d->name != origsymbolNIL && d->name->sym == t ){
+	if( strcmp( d->name, t ) == 0 ){
 	    prev_types_ix = ix;
 	    types_hash[hv] = ix;
 	    return ix;
@@ -113,39 +115,24 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
  * Return the index of that field in the list, or fl->sz if not
  * found.
  */ 
-static unsigned int find_field_ix( const_Field_list fl, const_tmsymbol nm )
+unsigned int find_field_ix( const Field_list fl, const char *nm )
 {
     unsigned int ix;
 
     for( ix = 0; ix < fl->sz; ix++ ){
-	const_Field f = fl->arr[ix];
+	const Field f = fl->arr[ix];
 
-	if( f->name->sym == nm ){
+	if( strcmp( f->name, nm ) == 0 ){
 	    return ix;
 	}
     }
     return fl->sz;
 }
 
-/* Search for tmsymbol 's' in the list 'l' and return TRUE if
-   found or FALSE otherwise.
- */
-tmbool member_tmsymbol_list( const_tmsymbol s, const_tmsymbol_list l )
-{
-    unsigned int sno;
-
-    for( sno=0; sno<l->sz; sno++ ){
-	if( l->arr[sno] == s ){
-	    return TRUE;
-	}
-    }
-    return FALSE;
-}
-
 /* Search for tmstring 's' in the list 'l' and return TRUE if
    found or FALSE otherwise.
  */
-tmbool member_tmstring_list( const_tmstring s, const_tmstring_list l )
+bool member_tmstring_list( const tmstring s, const tmstring_list l )
 {
     unsigned int sno;
 
@@ -157,22 +144,22 @@ tmbool member_tmstring_list( const_tmstring s, const_tmstring_list l )
     return FALSE;
 }
 
-/* Search for all symbols 'sl' in the list 'l' and return TRUE if
+/* Search for all strings 'sl' in the list 'l' and return TRUE if
  * any of them occurs in 'l', or FALSE otherwise.
  */
-tmbool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l )
+bool any_member_tmstring_list( const tmstring_list sl, const tmstring_list l )
 {
     unsigned int ix;
 
     for( ix=0; ix<sl->sz; ix++ ){
-	if( member_tmsymbol_list( sl->arr[ix], l ) ){
+	if( member_tmstring_list( sl->arr[ix], l ) ){
 	    return TRUE;
 	}
     }
     return FALSE;
 }
 
-static Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm )
+Field find_field_super( const ds_list types, tmstring_list supers, const char *nm )
 {
     unsigned int ix;
 
@@ -186,12 +173,12 @@ static Field find_field_super( const_ds_list types, tmsymbol_list supers, const_
     return FieldNIL;
 }
 
-Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
+Field find_field( const ds_list types, const char *type, const char *nm )
 {
     unsigned int pos;
     ds t;
     Field_list fl = Field_listNIL;
-    tmsymbol_list inherits = tmsymbol_listNIL;
+    tmstring_list inherits = tmstring_listNIL;
 
     pos = find_type_ix( types, type );
     if( pos >= types->sz ){
@@ -201,7 +188,9 @@ Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
     inherits = t->inherits;
     switch( t->tag ){
 	case TAGDsAlias:
-	case TAGDsInclude:
+	    fl = Field_listNIL;
+	    break;
+
 	case TAGDsConstructorBase:
 	    fl = Field_listNIL;
 	    break;
@@ -228,97 +217,100 @@ Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
     return find_field_super( types, inherits, nm );
 }
 
-tmsymbol_list extract_inherits( const_ds_list types, const_tmsymbol type )
+tmstring_list extract_inherits( const ds_list types, const char *type )
 {
     unsigned int ix;
 
     ix = find_type_ix( types, type );
     if( ix>=types->sz ){
-	return tmsymbol_listNIL;
+	return tmstring_listNIL;
     }
     return types->arr[ix]->inherits;
 }
 
-/* Given a pointer to a symbol list 'res', a list of types 'types'
+/* Given a pointer to a string list 'res', a list of types 'types'
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types that inherit 'type'.
  */
-void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type )
+void collect_subclasses( tmstring_list *res, const ds_list types, const tmstring type )
 {
-    tmsymbol_list queue;
+    tmstring_list queue;
 
-    queue = new_tmsymbol_list();
+    queue = new_tmstring_list();
     collect_inheritors( &queue, types, type );
     while( queue->sz>0 ){
-	tmsymbol nm;
+	tmstring nm;
 	int valid;
 
-	queue = extract_tmsymbol_list( queue, 0, &nm, &valid );
+	queue = extract_tmstring_list( queue, 0, &nm, &valid );
 	if( valid ){
-	    if( !member_tmsymbol_list( nm, *res ) ){
+	    if( !member_tmstring_list( nm, *res ) ){
 		collect_inheritors( &queue, types, nm );
-		*res = append_tmsymbol_list( *res, nm );
+		*res = append_tmstring_list( *res, nm );
+	    }
+	    else {
+		rfre_tmstring( nm );
 	    }
 	}
     }
-    rfre_tmsymbol_list( queue );
+    rfre_tmstring_list( queue );
 }
 
-/* Given a pointer to a symbol list 'res', a list of types 'types'
+/* Given a pointer to a string list 'res', a list of types 'types'
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types where 'type' inherits from.
  */
-void collect_superclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type )
+void collect_superclasses( tmstring_list *res, const ds_list types, const char *type )
 {
     unsigned int ix;
-    const_tmsymbol_list inherits = extract_inherits( types, type );
+    const tmstring_list inherits = extract_inherits( types, type );
 
-    if( inherits == tmsymbol_listNIL ){
+    if( inherits == tmstring_listNIL ){
 	return;
     }
     for( ix=0; ix<inherits->sz; ix++ ){
-	tmsymbol t = inherits->arr[ix];
+	const tmstring t = inherits->arr[ix];
 
-	if( !member_tmsymbol_list( t, *res ) ){
+	if( !member_tmstring_list( t, *res ) ){
 	    collect_superclasses( res, types, t );
-	    *res = append_tmsymbol_list( *res, rdup_tmsymbol( t ) );
+	    *res = append_tmstring_list( *res, rdup_tmstring( t ) );
 	}
     }
 }
 
-/* Given a pointer to a symbol list 'res', a list of types 'types'
+/* Given a pointer to a string list 'res', a list of types 'types'
  * and a type name 'type', collect into '*res' the types that inherit
  * 'type'.
  */
-void collect_inheritors( tmsymbol_list *res, const_ds_list types, tmsymbol type )
+void collect_inheritors( tmstring_list *res, const ds_list types, const tmstring type )
 {
     unsigned int tix;
     unsigned int ix;
-    tmsymbol_list mine;
+    tmstring_list mine;
 
     tix = find_type_ix( types, type );
-    if( tix<types->sz && types->arr[tix]->inheritors != tmsymbol_listNIL ){
-	*res = concat_tmsymbol_list(
+    if( tix<types->sz && types->arr[tix]->inheritors != tmstring_listNIL ){
+	*res = concat_tmstring_list(
 	    *res,
-	    rdup_tmsymbol_list( types->arr[tix]->inheritors )
+	    rdup_tmstring_list( types->arr[tix]->inheritors )
 	);
 	return;
     }
-    mine = new_tmsymbol_list();
+    mine = new_tmstring_list();
     for( ix=0; ix<types->sz; ix++ ){
-	const_ds d = types->arr[ix];
-	const_tmsymbol_list inherits = d->inherits;
+	const ds d = types->arr[ix];
+	const tmstring_list inherits = d->inherits;
 
-	if( inherits != tmsymbol_listNIL && member_tmsymbol_list( type, inherits ) ){
-	    tmsymbol nm = d->name->sym;
+	if( inherits != tmstring_listNIL && member_tmstring_list( type, inherits ) ){
+	    const char *nm = d->name;
 
-	    mine = append_tmsymbol_list( mine, nm );
+	    mine = append_tmstring_list( mine, rdup_tmstring( nm ) );
 	}
     }
     if( tix<types->sz ){
-	types->arr[tix]->inheritors = rdup_tmsymbol_list( mine );
+	types->arr[tix]->inheritors = rdup_tmstring_list( mine );
     }
-    *res = concat_tmsymbol_list( *res, mine );
+    *res = concat_tmstring_list( *res, mine );
 }
 
 /* Given a list of types, zap all memoized inheritors */
@@ -329,22 +321,22 @@ ds_list zap_memoized_inheritors( ds_list types )
     for( ix=0; ix<types->sz; ix++ ){
 	ds d = types->arr[ix];
 
-	if( d->inheritors != tmsymbol_listNIL ){
-	    rfre_tmsymbol_list( d->inheritors );
-	    d->inheritors = tmsymbol_listNIL;
+	if( d->inheritors != tmstring_listNIL ){
+	    rfre_tmstring_list( d->inheritors );
+	    d->inheritors = tmstring_listNIL;
 	}
     }
     return types;
 }
 
 
-/* Given a pointer to a symbol list 'fields', a list of types 'types'
+/* Given a pointer to a string list 'fields', a list of types 'types'
  * and a type name 'type', collect into '*fields' the fields 
  * of this type (but not the fields it inherits).
  * Constructor types in the inherit tree are considered to have an
  * empty field list.
  */
-void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type )
+void collect_fields( tmstring_list *fields, const ds_list types, const char *type )
 {
     unsigned int ix;
     Field_list el = Field_listNIL;
@@ -371,36 +363,15 @@ void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol 
 	    el = to_DsConstructor(d)->fields;
 	    break;
 
-	case TAGDsInclude:
 	case TAGDsConstructorBase:
 	    return;
     }
     if( el != Field_listNIL ){
 	for( ix=0; ix<el->sz; ix++ ){
-	    const_Field e = el->arr[ix];
+	    const Field e = el->arr[ix];
 
-	    *fields = append_tmsymbol_list( *fields, e->name->sym );
+	    *fields = append_tmstring_list( *fields, new_tmstring( e->name ) );
 	}
-    }
-}
-
-/* Given a pointer to a string list 'fields', a list of types 'types'
- * and a type name 'type', collect into '*fields' the fields that are
- * inherited by this type, in depth-first order.
- * Constructor types in the inherit tree are considered to have an
- * empty field list, but may of course inherit from other classes.
- */
-static void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type )
-{
-    tmsymbol_list inherits;
-    unsigned int ix;
-
-    inherits = extract_inherits( types, type );
-    if( inherits == tmsymbol_listNIL ){
-	return;
-    }
-    for( ix=0; ix<inherits->sz; ix++ ){
-	collect_all_fields( fields, types, inherits->arr[ix] );
     }
 }
 
@@ -410,29 +381,49 @@ static void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types
  * Constructor types in the inherit tree are considered to have an
  * empty field list, but may of course inherit from other classes.
  */
-void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type )
+void collect_all_fields( tmstring_list *fields, const ds_list types, const char *type )
 {
     collect_inherited_fields( fields, types, type );
     collect_fields( fields, types, type );
 }
 
-/* Given a description 'desc' and a list of tmsymbols 'l', check
- * that the given list of tmsymbols does not contain duplicate entries.
+/* Given a pointer to a string list 'fields', a list of types 'types'
+ * and a type name 'type', collect into '*fields' the fields that are
+ * inherited by this type, in depth-first order.
+ * Constructor types in the inherit tree are considered to have an
+ * empty field list, but may of course inherit from other classes.
  */
-tmbool check_double_symbols( const char *msg, const_tmsymbol_list l )
+void collect_inherited_fields( tmstring_list *fields, const ds_list types, const char *type )
+{
+    tmstring_list inherits;
+    unsigned int ix;
+
+    inherits = extract_inherits( types, type );
+    if( inherits == tmstring_listNIL ){
+	return;
+    }
+    for( ix=0; ix<inherits->sz; ix++ ){
+	collect_all_fields( fields, types, inherits->arr[ix] );
+    }
+}
+
+/* Given a description 'desc' and a list of tmstrings 'l', check
+ * that the given list of tmstrings does not contain duplicate entries.
+ */
+bool check_double_strings( const char *msg, const tmstring_list l )
 {
     unsigned int ixa;
     unsigned int ixb;
-    tmbool ok = TRUE;
+    bool ok = TRUE;
 
     for( ixa=0; ixa<l->sz; ixa++ ){
-	tmsymbol sa = l->arr[ixa];
+	tmstring sa = l->arr[ixa];
 
 	for( ixb=ixa+1; ixb<l->sz; ixb++ ){
-	    tmsymbol sb = l->arr[ixb];
-
-	    if( sa == sb ){
-		error( "%s: `%s'", msg, sa->name );
+	    tmstring sb = l->arr[ixb];
+	    if( strcmp( sa, sb ) == 0 ){
+		sprintf( errarg, "'%s'", sa );
+		error( msg );
 		ok = FALSE;
 	    }
 	}

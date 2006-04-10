@@ -292,13 +292,14 @@ $(stat)void rfre_$t_list( $t_list l )
 /* Append $t 'b' after list of $t 'a'. */
 $(stat)$t_list append_$t_list( $t_list a, $t b )
 {
-    $t tl = a;
+    $t tl;
 
-    b->${call linkname $t} = $tNIL;
-    if( tl == $tNIL ){
+    if( a == $tNIL ){
 	return b;
     }
+    tl = a;
     while( tl->${call linkname $t} != $tNIL ) tl = tl->${call linkname $t};
+    b->${call linkname $t} = $tNIL;
     tl->${call linkname $t} = b;
     return a;
 }

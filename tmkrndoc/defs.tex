@@ -1,9 +1,12 @@
 \def\Tm{{\sf Tm}}
+\def\coil{{\bf Coil}}
 \def\C{{\sf C}}
 \def\Unix{{\bf Unix}}
 \def\Miranda{Miranda}
 \def\Pascal{Pascal}
-\newcommand{\Cplusplus}{{\sf C{\small ++}}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\medskipamount}
 
 \def\emptystring{$\epsilon$}
 
@@ -36,8 +39,7 @@
 \newlength{\descwidth}
 \setlength{\descwidth}{\textwidth}
 \addtolength{\descwidth}{-3.4cm}
-\newenvironment{desctab}{\begin{description}[\breaklabel\setlabelstyle{\bfseries\ttfamily}]}{\end{description}}
-%\newenvironment{desctab}{\begin{flushleft}\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}p{\descwidth}}}{\end{tabular*}\vspace{4mm}\end{flushleft}}
+\newenvironment{desctab}{\begin{flushleft}\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}p{\descwidth}}}{\end{tabular*}\vspace{4mm}\end{flushleft}}
 %\newenvironment{desctab}{\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}p{0.7\textwidth}}}{\end{tabular*}}
 %\newenvironment{listing}{\begin{list}{}{\setlength{\leftmargin}{1em}}\item}{\end{list}}
 

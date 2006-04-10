@@ -22,9 +22,6 @@ help:
 check:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) check; cd ..; done
 
-tests:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) tests; cd ..; done
-
 test:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done
 

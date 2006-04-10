@@ -29,7 +29,6 @@ PROG = tm
 
 CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION) -g
 LDFLAGS	      = $(CFLAGS)
-LINTFLAGS = $(IPATH)
 
 TM            = tm
 
@@ -92,6 +91,7 @@ TMOUTPUT = tmcode.c tmcode.h
 
 GENFILES = $(TMOUTPUT) tmpath.c version.h
 
+
 JUNK          = y.output lint testerr testout testrdir index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
 		config.log distlist
@@ -109,8 +109,6 @@ DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) \
     $(TMOUTPUT) $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES)
 
 
-all: $(PROG)
-
 help :
 	@echo " Possible make targets:"
 	@echo "all		Create local running programs."
@@ -122,8 +120,7 @@ help :
 	@echo "doc		Format documentation."
 	@echo "man		Format manual pages."
 
-lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
-	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
+all: $(PROG)
 
 $(PROG): $(OBJS)
 	$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) -o $(PROG)
@@ -138,17 +135,14 @@ uninstall:
 distclean:
 	rm -f $(OBJS) $(JUNK) $(PROG)
 	rm -f config.status config.cache config.h
-	cd testsuite && make distclean
 
 empty:
 	rm -f $(OBJS) $(JUNK) $(PROG)
 	rm -f config.h
 	rm -f $(PRECIOUSJUNK)
-	cd testsuite && make empty
 
 clean:
 	rm -f $(OBJS) $(GENFILES) $(JUNK)
-	cd testsuite && make clean
 
 tmcode.h: tmcode.ht tm.ds tmspec.t
 	tm tm.ds tmcode.ht > tmcode.h
@@ -168,14 +162,11 @@ man:
 version.h: ../version.h
 	cp ../version.h version.h
 
-check: 
-	cd testsuite && make check
-
-tests:
-	cd testsuite && make tests
-
-test:
-	cd testsuite && make test
+check: testin sub.ds test.ds testsub goodout gooderr goodrdir $(TM)
+	-./tm -dn -v -stest1 -stest2=a -Ibla -o testout -e testerr test.ds testin
+	diff testout goodout
+	diff testerr gooderr
+	diff testrdir goodrdir
 
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
@@ -198,6 +189,7 @@ stats: empty
 
 genstats: $(GENSRCS) $(GENHDRS)
 	wc -l $(GENSRCS) $(GENHDRS)
+
  
 # Configure-related rules.
 

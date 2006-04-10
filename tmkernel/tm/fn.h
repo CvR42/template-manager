@@ -3,4 +3,4 @@
  * Translation routines.
  */
 
-extern tmstring evalfn( const_origin org, const tmstring f );
+extern tmstring evalfn( const tmstring f );

@@ -17,12 +17,10 @@ TM = tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
-CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l \
-  calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c \
-  oksubst.clc
-EXAMPLEFILES = append.xt foreach.xt for.xt if.xt macro.xt var.xt cmp.xt \
-  arith.xt boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt \
-  eval.xt math.xt linemacro.xt setfn.xt switch.xt unalias.xt time.xt
+CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c oksubst.clc
+EXAMPLEFILES = append.xt foreach.xt for.xt if.xt macro.xt var.xt cmp.xt arith.xt \
+  boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
+  linemacro.xt setfn.xt switch.xt unalias.xt time.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex command.tex tmc.tex intro.tex \
@@ -43,8 +41,6 @@ DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
             goodwords main.bib pdstitle.sty plot.ds .cvsignore \
 	    title.ct title.ds ch.sh cast.t alias.ds
 
-all: $(TOPFILE).pdf
-
 help:
 	@echo Possible targets:
 	@echo 'clean   - Remove all intermediate files.'
@@ -56,6 +52,8 @@ help:
 	@echo 'install - Install (dummy for compatibility reasons).'
 	@echo 'spell   - Run spelling check.'
 	@echo 'sort    - Sort spelling goodwords.'
+
+all: $(TOPFILE).pdf
 
 fast: $(TOPFILE).pdf
 

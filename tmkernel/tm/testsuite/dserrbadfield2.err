@@ -1,4 +1,0 @@
-dserrbadfield2.t:1: ':' expected
-t == ( a );
-         ^
-errors detected, program aborted

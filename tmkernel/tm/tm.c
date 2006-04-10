@@ -6,13 +6,17 @@
 #include <assert.h>
 #include <time.h>
 
+#include "config.h"
+
 #include "tmdefs.h"
 
 #include <tmc.h>
 
 #include "flag.h"
 #include "tmcode.h"
+#include "tmstring.h"
 #include "error.h"
+#include "fn.h"
 #include "lex.h"
 #include "dsparser.h"
 #include "misc.h"
@@ -29,8 +33,6 @@ static FILE *tplfile;
 static tmstring outfilename;	/* Possible output redirection file. */
 static tmstring errfilename;	/* Possible error redirection file. */
 
-static tmbool mylextr;
-
 /* Table of debugging flags plus associated information.
 
    Table is ended by an entry with flagchar '\0'
@@ -43,7 +45,7 @@ static dbflag flagtab[] = {
     { 'n', &noerrorline, "don't generate line numbers in error messages (useful for diffs)" },
     { 's', &prstat, "statistics" },
     { 'v', &vartr, "variable and macro tracing" },
-    { 'x', &mylextr, "tracing of lexical analyzer" },
+    { 'x', &lextr, "tracing of lexical analyzer" },
     { '\0', &fntracing, "" }
 };
 
@@ -82,7 +84,7 @@ static const char helptext[] =
 /* Scan command line arguments and options as passed by 'argc' and 'argv'. */
 static void scanargs( int argc, char **argv, tmstring lp )
 {
-    tmbool printusage = FALSE;
+    int printusage = FALSE;
     int exitcode = 0;
     int op;
     tmstring tplfnm;
@@ -246,7 +248,8 @@ static void scanargs( int argc, char **argv, tmstring lp )
     if( tplfnm != tmstringNIL ){
 	tplfilename = search_file( searchpath, tplfnm, PATHSEPSTR, "r" );
 	if( tplfilename == tmstringNIL ){
-	    error( "file `%s' not found", tplfnm );
+	    sprintf( errarg, "'%s'", tplfnm );
+	    error( "file not found" );
 	    exit( 1 );
 	}
 	rfre_tmstring( tplfnm );
@@ -254,7 +257,6 @@ static void scanargs( int argc, char **argv, tmstring lp )
     else {
 	tplfilename = tmstringNIL;
     }
-    set_lex_debugging( mylextr );
 }
 
 int main( int argc, char **argv )
@@ -263,11 +265,12 @@ int main( int argc, char **argv )
     TMPRINTSTATE *st;
     int lev;
     char buf[10];
-    int exitcode = 0;
 
+    dsfile = stdout;
     tracestream = stderr;
     statstream = stderr;
     start_time = clock();
+    init_error();
     init_lex();
     init_var();
     active_libpath = find_active_libpath();
@@ -302,7 +305,7 @@ int main( int argc, char **argv )
     setvar( "kernel-version", TMKERNEL_VERSION );
     setvar( "libpath", active_libpath );
     setvar( "pathsep", PATHSEPSTR );
-    translate( tplfile, tplfilename, stdout );
+    translate( tplfile, stdout );
     fclose( tplfile );
     end_lex();
     rfre_ds_list( allds );
@@ -312,13 +315,11 @@ int main( int argc, char **argv )
     rfre_tmstring( errfilename );
     rfre_tmstring_list( searchpath );
     rfre_tmstring( active_libpath );
-    flush_tmsymbol();
     end_var();
     errcheck();
     if( get_balance_tm() != 0 || get_balance_tmstring() != 0 ){
 	fprintf( statstream, "Object allocation not balanced.\n" );
 	prstat = TRUE;
-        exitcode = 1;
     }
     if( prstat ){
 	stat_tm( statstream );
@@ -327,6 +328,6 @@ int main( int argc, char **argv )
 	report_lognew( statstream );
     }
     flush_lognew();
-    exit( exitcode );
-    return exitcode;
+    exit( 0 );
+    return 0;
 }

@@ -3,6 +3,8 @@
  * Global variables.
  */
 
+#include "config.h"
+
 #include <time.h>
 #include <stdio.h>
 
@@ -10,22 +12,27 @@
 
 #include "tmdefs.h"
 #include "tmcode.h"
+#include "tmstring.h"
 #include "global.h"
 
 FILE *tracestream = 0;
 FILE *statstream = 0;
 
 tmstring tplfilename = tmstringNIL;
+int tpllineno = 0;
 tmstring dsfilename = tmstringNIL;
+FILE *dsfile;
+int dslineno = 0;
 ds_list allds;
 tmstring_list searchpath = tmstring_listNIL;
 
 clock_t start_time;
 
-tmbool fntracing = FALSE;
-tmbool listing = FALSE;
-tmbool maintr = FALSE;
-tmbool prstat = FALSE;
-tmbool sevaltr = FALSE;
-tmbool vartr = FALSE;
-tmbool noerrorline = FALSE;
+int fntracing = FALSE;
+int listing = FALSE;
+int maintr = FALSE;
+int prstat = FALSE;
+int sevaltr = FALSE;
+int vartr = FALSE;
+int lextr = FALSE;
+int noerrorline = FALSE;
