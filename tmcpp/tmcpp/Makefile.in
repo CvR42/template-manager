@@ -13,7 +13,6 @@ CC = $(CXX)
 LINKER = $(CXX)
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
-UNINSTALL_DATA = rm -f
 LOCALBIN = @prefix@/bin
 LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
@@ -112,14 +111,7 @@ tmcinstall: need.t tmcpp.ct tmcpp.ht cppwalk.t
 	rm -f tmp4242
 	$(INSTALL_DATA) cppwalk.t $(LOCALLIB)/cppwalk.t
 
-tmcuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmcpp.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmcpp.ht
-	$(UNINSTALL_DATA) $(LOCALLIB)/cppwalk.t
-
 install: tmcinstall
-
-uninstall: tmcuninstall
 
 clean:
 	rm -f $(JUNK) $(OBJS) $(TMOUT)
@@ -150,17 +142,6 @@ cppcode.h: cppcode.ht tmcpp.ht spec.t cltest.ds need.t macros.t
 
 stats:
 	wc -l $(TMMODULES)
-
-# Configure-related rules.
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile: Makefile.in config.status
-	./config.status
 
 ###
 cppcode.o: cppcode.h config.h

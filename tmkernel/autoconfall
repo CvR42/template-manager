@@ -1,7 +1,6 @@
 #!/bin/sh
-# Run autoconf in all directories that have a configure.in file.
-H=`pwd`
-DIRS=`find $H -name configure.in -printf '%h '`
+# Run autoconf in all the directories in the list below
+TOP=`pwd`
+DIRS=". libtmc tmc tm"
 
-for i in $DIRS; do cd $i; autoconf; echo -n .; done
-echo
+for i in $DIRS; do cd $TOP/$i; autoconf; done

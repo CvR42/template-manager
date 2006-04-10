@@ -8,7 +8,6 @@
 # tm Pascal support make file
 
 VERSION = 2
-PC = pc
 
 # debugging flags
 DBUG =
@@ -38,10 +37,7 @@ JUNK = tmp core makelog stestprog$(EXT) testmass$(EXT) testout testtmp stamp.t \
 
 TESTFILES = test.ds testdata testconf.t
 
-CONFIGFILES = configure.ac configure
-
-DISTFILES = $(TMMODULES) $(TESTFILES) $(TESTSRCS) $(DOC) $(CONFIGFILES) \
-   Makefile.in .cvsignore
+DISTFILES = $(TMMODULES) $(TESTFILES) $(TESTSRCS) $(DOC) Makefile.in
 
 TMMODULES = pasgvar.pt pasvar.pt pascode.pt pastype.pt pasneed.t paslib.pt \
 	    paslib.ht pascode.ht
@@ -115,7 +111,10 @@ distclean:
 empty:
 	rm -f $(JUNK)
 
-distlist: $(MAKEFILE) $(DISTFILES)
+distfiles: $(MAKEFILE)
+	@echo $(DISTFILES) | tr ' ' '\012'
+
+distlist: $(MAKEFILE)
 	echo $(DISTFILES) | tr ' ' '\012' > distlist
 
 setup:
@@ -136,27 +135,16 @@ testcode.h : testcode.ht testconf.t test.ds pascode.ht paslib.ht
 	$(TM) test.ds testcode.ht > testcode.h
 
 testmass.o: testmass.p
-	$(PC) -c $(PFLAGS) $<
+	pc -c $(PFLAGS) $<
 	
 # Note that testmass.p has a separate rule using less trickery
 .p.o:
 	ln $< $*.c
 	cc -E -I$(IDIR) -D$(SYS) $*.c | sed -e '/^#/d' >tmp.p
 	rm -f $*.c
-	$(PC) -c $(PFLAGS) tmp.p
+	pc -c $(PFLAGS) tmp.p
 	mv tmp.o $@
 	rm -f tmp.p
-
-# ----- Configuration
-
-configure: configure.ac
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile: Makefile.in config.status
-	./config.status
 
 ###
 testcode.o: testtype.h

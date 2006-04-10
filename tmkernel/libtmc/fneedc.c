@@ -1,12 +1,13 @@
-/* $Id$
- *
- * Tm - an interface code generator.
+/* Tm - an interface code generator.
  * Author: C. van Reeuwijk.
  *
  * All rights reserved.
  */
 
-/* Ensure that the next non-blank character in the input stream is the
+/* File: fneedc.c
+ * Last modified: CvR
+ *
+ * Ensure that the next non-blank character in the input stream is the
  * required character. Else complain.
  */
 

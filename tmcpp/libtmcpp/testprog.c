@@ -304,7 +304,7 @@ static void test_double( void )
 static void test_float( void )
 {
     int res;
-    float a = 1.2e3f;
+    float a = 1.2e3;
 
     res = compare( (float) 1.0, (float) -1.0 );
     if( res <= 0 ){

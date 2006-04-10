@@ -1,8 +1,13 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Translation routines.
+ * All rights reserved.
  */
 
-extern tmstring alevalto( const_origin org, char **spi, const int sc );
-extern void dotrans( const_tplelm_list tpl, FILE *outfile );
-extern void translate( FILE *infile, const char *filenm, FILE *outfile );
+/* file: tmtrans.h
+ * translation routines.
+ */
+
+extern tmstring alevalto( char **spi, const int sc );
+extern void dotrans( const tplelm_list tpl, FILE *outfile );
+extern void translate( FILE *infile, FILE *outfile );

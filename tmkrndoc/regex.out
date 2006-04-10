@@ -1,0 +1,3 @@
+filt: [blup(lu) burp(ur)]
+rmlist: [bla zwoing]
+subs: [bla blup(lu) burp(ur) zwoing], [bla &(lu) &(ur) zwoing]

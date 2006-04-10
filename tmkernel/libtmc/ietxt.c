@@ -1,4 +1,10 @@
-/* File: $Id$ */
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: ietxt.c */
 
 #include "config.h"
 #include "tmc.h"

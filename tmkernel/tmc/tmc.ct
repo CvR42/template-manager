@@ -403,7 +403,6 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return l;
     }
     if( l->sz >= l->room ){
 	l = setroom_$t_list( l, 1+(l->sz)+(l->sz) );
@@ -442,7 +441,6 @@ $(stic_$t)$t_list insertlist_$t_list( $t_list la, unsigned int pos, $t_list lb )
 
     if( la == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return la;
     }
     if( lb != $t_listNIL && lb->sz != 0 ){
 	const unsigned int szb = lb->sz;
@@ -456,7 +454,7 @@ $(stic_$t)$t_list insertlist_$t_list( $t_list la, unsigned int pos, $t_list lb )
 
 	/* Move up elements */
 	arr = la->arr;
-	for( ix=la->sz+szb-1; ix>=(pos+szb); ix-- ){
+	for( ix=la->sz+szb-1; ix>pos; ix-- ){
 	    arr[ix] = arr[ix-szb];
 	}
 	la->sz += szb;
@@ -501,7 +499,6 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 
     if( la == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return la;
     }
     la = setroom_$t_list( la, la->sz+lb->sz );
     cnt = lb->sz;
@@ -1551,7 +1548,6 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return l;
     }
     if( pos >= l->sz ){
 	return l;
@@ -1587,7 +1583,6 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return l;
     }
     if( to>=l->sz ){
 	to = l->sz;
@@ -1633,7 +1628,6 @@ $(stic_$t)$t_list extract_$t_list(
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return l;
     }
     if( pos >= l->sz ){
 	*valid = 0;
@@ -1701,7 +1695,6 @@ $(stic_$t)$t_list extractlist_$t_list(
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-	return l;
     }
     if( to>=l->sz ){
 	to = l->sz;

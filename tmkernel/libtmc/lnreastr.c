@@ -1,6 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Realloc tmstring size. Version for use with lognew.
+ * All rights reserved.
+ */
+
+/* file: lreastr.c
+   Realloc tmstring size. Version for use with lognew.
  */
 
 #include <ctype.h>

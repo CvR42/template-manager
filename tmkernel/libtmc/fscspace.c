@@ -1,4 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: fscspace.c
+ * CvR
  *
  * Handling of close brackets around constructors and lists.
  */
@@ -11,9 +18,9 @@
 int tm_lineno;
 
 /* Skip all `isspace()' characters and Miranda style comment.
- * Note that since comment is introduced by '||' the pattern
- * '|[^|]' causes grave problems. It is 'solved' by generating
- * an error message and returning 1.
+   Note that since comment is introduced by '||' the pattern
+   '|[^|]' causes grave problems. It is 'solved' by generating
+   an error message and returning 1.
  */
 int tm_fscanspace( FILE *f )
 {

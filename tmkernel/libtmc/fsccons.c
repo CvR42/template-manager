@@ -1,4 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: fsccons.c
+ * Last modified: CvR
  *
  * Reading of constructor names.
  */
@@ -21,12 +28,12 @@ int tm_fscancons( FILE *f, char *buf, const int sz )
 	return 1;
     }
     c = getc( f );
-    while( (isalnum( c ) || c == '_') && n<sz ){
+    while( isalnum( c ) && n<sz ){
 	*p++ = c;
 	c = getc( f );
 	n++;
     }
-    if( isalnum( c ) || c == '_' ){
+    if( isalnum( c ) ){
 	buf[sz-1] = '\0';
 	(void) sprintf(
 	    tm_errmsg,

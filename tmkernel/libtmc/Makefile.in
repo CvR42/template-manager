@@ -23,7 +23,6 @@ CC = @CC@
 RANLIB=@RANLIB@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
-UNINSTALL_DATA=rm -f
 
 DBUGFLAGS = -g -DLOGNEW -DSTAT
 
@@ -62,7 +61,6 @@ LIBSRCS	 = \
                 errmsg.c \
                 escstr.c \
                 fatal.c \
-                badcast.c \
                 fneedc.c \
                 fprdbl.c \
                 fprint.c \
@@ -194,16 +192,11 @@ check: testprog testin
 	diff testout goodout
 	diff testerr gooderr
 
-install: $(LIBNAME) $(INSTHFILES)
+install: $(LIBNAME)
 	-$(INSTALL) -d $(LOCALLIB)
 	-$(INSTALL) -d $(LOCALINCLUDE)
 	$(INSTALL_DATA) $(LIBNAME) $(LOCALLIB)/$(LIBNAME)
-	$(RANLIB) $(LOCALLIB)/$(LIBNAME)
 	$(INSTALL_DATA) $(INSTHFILES) $(LOCALINCLUDE)
-
-uninstall:
-	$(UNINSTALL_DATA) $(LOCALLIB)/$(LIBNAME)
-	$(UNINSTALL_DATA) $(LOCALINCLUDE)
 
 tags: $(LIBSRCS) $(TESTSRCS)
 	ctags $(LIBSRCS) $(TESTSRCS)
@@ -230,9 +223,8 @@ distlist: $(DISTFILES)
 .c.o:
 	$(CC) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
 
-# TODO: do something better here
 depend:
-	echo "Nothing is done"
+	mkmf -f $(MAKEFILE)
 
 
 # Configure-related rules.
@@ -250,5 +242,48 @@ JUNK += config.log config.cache
 PRECIOUSJUNK += config.status configure
 
 ###
-$(LIBOBJS): tmc.h config.h
-$(TESTOBJS): tmc.h config.h
+badtag.o: tmc.h config.h
+cmpdbl.o: tmc.h config.h
+errmsg.o: tmc.h config.h
+escstr.o: tmc.h config.h
+fatal.o: tmc.h config.h
+fneedc.o: tmc.h config.h
+fprdbl.o: tmc.h config.h
+fprint.o: tmc.h config.h
+fprsshrt.o: tmc.h config.h
+fprstr.o: tmc.h config.h
+fprsym.o: tmc.h config.h
+fprushrt.o: tmc.h config.h
+fsccbrac.o: tmc.h config.h
+fsccons.o: tmc.h config.h
+fscdbl.o: tmc.h config.h
+fscescc.o: tmc.h config.h
+fscflt.o: tmc.h config.h
+fscint.o: tmc.h config.h
+fscobrac.o: tmc.h config.h
+fscspace.o: tmc.h config.h
+fscsshrt.o: tmc.h config.h
+fscstr.o: tmc.h config.h
+fscushrt.o: tmc.h config.h
+lognew.o: tmc.h config.h
+newstr.o: tmc.h config.h
+lnfrestr.o: tmc.h config.h
+lnfscstr.o: tmc.h config.h
+lnnewstr.o: tmc.h config.h
+noroom.o: tmc.h config.h
+prdbl.o: tmc.h config.h
+print.o: tmc.h config.h
+propt.o: tmc.h config.h
+prsshrt.o: tmc.h config.h
+prstr.o: tmc.h config.h
+prsym.o: tmc.h config.h
+prushrt.o: tmc.h config.h
+symbol.o: tmc.h config.h
+testprog.o: tmc.h config.h
+tmcalloc.o: tmc.h config.h
+tmmalloc.o: tmc.h config.h
+tmreallc.o: tmc.h config.h
+cmptxt.o: tmc.h config.h
+ietxt.o: tmc.h config.h
+t2s.o: tmc.h config.h
+lnt2s.o: tmc.h config.h

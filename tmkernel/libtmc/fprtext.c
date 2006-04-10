@@ -1,15 +1,17 @@
-/* File: $Id$
- *
- * Tm - an interface code generator.
+/* Tm - an interface code generator.
  * Author: C. van Reeuwijk.
  *
  * All rights reserved.
  */
 
+/* File: fprstr.c
+ * C. van Reeuwijk
+ */
+
 #include "config.h"
 #include "tmc.h"
 
-/* Implementation of 'print' for a 'tmtext'. */
+/* Definition of 'print' for a 'tmtext'. */
 void fprint_tmtext( FILE *f, const tmtext t )
 {
     long ix;

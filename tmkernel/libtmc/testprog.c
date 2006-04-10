@@ -1,4 +1,10 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: testprog.c
  *
  * Test of library programs.
  */
@@ -644,38 +650,21 @@ static void test_tmsymbol( void )
 {
     tmsymbol a;
     tmsymbol b;
-    tmsymbol realb;
     tmsymbol t;
     tmsymbol g1;
     tmsymbol g2;
 
     a = add_tmsymbol( "a" );
     b = add_tmsymbol( "a" );
-    realb = add_tmsymbol( "b" );
     if( a != b ){
 	bad( "equal tmsymbols do not compare equal" );
     }
-    realb = add_tmsymbol( "b" );
-    if( a == realb ){
+    b = add_tmsymbol( "b" );
+    if( a == b ){
 	bad( "unequal tmsymbols compare equal" );
-    }
-    if( !isequal_tmsymbol( a, b ) ){
-	bad( "equal tmsymbols compare unequal" );
-    }
-    if( isequal_tmsymbol( a, realb ) ){
-	bad( "unequal tmsymbols compare equal" );
-    }
-    if( cmp_tmsymbol( a, b )!=0 ){
-	bad( "unexpected ordering of tmsymbols" );
-    }
-    if( cmp_tmsymbol( a, realb )>=0 ){
-	bad( "unexpected ordering of tmsymbols" );
-    }
-    if( cmp_tmsymbol( realb, a )<=0 ){
-	bad( "unexpected ordering of tmsymbols" );
     }
     g1 = gen_tmsymbol( "base" );
-    if( g1 == a || g1 == realb ){
+    if( g1 == a || g1 == b ){
 	bad( "gensym tmsymbol is equal to existing tmsymbol" );
     }
     t = find_tmsymbol( "a" );
@@ -691,13 +680,17 @@ static void test_tmsymbol( void )
 	bad( "non-existing tmsymbol found" );
     }
     g2 = gen_tmsymbol( "base" );
-    if( g2 == a || g2 == realb || g2 == g1 ){
+    if( g2 == a || g2 == b || g2 == g1 ){
 	bad( "gensym tmsymbol is equal to existing tmsymbol" );
     }
     flush_tmsymbol();
 }
 
+#ifdef __MSDOS__
+long huge idlist[TESTARRAYSIZE];
+#else
 long idlist[TESTARRAYSIZE];
+#endif
 
 int main( void )
 {
@@ -775,7 +768,7 @@ int main( void )
     for( ix=1; ix<49; ix++ ){
 	tm_fre_logid( idlist[ix] );
     }
-    simple_report_lognew( stderr );
+    report_lognew( stderr );
     flush_lognew();
     fflush( outfile );		/* Just to be sure.. */
     tm_fatal( __FILE__, __LINE__, "test of 'tm_fatal'" );

@@ -1,3 +1,9 @@
-/* File: $Id$ */
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
 
-extern char *evalexpr( const_origin org, const_tmstring x );
+/* file: tmexpr.h */
+
+extern char *evalexpr( const tmstring x );

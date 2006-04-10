@@ -233,7 +233,6 @@ public:
 .endforeach
 .foreach t $(need_ds)
 #define to_$t(e) (($t *)e)
-#define to_const_$t(e) ((const $t *)e)
 .endforeach
 
 .. print() routines

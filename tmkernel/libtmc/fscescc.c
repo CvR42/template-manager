@@ -1,5 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
+ * All rights reserved.
+ */
+
+/* File: fscescc.c
+ * 
  * Scan a (possibly escaped) character from the given file.
  */
 
@@ -8,7 +14,7 @@
 #include "tmc.h"
 
 /* Try to read a (possibly escaped) character from the file 'f'. Give
- * an error message if this is not successful. 
+   an error message if this is not successful. 
  */
 int tm_fscanescapedchar( FILE *f, int *code )
 {

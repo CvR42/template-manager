@@ -19,7 +19,6 @@ LOCALLIB = @prefix@/lib
 LOCALINCLUDE = @prefix@/include
 LOCALMAN = @prefix@/man
 TMPFILE = @prefix@/tmp4242
-UNINSTALL_DATA = rm -f
 
 # System dependent flags for compilation with debugging
 DBUGFLAGS = -g -DLOGNEW -DSTAT
@@ -159,12 +158,6 @@ tmcinstall: need.t tmc.ct tmc.ht tmcid.t tmcwalk.t tmcanalyze.t
 	$(INSTALL_DATA) tmcwalk.t $(LOCALLIB)/tmcwalk.t
 	$(INSTALL_DATA) tmcanalyze.t $(LOCALLIB)/tmcanalyze.t
 
-tmcuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmc.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmc.ht
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmcwalk.t
-	$(UNINSTALL_DATA) $(LOCALLIB)/tmcanalyze.t
-
 alutest: $(ALUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(ALUTESTOBJS) $(LIBS) -o alutest
 
@@ -180,10 +173,6 @@ aluinstall: need.t calu.ct calu.ht aluid.t
 	cat macros.t aluid.t need.t calu.ht > $(TMPFILE)
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/calu.ht
 	rm -f $(TMPFILE)
-
-aluuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/calu.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/calu.ht
 
 llutest:     $(LLUTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(LLUTESTOBJS) $(LIBS) -o llutest
@@ -201,13 +190,7 @@ lluinstall: need.t cllu.ct cllu.ht lluid.t
 	$(INSTALL_DATA) $(TMPFILE) $(LOCALLIB)/cllu.ht
 	rm -f $(TMPFILE)
 
-lluuninstall: 
-	$(UNINSTALL_DATA) $(LOCALLIB)/cllu.ct
-	$(UNINSTALL_DATA) $(LOCALLIB)/cllu.ht
-
 install: tmcinstall lluinstall aluinstall
-
-uninstall: tmcuninstall lluuninstall aluuninstall
 
 clean:
 	rm -f $(JUNK)
@@ -224,32 +207,31 @@ distfiles:
 distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
-# TODO: do something smarter here.
 depend: $(TMCTMHDRS) $(TMCTMSRCS) $(LLUTMSRCS) $(LLUTMHDRS) $(ALUTMHDRS) $(ALUTMSRCS)
-	echo "Nothing is done"
+	mkmf -I$(LOCALINCLUDE) -f $(MAKEFILE)
 
-tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t $(TM)
+tmcwalktest.c: tmcwalktest.ct cltest.ds tmcwalk.t
 	$(TM) cltest.ds tmcwalktest.ct > tmcwalktest.c
 
-tmcanalyzetest.c: tmcanalyzetest.ct cltest.ds tmcanalyze.t $(TM)
+tmcanalyzetest.c: tmcanalyzetest.ct cltest.ds tmcanalyze.t
 	$(TM) cltest.ds tmcanalyzetest.ct > tmcanalyzetest.c
 
-tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t $(TM)
+tmccode.c: tmccode.ct tmc.ct tmcspec.t cltest.ds need.t macros.t tmcid.t
 	$(TM) cltest.ds tmccode.ct > tmccode.c
 
-tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t tmcid.t $(TM)
+tmccode.h: tmccode.ht tmc.ht tmcspec.t cltest.ds need.t macros.t tmcid.t
 	$(TM) cltest.ds tmccode.ht > tmccode.h
 
-alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t $(TM)
+alucode.c: alucode.ct calu.ct aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ct > alucode.c
 
-alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t $(TM)
+alucode.h: alucode.ht calu.ht aluspec.t test.ds need.t macros.t aluid.t
 	$(TM) test.ds alucode.ht > alucode.h
 
-llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t $(TM)
+llucode.c : llucode.ct cllu.ct lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ct > llucode.c
 
-llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t $(TM)
+llucode.h : llucode.ht cllu.ht lluspec.t test.ds need.t macros.t lluid.t
 	$(TM) test.ds llucode.ht > llucode.h
 
 tmctest.c: xxtest.c

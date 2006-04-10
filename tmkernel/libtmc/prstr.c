@@ -1,9 +1,17 @@
-/* File: $Id$ */
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: prstr.c
+ * C. van Reeuwijk
+ */
 
 #include "config.h"
 #include "tmc.h"
 
-/* Implementation of 'print' for a 'tmstring'. */
+/* definition of 'print' for a 'tmstring' */
 void print_tmstring( TMPRINTSTATE *st, const_tmstring s )
 {
     tmstring buf;

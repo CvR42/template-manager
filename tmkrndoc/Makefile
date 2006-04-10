@@ -17,12 +17,10 @@ TM = tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
-CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l \
-  calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c \
-  oksubst.clc
-EXAMPLEFILES = append.xt foreach.xt for.xt if.xt macro.xt var.xt cmp.xt \
-  arith.xt boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt \
-  eval.xt math.xt linemacro.xt setfn.xt switch.xt unalias.xt time.xt
+CALCDEMO = calc.c calc.ct calc.ds calc.h calc.ht calcconf.t calclex.l calcopt.c calcparse.y okopt.clc oktest.clc test.calc subst.ct subst.c oksubst.clc
+EXAMPLEFILES = append.xt foreach.xt if.xt macro.xt var.xt cmp.xt arith.xt \
+  boolean.xt textfn.xt listfn.xt regex.xt fnds.xt service.xt eval.xt math.xt \
+  linemacro.xt setfn.xt switch.xt unalias.xt time.xt
 EXAMPLEOUTFILES = $(EXAMPLEFILES:.xt=.out)
 
 TEXFILES = main.tex tm.tex command.tex tmc.tex intro.tex \
@@ -39,11 +37,9 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(TOPFILE).toc dist.lst title.c
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
-	    $(CALCDEMO) javagrammar.sty pds.pdf README \
-            goodwords main.bib pdstitle.sty plot.ds .cvsignore \
+	    $(CALCDEMO) \
+            goodwords main.bib main.pdf pdstitle.sty plot.ds .cvsignore \
 	    title.ct title.ds ch.sh cast.t alias.ds
-
-all: $(TOPFILE).pdf
 
 help:
 	@echo Possible targets:
@@ -56,6 +52,8 @@ help:
 	@echo 'install - Install (dummy for compatibility reasons).'
 	@echo 'spell   - Run spelling check.'
 	@echo 'sort    - Sort spelling goodwords.'
+
+all: $(TOPFILE).pdf
 
 fast: $(TOPFILE).pdf
 
@@ -88,10 +86,10 @@ spell: $(SPELLFILES)
 $(SPELLFILES): sort
 
 unalias.out: unalias.xt alias.ds
-	$(TM) alias.ds unalias.xt > $*.out
+	tm alias.ds unalias.xt > $*.out
 
 .xt.out: plot.ds
-	$(TM) plot.ds $< > $*.out
+	tm plot.ds $< > $*.out
 
 clean:
 	rm -f $(JUNK) $(SPELLFILES)
@@ -109,22 +107,22 @@ distlist: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 demo.c : plot.ds demo.ct democonf.t
-	$(TM) plot.ds demo.ct | expand > demo.c
+	tm plot.ds demo.ct | expand > demo.c
 
 demo.h : plot.ds demo.ht democonf.t
-	$(TM) plot.ds demo.ht | expand > demo.h
+	tm plot.ds demo.ht | expand > demo.h
 
 subst.c : calc.ds subst.ct
-	$(TM) calc.ds subst.ct | expand > subst.c
+	tm calc.ds subst.ct | expand > subst.c
 
 calc.c : calc.ds calc.ct calcconf.t
-	$(TM) calc.ds calc.ct | expand > calc.c
+	tm calc.ds calc.ct | expand > calc.c
 
 calc.h : calc.ds calc.ht calcconf.t
-	$(TM) calc.ds calc.ht | expand > calc.h
+	tm calc.ds calc.ht | expand > calc.h
 
 title.c: title.ct title.ds
-	$(TM) title.ds title.ct > title.c
+	tm title.ds title.ct > title.c
 
 t: $(CALCDEMO) $(EXAMPLEOUTFILES)
 	echo $(CALCDEMO) $(EXAMPLEOUTFILES)

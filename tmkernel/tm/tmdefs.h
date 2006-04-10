@@ -1,7 +1,12 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Datastructures and other definitions of Tm: datastructure
- * and definition and manipulation routine generator.
+ * All rights reserved.
+ */
+
+/* file: tmdefs.h
+   datastructures and other definitions of tm: datastructure
+   and definition and manipulation routine generator.
  */
 
 #include <stdio.h>
@@ -26,8 +31,8 @@ typedef int bool;
 
 #define CHARNIL (char *)0
 
-#define TRUE TMTRUE
-#define FALSE TMFALSE
+#define TRUE 1
+#define FALSE 0
 
 /* increment in dynamically growing string buffer size */
 #define STRSTEP 20
@@ -37,6 +42,9 @@ typedef int bool;
 
 /* size of buffer for integer string */
 #define NUMBUFSIZE 40
+
+/* size of file copy buffer. */
+#define CPBUFSIZE 2000
 
 /* The name of the variable wherein return values are stored.
  * This is not only ment to be funny: this name can not be used
@@ -60,9 +68,3 @@ typedef int bool;
 #define VARCHAR '$'
 #define LCOMCHAR '.'
 #define DQUOTE '"'
-
-#if __GNUC__
-#define ATTRIBUTE_PRINTF(fmt,args) __attribute__((format(printf,fmt,args)))
-#else
-#define ATTRIBUTE_PRINTF(fmt,args)
-#endif

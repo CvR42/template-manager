@@ -7,7 +7,7 @@ MAKEFILE = Makefile
 #DIRLIST=libtmc tm tmc tmpas tmmira
 DIRLIST=libtmc tm tmc
 CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoconfall
-DISTFILES = $(CONFIGUREFILES) README CHANGES gpl.txt lgpl.txt version.h .cvsignore
+DISTFILES = $(CONFIGUREFILES) README CHANGES LICENCE version.h .cvsignore
 JUNK = dist.lst
 
 help:
@@ -22,23 +22,14 @@ help:
 check:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) check; cd ..; done
 
-tests:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) tests; cd ..; done
-
 test:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done
 
 all:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
 
-depend:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) depend; cd ..; done
-
 install:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done
-
-uninstall:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) uninstall; cd ..; done
 
 distclean:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
@@ -56,8 +47,6 @@ empty:
 distlist:
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 	for i in $(DIRLIST); do cd $$i; $(MAKE) distlist; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
-
-# ----- Configuration
 
 configure: configure.in
 	autoconf

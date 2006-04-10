@@ -23,7 +23,6 @@ CXX = @CXX@
 RANLIB=@RANLIB@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
-UNINSTALL_DATA=rm -f
 
 DBUGFLAGS = -g
 
@@ -37,7 +36,7 @@ CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
 
 LINKER = @CXX@
 
-INSTHFILES = tmcpp.h
+INSTHFILES    = tmcpp.h
 
 TESTSRCS = testprog.c
 TESTFILES = testin goodout gooderr $(TESTSRCS)
@@ -147,7 +146,7 @@ PROGS   =
 MAKEFILE = Makefile
 
 FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
-    config.hts makefile.tos libtmcpp.mcp
+    config.hts makefile.tos
 
 CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
 
@@ -194,12 +193,7 @@ install: $(LIBNAME)
 	-$(INSTALL) -d $(LOCALLIB)
 	-$(INSTALL) -d $(LOCALINCLUDE)
 	$(INSTALL_DATA) $(LIBNAME) $(LOCALLIB)/$(LIBNAME)
-	$(RANLIB) $(LOCALLIB)/$(LIBNAME)
-	$(INSTALL_DATA) tmcpp.h $(LOCALINCLUDE)/tmcpp.h
-
-uninstall:
-	$(UNINSTALL_DATA) $(LOCALLIB)/$(LIBNAME)
-	$(UNINSTALL_DATA) $(LOCALINCLUDE)/tmcpp.h
+	$(INSTALL_DATA) $(INSTHFILES) $(LOCALINCLUDE)
 
 tags: $(LIBSRCS) $(TESTSRCS)
 	ctags $(LIBSRCS) $(TESTSRCS)
@@ -228,15 +222,6 @@ distlist: $(DISTFILES)
 
 depend:
 	mkmf -f $(MAKEFILE)
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile: Makefile.in config.status
-	./config.status
 
 ###
 badtag.o: tmcpp.h config.h

@@ -1,6 +1,11 @@
-/* File: $Id$
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
  *
- * Log new_ and fre_ actions and their origin in the users' code.
+ * All rights reserved.
+ */
+
+/* file: newlog.c
+   Log new_ and fre_ actions and their origin in the users' code.
  */
 
 #include "config.h"
@@ -61,15 +66,6 @@ static void print_plist( FILE *f )
 
     for( ix=0l; ix<plistsz; ix++ ){
 	fprintf( f, "%s(%d) p=%p\n", plist[ix].file, plist[ix].line, plist[ix].ptr );
-    }
-}
-
-static void print_simple_plist( FILE *f )
-{
-    size_t ix;
-
-    for( ix=0l; ix<plistsz; ix++ ){
-	fprintf( f, "%s(%d)\n", plist[ix].file, plist[ix].line );
     }
 }
 
@@ -230,26 +226,6 @@ void report_lognew( FILE *f )
     }
     else {
 	print_plist( f );
-    }
-    if( idofl ){
-	fputs( "lognew: id list overflow.\n", f );
-    }
-    else {
-	print_idlist( f );
-    }
-}
-
-/* Print the remaining entries in the new log to file 'f'. */
-void simple_report_lognew( FILE *f )
-{
-    if( plistsz>0 || idcnt>0 ){
-	fputs( "lognew: pending blocks:\n", f );
-    }
-    if( plistofl ){
-	fputs( "lognew: pointer list overflow.\n", f );
-    }
-    else {
-	print_simple_plist( f );
     }
     if( idofl ){
 	fputs( "lognew: id list overflow.\n", f );

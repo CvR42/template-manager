@@ -1,4 +1,4 @@
-/* File: $Id$
+/* File: checkds.c
  *
  * Check correctness of the ds file.
  */
@@ -6,35 +6,39 @@
 #include <assert.h>
 #include <tmc.h>
 
+#include "config.h"
 #include "tmdefs.h"
-#include "tmcode.h"
 #include "error.h"
+#include "tmcode.h"
 #include "misc.h"
 #include "checkds.h"
 
 /* Ensure that there are no double names in tuple with name 'nm'
  * and fields 'fields'.
  */
-void cktuple( const_tmsymbol nm, const_Field_list fields, const_tmsymbol_list inherits )
+void cktuple( tmstring nm, Field_list fields, tmstring_list inherits )
 {
     unsigned int ix;	/* index of currently checked field */
 
     for( ix=0; ix<fields->sz; ix++ ){
-	const_Field fx = fields->arr[ix];
-	const_origsymbol fnm = fx->name;
+	Field fx = fields->arr[ix];
+	tmstring fnm = fx->name;
 	unsigned int iy;	/* index of searched subsequent fields */
 
 	for( iy=ix+1; iy<fields->sz; iy++ ){
-	    const_Field fy = fields->arr[iy];
+	    Field fy = fields->arr[iy];
 
-	    if( fy->name->sym == fnm->sym ){
-		origsymbol_error( fy->name, "double use of field name in type `%s'", nm->name );
+	    if( strcmp( fy->name, fnm ) == 0 ){
+		sprintf( errpos, "in type '%s'", nm );
+		sprintf( errarg, "'%s'", fnm );
+		error( "double use of field name" );
 		return;
 	    }
 	}
     }
-    if( member_tmsymbol_list( nm, inherits ) ){
-	error( "Type `%s' inherits itself", nm->name );
+    if( member_tmstring_list( nm, inherits ) ){
+	sprintf( errpos, "in type '%s'", nm );
+	error( "Type inherits itself" );
 	return;
     }
     return;
@@ -44,38 +48,39 @@ void cktuple( const_tmsymbol nm, const_Field_list fields, const_tmsymbol_list in
  * a list of visited flags and a list of accepted flags, check the
  * data structure with the given index for circular inheritances.
  */
-static tmbool check_ds_inheritance(
- const_ds_list dl,
+static bool check_ds_inheritance(
+ ds_list dl,
  unsigned int theds,
- tmbool *visited,
- tmbool *accepted
+ bool *visited,
+ bool *accepted
 )
 {
-    tmsymbol_list supers;	/* The list of superclasses. */
+    tmstring_list supers;	/* The list of superclasses. */
     unsigned int ix;
-    const_ds me = dl->arr[theds];
-    tmbool ok = TRUE;
+    ds me = dl->arr[theds];
+    bool ok = TRUE;
 
     assert( theds<dl->sz );
     if( accepted[theds] ){
         return ok;
     }
     if( visited[theds] ){
-	origsymbol_error( me->name, "circular inheritance/alias hierarchy in type" );
+	sprintf( errpos, "type '%s'", me->name );
+	error( "circular inheritance/alias hierarchy" );
 	accepted[theds] = TRUE;		/* Break the circle to allow further checks. */
 	return FALSE;
     }
     visited[theds] = TRUE;
-    supers = rdup_tmsymbol_list( me->inherits );
+    supers = rdup_tmstring_list( me->inherits );
     for( ix=0; ix<supers->sz; ix++ ){
-        tmsymbol super = supers->arr[ix];
+        tmstring super = supers->arr[ix];
         unsigned int superix = find_type_ix( dl, super );
 
         if( superix<dl->sz ){
 	    ok &= check_ds_inheritance( dl, superix, visited, accepted );
         }
     }
-    rfre_tmsymbol_list( supers );
+    rfre_tmstring_list( supers );
     visited[theds] = FALSE;
     accepted[theds] = TRUE;
     return ok;
@@ -84,25 +89,26 @@ static tmbool check_ds_inheritance(
 /* Given a list of datastructure definitions, ensure that it does not
  * contain circular inheritances.
  */
-tmbool check_ds_list( const_ds_list dl )
+bool check_ds_list( const ds_list dl )
 {
-    tmbool *visited;	/* The data structures currently under examination */
-    tmbool *accepted;	/* The data structures that already passed the test. */
+    bool *visited;	/* The data structures currently under examination */
+    bool *accepted;	/* The data structures that already passed the test. */
     unsigned int ix;
     unsigned int sz;
-    tmbool ok;
+    bool ok;
 
     ok = TRUE;
     /* First check on double definition of a type. */
     for( ix=0; ix<dl->sz; ix++ ){
 	unsigned int iy;
-	const_origsymbol nmx = dl->arr[ix]->name;
+	const tmstring nmx = dl->arr[ix]->name;
 
 	for( iy=ix+1; iy<dl->sz; iy++ ){
-	    const_origsymbol nmy = dl->arr[iy]->name;
+	    const tmstring nmy = dl->arr[iy]->name;
 
-	    if( nmx->sym == nmy->sym ){
-		origsymbol_error( nmy, "Double definition" );
+	    if( strcmp( nmx, nmy ) == 0 ){
+		sprintf( errarg, "type '%s'", nmx );
+		error( "Double definition" );
 		ok = FALSE;
 		break;
 	    }
@@ -113,12 +119,12 @@ tmbool check_ds_list( const_ds_list dl )
 	return ok;
     }
     sz = dl->sz;
-    visited = TM_MALLOC( tmbool *, sizeof(tmbool)*sz );
+    visited = TM_MALLOC( bool *, sizeof(bool)*sz );
     if( visited == NULL ){
         /* No room. Don't report it; the check is not that important anyway.  */
         return ok;
     }
-    accepted = TM_MALLOC( tmbool *, sizeof(tmbool)*sz );
+    accepted = TM_MALLOC( bool *, sizeof(bool)*sz );
     if( accepted == NULL ){
         /* No room. Don't report it; the check is not that important anyway. */
         TM_FREE( visited );
@@ -137,21 +143,21 @@ tmbool check_ds_list( const_ds_list dl )
 	return ok;
     }
     for( ix=0; ix<dl->sz; ix++ ){
-	tmsymbol nmx = dl->arr[ix]->name->sym;
+	const tmstring nmx = dl->arr[ix]->name;
 	char msg[200];
-	tmsymbol_list tl = new_tmsymbol_list();
+	tmstring_list tl = new_tmstring_list();
 
 	collect_superclasses( &tl, dl, nmx );
-	sprintf( msg, "Duplicate superclass in type '%s'", nmx->name );
-	ok &= check_double_symbols( msg, tl );
-	rfre_tmsymbol_list( tl );
+	sprintf( msg, "Duplicate superclass in type '%s'", nmx );
+	ok &= check_double_strings( msg, tl );
+	rfre_tmstring_list( tl );
 	if( ok ){
-	    tmsymbol_list fields = new_tmsymbol_list();
+	    tmstring_list fields = new_tmstring_list();
 
 	    collect_all_fields( &fields, dl, nmx );
-	    sprintf( msg, "Duplicate field in type '%s'", nmx->name );
-	    ok &= check_double_symbols( msg, fields );
-	    rfre_tmsymbol_list( fields );
+	    sprintf( msg, "Duplicate field in type '%s'", nmx );
+	    ok &= check_double_strings( msg, fields );
+	    rfre_tmstring_list( fields );
 	}
     }
     return ok;

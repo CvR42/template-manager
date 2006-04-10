@@ -1,4 +1,12 @@
-/* File: $Id$ */
+/* Tm - an interface code generator.
+ * Author: C. van Reeuwijk.
+ *
+ * All rights reserved.
+ */
+
+/* File: prsym.c
+ * C. van Reeuwijk
+ */
 
 #include <ctype.h>
 #include "tmc.h"
@@ -6,7 +14,7 @@
 
 #define BACKSLASH '\\'
 
-/* Implementation of 'print' for a 'tmsymbol'. */
+/* definition of 'print' for a 'tmsymbol'. */
 void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s )
 {
     if( s == tmsymbolNIL ){
