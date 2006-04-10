@@ -1,7 +1,0 @@
-New in version 1.0.1:
-- Removed invocations of tmdate.
-- Adapted the templates for more strict conslist and telmlist functions.
-
-New in version 1.0:
-
-- First release of the Pascal templates.
