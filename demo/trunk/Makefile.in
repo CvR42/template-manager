@@ -5,6 +5,9 @@
 #
 # To configure this Makefile, run 'configure'
 
+# Version number of this project
+VERSION = 1.0.1
+
 MAKEFILE = Makefile
 DEPENDFILE = $(MAKEFILE).d
 CC = @CC@
@@ -77,16 +80,16 @@ SUBSTOBJ = $(SUBSTSRC:.c=.o)
 
 JUNK          = sedlint y.output lint testerr testout index.sed \
 		dsneed.t makelog testscr  log tags dist.lst \
-		config.log version.h distlist $(GENSRC) $(GENHDR) \
+		config.log version.h $(GENSRC) $(GENHDR) \
 		test.clc opt.clc $(OPTOBJ) $(PARSEOBJ) $(SUBSTOBJ)
+PRECIOUSJUNK  =
 MAKESTATES    = refman
 
 # Files for configuration
-CONFIGUREFILES = configure Makefile.in configure.in .cvsignore
+CONFIGUREFILES = configure Makefile.in configure.in
 
 DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) calcopt.c \
     $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES) $(PARSESRC)
-
 
 help:
 	@echo " Possible make targets:"
@@ -94,7 +97,7 @@ help:
 	@echo "test		Run tests."
 	@echo "install		Install relevant files."
 	@echo "clean		Free disk space."
-	@echo "distfiles	List distribution files."
+	@echo "dist     	Create distribution files."
 	@echo "depend		Update dependencies in $(MAKEFILE)."
 	@echo "refman		Copy files to the reference manual directory."
 
@@ -117,11 +120,11 @@ install:
 	@echo "Nothing to install"
 
 distclean:
-	rm -f $(OBJS) $(JUNK) $(PROGS)
+	rm -f $(OBJS) $(JUNK) $(PROGS) $(PRECIOUSJUNK)
 	rm -f config.status config.cache config.h
 
 empty:
-	rm -f $(OBJS) $(JUNK) $(PROGS) $(MAKESTATES)
+	rm -f $(OBJS) $(JUNK) $(PROGS) $(MAKESTATES) $(PRECIOUSJUNK)
 	rm -f config.status config.cache config.h
 
 clean:
@@ -171,7 +174,7 @@ realdistfiles: $(DISTFILES)
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(DISTFILES)
+dist.lst: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 gfiles: $(GENSRC) $(GENHDR)
@@ -186,7 +189,28 @@ $(DEPENDFILE):
 
 -include $(DEPENDFILE)
 
+# ---- Distribution-related ----
 
+DISTBASENAME=tm-demo-$(VERSION)
+PACKAGES = $(DISTBASENAME).tar.gz $(DISTBASENAME).zip
+
+JUNK += $(PACKAGES) distlist
+PRECIOUSJUNK += $(PACKAGES)
+
+SVNURL="https://gforge.cs.vu.nl/svn/templatemanager/demo/trunk"
+
+distlist: dist.lst
+	sed -e "s/^/$(DISTBASENAME)\//" dist.lst > distlist
+
+$(DISTBASENAME).tar.gz $(DISTBASENAME).zip: distlist
+	svn export $(SVNURL) $(DISTBASENAME)
+	cd $(DISTBASENAME) && autoconf
+	tar cf $(DISTBASENAME).tar `cat distlist`
+	gzip --best -f $(DISTBASENAME).tar
+	zip -q -9 $(DISTBASENAME).zip `cat distlist`
+	rm -rf $(DISTBASENAME)
+
+dist: $(PACKAGES)
 
 # Configure-related rules.
 
