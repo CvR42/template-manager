@@ -91,8 +91,6 @@ JUNK = \
     tmkerneldoc_distlist
 
 PACKAGES = \
-    tmdemo-$(TMDEMO_VERSION).tar.gz \
-    tmdemo-$(TMDEMO_VERSION).zip \
     tmkernel-$(TMKERNEL_VERSION).tar.gz \
     tmkernel-$(TMKERNEL_VERSION).zip \
     tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
@@ -107,8 +105,6 @@ FTPFILES= \
     $(FTPDIR)/CHANGES.tmmira \
     $(FTPDIR)/CHANGES.tmpas \
     $(FTPDIR)/README \
-    $(FTPDIR)/tmdemo-$(TMDEMO_VERSION).tar.gz \
-    $(FTPDIR)/tmdemo-$(TMDEMO_VERSION).zip \
     $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz \
     $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).zip \
     $(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
@@ -128,10 +124,6 @@ tmmira_distlist: $(MAKEFILE) tmmira tmmira/tmmira tmmira/miradoc
 tmpas_distlist: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
 	cd tmpas; $(MAKE) distlist
 	sed -e "s/^/tmpas-$(TMPAS_VERSION)\//" tmpas/distlist > tmpas_distlist
-
-tmdemo_distlist: $(MAKEFILE) tmdemo
-	cd tmdemo; $(MAKE) distlist
-	sed -e "s/^/tmdemo-$(TMDEMO_VERSION)\//" tmdemo/dist.lst > tmdemo_distlist
 
 tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc
 	cd tmkernel; $(MAKE) distlist
@@ -165,14 +157,6 @@ tmkernel-$(TMKERNEL_VERSION).tar.gz tmkernel-$(TMKERNEL_VERSION).zip: tmkernel_d
 	zip -q -9 tmkernel-$(TMKERNEL_VERSION).zip `cat tmkernel_distlist`
 	rm -rf tmkernel-$(TMKERNEL_VERSION)
 
-tmdemo-$(TMDEMO_VERSION).tar.gz tmdemo-$(TMDEMO_VERSION).zip: tmdemo_distlist
-	-mkdir tmdemo-$(TMDEMO_VERSION)
-	cvs -d $(CVSDIR) export -r HEAD -d tmdemo-$(TMDEMO_VERSION) tm/tmdemo
-	tar cf tmdemo-$(TMDEMO_VERSION).tar `cat tmdemo_distlist`
-	gzip --best -f tmdemo-$(TMDEMO_VERSION).tar
-	zip -q -9 tmdemo-$(TMDEMO_VERSION).zip `cat tmdemo_distlist`
-	rm -rf tmdemo-$(TMDEMO_VERSION)
-
 tmpas-$(TMPAS_VERSION).tar.gz tmpas-$(TMPAS_VERSION).zip: tmpas_distlist
 	-mkdir tmpas-$(TMPAS_VERSION)
 	cvs -d $(CVSDIR) export -r HEAD -d tmpas-$(TMPAS_VERSION) tm/tmpas
@@ -192,12 +176,6 @@ tmmira-$(TMMIRA_VERSION).tar.gz tmmira-$(TMMIRA_VERSION).zip: tmmira_distlist
 	gzip --best -f tmmira-$(TMMIRA_VERSION).tar
 	zip -q -9 tmmira-$(TMMIRA_VERSION).zip `cat tmmira_distlist`
 	rm -rf tmmira-$(TMMIRA_VERSION)
-
-$(FTPDIR)/tmdemo-$(TMDEMO_VERSION).tar.gz: tmdemo-$(TMDEMO_VERSION).tar.gz
-	cp tmdemo-$(TMDEMO_VERSION).tar.gz $(FTPDIR)
-
-$(FTPDIR)/tmdemo-$(TMDEMO_VERSION).zip: tmdemo-$(TMDEMO_VERSION).zip
-	cp tmdemo-$(TMDEMO_VERSION).zip $(FTPDIR)
 
 $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel-$(TMKERNEL_VERSION).tar.gz
 	cp tmkernel-$(TMKERNEL_VERSION).tar.gz $(FTPDIR)
