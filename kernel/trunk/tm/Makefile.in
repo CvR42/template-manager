@@ -94,7 +94,7 @@ GENFILES = $(TMOUTPUT) tmpath.c version.h
 
 JUNK          = y.output lint testerr testout testrdir index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
-		config.log distlist
+		config.log
 PRECIOUSJUNK = sedlint
 
 FOREIGNFILES = tmtos.prj makefile.tc config.htc makefile.tos config.hts
@@ -180,7 +180,7 @@ test:
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(MAKEFILE)
+dist.lst: $(MAKEFILE)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 depend: $(DEPENDFILE)

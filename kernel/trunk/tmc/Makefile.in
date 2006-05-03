@@ -44,7 +44,7 @@ MAKEFILE = Makefile
 DOC = README
 
 JUNK = tmp core makelog testerr testout alutest llutest config.log \
-       gmon.out log alutest.c llutest.c dist.lst distlist tmctest.c \
+       gmon.out log alutest.c llutest.c dist.lst tmctest.c \
        alutest.c llutest.c tmctest tmcwalktest tmcanalyzetest aldtest \
        $(OBJS) $(TMOUT)
 PRECIOUSJUNK =
@@ -61,7 +61,7 @@ FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
          	makefile.tos config.hts
 
 # Files for configuration
-CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
+CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
 DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
@@ -221,7 +221,7 @@ empty:
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(DISTFILES)
+dist.lst: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 # TODO: do something smarter here.
