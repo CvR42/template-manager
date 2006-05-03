@@ -4,10 +4,10 @@ SHELL=/bin/sh
 MAKEFILE = Makefile
 
 # The Tm directories that may require compilation, testing or installation
-#DIRLIST=libtmc tm tmc tmpas tmmira
 DIRLIST=libtmc tm tmc
+DOCDIRLIST=$(DIRLIST) manual
 CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoconfall
-DISTFILES = $(CONFIGUREFILES) README CHANGES gpl.txt lgpl.txt version.h .cvsignore
+DISTFILES = $(CONFIGUREFILES) README CHANGES gpl.txt lgpl.txt version.h
 JUNK = dist.lst
 
 help:
@@ -17,8 +17,8 @@ help:
 	@echo "install  Install all compilation results."
 	@echo "clean    Delete intermediate files."
 	@echo "empty    Delete files that can be re-generated. * Use only after a successful install *"
-	@echo "distlist	Create a list of files to distribute."
-	@echo "dist	All distribution packages."
+	@echo "dist.lst	Create a list of files to distribute."
+	@echo "dist	The distribution packages."
 
 check:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) check; cd ..; done
@@ -42,21 +42,21 @@ uninstall:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) uninstall; cd ..; done
 
 distclean:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
 	rm -f $(JUNK)
 
 clean:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) clean; cd ..; done
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) clean; cd ..; done
 	rm -f $(JUNK)
 
 empty:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) empty; cd ..; done
-	rm -f $(JUNK)
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) empty; cd ..; done
+	rm -f $(JUNK) $(PRECIOUSJUNK)
 	rm -f config.status config.log config.cache
 
-distlist:
-	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
-	for i in $(DIRLIST); do cd $$i; $(MAKE) distlist; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
+dist.lst:
+	echo $(DOCDISTFILES) | tr ' ' '\012' > dist.lst
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) dist.lst; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
 
 # ----- Configuration
 
@@ -84,134 +84,35 @@ SHELL=/bin/sh
 FTPDIR=$(HOME)/website/software/Tm
 MAKEFILE=Makefile
 
-JUNK = \
-    tmkernel_distlist \
-    tmpas_distlist \
-    tmmira_distlist \
-    tmkerneldoc_distlist
+# ---- Distribution-related rules ----
 
-PACKAGES = \
-    tmkernel-$(TMKERNEL_VERSION).tar.gz \
-    tmkernel-$(TMKERNEL_VERSION).zip \
-    tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
-    tmkerneldoc-$(TMKERNEL_VERSION).zip \
-    tmmira-$(TMMIRA_VERSION).tar.gz \
-    tmmira-$(TMMIRA_VERSION).zip \
-    tmpas-$(TMPAS_VERSION).tar.gz \
-    tmpas-$(TMPAS_VERSION).zip
+DISTBASENAME=tm-$(VERSION)
 
-FTPFILES= \
-    $(FTPDIR)/CHANGES.tmkernel \
-    $(FTPDIR)/CHANGES.tmmira \
-    $(FTPDIR)/CHANGES.tmpas \
-    $(FTPDIR)/README \
-    $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz \
-    $(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).zip \
-    $(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).tar.gz \
-    $(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).zip \
-    $(FTPDIR)/tmmira-$(TMMIRA_VERSION).tar.gz \
-    $(FTPDIR)/tmmira-$(TMMIRA_VERSION).zip \
-    $(FTPDIR)/tmpas-$(TMPAS_VERSION).tar.gz \
-    $(FTPDIR)/tmpas-$(TMPAS_VERSION).zip
+JUNK += tmkernel_distlist
+
+PACKAGES = $(DISTBASENAME).tar.gz $(DISTBASENAME).zip 
+
+PRECIOUSJUNK += $(PACKAGES)
 
 dist: $(PACKAGES)
 
-tmmira_distlist: $(MAKEFILE) tmmira tmmira/tmmira tmmira/miradoc
-	cd tmmira; $(MAKE) distlist
-	cp /dev/null tmmira_distlist
-	sed -e "s/^/tmmira\//" tmmira/distlist >> tmmira_distlist
+SVNURL="https://gforge.cs.vu.nl/svn/templatemanager/kernel/trunk"
 
-tmpas_distlist: $(MAKEFILE) tmpas tmpas/tmpas tmpas/pasdoc
-	cd tmpas; $(MAKE) distlist
-	sed -e "s/^/tmpas-$(TMPAS_VERSION)\//" tmpas/distlist > tmpas_distlist
+tmkernel_distlist: $(MAKEFILE) dist.lst tm tmc libtmc
+	cd tmkernel; $(MAKE) test.lst
+	sed -e "s/^/$(DISTBASENAME)\//" dist.lst > tmkernel_distlist
 
-tmkernel_distlist: $(MAKEFILE) tmkernel tmkernel/tm tmkernel/tmc tmkernel/libtmc
-	cd tmkernel; $(MAKE) distlist
-	sed -e "s/^/tmkernel-$(TMKERNEL_VERSION)\//" tmkernel/dist.lst > tmkernel_distlist
-
-tmkerneldoc_distlist: $(MAKEFILE) tmkrndoc
-	cd tmkrndoc; $(MAKE) distlist
-	sed -e "s/^/tmkerneldoc-$(TMKERNEL_VERSION)\//" tmkrndoc/dist.lst > tmkerneldoc_distlist
-
-tmkerneldoc-$(TMKERNEL_VERSION).tar.gz tmkerneldoc-$(TMKERNEL_VERSION).zip: tmkerneldoc_distlist
-	-mkdir tmkerneldoc-$(TMKERNEL_VERSION)
-	cvs -d $(CVSDIR) export -r HEAD -d tmkerneldoc-$(TMKERNEL_VERSION) tm/tmkrndoc
-	tar cf tmkerneldoc-$(TMKERNEL_VERSION).tar `cat tmkerneldoc_distlist`
-	gzip --best -f tmkerneldoc-$(TMKERNEL_VERSION).tar
-	zip -q -9 tmkerneldoc-$(TMKERNEL_VERSION).zip `cat tmkerneldoc_distlist`
-	rm -rf tmkerneldoc-$(TMKERNEL_VERSION)
-
-tmkernel-$(TMKERNEL_VERSION).tar.gz tmkernel-$(TMKERNEL_VERSION).zip: tmkernel_distlist
-	-mkdir tmkernel-$(TMKERNEL_VERSION)
-	cvs -d $(CVSDIR) export -r HEAD -d tmkernel-$(TMKERNEL_VERSION) tm/tmkernel
-	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmkernel-$(TMKERNEL_VERSION)/version.h
-	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > tmkernel-$(TMKERNEL_VERSION)/tm/version.h
-	cd tmkernel-$(TMKERNEL_VERSION)/libtmc; autoconf
-	cd tmkernel-$(TMKERNEL_VERSION)/tm; autoconf
-	cd tmkernel-$(TMKERNEL_VERSION)/tm; tm tm.ds tmcode.ct > tmcode.c
-	cd tmkernel-$(TMKERNEL_VERSION)/tm; tm tm.ds tmcode.ht > tmcode.h
-	cd tmkernel-$(TMKERNEL_VERSION)/tmc; autoconf
-	cd tmkernel-$(TMKERNEL_VERSION); autoconf
-	tar cf tmkernel-$(TMKERNEL_VERSION).tar `cat tmkernel_distlist`
-	gzip --best -f tmkernel-$(TMKERNEL_VERSION).tar
-	zip -q -9 tmkernel-$(TMKERNEL_VERSION).zip `cat tmkernel_distlist`
-	rm -rf tmkernel-$(TMKERNEL_VERSION)
-
-tmpas-$(TMPAS_VERSION).tar.gz tmpas-$(TMPAS_VERSION).zip: tmpas_distlist
-	-mkdir tmpas-$(TMPAS_VERSION)
-	cvs -d $(CVSDIR) export -r HEAD -d tmpas-$(TMPAS_VERSION) tm/tmpas
-	cd tmpas-$(TMPAS_VERSION); autoconf
-	cd tmpas-$(TMPAS_VERSION)/tmpas; autoconf
-	tar cf tmpas-$(TMPAS_VERSION).tar `cat tmpas_distlist`
-	gzip --best -f tmpas-$(TMPAS_VERSION).tar
-	zip -q -9 tmpas-$(TMPAS_VERSION).zip `cat tmpas_distlist`
-	rm -rf tmpas-$(TMPAS_VERSION)
-
-tmmira-$(TMMIRA_VERSION).tar.gz tmmira-$(TMMIRA_VERSION).zip: tmmira_distlist
-	-mkdir tmmira-$(TMMIRA_VERSION)
-	cvs -d $(CVSDIR) export -r HEAD -d tmmira-$(TMMIRA_VERSION) tm/tmmira
-	cd tmmira-$(TMMIRA_VERSION); autoconf
-	cd tmmira-$(TMMIRA_VERSION)/tmmira; autoconf
-	tar cf tmmira-$(TMMIRA_VERSION).tar `cat tmmira_distlist`
-	gzip --best -f tmmira-$(TMMIRA_VERSION).tar
-	zip -q -9 tmmira-$(TMMIRA_VERSION).zip `cat tmmira_distlist`
-	rm -rf tmmira-$(TMMIRA_VERSION)
-
-$(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).tar.gz: tmkernel-$(TMKERNEL_VERSION).tar.gz
-	cp tmkernel-$(TMKERNEL_VERSION).tar.gz $(FTPDIR)
-
-$(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).zip: tmkerneldoc-$(TMKERNEL_VERSION).zip
-	cp tmkerneldoc-$(TMKERNEL_VERSION).zip $(FTPDIR)
-
-$(FTPDIR)/tmkerneldoc-$(TMKERNEL_VERSION).tar.gz: tmkerneldoc-$(TMKERNEL_VERSION).tar.gz
-	cp tmkerneldoc-$(TMKERNEL_VERSION).tar.gz $(FTPDIR)
-
-$(FTPDIR)/tmkernel-$(TMKERNEL_VERSION).zip: tmkernel-$(TMKERNEL_VERSION).zip
-	cp tmkernel-$(TMKERNEL_VERSION).zip $(FTPDIR)
-
-$(FTPDIR)/tmpas-$(TMPAS_VERSION).tar.gz: tmpas-$(TMPAS_VERSION).tar.gz
-	cp tmpas-$(TMPAS_VERSION).tar.gz $(FTPDIR)
-
-$(FTPDIR)/tmpas-$(TMPAS_VERSION).zip: tmpas-$(TMPAS_VERSION).zip
-	cp tmpas-$(TMPAS_VERSION).zip $(FTPDIR)
-
-$(FTPDIR)/tmmira-$(TMMIRA_VERSION).tar.gz: tmmira-$(TMMIRA_VERSION).tar.gz
-	cp tmmira-$(TMMIRA_VERSION).tar.gz $(FTPDIR)
-
-$(FTPDIR)/tmmira-$(TMMIRA_VERSION).zip: tmmira-$(TMMIRA_VERSION).zip
-	cp tmmira-$(TMMIRA_VERSION).zip $(FTPDIR)
-
-$(FTPDIR)/README: README.ftp
-	cp README.ftp $(FTPDIR)/README
-
-$(FTPDIR)/CHANGES.tmpas: tmpas/CHANGES
-	cp tmpas/CHANGES $(FTPDIR)/CHANGES.tmpas
-
-$(FTPDIR)/CHANGES.tmmira: tmmira/CHANGES
-	cp tmmira/CHANGES $(FTPDIR)/CHANGES.tmmira
-
-$(FTPDIR)/CHANGES.tmkernel: tmkernel/CHANGES
-	cp tmkernel/CHANGES $(FTPDIR)/CHANGES.tmkernel
-
-ftp: $(FTPFILES)
-	touch ftp
+$(DISTBASENAME).tar.gz $(DISTBASENAME).zip: tmkernel_distlist
+	-mkdir $(DISTBASENAME)
+	svn export $(SVNURL) tmkernel-$(TMKERNEL_VERSION) tm/tmkernel
+	echo '#define TMKERNEL_VERSION "$(TMKERNEL_VERSION)"' > $(DISTBASENAME)/tm/version.h
+	cd $(DISTBASENAME)/libtmc; autoconf
+	cd $(DISTBASENAME)/tm; autoconf
+	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ct > tmcode.c
+	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ht > tmcode.h
+	cd $(DISTBASENAME)/tmc; autoconf
+	cd $(DISTBASENAME); autoconf
+	tar cf $(DISTBASENAME).tar `cat tmkernel_distlist`
+	gzip --best -f $(DISTBASENAME).tar
+	zip -q -9 $(DISTBASENAME).zip `cat tmkernel_distlist`
+	rm -rf $(DISTBASENAME)

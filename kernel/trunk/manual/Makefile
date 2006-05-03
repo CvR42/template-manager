@@ -39,8 +39,8 @@ JUNK = $(TOPFILE).log $(TOPFILE).blg $(TOPFILE).ilg \
        $(TOPFILE).toc dist.lst title.c
 
 DISTFILES = $(TEXFILES) $(MAKEFILE) $(EXAMPLEFILES) $(EXAMPLEOUTFILES) \
-	    $(CALCDEMO) javagrammar.sty pds.pdf README \
-            goodwords main.bib pdstitle.sty plot.ds .cvsignore \
+	    $(CALCDEMO) javagrammar.sty README \
+            goodwords main.bib pdstitle.sty plot.ds \
 	    title.ct title.ds ch.sh cast.t alias.ds
 
 all: $(TOPFILE).pdf
@@ -56,14 +56,6 @@ help:
 	@echo 'install - Install (dummy for compatibility reasons).'
 	@echo 'spell   - Run spelling check.'
 	@echo 'sort    - Sort spelling goodwords.'
-
-fast: $(TOPFILE).pdf
-
-test:
-	@echo "Nothing to test"
-
-install:
-	@echo "Nothing to install"
 
 # The dependency rules as implemented by latex
 $(TOPFILE).pdf : $(TEXFILES) $(EXAMPLEOUTFILES) $(CALCDEMO)
@@ -93,6 +85,18 @@ unalias.out: unalias.xt alias.ds
 .xt.out: plot.ds
 	$(TM) plot.ds $< > $*.out
 
+check:
+	@echo "Nothing to test"
+
+test:
+	@echo "Nothing to test"
+
+tests:
+	@echo "Nothing to test"
+
+depend:
+	@echo "No dependencies"
+
 clean:
 	rm -f $(JUNK) $(SPELLFILES)
 
@@ -105,7 +109,7 @@ empty:
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(DISTFILES)
+dist.lst: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 demo.c : plot.ds demo.ct democonf.t
@@ -140,9 +144,9 @@ tm-manual.ps: $(TOPFILE).ps
 	gzip -9 __tmp.ps
 	mv __tmp.ps.gz $*.ps.gz
 
-docinstall: tm-manual.ps tm-manual.ps.gz
-	cp tm-manual.ps $(WEBDIR)
-	cp tm-manual.ps.gz $(WEBDIR)
+install:
+
+uninstall:
 
 main.dvi: $(CALCDEMO)
 main.dvi: title.c

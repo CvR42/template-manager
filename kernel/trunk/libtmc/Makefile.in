@@ -159,7 +159,7 @@ MAKEFILE = Makefile
 FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
     config.hts makefile.tos
 
-CONFIGUREFILES = configure config.hin Makefile.in configure.in .cvsignore
+CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
 DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(FOREIGNFILES) \
 	    $(CONFIGUREFILES)
@@ -226,7 +226,7 @@ empty:
 distfiles:
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-distlist: $(DISTFILES)
+dist.lst: $(DISTFILES)
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 
 .c.o:
