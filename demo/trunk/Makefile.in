@@ -189,7 +189,7 @@ $(DEPENDFILE):
 
 -include $(DEPENDFILE)
 
-# ---- Distribution-related ----
+# ---- Distribution-related rules ----
 
 DISTBASENAME=tm-demo-$(VERSION)
 PACKAGES = $(DISTBASENAME).tar.gz $(DISTBASENAME).zip
