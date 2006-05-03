@@ -10,10 +10,7 @@ WEBDIR = $(HOME)/website/software/Tm
 # Top level LaTeX file containing the \include commands.
 TOPFILE = main
 
-# Reduction factor for draft files
-REDUCT = 2
-
-TM = tm
+TM = ../tm/tm
 LEX	 = flex -b -i
 YACC	 = bison -v -d -y
 
