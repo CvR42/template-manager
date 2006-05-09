@@ -17,5 +17,5 @@ void tm_fatal( const char *file, const int line, const char *s )
     else {
 	fprintf( stderr, "%s(%d): *** fatal error: %s\n", file, line, s );
     }
-    exit( 1 );
+    exit( EXIT_FAILURE );
 }

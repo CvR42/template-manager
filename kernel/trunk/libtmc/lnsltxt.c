@@ -6,7 +6,7 @@
 /* Given a tmtext 't' and a start and end position 'from' and 'to',
  * return a new tmtext that contains the tmtext between these positions.
  */
-tmtext slice_tmtext_lognew( const tmtext t, const long from_parm, const long to_parm, const char *file, const int line )
+tmtext slice_tmtext_lognew( const_tmtext t, long from_parm, long to_parm, const char *file, int line )
 {
     tmtext nw;
     long sz;

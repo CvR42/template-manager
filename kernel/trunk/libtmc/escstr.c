@@ -25,7 +25,7 @@ static char escchar_buf[6];
 char *tm_escapestring( const unsigned int code )
 {
     char *p = escchar_buf;
-    const unsigned int code1 = code & 0xff;
+    unsigned int code1 = code & 0xffu;
 
     if( code1 == BACKSLASH || code1 == '"' || code1 == '\'' ){
 	*p++ = BACKSLASH;

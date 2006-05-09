@@ -49,6 +49,7 @@ JUNK  = testprog testerr testout tmp core mon.out gmon.out \
 PRECIOUSJUNK = 
 
 SRCS	= $(LIBSRCS) $(TESTSRCS)
+LINTSRCS = $(SRCS)
 
 HDRS = tmc.h
 
@@ -235,6 +236,14 @@ dist.lst: $(DISTFILES)
 # TODO: do something better here
 depend:
 	echo "Nothing is done"
+
+# ---- lint rules ----
+
+lint: $(LINTSRCS) splint.flags
+	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint
+
+JUNK += lint
+DISTFILES += splint.flags
 
 
 # Configure-related rules.

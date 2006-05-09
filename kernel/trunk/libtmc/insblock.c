@@ -7,7 +7,7 @@
 /* Given a tmtext 't', a position 'pos' and a size 'sz', make room for 'sz'
  * characters in the tmtext, starting at position 'pos'.
  */
-void insblock_tmtext( tmtext t, const long pos, const long sz )
+void insblock_tmtext( tmtext t, long pos, long sz )
 {
     tmtextptr s;
     tmtextptr d;
@@ -16,7 +16,7 @@ void insblock_tmtext( tmtext t, const long pos, const long sz )
     t = setroom_tmtext( t, t->sz+sz );
     z = t->sz-pos;
     if( z<=0 ){
-	/* The chars are to be inserted at the end of the tmtext,	 */
+	/* The chars are to be inserted at the end of the tmtext. */
 	t->sz += sz;
 	return;
     }

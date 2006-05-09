@@ -14,14 +14,15 @@
  * copy 'sz' characters from 's' to 'd'. The blocks should not overlap,
  * there are special functions to insert or delete blocks in a tmtext.
  */
-void copyblock_tmtext( tmtextptr d, const tmtextptr s, const long sz )
+void copyblock_tmtext( tmtextptr d, const_tmtextptr s, long sz )
 {
-    tmtextptr p = s;
     long cnt = sz;
 
 #if HAVE_MEMMOVE
-    memcpy( d, p, cnt );
+    memcpy( d, s, (size_t) cnt );
 #else
+    const_tmtextptr p = s;
+
     while( cnt>0 ){
 	*d++ = *p++;
 	cnt--;

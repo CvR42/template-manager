@@ -15,7 +15,7 @@ FILE *outfile;
 static void bad( const char *msg )
 {
    fprintf( stderr, "check error: %s\n", msg );
-   exit( 1 );
+   exit( EXIT_FAILURE );
 }
 
 /* test_printopt: test printopt routines */
@@ -104,7 +104,7 @@ static void test_cons( TMPRINTSTATE *st )
     do{
 	if( tm_fscancons( infile, buf, 1000 ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
-            exit( 1 );
+            exit( EXIT_FAILURE );
 	}
 	tm_printword( st, buf );
     } while( strcmp( buf, "StopFscanCons" ) != 0 );
@@ -779,6 +779,6 @@ int main( void )
     flush_lognew();
     fflush( outfile );		/* Just to be sure.. */
     tm_fatal( __FILE__, __LINE__, "test of 'tm_fatal'" );
-    exit( 0 );
+    exit( EXIT_SUCCESS );
     return 0;
 }
