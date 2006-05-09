@@ -13,12 +13,10 @@ tm_neutralp tm_realloc( tm_neutralp old, size_t sz )
     if( sz == 0 ){
 	sz = 1;
     }
-    for(;;){
-	adr = (tm_neutralp) realloc( old, sz );
-	if( adr != (tm_neutralp)0 ){
-	    break;
-	}
+    adr = (tm_neutralp) realloc( old, sz );
+    if( adr == (tm_neutralp)0 ){
 	tm_noroom();
+	exit( EXIT_FAILURE );
     }
     return adr;
 }

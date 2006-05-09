@@ -10,7 +10,7 @@
 /* Try to read a constructor name in buffer `buf'. The buffer is 'sz'
  * characters long.
  */
-int tm_fscancons( FILE *f, char *buf, const int sz )
+tmbool tm_fscancons( FILE *f, char *buf, const int sz )
 {
     int c;
     char charstr[15];
@@ -18,7 +18,7 @@ int tm_fscancons( FILE *f, char *buf, const int sz )
 
     char *p = buf;
     if( tm_fscanspace( f ) ){
-	return 1;
+	return TMTRUE;
     }
     c = getc( f );
     while( (isalnum( c ) || c == '_') && n<sz ){
@@ -33,7 +33,7 @@ int tm_fscancons( FILE *f, char *buf, const int sz )
 	    "Constructor name too long; all I got was `%s'",
 	    buf
 	);
-	return 1;
+	return TMTRUE;
     }
     ungetc( c, f );
     *p = '\0';
@@ -48,7 +48,7 @@ int tm_fscancons( FILE *f, char *buf, const int sz )
 	    (void) sprintf( charstr, "char 0x%02x", c );
 	}
 	(void) sprintf( tm_errmsg, "Expected constructor name but got %s", charstr );
-	return 1;
+	return TMTRUE;
     }
-    return 0;
+    return TMFALSE;
 }

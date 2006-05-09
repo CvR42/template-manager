@@ -6,7 +6,7 @@
 
 int fscan_tmuchar( FILE *f, tmuchar *p )
 {
-    int brac;
+    unsigned int brac;
     int code;
 
     *p = 0;

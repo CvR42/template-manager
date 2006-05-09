@@ -6,7 +6,7 @@
 /* Given a tmtext datastructure 't' and a character 'c', add the character
  * to the tmtext.
  */
-tmtext putc_tmtext( const char c, tmtext t )
+tmtext putc_tmtext( char c, tmtext t )
 {
     if( t->curpos>=t->room ){
 	t = setroom_tmtext( t, t->room+TEXTGROWSTEP );

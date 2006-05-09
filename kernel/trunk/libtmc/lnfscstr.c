@@ -16,7 +16,7 @@
 int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int line )
 {
     int c;
-    int brac;
+    unsigned int brac;
     unsigned int ix = 0;
     unsigned int sz = INITIAL_STRINGSIZE;
     tmstring buf;

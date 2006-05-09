@@ -15,7 +15,7 @@ int tm_lineno;
  * '|[^|]' causes grave problems. It is 'solved' by generating
  * an error message and returning 1.
  */
-int tm_fscanspace( FILE *f )
+tmbool tm_fscanspace( FILE *f )
 {
     int c;
 
@@ -34,12 +34,12 @@ int tm_fscanspace( FILE *f )
 	c = fgetc( f );
 	if( c != '|' ){
 	    (void) sprintf( tm_errmsg, "fscanspace(): single '|' found" );
-	    return 1;
+	    return TMTRUE;
 	}
 	do {
 	    c = fgetc( f );
 	} while( c != '\n' );
 	tm_lineno++;
     }
-    return 0;
+    return TMFALSE;
 }

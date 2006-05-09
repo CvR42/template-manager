@@ -66,6 +66,8 @@ struct str_tmprintstate {
 
 typedef struct str_tmprintstate TMPRINTSTATE;
 
+typedef enum en_tmbool { TMFALSE=0, TMTRUE=1 } tmbool;
+
 /* 'tmschar' functions */
 #define tmscharNIL ('\0')
 #define null_tmschar() tmscharNIL
@@ -273,9 +275,9 @@ extern tmtext string_to_tmtext_lognew( const char *s, const char *file, const in
 extern tmtext string_to_tmtext_nolognew( const char *s ); 
 extern tmtext puts_tmtext( const char *s, tmtext t );
 extern tmtext putc_tmtext( const char c, tmtext t );
-extern void print_tmtext( TMPRINTSTATE *st, const tmtext t );
+extern void print_tmtext( TMPRINTSTATE *st, const_tmtext t );
 extern void fprint_tmtext( FILE *f, const tmtext t );
-extern int fscan_tmtext_lognew( FILE *f, tmtext *s, const char *file, const int line );
+extern int fscan_tmtext_lognew( FILE *f, tmtext *s, const char *file, int line );
 extern int fscan_tmtext_nolognew( FILE *f, tmtext *s );
 extern tmtext slice_tmtext_lognew( const_tmtext t, long from, long to, const char *file, int line );
 extern tmtext slice_tmtext_nolognew( const_tmtext t, long from, long to );
@@ -287,7 +289,6 @@ extern void insblock_tmtext( tmtext t, long pos, long sz );
 /* 'tmbool' functions */
 #define TMTRUESTR "True"
 #define TMFALSESTR "False"
-typedef enum en_tmbool { TMFALSE=0, TMTRUE=1 } tmbool;
 #define new_tmbool(b) ((b)?TMTRUE:TMFALSE)
 #define rdup_tmbool(b) (b)
 #define fre_tmbool(b)
@@ -305,7 +306,7 @@ extern tmsymbol add_tmsymbol( const char *name );
 extern tmsymbol gen_tmsymbol( const char *pre );
 extern void flush_tmsymbol( void );
 extern int fscan_tmsymbol( FILE *f, tmsymbol *s );
-extern void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s );
+extern void print_tmsymbol( TMPRINTSTATE *st, const_tmsymbol s );
 extern void fprint_tmsymbol( FILE *f, const tmsymbol s );
 
 extern tm_neutralp tm_malloc( size_t sz );
@@ -429,18 +430,18 @@ extern tmbool isequal_tmtext( const const_tmtext ta, const const_tmtext tb );
 extern int fscan_tmbool( FILE *f, tmbool *bp );
 
 /* General low-level service functions */
-extern int tm_fscanopenbrac( FILE *f );
-extern int tm_fscanclosebrac( FILE *f, const int n );
-extern int tm_fneedc( FILE *f, int c );
-extern int tm_fscancons( FILE *f, char *s, const int sz );
-extern int tm_fscanspace( FILE *f );
-extern char *tm_escapestring( const unsigned int code );
-extern int tm_fscanescapedchar( FILE *f, int *code );
+extern unsigned int tm_fscanopenbrac( FILE *f );
+extern tmbool tm_fscanclosebrac( FILE *f, unsigned int n );
+extern tmbool tm_fneedc( FILE *f, int c );
+extern tmbool tm_fscancons( FILE *f, char *s, int sz );
+extern tmbool tm_fscanspace( FILE *f );
+extern char *tm_escapestring( unsigned int code );
+extern tmbool tm_fscanescapedchar( FILE *f, int *code );
 
-extern void tm_fatal( const char *file, const int line, const char *s );
-extern void tm_badtag( const char *file, const int line, const int tag );
+extern void tm_fatal( const char *file, int line, const char *s );
+extern void tm_badtag( const char *file, int line, const int tag );
 extern void tm_noroom( void );
-extern tm_neutralp tm_badcast( const char *file, const int line );
+extern /*@null@*/ tm_neutralp tm_badcast( const char *file, int line );
 
 /* the error message buffer of tm and its length */
 extern char tm_errmsg[];

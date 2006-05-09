@@ -14,7 +14,7 @@
 int fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
 {
     int c;
-    int brac;
+    unsigned int brac;
 
     *s = tmwordNIL;
     brac = tm_fscanopenbrac( f );

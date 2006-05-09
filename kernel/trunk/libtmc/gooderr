@@ -6,7 +6,7 @@ tmtext              :     37 allocated,     37 freed.
 lognew: pending blocks:
 testprog.c(760)
 testprog.c(764)
-testprog.c(766)
+testprog.c(765)
 testlognew(0) id=8
 testlognew(49) id=50
-testprog.c(781): *** fatal error: test of 'tm_fatal'
+testprog.c(779): *** fatal error: test of 'tm_fatal'

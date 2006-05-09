@@ -15,7 +15,7 @@
 int fscan_tmtext_nolognew( FILE *f, tmtext *s )
 {
     int c;
-    int brac;
+    unsigned int brac;
 
     *s = tmtextNIL;
     brac = tm_fscanopenbrac( f );
@@ -43,7 +43,7 @@ int fscan_tmtext_nolognew( FILE *f, tmtext *s )
 	    if( tm_fscanescapedchar( f, &c ) ){
 		return 1;
 	    }
-	    putc_tmtext( c, *s );
+	    *s = putc_tmtext( c, *s );
 	}
     }
     return tm_fscanclosebrac( f, brac );
