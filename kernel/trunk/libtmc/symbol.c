@@ -117,7 +117,7 @@ tmsymbol add_tmsymbol( const char *name )
 	    "You can't add tmsymbols after using gen_tmsymbol() (name = '%s')\n",
 	    name
 	);
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     hashval = hash( name );
     entry = dofind_tmsymbol( name, symtab[hashval] );

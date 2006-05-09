@@ -11,6 +11,6 @@
 
 void tm_badtag( const char *file, const int line, const int tag ) 
 {
-    fprintf( stderr, "%s(%d): bad tag: %d=0x%x\n", file, line, tag, tag );
-    exit( 1 );
+    fprintf( stderr, "%s(%d): bad tag: %d=0x%x\n", file, line, tag, (unsigned int) tag );
+    exit( EXIT_FAILURE );
 }

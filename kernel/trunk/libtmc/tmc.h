@@ -237,6 +237,7 @@ inline tmsymbol null_tmsymbol() { return tmsymbolNIL; }
 
 /* 'tmtext' functions. */
 typedef char *tmtextptr;
+typedef const char *const_tmtextptr;
 
 /* Structure for texts in memory. */
 typedef struct str_tmtext {
@@ -261,13 +262,13 @@ extern void fre_tmtext_lognew( tmtext t );
 extern void fre_tmtext_nolognew( tmtext t );
 extern tmtext new_tmtext_lognew( const char *file, const int line );
 extern tmtext new_tmtext_nolognew( void );
-extern tmtext setroom_tmtext( tmtext t, const long rm );
-extern tmtext delblock_tmtext( tmtext t, const long from, const long to );
-extern tmtext replace_tmtext( tmtext t, const long from, const long to, const tmtext nw );
-extern tmtext insert_tmtext( tmtext t, const long pos_parm, const tmtext nw );
-extern int cmp_string_tmtext( const char *s, const tmtext t );
-extern tmstring tmtext_to_tmstring_nolognew( const tmtext t );
-extern tmstring tmtext_to_tmstring_lognew( const tmtext t, const char *file, const int line );
+extern tmtext setroom_tmtext( tmtext t, long rm );
+extern tmtext delblock_tmtext( tmtext t, long from, long to );
+extern tmtext replace_tmtext( tmtext t, long from, long to, const_tmtext nw );
+extern tmtext insert_tmtext( tmtext t, long pos_parm, const_tmtext nw );
+extern int cmp_string_tmtext( const char *s, const_tmtext t );
+extern tmstring tmtext_to_tmstring_nolognew( const_tmtext t );
+extern tmstring tmtext_to_tmstring_lognew( const_tmtext t, const char *file, const int line );
 extern tmtext string_to_tmtext_lognew( const char *s, const char *file, const int line ); 
 extern tmtext string_to_tmtext_nolognew( const char *s ); 
 extern tmtext puts_tmtext( const char *s, tmtext t );
@@ -276,12 +277,12 @@ extern void print_tmtext( TMPRINTSTATE *st, const tmtext t );
 extern void fprint_tmtext( FILE *f, const tmtext t );
 extern int fscan_tmtext_lognew( FILE *f, tmtext *s, const char *file, const int line );
 extern int fscan_tmtext_nolognew( FILE *f, tmtext *s );
-extern tmtext slice_tmtext_lognew( const tmtext t, const long from, const long to, const char *file, const int line );
-extern tmtext slice_tmtext_nolognew( const tmtext t, const long from, const long to );
+extern tmtext slice_tmtext_lognew( const_tmtext t, long from, long to, const char *file, int line );
+extern tmtext slice_tmtext_nolognew( const_tmtext t, long from, long to );
 
 /* The functions below are undocumented. */
-extern void copyblock_tmtext( tmtextptr d, const tmtextptr s, const long sz );
-extern void insblock_tmtext( tmtext t, const long pos, const long sz );
+extern void copyblock_tmtext( tmtextptr d, const_tmtextptr s, long sz );
+extern void insblock_tmtext( tmtext t, long pos, long sz );
 
 /* 'tmbool' functions */
 #define TMTRUESTR "True"
@@ -323,7 +324,7 @@ extern tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
 #define TM_FREE free
 
 extern long int tm_new_logid( const char *file, const int line );
-extern void tm_fre_logid( const long int id );
+extern void tm_fre_logid( long int id );
 extern void tm_lognew( const tm_neutralp p, const char *file, const int line );
 extern void tm_logfre( const tm_neutralp p );
 extern void flush_lognew( void );
@@ -391,8 +392,8 @@ extern void fprint_tmuint( FILE *f, const tmuint u );
 
 /* 'long' functions */
 extern int fscan_long( FILE *f, long *i );
-extern void print_long( TMPRINTSTATE *st, const long i );
-extern void fprint_long( FILE *f, const long i );
+extern void print_long( TMPRINTSTATE *st, long i );
+extern void fprint_long( FILE *f, long i );
 
 /* 'tmulong' functions */
 extern int fscan_tmulong( FILE *f, tmulong *p );

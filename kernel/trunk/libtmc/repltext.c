@@ -10,9 +10,9 @@
  */
 tmtext replace_tmtext(
  tmtext t,
- const long from_parm,
- const long to_parm,
- const tmtext nw
+ long from_parm,
+ long to_parm,
+ const_tmtext nw
 )
 {
     long h;

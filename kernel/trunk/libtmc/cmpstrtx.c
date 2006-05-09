@@ -10,7 +10,7 @@
 #include "tmc.h"
 
 /* Given a string and a tmtext, compare them. */
-int cmp_string_tmtext( const char *s, const tmtext t )
+int cmp_string_tmtext( const char *s, const_tmtext t )
 {
     long ix;
 

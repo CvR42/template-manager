@@ -6,7 +6,7 @@
 /* Given a tmtext 't' and a start and end position 'from' and 'to',
  * return a new tmtext that contains the tmtext between these positions.
  */
-tmtext slice_tmtext_nolognew( const tmtext t, const long from_parm, const long to_parm )
+tmtext slice_tmtext_nolognew( const_tmtext t, long from_parm, long to_parm )
 {
     tmtext nw;
     long sz;

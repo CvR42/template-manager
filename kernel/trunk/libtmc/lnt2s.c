@@ -6,7 +6,7 @@
 /* Given a tmtext 't' return a tmstring .
  * This function assumes the tmtext contains no '\0'.
  */
-tmstring tmtext_to_tmstring_lognew( const tmtext t, const char *file, const int line )
+tmstring tmtext_to_tmstring_lognew( const_tmtext t, const char *file, int line )
 {
     size_t sz;
     tmstring s;

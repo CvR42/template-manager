@@ -10,7 +10,7 @@
  * appended. If 'pos' is negative, it is assumed that the
  * text must be inserted at the start of 't'.
  */
-tmtext insert_tmtext( tmtext t, const long pos_parm, const tmtext nw )
+tmtext insert_tmtext( tmtext t, long pos_parm, const_tmtext nw )
 {
     long pos = pos_parm;
 

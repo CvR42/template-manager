@@ -93,10 +93,10 @@ TMOUTPUT = tmcode.c tmcode.h
 
 GENFILES = $(TMOUTPUT) tmpath.c version.h
 
-JUNK          = y.output lint testerr testout testrdir index.sed \
+JUNK         = y.output testerr testout testrdir index.sed \
 		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
 		config.log
-PRECIOUSJUNK = sedlint
+PRECIOUSJUNK =
 
 FOREIGNFILES = tmtos.prj makefile.tc config.htc makefile.tos config.hts
 

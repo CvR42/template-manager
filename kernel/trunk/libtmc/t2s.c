@@ -6,7 +6,7 @@
 /* Given a tmtext 't' return a tmstring .
  * This function assumes the tmtext contains no '\0'.
  */
-tmstring tmtext_to_tmstring_nolognew( const tmtext t )
+tmstring tmtext_to_tmstring_nolognew( const_tmtext t )
 {
     size_t sz;
     tmstring s;
