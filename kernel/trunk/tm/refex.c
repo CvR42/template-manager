@@ -71,8 +71,8 @@ typedef enum en_dfacode {
 #define MAXCHR	128
 #define CHRBIT	8
 #define BITBLK	(MAXCHR/CHRBIT)
-#define BLKIND	0170
-#define BITIND	07
+#define BLKIND	0170U
+#define BITIND	07U
 
 /* Forward declaration. */
 static const char *pmatch( const char *lp, const char *ap );
@@ -82,7 +82,7 @@ static char dfa[MAXDFA];		/* the deterministic finite automaton */
 static int sta = DFA_BAD;               /* status of lastpat */
 static const char *bopat[MAXTAG];
 static const char *eopat[MAXTAG];
-static char bittab[BITBLK];		/* bit table for PAT_INSET */
+static unsigned char bittab[BITBLK];		/* bit table for PAT_INSET */
 
 static void chset( const int c )
 {
@@ -134,7 +134,7 @@ const char *ref_comp( const char *pat )
 		    chset( *p++ );
 		}
 		while (*p && *p != ']' ){
-		    if( *p == '-' && *(p+1) && *(p+1) != ']' ){
+		    if( *p == '-' && (*(p+1) != '\0') && *(p+1) != ']' ){
 			p++;
 			c1 = *(p-2) + 1;
 			c2 = *p++;
@@ -146,7 +146,7 @@ const char *ref_comp( const char *pat )
 			chset( *p++ );
 		    }
 		}
-		if( !*p ){
+		if( *p == '\0' ){
 		    dfa[0] = PAT_END;
 		    return "Missing ]";
 		}
@@ -354,7 +354,7 @@ void ref_subs( const char *src, char *dst )
 		    pin = c - '0';
 		    break;
 		}
-		/* Fallthrough! */
+		/*@fallthrough@*/
 
 	    default:
 		*dst++ = c;
