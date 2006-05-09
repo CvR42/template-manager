@@ -83,7 +83,7 @@ static const char helptext[] =
 static void scanargs( int argc, char **argv, tmstring lp )
 {
     tmbool printusage = FALSE;
-    int exitcode = 0;
+    int exitcode = EXIT_SUCCESS;
     int op;
     tmstring tplfnm;
 
@@ -133,7 +133,7 @@ static void scanargs( int argc, char **argv, tmstring lp )
 	    case 'h':
 	    case 'H':
 		printusage = TRUE;
-		exitcode = 0;
+		exitcode = EXIT_SUCCESS;
 		break;
 
 	    case 'I':
@@ -213,7 +213,7 @@ static void scanargs( int argc, char **argv, tmstring lp )
 	    case '?':
 	    default:
 		printusage = TRUE;
-		exitcode = 1;
+		exitcode = EXIT_FAILURE;
 		break;
 	}
 	argc--;
@@ -241,13 +241,13 @@ static void scanargs( int argc, char **argv, tmstring lp )
 	    "%s: only one input file allowed\n",
 	    argv[0]
 	);
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     if( tplfnm != tmstringNIL ){
 	tplfilename = search_file( searchpath, tplfnm, PATHSEPSTR, "r" );
 	if( tplfilename == tmstringNIL ){
 	    error( "file `%s' not found", tplfnm );
-	    exit( 1 );
+	    exit( EXIT_FAILURE );
 	}
 	rfre_tmstring( tplfnm );
     }
@@ -263,7 +263,7 @@ int main( int argc, char **argv )
     TMPRINTSTATE *st;
     int lev;
     char buf[10];
-    int exitcode = 0;
+    int exitcode = EXIT_SUCCESS;
 
     tracestream = stderr;
     statstream = stderr;
@@ -318,7 +318,7 @@ int main( int argc, char **argv )
     if( get_balance_tm() != 0 || get_balance_tmstring() != 0 ){
 	fprintf( statstream, "Object allocation not balanced.\n" );
 	prstat = TRUE;
-        exitcode = 1;
+        exitcode = EXIT_FAILURE;
     }
     if( prstat ){
 	stat_tm( statstream );
