@@ -16,7 +16,7 @@
 int fscan_tmstring_nolognew( FILE *f, tmstring *s )
 {
     int c;
-    int brac;
+    unsigned int brac;
     unsigned int ix = 0;
     unsigned int sz = INITIAL_STRINGSIZE;
     tmstring buf;

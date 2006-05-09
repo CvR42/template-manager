@@ -25,7 +25,7 @@ static char escchar_buf[6];
 char *tm_escapestring( const unsigned int code )
 {
     char *p = escchar_buf;
-    unsigned int code1 = code & 0xffu;
+    char code1 = (char) (code & 0xffU);
 
     if( code1 == BACKSLASH || code1 == '"' || code1 == '\'' ){
 	*p++ = BACKSLASH;
@@ -43,10 +43,10 @@ char *tm_escapestring( const unsigned int code )
 	    case '\t': *p++ = BACKSLASH; *p++ = 't'; break;
 	    case '\v': *p++ = BACKSLASH; *p++ = 'v'; break;
 	    default:
-		sprintf( escchar_buf, "\\%03o", code1 );
-		return &escchar_buf[0];
+		sprintf( escchar_buf, "\\%03o", (code & 0xffU) );
+		return escchar_buf;
 	}
     }
     *p = '\0';
-    return &escchar_buf[0];
+    return escchar_buf;
 }

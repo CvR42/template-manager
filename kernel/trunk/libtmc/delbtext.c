@@ -35,7 +35,7 @@ tmtext delblock_tmtext( tmtext t, const long from, const long to )
     s = t->arr+from+sz;
     t->sz -= sz;
 #if HAVE_MEMMOVE
-    memmove( d, s, z );
+    memmove( d, s, (size_t) z );
 #else
     while( z>0 ){
 	*d++ = *s++;

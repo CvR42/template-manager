@@ -7,7 +7,7 @@
 
 int fscan_tmushort( FILE *f, tmushort *p )
 {
-    int brac;
+    unsigned int brac;
 
     *p = 0;
     brac = tm_fscanopenbrac( f );

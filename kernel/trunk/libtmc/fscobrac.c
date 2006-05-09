@@ -12,9 +12,9 @@
  * that you encounter up to the first other character. Return the number
  * of open brackets found.
  */
-int tm_fscanopenbrac( FILE *f )
+unsigned int tm_fscanopenbrac( FILE *f )
 {
-    int braccnt = 0;
+    unsigned int braccnt = 0;
     int c;
 
     for(;;){

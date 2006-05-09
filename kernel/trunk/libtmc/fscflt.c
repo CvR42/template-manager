@@ -7,12 +7,12 @@
 
 int fscan_float( FILE *f, float *p )
 {
-    int brac = tm_fscanopenbrac( f );
+    unsigned int brac = tm_fscanopenbrac( f );
 
     *p = (float) 0;
     if( fscanf( f, "%f", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "float expected" );
-	return 1;
+	return TMTRUE;
     }
     return tm_fscanclosebrac( f, brac );
 }

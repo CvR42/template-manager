@@ -9,8 +9,8 @@
 #define TESTARRAYSIZE 13000
 
 /* The file handle for the input and output file. */
-FILE *infile;
-FILE *outfile;
+static FILE *infile;
+static FILE *outfile;
 
 static void bad( const char *msg )
 {
@@ -72,8 +72,8 @@ static void test_printopt( TMPRINTSTATE *st )
  */
 static void test_brac( TMPRINTSTATE *st )
 {
-    int bracs;
-    int i;
+    unsigned int bracs;
+    unsigned int i;
 
     do{
 	bracs = tm_fscanopenbrac( infile );
@@ -697,7 +697,7 @@ static void test_tmsymbol( void )
     flush_tmsymbol();
 }
 
-long idlist[TESTARRAYSIZE];
+static long idlist[TESTARRAYSIZE];
 
 int main( void )
 {
@@ -762,9 +762,7 @@ int main( void )
     }
     str = new_tmstring( "bla" );
     str = realloc_tmstring( str, strlen( str )*4 );
-    (void) str;
     str = create_tmstring( 23 );
-    (void) str;
     for( ix=0; ix<TESTARRAYSIZE; ix++ ){
 	idlist[ix] = tm_new_logid( "testlognew", ix );
     }

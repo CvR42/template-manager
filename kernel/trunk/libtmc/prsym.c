@@ -7,7 +7,7 @@
 #define BACKSLASH '\\'
 
 /* Implementation of 'print' for a 'tmsymbol'. */
-void print_tmsymbol( TMPRINTSTATE *st, const tmsymbol s )
+void print_tmsymbol( TMPRINTSTATE *st, const_tmsymbol s )
 {
     if( s == tmsymbolNIL ){
 	tm_printword( st, "@" );

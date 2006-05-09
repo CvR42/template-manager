@@ -12,15 +12,15 @@
 /* Skip all `isspace()' characters, and try to read `n' close
  * brackets. Give an error if this is not possible.
  */
-int tm_fscanclosebrac( FILE *f, const int n )
+tmbool tm_fscanclosebrac( FILE *f, unsigned int n )
 {
     int cnt = n;
 
     while( cnt>0 ){
         if( tm_fneedc( f, CLOSEBRAC ) ){
-	    return 1;
+	    return TMTRUE;
 	}
 	cnt--;
     }
-    return 0;
+    return TMFALSE;
 }

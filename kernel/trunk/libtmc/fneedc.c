@@ -18,7 +18,7 @@
    Compose an error message in 'tm_errmsg' and return 1 if this
    is not possible, else return 0.
  */
-int tm_fneedc( FILE *f, int needc )
+tmbool tm_fneedc( FILE *f, int needc )
 {
     int c;
     char charstr[15];
@@ -36,13 +36,13 @@ int tm_fneedc( FILE *f, int needc )
 	    (void) sprintf( charstr, "char '%c'", c );
 	}
 	else {
-	    (void) sprintf( charstr, "char 0x%02x", c );
+	    (void) sprintf( charstr, "char 0x%02x", (unsigned int) c );
 	}
 	if( c>=' ' && c<='~' ){
 	    (void) sprintf( needcharstr, "'%c'", needc );
 	}
 	else {
-	    (void) sprintf( needcharstr, "0x%02x", needc );
+	    (void) sprintf( needcharstr, "0x%02x", (unsigned int) needc );
 	}
 	(void) sprintf(
 	    tm_errmsg,

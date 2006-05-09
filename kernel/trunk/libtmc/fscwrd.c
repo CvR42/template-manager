@@ -14,7 +14,7 @@
 int fscan_tmword_nolognew( FILE *f, tmword *s )
 {
     int c;
-    int brac;
+    unsigned int brac;
 
     *s = tmwordNIL;
     brac = tm_fscanopenbrac( f );

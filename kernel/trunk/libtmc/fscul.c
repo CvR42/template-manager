@@ -7,7 +7,7 @@
 
 int fscan_tmulong( FILE *f, tmulong *p )
 {
-    int brac = tm_fscanopenbrac( f );
+    unsigned int brac = tm_fscanopenbrac( f );
 
     *p = 0;
     if( fscanf( f, "%lu", p ) != 1 ){

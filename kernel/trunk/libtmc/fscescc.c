@@ -10,7 +10,7 @@
 /* Try to read a (possibly escaped) character from the file 'f'. Give
  * an error message if this is not successful. 
  */
-int tm_fscanescapedchar( FILE *f, int *code )
+tmbool tm_fscanescapedchar( FILE *f, int *code )
 {
     int c;
 
@@ -22,7 +22,7 @@ int tm_fscanescapedchar( FILE *f, int *code )
     if( c == '\\' ){
 	c = fgetc( f );
 	if( c == EOF ){
-	    return 1;
+	    return TMTRUE;
 	}
 	switch( c ){
 	    case 'b': c = '\b'; break;
@@ -54,5 +54,5 @@ int tm_fscanescapedchar( FILE *f, int *code )
 	}
     }
     *code = c;
-    return 0;
+    return TMFALSE;
 }
