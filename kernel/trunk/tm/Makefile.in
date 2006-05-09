@@ -87,6 +87,7 @@ GENOBJS = $(GENSRCS:.c=.o)
 OBJS = $(GENOBJS) $(NORMALOBJS)
 
 SRCS = $(NORMALSRCS) $(GENSRCS)
+LINTSRCS = $(SRCS)
 
 TMOUTPUT = tmcode.c tmcode.h
 
@@ -121,9 +122,6 @@ help :
 	@echo "depend		Update dependencies in $(MAKEFILE)."
 	@echo "doc		Format documentation."
 	@echo "man		Format manual pages."
-
-lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
-	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
 
 $(PROG): $(OBJS)
 	$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) -o $(PROG)
@@ -214,6 +212,17 @@ JUNK += config.log config.cache
 PRECIOUSJUNK += config.status configure
 
 -include $(DEPENDFILE)
+
+# --- lint ---
+
+#lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
+#	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
+
+lint: $(LINTSRCS) splint.flags
+	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint
+
+JUNK += lint
+DISTFILES += splint.flags
 
 ###
 
