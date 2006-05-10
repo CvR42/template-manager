@@ -21,7 +21,7 @@ SCRIPTS = runerr rungen runall
 
 TESTFILES = $(wildcard *.flags *.err *.t *.out err*.status gen*.status dserr*.status)
 
-DISTFILES = $(MAKEFILE) $(TESTFILES) $(SCRIPTS) .cvsignore
+DISTFILES = $(MAKEFILE) $(TESTFILES) $(SCRIPTS) sub.ds
 
 all:
 

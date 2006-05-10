@@ -39,7 +39,7 @@ DSFILES       = tm.ds
 
 TMFILES       = tmcode.ct tmcode.ht tmspec.t
 
-TESTFILES     = sub.ds test.ds testin goodout gooderr goodrdir testsub
+TESTFILES     = goodout goodrdir
 
 HDRS	      = refex.h \
 		tmdefs.h \
