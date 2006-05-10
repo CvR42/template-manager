@@ -99,7 +99,7 @@ distlist: $(MAKEFILE) dist.lst tm tmc libtmc
 $(DISTBASENAME).tar.gz $(DISTBASENAME).zip: distlist
 	rm -rf $(DISTBASENAME)
 	svn export . $(DISTBASENAME)
-	echo '#define VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
+	echo '#define TMKERNEL_VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
 	cd $(DISTBASENAME)/libtmc; autoconf
 	cd $(DISTBASENAME)/tm; autoconf
 	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ct > tmcode.c
