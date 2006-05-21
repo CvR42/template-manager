@@ -10,17 +10,17 @@
 #include "tmc.h"
 
 /* Implementation of 'print' for a 'tmtext'. */
-void fprint_tmtext( FILE *f, const tmtext t )
+void fprint_tmtext( FILE *f, const_tmtext t )
 {
     long ix;
 
     if( t == tmtextNIL ){
-	fputc( '@', f );
+	(void) fputc( '@', f );
 	return;
     }
-    putc( '"', f );
+    (void) fputc( '"', f );
     for( ix=0; ix<t->sz; ix++ ){
-	fputs( tm_escapestring( t->arr[ix] ), f );
+	(void) fputs( tm_escapestring( t->arr[ix] ), f );
     }
-    putc( '"', f );
+    (void) fputc( '"', f );
 }

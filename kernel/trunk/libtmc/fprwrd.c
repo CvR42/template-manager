@@ -12,8 +12,8 @@
 void fprint_tmword( FILE *f, const char *s )
 {
     if( s == 0 ){
-	fputs( "@", f );
+	(void) fputs( "@", f );
 	return;
     }
-    fputs( s, f );
+    (void) fputs( s, f );
 }

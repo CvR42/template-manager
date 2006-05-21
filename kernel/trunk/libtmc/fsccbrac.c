@@ -14,7 +14,7 @@
  */
 tmbool tm_fscanclosebrac( FILE *f, unsigned int n )
 {
-    int cnt = n;
+    unsigned int cnt = n;
 
     while( cnt>0 ){
         if( tm_fneedc( f, CLOSEBRAC ) ){

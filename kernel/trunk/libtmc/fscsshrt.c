@@ -12,7 +12,7 @@ int fscan_tmshort( FILE *f, tmshort *p )
     *p = 0;
     if( fscanf( f, "%hd", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "tmshort expected" );
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, brac );
 }

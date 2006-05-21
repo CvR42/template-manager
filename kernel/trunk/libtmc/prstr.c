@@ -8,7 +8,7 @@ void print_tmstring( TMPRINTSTATE *st, const_tmstring s )
 {
     tmstring buf;
     const char *sp;
-    unsigned int sz;
+    size_t sz;
     unsigned int ix = 0;
 
     if( s == tmstringNIL ){
@@ -20,7 +20,7 @@ void print_tmstring( TMPRINTSTATE *st, const_tmstring s )
     sp = s;
     buf[ix++] = '"';
     while( *sp != '\0' ){
-	unsigned int esz;
+	size_t esz;
 	const char *pp;
 	unsigned int c;
 

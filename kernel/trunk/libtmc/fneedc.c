@@ -25,7 +25,7 @@ tmbool tm_fneedc( FILE *f, int needc )
     char needcharstr[15];
 
     if( tm_fscanspace( f ) ){
-	return 1;
+	return TMTRUE;
     }
     c = getc( f );
     if( c != needc ){
@@ -50,7 +50,7 @@ tmbool tm_fneedc( FILE *f, int needc )
 	    needcharstr,
 	    charstr
 	);
-	return 1;
+	return TMTRUE;
     }
-    return 0;
+    return TMFALSE;
 }

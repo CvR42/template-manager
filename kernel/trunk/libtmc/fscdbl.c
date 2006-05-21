@@ -12,7 +12,7 @@ int fscan_double( FILE *f, double *p )
     *p = (double) 0;
     if( fscanf( f, "%lf", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "double expected" );
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, brac );
 }

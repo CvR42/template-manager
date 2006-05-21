@@ -239,12 +239,12 @@ static void doindent( TMPRINTSTATE *st, int n )
 {
     if( st->tabwidth>0 ){
 	while( n >= st->tabwidth ){
-	    fputc( '\t', st->file );
+	    (void) fputc( '\t', st->file );
 	    n -= st->tabwidth;
 	}
     }
     while( n > 0 ){
-	fputc( ' ', st->file );
+	(void) fputc( ' ', st->file );
 	n--;
     }
 }
@@ -365,14 +365,14 @@ static void vertprintcons( TMPRINTSTATE *st, SuCons c, int lev )
 	return;
     }
     doindent( st, st->istep * lev );
-    fputs( "(\n", st->file );
+    (void) fputs( "(\n", st->file );
     while( l != sunitNIL ){
 	vertprintsunit( st, l, (lev+1) );
 	l = l->next;
-	fputc( '\n', st->file );
+	(void) fputc( '\n', st->file );
     }
     doindent( st, st->istep * lev );
-    fputc( ')', st->file );
+    (void) fputc( ')', st->file );
     return;
 }
 
@@ -384,21 +384,21 @@ static void vertprintlist( TMPRINTSTATE *st, SuList lst, int lev )
     l = lst->ulist;
     if( l == sunitNIL ){
 	doindent( st, st->istep * lev );
-	fputs( "[]", st->file );
+	(void) fputs( "[]", st->file );
 	return;
     }
     doindent( st, st->istep * lev );
-    fputs( "[\n", st->file );
+    (void) fputs( "[\n", st->file );
     while( l != sunitNIL ){
 	vertprintsunit( st, l, (lev+1) );
 	l = l->next;
 	if( l != sunitNIL ){
-	    fputc( ',', st->file );
+	    (void) fputc( ',', st->file );
 	}
-	fputc( '\n', st->file );
+	(void) fputc( '\n', st->file );
     }
     doindent( st, st->istep * lev );
-    fputc( ']', st->file );
+    (void) fputc( ']', st->file );
     return;
 }
 
@@ -410,19 +410,21 @@ static void vertprinttuple( TMPRINTSTATE *st, SuTuple lst, int lev )
     l = lst->ulist;
     if( l == sunitNIL ){
 	doindent( st, st->istep * lev );
-	fputs( "()", st->file );
+	(void) fputs( "()", st->file );
 	return;
     }
     doindent( st, st->istep * lev );
-    fputs( "(\n", st->file );
+    (void) fputs( "(\n", st->file );
     while( l != sunitNIL ){
 	vertprintsunit( st, l, (lev+1) );
 	l = l->next;
-	if( l != sunitNIL ) fputc( ',', st->file );
-	fputc( '\n', st->file );
+	if( l != sunitNIL ){
+	    (void) fputc( ',', st->file );
+	}
+	(void) fputc( '\n', st->file );
     }
     doindent( st, st->istep * lev );
-    fputc( ')', st->file );
+    (void) fputc( ')', st->file );
     return;
 }
 
@@ -438,7 +440,7 @@ static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev )
     switch( l->tag ){
 	case TAGSuWord:
 	    doindent( st, st->istep * lev );
-	    fputs( ((SuWord)l)->word, st->file );
+	    (void) fputs( ((SuWord)l)->word, st->file );
 	    break;
 
 	case TAGSuCons:
@@ -599,7 +601,7 @@ void tm_closecons( TMPRINTSTATE *st )
     poplev( st );
     if( st->braclev<1 ){
 	vertprintsunit( st, nw, 0 );
-	fputc( '\n', st->file );
+	(void) fputc( '\n', st->file );
 	rfresunit( nw );
 	return;
     }
@@ -632,7 +634,7 @@ void tm_closelist( TMPRINTSTATE *st )
     poplev( st );
     if( st->braclev<1 ){
 	vertprintsunit( st, nw, 0 );
-	fputc( '\n', st->file );
+	(void) fputc( '\n', st->file );
 	rfresunit( nw );
 	return;
     }
@@ -665,7 +667,7 @@ void tm_closetuple( TMPRINTSTATE *st )
     poplev( st );
     if( st->braclev<1 ){
 	vertprintsunit( st, nw, 0 );
-	fputc( '\n', st->file );
+	(void) fputc( '\n', st->file );
 	rfresunit( nw );
 	return;
     }
@@ -680,8 +682,8 @@ void tm_printword( TMPRINTSTATE *st, const char *w )
     sunit nw;
 
     if( st->braclev<1 ){
-	fputs( w, st->file );
-	fputc( '\n', st->file );
+	(void) fputs( w, st->file );
+	(void) fputc( '\n', st->file );
 	return;
     }
     nw = newSuWord( new_tmstring_nolognew( w ) );

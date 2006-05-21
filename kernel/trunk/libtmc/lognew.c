@@ -8,7 +8,7 @@
 
 /* An entry in the pending pointer list. */
 typedef struct str_ptrlog {
-    tm_neutralp ptr;
+    const_tm_neutralp ptr;
     const char *file;
     int line;
 } ptrlog;
@@ -25,12 +25,12 @@ typedef struct str_id {
     } u;
 } id;
 
-static id *idlist = (id *)0;	/* The array of block info. */
-static ptrlog *plist = (ptrlog *)0; 
+static /*@only@*/ id *idlist = (id *)0;	/* The array of block info. */
+static /*@only@*/ ptrlog *plist = (ptrlog *)0; 
 static size_t plistsz = 0;	/* The index of the first free element in the list. */
 static size_t plistroom = 0;	/* The number of elements in the array. */
 static int plistofl = 0;	/* Overflow in the pointer list? */
-static long int idsz = 0;	/* The index of the first free element in the array. */
+static long int idsz = 0;		/* The index of the first free element in the array. */
 static long int idroom = 0;	/* The number of elements in the array. */
 static long int idfree = -1;	/* The linked list of free blocks. */
 static long int idcnt = 0;	/* The number of pending blocks. */
@@ -43,16 +43,16 @@ static int idofl = 0;		/* Overflow in the id list? */
 /* Given a pointer 'p', search for it in the list of pending pointers.
  * Return the position in the list if found, else return -1.
  */
-static long search_plist( const tm_neutralp p )
+static long int search_plist( const_tm_neutralp p )
 {
     size_t ix;
 
     for( ix=0; ix<plistsz; ix++ ){
         if( plist[ix].ptr == p ){
-            return ix;
+            return (long int) ix;
         }
     }
-    return -1;
+    return -1L;
 }
 
 static void print_plist( FILE *f )
@@ -74,7 +74,7 @@ static void print_simple_plist( FILE *f )
 }
 
 /* Given a pointer 'p', record it as a new entry in the 'new' table. */
-void tm_lognew( const tm_neutralp p, const char *file, const int line )
+void tm_lognew( const_tm_neutralp p, const char *file, const int line )
 {
     size_t newroom;
     long pos;
@@ -105,7 +105,7 @@ void tm_lognew( const tm_neutralp p, const char *file, const int line )
 }
 
 /* Given a pointer 'p', delete its entry from the 'plist' table. */
-void tm_logfre( const tm_neutralp p )
+void tm_logfre( const_tm_neutralp p )
 {
     long pos;		/* Position of the entry in the table. */
 
@@ -141,7 +141,7 @@ void tm_logfre( const tm_neutralp p )
 long int tm_new_logid( const char *file, const int line )
 {
     long int theid;
-    size_t newroom;
+    long int newroom;
 
     if( idfree>0 ){
 	theid = idfree;
@@ -223,16 +223,16 @@ static void print_idlist( FILE *f )
 void report_lognew( FILE *f )
 {
     if( plistsz>0 || idcnt>0 ){
-	fputs( "lognew: pending blocks:\n", f );
+	(void) fputs( "lognew: pending blocks:\n", f );
     }
     if( plistofl ){
-	fputs( "lognew: pointer list overflow.\n", f );
+	(void) fputs( "lognew: pointer list overflow.\n", f );
     }
     else {
 	print_plist( f );
     }
     if( idofl ){
-	fputs( "lognew: id list overflow.\n", f );
+	(void) fputs( "lognew: id list overflow.\n", f );
     }
     else {
 	print_idlist( f );
@@ -243,16 +243,16 @@ void report_lognew( FILE *f )
 void simple_report_lognew( FILE *f )
 {
     if( plistsz>0 || idcnt>0 ){
-	fputs( "lognew: pending blocks:\n", f );
+	(void) fputs( "lognew: pending blocks:\n", f );
     }
     if( plistofl ){
-	fputs( "lognew: pointer list overflow.\n", f );
+	(void) fputs( "lognew: pointer list overflow.\n", f );
     }
     else {
 	print_simple_plist( f );
     }
     if( idofl ){
-	fputs( "lognew: id list overflow.\n", f );
+	(void) fputs( "lognew: id list overflow.\n", f );
     }
     else {
 	print_idlist( f );

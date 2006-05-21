@@ -12,7 +12,7 @@ int fscan_float( FILE *f, float *p )
     *p = (float) 0;
     if( fscanf( f, "%f", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "float expected" );
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, brac );
 }

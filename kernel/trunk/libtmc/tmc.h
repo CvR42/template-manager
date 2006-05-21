@@ -30,6 +30,7 @@ typedef char *tmword;
 typedef const char *const_tmstring;
 typedef const char *const_tmword;
 typedef void *tm_neutralp;
+typedef const void *const_tm_neutralp;
 
 struct str_Sstack {
     struct str_Sstack *next;
@@ -243,7 +244,7 @@ typedef const char *const_tmtextptr;
 
 /* Structure for texts in memory. */
 typedef struct str_tmtext {
-    tmtextptr arr;
+    /*@only@*/ tmtextptr arr;
     long curpos;	/* Current read or write pointer. */
     long sz;
     long room;
@@ -260,10 +261,10 @@ extern tmtext rdup_tmtext_nolognew( const tmtext t );
 #define rfre_tmtext fre_tmtext
 extern void stat_tmtext( FILE *f );
 extern int get_balance_tmtext( void );
-extern void fre_tmtext_lognew( tmtext t );
-extern void fre_tmtext_nolognew( tmtext t );
-extern tmtext new_tmtext_lognew( const char *file, const int line );
-extern tmtext new_tmtext_nolognew( void );
+extern void fre_tmtext_lognew( /*@null@*/ /*@out@*/ /*@only@*/ tmtext t );
+extern void fre_tmtext_nolognew( /*@null@*/ /*@out@*/ /*@only@*/ tmtext t );
+extern /*@only@*/ tmtext new_tmtext_lognew( const char *file, const int line );
+extern /*@only@*/ tmtext new_tmtext_nolognew( void );
 extern tmtext setroom_tmtext( tmtext t, long rm );
 extern tmtext delblock_tmtext( tmtext t, long from, long to );
 extern tmtext replace_tmtext( tmtext t, long from, long to, const_tmtext nw );
@@ -271,19 +272,19 @@ extern tmtext insert_tmtext( tmtext t, long pos_parm, const_tmtext nw );
 extern int cmp_string_tmtext( const char *s, const_tmtext t );
 extern tmstring tmtext_to_tmstring_nolognew( const_tmtext t );
 extern tmstring tmtext_to_tmstring_lognew( const_tmtext t, const char *file, const int line );
-extern tmtext string_to_tmtext_lognew( const char *s, const char *file, const int line ); 
-extern tmtext string_to_tmtext_nolognew( const char *s ); 
-extern tmtext puts_tmtext( const char *s, tmtext t );
-extern tmtext putc_tmtext( const char c, tmtext t );
-extern void print_tmtext( TMPRINTSTATE *st, const_tmtext t );
-extern void fprint_tmtext( FILE *f, const tmtext t );
+extern /*@only@*/ tmtext string_to_tmtext_lognew( const char *s, const char *file, const int line ); 
+extern /*@only@*/ tmtext string_to_tmtext_nolognew( const char *s ); 
+extern /*@only@*/ tmtext puts_tmtext( const char *s, /*@only@*/ tmtext t );
+extern /*@only@*/ tmtext putc_tmtext( const char c, /*@only@*/ tmtext t );
+extern void print_tmtext( /*@observer@*/ TMPRINTSTATE *st, const_tmtext t );
+extern void fprint_tmtext( FILE *f, const_tmtext t );
 extern int fscan_tmtext_lognew( FILE *f, tmtext *s, const char *file, int line );
 extern int fscan_tmtext_nolognew( FILE *f, tmtext *s );
 extern tmtext slice_tmtext_lognew( const_tmtext t, long from, long to, const char *file, int line );
 extern tmtext slice_tmtext_nolognew( const_tmtext t, long from, long to );
 
 /* The functions below are undocumented. */
-extern void copyblock_tmtext( tmtextptr d, const_tmtextptr s, long sz );
+extern void copyblock_tmtext( /*@unique@*/ tmtextptr d, /*@unique@*/ const_tmtextptr s, long sz );
 extern void insblock_tmtext( tmtext t, long pos, long sz );
 
 /* 'tmbool' functions */
@@ -301,7 +302,7 @@ extern void insblock_tmtext( tmtext t, long pos, long sz );
 #define null_tmbool() tmboolNIL
 
 /* 'tmsymbol' functions */
-extern tmsymbol find_tmsymbol( const char *name );
+extern /*@null@*/ tmsymbol find_tmsymbol( const char *name );
 extern tmsymbol add_tmsymbol( const char *name );
 extern tmsymbol gen_tmsymbol( const char *pre );
 extern void flush_tmsymbol( void );
@@ -309,9 +310,9 @@ extern int fscan_tmsymbol( FILE *f, tmsymbol *s );
 extern void print_tmsymbol( TMPRINTSTATE *st, const_tmsymbol s );
 extern void fprint_tmsymbol( FILE *f, const tmsymbol s );
 
-extern tm_neutralp tm_malloc( size_t sz );
-extern tm_neutralp tm_calloc( size_t n, size_t sz );
-extern tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
+extern /*@only@*/ tm_neutralp tm_malloc( size_t sz );
+extern /*@only@*/ tm_neutralp tm_calloc( size_t n, size_t sz );
+extern /*@only@*/ tm_neutralp tm_realloc( /*@only@*/ tm_neutralp p, size_t sz );
 
 #ifdef __cplusplus
 #define TM_MALLOC(t,n) (t) tm_malloc(n)
@@ -326,8 +327,8 @@ extern tm_neutralp tm_realloc( tm_neutralp p, size_t sz );
 
 extern long int tm_new_logid( const char *file, const int line );
 extern void tm_fre_logid( long int id );
-extern void tm_lognew( const tm_neutralp p, const char *file, const int line );
-extern void tm_logfre( const tm_neutralp p );
+extern void tm_lognew( const_tm_neutralp p, const char *file, const int line );
+extern void tm_logfre( const_tm_neutralp p );
 extern void flush_lognew( void );
 extern void report_lognew( FILE *f );
 extern void simple_report_lognew( FILE *f );
@@ -404,27 +405,27 @@ extern void fprint_tmulong( FILE *f, const tmulong u );
 /* 'tmword' functions */
 extern int fscan_tmword_nolognew( FILE *f, tmword *s );
 extern int fscan_tmword_lognew( FILE *f, tmword *p, const char *file, const int line );
-extern void print_tmword( TMPRINTSTATE *st, const const_tmword s );
-extern void fprint_tmword( FILE *f, const const_tmword s );
+extern void print_tmword( TMPRINTSTATE *st, /*@null@*/ const const_tmword s );
+extern void fprint_tmword( FILE *f, /*@null@*/ const const_tmword s );
 
 /* 'tmstring' functions */
-extern tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz );
-extern tmstring realloc_tmstring_lognew( tmstring s, const size_t sz, const char *file, const int line );
-extern tmstring create_tmstring_nolognew( const size_t sz );
-extern tmstring create_tmstring_lognew( const size_t sz, const char *file, const int line );
-extern tmstring new_tmstring_lognew( const char *s, const char *file, const int line );
-extern void fre_tmstring_lognew( tmstring s );
+extern /*@only@*/ tmstring realloc_tmstring_nolognew( /*@only@*/ tmstring s, const size_t sz );
+extern /*@only@*/ tmstring realloc_tmstring_lognew( /*@only@*/ tmstring s, const size_t sz, const char *file, const int line );
+extern /*@only@*/ tmstring create_tmstring_nolognew( const size_t sz );
+extern /*@only@*/ tmstring create_tmstring_lognew( const size_t sz, const char *file, const int line );
+extern /*@null@*/ /*@only@*/ tmstring new_tmstring_lognew( const char *s, const char *file, const int line );
+extern void fre_tmstring_lognew( /*@null@*/ /*@out@*/ /*@only@*/ tmstring s );
 extern int fscan_tmstring_lognew( FILE *f, tmstring *p, const char *file, const int line );
-extern tmstring new_tmstring_nolognew( const char *s );
-extern void fre_tmstring_nolognew( tmstring s );
+extern /*@null@*/ /*@only@*/ tmstring new_tmstring_nolognew( const char *s );
+extern void fre_tmstring_nolognew( /*@null@*/ /*@out@*/ /*@only@*/ tmstring s );
 extern int fscan_tmstring_nolognew( FILE *f, tmstring *p );
-extern void print_tmstring( TMPRINTSTATE *st, const_tmstring s );
-extern void fprint_tmstring( FILE *f, const_tmstring s );
+extern void print_tmstring( TMPRINTSTATE *st, /*@null@*/ const_tmstring s );
+extern void fprint_tmstring( FILE *f, /*@null@*/ const_tmstring s );
 extern void stat_tmstring( FILE *f );
 extern int get_balance_tmstring( void );
 
 /* 'tmtext' functions */
-extern tmbool isequal_tmtext( const const_tmtext ta, const const_tmtext tb );
+extern tmbool isequal_tmtext( const_tmtext ta, const_tmtext tb );
 
 /* 'tmbool' functions */
 extern int fscan_tmbool( FILE *f, tmbool *bp );
@@ -438,10 +439,10 @@ extern tmbool tm_fscanspace( FILE *f );
 extern char *tm_escapestring( unsigned int code );
 extern tmbool tm_fscanescapedchar( FILE *f, int *code );
 
-extern void tm_fatal( const char *file, int line, const char *s );
-extern void tm_badtag( const char *file, int line, const int tag );
-extern void tm_noroom( void );
-extern /*@null@*/ tm_neutralp tm_badcast( const char *file, int line );
+extern /*@noreturn@*/ void tm_fatal( const char *file, int line, const char *s );
+extern /*@noreturn@*/ void tm_badtag( const char *file, int line, const int tag );
+extern /*@noreturn@*/ void tm_noroom( void );
+extern /*@noreturn@*/ /*@null@*/ tm_neutralp tm_badcast( const char *file, int line );
 
 /* the error message buffer of tm and its length */
 extern char tm_errmsg[];

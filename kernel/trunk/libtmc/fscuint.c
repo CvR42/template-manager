@@ -12,7 +12,7 @@ int fscan_tmuint( FILE *f, tmuint *p )
     *p = 0;
     if( fscanf( f, "%u", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "unsigned int expected" );
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, brac );
 }

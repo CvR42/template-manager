@@ -12,7 +12,7 @@
 static FILE *infile;
 static FILE *outfile;
 
-static void bad( const char *msg )
+static /*@noreturn@*/ void bad( const char *msg )
 {
    fprintf( stderr, "check error: %s\n", msg );
    exit( EXIT_FAILURE );
@@ -516,127 +516,127 @@ static void test_tmbool( TMPRINTSTATE *st )
 /* Test of fprint_tmuchar() */
 static void ftest_tmuchar( FILE *f )
 {
-    fputs( "fprint_tmuchar: [", f );
+    (void) fputs( "fprint_tmuchar: [", f );
     fprint_tmuchar( f, 'a' );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmuchar( f, ' ' );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmuchar( f, (tmuchar) 129 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmuchar( f, '\0' );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_tmschar() */
 static void ftest_tmschar( FILE *f )
 {
-    fputs( "fprint_tmschar: [", f );
+    (void) fputs( "fprint_tmschar: [", f );
     fprint_tmschar( f, 'a' );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmschar( f, ' ' );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmschar( f, (tmschar) -2 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmschar( f, (tmschar) 129 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmschar( f, '\0' );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_tmshort() */
 static void ftest_tmshort( FILE *f )
 {
-    fputs( "fprint_tmshort: [", f );
+    (void) fputs( "fprint_tmshort: [", f );
     fprint_tmshort( f, 12 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmshort( f, 0 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmshort( f, -42 );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_tmuint() */
 static void ftest_tmushort( FILE *f )
 {
-    fputs( "fprint_tmushort: [", f );
+    (void) fputs( "fprint_tmushort: [", f );
     fprint_tmushort( f, 12 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmushort( f, 0 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmushort( f, 42 );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_int() */
 static void ftest_int( FILE *f )
 {
-    fputs( "fprint_int: [", f );
+    (void) fputs( "fprint_int: [", f );
     fprint_int( f, 12 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_int( f, 0 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_int( f, -42 );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_tmuint() */
 static void ftest_tmuint( FILE *f )
 {
-    fputs( "fprint_tmuint: [", f );
+    (void) fputs( "fprint_tmuint: [", f );
     fprint_tmuint( f, 12 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmuint( f, 0 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmuint( f, 42 );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_long() */
 static void ftest_long( FILE *f )
 {
-    fputs( "fprint_long: [", f );
+    (void) fputs( "fprint_long: [", f );
     fprint_long( f, 12 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_long( f, 0 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_long( f, -123442 );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test of fprint_tmulong() */
 static void ftest_tmulong( FILE *f )
 {
-    fputs( "fprint_tmulong: [", f );
+    (void) fputs( "fprint_tmulong: [", f );
     fprint_tmulong( f, 12 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmulong( f, 0 );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmulong( f, 123442 );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 static void ftest_tmstring( FILE *f )
 {
-    fputs( "fprint_tmstring: [", f );
+    (void) fputs( "fprint_tmstring: [", f );
     fprint_tmstring( f, "blabla" );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmstring( f,  "" );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmstring( f,  "reutel" );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmstring( f,  tmstringNIL );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 static void ftest_tmword( FILE *f )
 {
-    fputs( "fprint_tmword: [", f );
+    (void) fputs( "fprint_tmword: [", f );
     fprint_tmword( f, "blabla" );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmword( f,  "reutel" );
-    fputs( " ", f );
+    (void) fputs( " ", f );
     fprint_tmword( f,  tmwordNIL );
-    fputs( "]\n", f );
+    (void) fputs( "]\n", f );
 }
 
 /* Test the tmsymbol handling routines. */

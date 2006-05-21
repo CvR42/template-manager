@@ -16,7 +16,7 @@ int fscan_tmbool( FILE *f, tmbool *s )
 {
     char buf[WORDBUFSZ];
     unsigned int braccnt;
-    tmbool err;
+    int err;
 
     braccnt = tm_fscanopenbrac( f );
     err = tm_fscancons( f, buf, WORDBUFSZ );
@@ -31,7 +31,7 @@ int fscan_tmbool( FILE *f, tmbool *s )
     }
     else {
 	(void) strcpy( tm_errmsg, "boolean expected" );
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, braccnt );
 }

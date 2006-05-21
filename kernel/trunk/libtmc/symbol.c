@@ -20,7 +20,7 @@ static tmsymbol symtab[SYMHASHWIDTH];
  * counter. This prevents the gensym counter from having to start
  * from 0 every time.
  */
-static int gencount[SYMHASHWIDTH];
+static unsigned int gencount[SYMHASHWIDTH];
 
 /* Initalize tmsymbol routines. */
 static void init_tmsymbol( void )
@@ -66,7 +66,7 @@ static tmsymbol new_tmsymbol( tmsymbol l, tmstring s )
    If the name occurs in the list, a pointer to the entry is returned,
    else tmsymbolNIL is returned.
  */
-static tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
+static /*@null@*/ tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
 {
     while( list != tmsymbolNIL ){
 	if( strcmp( list->name, name ) == 0 ){
@@ -145,18 +145,17 @@ tmsymbol gen_tmsymbol( const char *pre )
     unsigned int hashval;
     tmstring name;
     tmsymbol entry;
-    unsigned long int gensymnum;
+    unsigned int gensymnum;
     unsigned int prehash;
 
     if( !initdone ){
 	init_tmsymbol();
     }
-    name = new_tmstring_nolognew( "" );
-    name = realloc_tmstring_nolognew( name, strlen( pre ) + 30 );
+    name = create_tmstring_nolognew( strlen( pre ) + 30 );
     prehash = hash( pre );
     gensymnum = gencount[prehash];
     for(;;){
-	sprintf( name, "%s%lx", pre, gensymnum++ );
+	sprintf( name, "%s%x", pre, gensymnum++ );
 	hashval = hash( name );
 	if( dofind_tmsymbol( name, symtab[hashval] ) == tmsymbolNIL ){
 	    break;
@@ -168,7 +167,7 @@ tmsymbol gen_tmsymbol( const char *pre )
     return entry;
 }
 
-void flush_tmsymbol( void )
+void flush_tmsymbol()
 {
     int i;
 

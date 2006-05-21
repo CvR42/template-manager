@@ -12,7 +12,7 @@ int fscan_long( FILE *f, long int *p )
     *p = 0;
     if( fscanf( f, "%ld", p ) != 1 ){
 	(void) strcpy( tm_errmsg, "long expected" );
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, brac );
 }

@@ -11,7 +11,7 @@ void insblock_tmtext( tmtext t, long pos, long sz )
 {
     tmtextptr s;
     tmtextptr d;
-    long z;		/* The size of the block to move. */
+    unsigned int z;		/* The size of the block to move. */
 
     t = setroom_tmtext( t, t->sz+sz );
     z = t->sz-pos;
@@ -23,7 +23,7 @@ void insblock_tmtext( tmtext t, long pos, long sz )
 #if HAVE_MEMMOVE
     s = t->arr+pos;
     d = t->arr+pos+sz;
-    memmove( d, s, z );
+    memmove( d, s, (size_t) z );
 #else
     s = t->arr+t->sz;
     d = t->arr+t->sz+sz;

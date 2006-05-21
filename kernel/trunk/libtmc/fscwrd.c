@@ -20,7 +20,7 @@ int fscan_tmword_nolognew( FILE *f, tmword *s )
     brac = tm_fscanopenbrac( f );
     c = fgetc( f );
     if( c != '@' ){
-	unsigned int sz = INITIAL_STRINGSIZE;
+	size_t sz = INITIAL_STRINGSIZE;
 	tmstring buf = create_tmstring_nolognew( sz );
 	unsigned int ix = 0;
 
@@ -30,12 +30,12 @@ int fscan_tmword_nolognew( FILE *f, tmword *s )
 		    (void) sprintf(
 			tm_errmsg,
 			"tmword expected, but got ascii code 0x%02x",
-			(c & 0xff)
+			(unsigned int) (c & 0xff)
 		    );
 		    fre_tmstring_nolognew( buf );
 		    return 1;
 		}
-		ungetc( c, f );
+		(void) ungetc( c, f );
 		break;
 	    }
 	    if( ix+1>sz ){
