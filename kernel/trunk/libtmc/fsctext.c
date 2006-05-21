@@ -39,7 +39,7 @@ int fscan_tmtext_nolognew( FILE *f, tmtext *s )
 	    break;
 	}
 	else {
-	    ungetc( c, f );
+	    (void) ungetc( c, f );
 	    if( tm_fscanescapedchar( f, &c ) ){
 		return 1;
 	    }

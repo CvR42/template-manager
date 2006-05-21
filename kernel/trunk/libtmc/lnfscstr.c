@@ -18,7 +18,7 @@ int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int lin
     int c;
     unsigned int brac;
     unsigned int ix = 0;
-    unsigned int sz = INITIAL_STRINGSIZE;
+    size_t sz = INITIAL_STRINGSIZE;
     tmstring buf;
 
     *s = tmstringNIL;
@@ -28,7 +28,7 @@ int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int lin
 	return 0;
     }
     if( c != '"' ){
-	(void) sprintf( tm_errmsg, "tmstring expected, but got ascii code 0x%02x", (c & 0xff) );
+	(void) sprintf( tm_errmsg, "tmstring expected, but got ascii code 0x%02x", (c & 0xffU) );
 	return 1;
     }
     buf = create_tmstring_lognew( sz, file, line );
@@ -42,7 +42,7 @@ int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int lin
 	if( c == '"' ){
 	    break;
 	}
-	ungetc( c, f );
+	(void) ungetc( c, f );
 	if( tm_fscanescapedchar( f, &c ) ){
 	    return 1;
 	}

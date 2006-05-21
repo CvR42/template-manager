@@ -24,7 +24,7 @@ unsigned int tm_fscanopenbrac( FILE *f )
 	c = getc( f );
 	if( c != '(' ){
 	    if( c != EOF ){
-		ungetc( c, f );
+		(void) ungetc( c, f );
 	    }
 	    break;
 	}

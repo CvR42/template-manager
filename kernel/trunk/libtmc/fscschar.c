@@ -12,14 +12,14 @@ int fscan_tmschar( FILE *f, tmschar *p )
 
     *p = 0;
     if( tm_fneedc( f, '\'' ) ){
-	return TMTRUE;
+	return 1;
     }
     if( tm_fscanescapedchar( f, &code ) ){
-	return TMTRUE;
+	return 1;
     }
     *p = (tmschar) code;
     if( tm_fneedc( f, '\'' ) ){
-	return TMTRUE;
+	return 1;
     }
     return tm_fscanclosebrac( f, brac );
 }

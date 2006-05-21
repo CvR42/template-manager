@@ -17,7 +17,7 @@ tmbool tm_fscanescapedchar( FILE *f, int *code )
     *code = 0;
     c = fgetc( f );
     if( c == EOF ){
-	return 1;
+	return TMTRUE;
     }
     if( c == '\\' ){
 	c = fgetc( f );
@@ -44,10 +44,10 @@ tmbool tm_fscanescapedchar( FILE *f, int *code )
 			    val = val*8 + (c-'0');
 			}
 			else
-			    ungetc( c, f );
+			    (void) ungetc( c, f );
 		    }
 		    else
-			ungetc( c, f );
+			(void) ungetc( c, f );
 		    c = val;
 		}
 		break;

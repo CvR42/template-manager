@@ -39,7 +39,7 @@ int fscan_tmtext_lognew( FILE *f, tmtext *s, const char *file, int line )
 	    break;
 	}
 	else {
-	    ungetc( c, f );
+	    (void) ungetc( c, f );
 	    if( tm_fscanescapedchar( f, &c ) ){
 		return 1;
 	    }

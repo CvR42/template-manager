@@ -35,7 +35,7 @@ tmbool tm_fscancons( FILE *f, char *buf, const int sz )
 	);
 	return TMTRUE;
     }
-    ungetc( c, f );
+    (void) ungetc( c, f );
     *p = '\0';
     if( p == buf ){
 	if( c == EOF ){
@@ -45,7 +45,7 @@ tmbool tm_fscancons( FILE *f, char *buf, const int sz )
 	    (void) sprintf( charstr, "char '%c'", c );
 	}
 	else {
-	    (void) sprintf( charstr, "char 0x%02x", c );
+	    (void) sprintf( charstr, "char 0x%02x", (unsigned int) c );
 	}
 	(void) sprintf( tm_errmsg, "Expected constructor name but got %s", charstr );
 	return TMTRUE;

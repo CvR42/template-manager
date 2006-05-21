@@ -14,7 +14,7 @@
 void fprint_tmsymbol( FILE *f, const tmsymbol s )
 {
     if( s == tmsymbolNIL ){
-	fputs( "@", f );
+	(void) fputs( "@", f );
 	return;
     }
     fprint_tmstring( f, s->name );

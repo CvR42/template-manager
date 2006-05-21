@@ -9,7 +9,7 @@ int fscan_tmuchar( FILE *f, tmuchar *p )
     unsigned int brac;
     int code;
 
-    *p = 0;
+    *p = '\0';
     brac = tm_fscanopenbrac( f );
     if( tm_fneedc( f, '\'' ) ){
 	return 1;

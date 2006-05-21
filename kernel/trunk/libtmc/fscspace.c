@@ -17,10 +17,9 @@ int tm_lineno;
  */
 tmbool tm_fscanspace( FILE *f )
 {
-    int c;
-
     for(;;){
-	c = fgetc( f );
+	int c = fgetc( f );
+
 	while( isspace( c ) ){
 	    if( c == '\n' ){
 		tm_lineno++;
