@@ -6,10 +6,11 @@
 
 /* file: tmc.h
  *
- * declaration of routines in tm library.
+ * Declaration of routines in tm runtime library.
  */
 
 #ifndef _TM_TMCDEFS
+#define _TM_TMCDEFS 1
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -453,5 +454,4 @@ extern int tm_lineno;
 } /* Closing bracket for 'extern "C" {' */
 #endif
 
-#define _TM_TMCDEFS 1
 #endif
