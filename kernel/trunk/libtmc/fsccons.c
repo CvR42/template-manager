@@ -7,6 +7,8 @@
 #include "config.h"
 #include "tmc.h"
 
+#define SZ 15
+
 /* Try to read a constructor name in buffer `buf'. The buffer is 'sz'
  * characters long.
  */
@@ -29,8 +31,9 @@ tmbool tm_fscancons( FILE *f, char *buf, const unsigned int sz )
     }
     if( isalnum( c ) || c == '_' ){
 	buf[sz-1] = '\0';
-	(void) sprintf(
+	(void) snprintf(
 	    tm_errmsg,
+            TM_ERRLEN,
 	    "Constructor name too long; all I got was `%s'",
 	    buf
 	);
@@ -40,15 +43,15 @@ tmbool tm_fscancons( FILE *f, char *buf, const unsigned int sz )
     *p = '\0';
     if( p == buf ){
 	if( c == EOF ){
-	    (void) sprintf( charstr, "EOF" );
+	    (void) snprintf( charstr, SZ, "EOF" );
 	}
 	else if( c>=' ' && c<='~' ){
-	    (void) sprintf( charstr, "char '%c'", c );
+	    (void) snprintf( charstr, SZ, "char '%c'", c );
 	}
 	else {
-	    (void) sprintf( charstr, "char 0x%02x", (unsigned int) c );
+	    (void) snprintf( charstr, SZ, "char 0x%02x", (unsigned int) c );
 	}
-	(void) sprintf( tm_errmsg, "Expected constructor name but got %s", charstr );
+	(void) snprintf( tm_errmsg, TM_ERRLEN, "Expected constructor name but got %s", charstr );
 	return TMTRUE;
     }
     return TMFALSE;

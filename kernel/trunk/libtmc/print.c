@@ -3,15 +3,17 @@
 #include "tmc.h"
 #include "config.h"
 
+#define SZ (sizeof(int)*8)
+
 void print_int( TMPRINTSTATE *st, const int i )
 {
-    char buf[sizeof(int)*8];
+    char buf[SZ];
 
     if( i<0 ){
-	sprintf( buf, "(%d)", i );
+	(void) snprintf( buf, SZ, "(%d)", i );
     }
     else {
-	sprintf( buf, "%d", i );
+	(void) snprintf( buf, SZ, "%d", i );
     }
     tm_printword( st, buf );
 }

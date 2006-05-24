@@ -344,7 +344,7 @@ static void test_tmstring( TMPRINTSTATE *st )
     do {
 	if( fscan_tmstring( infile, &s ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
-	    fflush( stderr );
+	    (void) fflush( stderr );
 	}
 	print_tmstring( st, s );
 	if( s != tmstringNIL && strcmp( s, "STOP"  ) == 0 ){
@@ -370,7 +370,7 @@ static void test_tmword( TMPRINTSTATE *st )
     do {
 	if( fscan_tmword( infile, &s ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
-	    fflush( stderr );
+	    (void) fflush( stderr );
 	}
 	print_tmword( st, s );
 	if( s != tmwordNIL && strcmp( s, "STOP"  ) == 0 ){
@@ -427,7 +427,7 @@ static void test_tmtext( TMPRINTSTATE *st )
     do {
 	if( fscan_tmtext( infile, &t ) ){
 	    fprintf( stderr, "*** Error: %s\n", tm_errmsg );
-	    fflush( stderr );
+	    (void) fflush( stderr );
 	}
 	print_tmtext( st, t );
 	if( t != tmtextNIL && cmp_string_tmtext( "STOP", t  ) == 0 ){
@@ -762,7 +762,7 @@ int main( void )
     }
     str = new_tmstring( "bla" );
     str = realloc_tmstring( str, strlen( str )*4 );
-    str = create_tmstring( 23 );
+    str = create_tmstring( 23 ); /* Deliberate memory leak. */
     for( ix=0; ix<TESTARRAYSIZE; ix++ ){
 	idlist[ix] = tm_new_logid( "testlognew", ix );
     }
@@ -775,7 +775,7 @@ int main( void )
     }
     simple_report_lognew( stderr );
     flush_lognew();
-    fflush( outfile );		/* Just to be sure.. */
+    (void) fflush( outfile );		/* Just to be sure.. */
     tm_fatal( __FILE__, __LINE__, "test of 'tm_fatal'" );
     exit( EXIT_SUCCESS );
     return 0;

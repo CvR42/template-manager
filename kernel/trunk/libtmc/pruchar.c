@@ -7,6 +7,6 @@ void print_tmuchar( TMPRINTSTATE *st, const tmuchar c )
 {
     char buf[10];
 
-    sprintf( buf, "'%s'", tm_escapestring( (unsigned int) c ) );
+    sprintf( buf, "'%s'", tm_escapestring( (int) c ) );
     tm_printword( st, buf );
 }

@@ -9,7 +9,7 @@
 static tmbool gensymworking = TMFALSE;
 static tmbool initdone = TMFALSE;
 
-typedef tmsymbol /*@only@*/ /*@null@*/ null_tmsymbol;
+typedef /*@only@*/ /*@null@*/ struct _tmc_sym *null_tmsymbol;
 
 /* This is the table of symbol strings. Each used symbol string should
  * occur here exactly once, so that a compare on equal names is
@@ -68,7 +68,7 @@ static /*@only@*/ tmsymbol new_tmsymbol( tmsymbol l, /*@only@*/ tmstring s )
    If the name occurs in the list, a pointer to the entry is returned,
    else tmsymbolNIL is returned.
  */
-static /*@null@*/ /*@observer@*/ tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
+static /*@null@*/ /*@dependent@*/ tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
 {
     while( list != tmsymbolNIL ){
 	if( strcmp( list->name, name ) == 0 ){
@@ -149,6 +149,7 @@ tmsymbol gen_tmsymbol( const char *pre )
     tmsymbol entry;
     unsigned int gensymnum;
     unsigned int prehash;
+    tmbool found = TMFALSE;
 
     if( !initdone ){
 	init_tmsymbol();
@@ -156,13 +157,11 @@ tmsymbol gen_tmsymbol( const char *pre )
     name = create_tmstring_nolognew( strlen( pre ) + 30 );
     prehash = hash( pre );
     gensymnum = gencount[prehash];
-    for(;;){
+    do {
 	sprintf( name, "%s%x", pre, gensymnum++ );
 	hashval = hash( name );
-	if( dofind_tmsymbol( name, symtab[hashval] ) == tmsymbolNIL ){
-	    break;
-	}
-    }
+	found = (dofind_tmsymbol( name, symtab[hashval] ) == tmsymbolNIL);
+    } while( !found );
     entry = new_tmsymbol( symtab[hashval], name );
     symtab[hashval] = entry;
     gencount[prehash] = gensymnum;

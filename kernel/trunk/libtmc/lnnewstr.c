@@ -13,8 +13,6 @@ tmstring new_tmstring_lognew( const char *s, const char *file, const int line )
     tmstring adr;
 
     adr = new_tmstring_nolognew( s );
-    if( adr != NULL ){
-        tm_lognew( adr, file, line );
-    }
+    tm_lognew( adr, file, line );
     return adr;
 }
