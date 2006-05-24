@@ -3,10 +3,12 @@
 #include "tmc.h"
 #include "config.h"
 
+#define SZ (sizeof(tmulong)*8)
+
 void print_tmulong( TMPRINTSTATE *st, const tmulong u )
 {
-    char buf[sizeof(tmulong)*8];
+    char buf[SZ];
 
-    sprintf( buf, "%lu", u );
+    (void) snprintf( buf, SZ, "%lu", u );
     tm_printword( st, buf );
 }

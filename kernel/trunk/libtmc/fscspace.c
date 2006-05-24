@@ -32,7 +32,7 @@ tmbool tm_fscanspace( FILE *f )
 	}
 	c = fgetc( f );
 	if( c != '|' ){
-	    (void) sprintf( tm_errmsg, "fscanspace(): single '|' found" );
+	    (void) snprintf( tm_errmsg, TM_ERRLEN, "fscanspace(): single '|' found" );
 	    return TMTRUE;
 	}
 	do {

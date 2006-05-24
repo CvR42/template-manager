@@ -8,7 +8,6 @@ void print_tmtext( TMPRINTSTATE *st, const_tmtext t )
 {
     tmtext fmt;
     tmstring str_fmt;
-    int c;
     long ix;
 
     if( t == tmtextNIL ){
@@ -19,7 +18,8 @@ void print_tmtext( TMPRINTSTATE *st, const_tmtext t )
     fmt = setroom_tmtext( fmt, t->sz+2 );
     fmt = putc_tmtext( '"', fmt );
     for( ix=0; ix<t->sz; ix++ ){
-	c = ((int) t->arr[ix]) & 0xffU;
+        int c = ((int) t->arr[ix]) & 0xff;
+
 	fmt = puts_tmtext( tm_escapestring( c ), fmt );
     }
     fmt = putc_tmtext( '"', fmt );

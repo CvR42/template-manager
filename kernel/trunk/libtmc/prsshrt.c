@@ -3,15 +3,17 @@
 #include "tmc.h"
 #include "config.h"
 
+#define SZ (sizeof(int)*8)
+
 void print_tmshort( TMPRINTSTATE *st, const tmshort i )
 {
-    char buf[sizeof(int)*8];
+    char buf[SZ];
 
     if( i<0 ){
-	sprintf( buf, "(%hd)", i );
+	(void) snprintf( buf, SZ, "(%hd)", i );
     }
     else {
-	sprintf( buf, "%hd", i );
+	(void) snprintf( buf, SZ, "%hd", i );
     }
     tm_printword( st, buf );
 }

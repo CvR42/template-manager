@@ -3,10 +3,12 @@
 #include "tmc.h"
 #include "config.h"
 
+#define SZ (sizeof(tmushort)*8)
+
 void print_tmushort( TMPRINTSTATE *st, const tmushort i )
 {
-    char buf[sizeof(tmushort)*8];
+    char buf[SZ];
 
-    sprintf( buf, "%hu", i );
+    (void) snprintf( buf, SZ, "%hu", i );
     tm_printword( st, buf );
 }

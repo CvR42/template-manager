@@ -3,10 +3,12 @@
 #include "tmc.h"
 #include "config.h"
 
-void print_tmschar( TMPRINTSTATE *st, const tmschar c )
-{
-    char buf[10];
+#define SZ 10
 
-    sprintf( buf, "'%s'", tm_escapestring( (int) c ) );
+void print_tmschar( TMPRINTSTATE *st, tmschar c )
+{
+    char buf[SZ];
+
+    (void) snprintf( buf, SZ, "'%s'", tm_escapestring( (int) c ) );
     tm_printword( st, buf );
 }
