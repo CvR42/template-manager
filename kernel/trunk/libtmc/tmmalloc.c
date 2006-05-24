@@ -13,12 +13,11 @@ tm_neutralp tm_malloc( size_t sz )
     if( sz == 0 ){
 	sz = 1;
     }
-    for(;;){
-	adr = (tm_neutralp) malloc( sz );
-	if( adr != (tm_neutralp)0 ){
-	    break;
-	}
+    adr = (tm_neutralp) malloc( sz );
+    if( adr == (tm_neutralp)0 ){
 	tm_noroom();
+        /*@notreached@*/
+	exit( EXIT_FAILURE );
     }
     return adr;
 }

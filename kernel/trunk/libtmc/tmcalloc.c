@@ -14,12 +14,11 @@ tm_neutralp tm_calloc( size_t n, size_t sz )
 	n = 1;
 	sz = 1;
     }
-    for(;;){
-	adr = (tm_neutralp) calloc( n, sz );
-	if( adr != (tm_neutralp)0 ){
-	    break;
-	}
+    adr = (tm_neutralp) calloc( n, sz );
+    if( adr == (tm_neutralp)0 ){
 	tm_noroom();
+        /*@notreached@*/
+	exit( EXIT_FAILURE );
     }
     return adr;
 }

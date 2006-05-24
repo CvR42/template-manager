@@ -35,7 +35,7 @@ tmtext replace_tmtext(
     oldsz = to-from;
     inssz = nw->sz-oldsz;
     if( inssz>0 ){
-	insblock_tmtext( t, to, inssz );
+	t = insblock_tmtext( t, to, inssz );
     }
     else if( inssz<0 ){
 	t = delblock_tmtext( t, to+inssz, to );

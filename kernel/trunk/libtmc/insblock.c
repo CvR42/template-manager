@@ -7,18 +7,18 @@
 /* Given a tmtext 't', a position 'pos' and a size 'sz', make room for 'sz'
  * characters in the tmtext, starting at position 'pos'.
  */
-void insblock_tmtext( tmtext t, long pos, long sz )
+tmtext insblock_tmtext( tmtext t, long pos, long sz )
 {
     tmtextptr s;
     tmtextptr d;
-    unsigned int z;		/* The size of the block to move. */
+    long z;		/* The size of the block to move. */
 
     t = setroom_tmtext( t, t->sz+sz );
     z = t->sz-pos;
     if( z<=0 ){
 	/* The chars are to be inserted at the end of the tmtext. */
 	t->sz += sz;
-	return;
+	return t;
     }
 #if HAVE_MEMMOVE
     s = t->arr+pos;
@@ -35,4 +35,5 @@ void insblock_tmtext( tmtext t, long pos, long sz )
     }
 #endif
     t->sz += sz;
+    return t;
 }

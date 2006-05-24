@@ -10,20 +10,21 @@
 /* Try to read a constructor name in buffer `buf'. The buffer is 'sz'
  * characters long.
  */
-tmbool tm_fscancons( FILE *f, char *buf, const int sz )
+tmbool tm_fscancons( FILE *f, char *buf, const unsigned int sz )
 {
     int c;
     char charstr[15];
-    int n = 0;		/* Number of characters read. */
+    unsigned int n = 0;		/* Number of characters read. */
 
     char *p = buf;
     if( tm_fscanspace( f ) ){
+        buf[0] = '\0';
 	return TMTRUE;
     }
-    c = getc( f );
+    c = fgetc( f );
     while( (isalnum( c ) || c == '_') && n<sz ){
-	*p++ = c;
-	c = getc( f );
+	*p++ = (char) c;
+	c = fgetc( f );
 	n++;
     }
     if( isalnum( c ) || c == '_' ){

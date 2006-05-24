@@ -8,8 +8,8 @@
 
 /* An entry in the pending pointer list. */
 typedef struct str_ptrlog {
-    const_tm_neutralp ptr;
-    const char *file;
+    /*@observer@*/ const_tm_neutralp ptr;
+    /*@observer@*/ const char *file;
     int line;
 } ptrlog;
 
@@ -25,16 +25,16 @@ typedef struct str_id {
     } u;
 } id;
 
-static /*@only@*/ id *idlist = (id *)0;	/* The array of block info. */
-static /*@only@*/ ptrlog *plist = (ptrlog *)0; 
+static /*@null@*/ /*@only@*/ id *idlist = NULL;	/* The array of block info. */
+static /*@null@*/ /*@only@*/ ptrlog *plist = NULL; 
 static size_t plistsz = 0;	/* The index of the first free element in the list. */
 static size_t plistroom = 0;	/* The number of elements in the array. */
-static int plistofl = 0;	/* Overflow in the pointer list? */
-static long int idsz = 0;		/* The index of the first free element in the array. */
-static long int idroom = 0;	/* The number of elements in the array. */
+static tmbool plistofl = TMFALSE;	/* Overflow in the pointer list? */
+static long int idsz = 0;	/* The index of the first free element in the array. */
+static size_t idroom = 0;	/* The number of elements in the array. */
 static long int idfree = -1;	/* The linked list of free blocks. */
 static long int idcnt = 0;	/* The number of pending blocks. */
-static int idofl = 0;		/* Overflow in the id list? */
+static tmbool idofl = TMFALSE;	/* Overflow in the id list? */
 
 /***********************************************************
  *   pointer list                                          *
@@ -45,11 +45,13 @@ static int idofl = 0;		/* Overflow in the id list? */
  */
 static long int search_plist( const_tm_neutralp p )
 {
-    size_t ix;
+    if( plist != NULL ){
+        size_t ix;
 
-    for( ix=0; ix<plistsz; ix++ ){
-        if( plist[ix].ptr == p ){
-            return (long int) ix;
+        for( ix=0; ix<plistsz; ix++ ){
+            if( plist[ix].ptr == p ){
+                return (long int) ix;
+            }
         }
     }
     return -1L;
@@ -59,6 +61,10 @@ static void print_plist( FILE *f )
 {
     size_t ix;
 
+    if( plist == NULL ){
+        (void) fputs( "plist is NULL\n", f );
+        return;
+    }
     for( ix=0l; ix<plistsz; ix++ ){
 	fprintf( f, "%s(%d) p=%p\n", plist[ix].file, plist[ix].line, plist[ix].ptr );
     }
@@ -68,6 +74,10 @@ static void print_simple_plist( FILE *f )
 {
     size_t ix;
 
+    if( plist == NULL ){
+        (void) fputs( "plist is NULL\n", f );
+        return;
+    }
     for( ix=0l; ix<plistsz; ix++ ){
 	fprintf( f, "%s(%d)\n", plist[ix].file, plist[ix].line );
     }
@@ -87,7 +97,7 @@ void tm_lognew( const_tm_neutralp p, const char *file, const int line )
 	tm_fatal( "", 0, "lognew: pointer already registered" );
     }
     if( plistsz>=plistroom ){
-	if( plistroom==0 ){
+	if( plist == NULL ){
 	    newroom = FIRSTLOGNEWSZ;
 	    plist = TM_MALLOC( ptrlog *, newroom*sizeof( ptrlog ) );
 	    plistroom = newroom;
@@ -97,6 +107,10 @@ void tm_lognew( const_tm_neutralp p, const char *file, const int line )
 	    plist = TM_REALLOC( ptrlog *, plist, newroom*sizeof( ptrlog ) );
 	    plistroom = newroom;
 	}
+    }
+    if( plist == NULL ){
+        plistofl = TMTRUE;
+        return;
     }
     plist[plistsz].file = file;
     plist[plistsz].line = line;
@@ -109,7 +123,7 @@ void tm_logfre( const_tm_neutralp p )
 {
     long pos;		/* Position of the entry in the table. */
 
-    if( plistofl || p == (tm_neutralp) 0 ){
+    if( plistofl || p == (tm_neutralp) 0 || plist == NULL ){
 	return;
     }
     pos = search_plist( p );
@@ -141,18 +155,22 @@ void tm_logfre( const_tm_neutralp p )
 long int tm_new_logid( const char *file, const int line )
 {
     long int theid;
-    long int newroom;
+    size_t newroom;
 
     if( idfree>0 ){
+        if( idlist == NULL ){
+            (void) fputs( "Internal error: idfree>0 with idlist==NULL\n", stderr );
+            return 0L;
+        }
 	theid = idfree;
 	idfree = idlist[theid].u.next;
     }
     else {
 	if( idofl ){
-	    return 0;
+	    return 0L;
 	}
-	if( idsz>=idroom ){
-	    if( idroom==0 ){
+	if( idsz>=(long int) idroom ){
+	    if( idlist == NULL ){
 		newroom = FIRSTLOGNEWSZ;
 		idlist = TM_MALLOC( id *, newroom*sizeof( id ) );
 		idroom = newroom;
@@ -165,6 +183,12 @@ long int tm_new_logid( const char *file, const int line )
 	}
 	theid = idsz++;
     }
+    if( idlist == NULL ){
+       idofl = TMTRUE;
+       idroom = 0;
+       idfree = 0;
+       return 0L;
+    }
     idcnt++;
     idlist[theid].u.filenm = file;
     idlist[theid].line = line;
@@ -176,7 +200,7 @@ void tm_fre_logid( const long int i )
 {
     char buf[256];
 
-   if( idofl ){
+   if( idlist == NULL ){
        return;
    }
    if( i<0l || i>idsz ){
@@ -198,6 +222,10 @@ static void print_idlist( FILE *f )
     long int ix;
     long int prcnt;
 
+    if( idlist == NULL ){
+        (void) fputs( "id list is NULL\n", f );
+        return;
+    }
     prcnt = 0l;
     for( ix=0l; ix<idsz; ix++ ){
 	if( idlist[ix].line>=0l ){
@@ -266,16 +294,12 @@ void flush_lognew( void )
     idroom = 0;
     idsz = 0;
     idfree = -1;
-    idofl = 0;
-    if( idlist != 0 ){
-	TM_FREE( idlist );
-    }
-    if( plist != 0 ){
-	TM_FREE( plist );
-    }
-    idlist = (id *)0;
-    plist = (ptrlog *)0;
+    idofl = TMFALSE;
+    TM_FREE( idlist );
+    TM_FREE( plist );
+    idlist = NULL;
+    plist = NULL;
     plistsz = 0;
     plistroom = 0;
-    plistofl = 0;
+    plistofl = TMFALSE;
 }

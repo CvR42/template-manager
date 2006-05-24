@@ -27,7 +27,7 @@ tmbool tm_fneedc( FILE *f, int needc )
     if( tm_fscanspace( f ) ){
 	return TMTRUE;
     }
-    c = getc( f );
+    c = fgetc( f );
     if( c != needc ){
 	if( c == EOF ){
 	    (void) sprintf( charstr, "EOF" );

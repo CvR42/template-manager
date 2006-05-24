@@ -20,7 +20,7 @@ tmtext insert_tmtext( tmtext t, long pos_parm, const_tmtext nw )
     if( pos>t->sz ){
 	pos = t->sz;
     }
-    insblock_tmtext( t, pos, nw->sz );
+    t = insblock_tmtext( t, pos, nw->sz );
     copyblock_tmtext( t->arr+pos, nw->arr, nw->sz );
     return t;
 }

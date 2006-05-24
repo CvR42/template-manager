@@ -2,4 +2,4 @@
 -booltype tmbool
 -boolfalse TMFALSE
 -booltrue TMTRUE
-
++charintliteral

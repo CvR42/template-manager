@@ -9,12 +9,14 @@
 static tmbool gensymworking = TMFALSE;
 static tmbool initdone = TMFALSE;
 
+typedef tmsymbol /*@only@*/ /*@null@*/ null_tmsymbol;
+
 /* This is the table of symbol strings. Each used symbol string should
  * occur here exactly once, so that a compare on equal names is
  * simplified to comparing the pointers to the strings. This is
  * ensured by the routines 'add_tmsymbol()' and 'gen_tmsymbol()'.
  */
-static tmsymbol symtab[SYMHASHWIDTH];
+static null_tmsymbol symtab[SYMHASHWIDTH];
 
 /* For each hash value of a possible gensym prefix, keep track of a
  * counter. This prevents the gensym counter from having to start
@@ -42,7 +44,7 @@ static unsigned int hash( const char *s )
     unsigned int sum = 0;
 
     while( *s != '\0' ){
-	sum = (5*sum)+(*s++);
+	sum = (5U*sum)+(unsigned int) (*s++);
 	while( sum>=SYMHASHWIDTH ){
 	    sum -= (SYMHASHWIDTH-1);
 	}
@@ -51,7 +53,7 @@ static unsigned int hash( const char *s )
 }
 
 /* Make a new storage space for a tmsymbol. */
-static tmsymbol new_tmsymbol( tmsymbol l, tmstring s )
+static /*@only@*/ tmsymbol new_tmsymbol( tmsymbol l, /*@only@*/ tmstring s )
 {
     tmsymbol nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
 
@@ -66,7 +68,7 @@ static tmsymbol new_tmsymbol( tmsymbol l, tmstring s )
    If the name occurs in the list, a pointer to the entry is returned,
    else tmsymbolNIL is returned.
  */
-static /*@null@*/ tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
+static /*@null@*/ /*@observer@*/ tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
 {
     while( list != tmsymbolNIL ){
 	if( strcmp( list->name, name ) == 0 ){

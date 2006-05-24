@@ -18,7 +18,7 @@ void fprint_tmstring( FILE *f, const_tmstring s )
     }
     (void) fputc( '"', f );
     while( *s != '\0' ){
-	int c = *s++;
+	int c = (int) *s++;
 	(void) fputs( tm_escapestring( c ), f );
     }
     (void) fputc( '"', f );

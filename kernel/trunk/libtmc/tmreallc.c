@@ -16,6 +16,7 @@ tm_neutralp tm_realloc( tm_neutralp old, size_t sz )
     adr = (tm_neutralp) realloc( old, sz );
     if( adr == (tm_neutralp)0 ){
 	tm_noroom();
+        /*@notreached@*/
 	exit( EXIT_FAILURE );
     }
     return adr;

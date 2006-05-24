@@ -12,15 +12,16 @@
 #define WORDBUFSZ 20
 
 /* Handle 'fscan_<type>' for type 'bool'.  */
-int fscan_tmbool( FILE *f, tmbool *s )
+tmbool fscan_tmbool( FILE *f, tmbool *s )
 {
     char buf[WORDBUFSZ];
     unsigned int braccnt;
-    int err;
+    tmbool err;
 
     braccnt = tm_fscanopenbrac( f );
     err = tm_fscancons( f, buf, WORDBUFSZ );
     if( err ){
+        *s = TMFALSE;
 	return err;
     }
     if( strcmp( buf, TMFALSESTR ) == 0 ){
@@ -31,7 +32,8 @@ int fscan_tmbool( FILE *f, tmbool *s )
     }
     else {
 	(void) strcpy( tm_errmsg, "boolean expected" );
-	return 1;
+        *s = TMFALSE;
+	return TMTRUE;
     }
     return tm_fscanclosebrac( f, braccnt );
 }
