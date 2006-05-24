@@ -36,7 +36,7 @@ tmstring new_tmstring_nolognew( const char *s )
     tmstring adr;
 
     if( s == NULL ){
-	return NULL;
+	return tmstringNIL;
     }
     len = strlen( s ) + 1;
     adr = TM_MALLOC( char *, len*sizeof( char ) );
@@ -48,10 +48,9 @@ tmstring new_tmstring_nolognew( const char *s )
 /* De-allocate space for tmstring 's'. */
 void fre_tmstring_nolognew( tmstring s )
 {
-    if( s==NULL ){
-	return;
+    if( s != tmstringNIL ){
+        frecnt_tmstring++;
     }
-    frecnt_tmstring++;
     TM_FREE( s );
 }
 

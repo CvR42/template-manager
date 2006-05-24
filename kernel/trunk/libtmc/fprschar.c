@@ -11,5 +11,5 @@
 
 void fprint_tmschar( FILE *f, const tmschar c )
 {
-    fprintf( f, "'%s'", tm_escapestring( (unsigned int) c ) );
+    fprintf( f, "'%s'", tm_escapestring( (int) c ) );
 }

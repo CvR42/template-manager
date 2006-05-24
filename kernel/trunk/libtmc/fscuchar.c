@@ -4,7 +4,7 @@
 #include "config.h"
 #include "tmc.h"
 
-int fscan_tmuchar( FILE *f, tmuchar *p )
+tmbool fscan_tmuchar( FILE *f, tmuchar *p )
 {
     unsigned int brac;
     int code;
@@ -12,14 +12,14 @@ int fscan_tmuchar( FILE *f, tmuchar *p )
     *p = '\0';
     brac = tm_fscanopenbrac( f );
     if( tm_fneedc( f, '\'' ) ){
-	return 1;
+	return TMTRUE;
     }
     if( tm_fscanescapedchar( f, &code ) ){
-	return 1;
+	return TMTRUE;
     }
     *p = (tmuchar) code;
     if( tm_fneedc( f, '\'' ) ){
-	return 1;
+	return TMTRUE;
     }
     return tm_fscanclosebrac( f, brac );
 }

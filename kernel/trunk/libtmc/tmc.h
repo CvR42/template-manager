@@ -23,9 +23,6 @@ typedef unsigned long tmulong;
 extern "C" {
 #endif
 
-typedef struct _tmc_sym *tmsymbol;
-typedef const struct _tmc_sym *const_tmsymbol;
-
 typedef char *tmstring;
 typedef char *tmword;
 typedef const char *const_tmstring;
@@ -34,36 +31,39 @@ typedef void *tm_neutralp;
 typedef const void *const_tm_neutralp;
 
 struct str_Sstack {
-    struct str_Sstack *next;
-    struct str_sunit *ulist;
+    /*@null@*/ struct str_Sstack *next;
+    /*@null@*/ struct str_sunit *ulist;
 };
 
 struct str_sunit {
-    struct str_sunit *next;
+    /*@null@*/ struct str_sunit *next;
     int tag;
 };
 
 /* Storage for a tmsymbol string */
 struct _tmc_sym {
-    struct _tmc_sym *next;		/* next in list */
+    /*@null@*/ struct _tmc_sym *next;	/* next in list */
     const_tmstring name;		/* pointer to the string */
 #ifdef __cplusplus
     mutable tm_neutralp data;		/* any info for it. */
 #else
-    tm_neutralp data;			/* any info for it. */
+    /*@exposed@*/ /*@null@*/ tm_neutralp data;	/* any info for it. */
 #endif
 };
 
+typedef /*@observer@*/ struct _tmc_sym *tmsymbol;
+typedef const struct _tmc_sym *const_tmsymbol;
+
 struct str_tmprintstate {
-    FILE *file;			/* output file */
+    /*@exposed@*/ FILE *file;	/* output file */
     char *linebuf;
     int istep;			/* indent step */
     int width;			/* with of output */
     int tabwidth;		/* Width of a tab, or 0 if no tab. */
     unsigned int flags;		/* Some configuration flags */
     int braclev;		/* current bracket level */
-    struct str_sunit *curlist;	/* current list of units */
-    struct str_Sstack *stack;	/* stack of open constr. & lists */
+    /*@null@*/ struct str_sunit *curlist;	/* current list of units */
+    /*@null@*/ struct str_Sstack *stack; /* stack of open constr. & lists */
 };
 
 typedef struct str_tmprintstate TMPRINTSTATE;
@@ -262,31 +262,31 @@ extern tmtext rdup_tmtext_nolognew( const tmtext t );
 #define rfre_tmtext fre_tmtext
 extern void stat_tmtext( FILE *f );
 extern int get_balance_tmtext( void );
-extern void fre_tmtext_lognew( /*@null@*/ /*@out@*/ /*@only@*/ tmtext t );
-extern void fre_tmtext_nolognew( /*@null@*/ /*@out@*/ /*@only@*/ tmtext t );
+extern void fre_tmtext_lognew( /*@null@*/ /*@only@*/ tmtext t );
+extern void fre_tmtext_nolognew( /*@null@*/ /*@only@*/ tmtext t );
 extern /*@only@*/ tmtext new_tmtext_lognew( const char *file, const int line );
 extern /*@only@*/ tmtext new_tmtext_nolognew( void );
-extern tmtext setroom_tmtext( tmtext t, long rm );
-extern tmtext delblock_tmtext( tmtext t, long from, long to );
-extern tmtext replace_tmtext( tmtext t, long from, long to, const_tmtext nw );
-extern tmtext insert_tmtext( tmtext t, long pos_parm, const_tmtext nw );
+extern /*@only@*/ tmtext setroom_tmtext( /*@returned@*/ tmtext t, long rm );
+extern /*@only@*/ tmtext delblock_tmtext( /*@returned@*/ tmtext t, long from, long to );
+extern /*@only@*/ tmtext replace_tmtext( /*@returned@*/ tmtext t, long from, long to, const_tmtext nw );
+extern /*@only@*/ tmtext insert_tmtext( tmtext t, long pos_parm, const_tmtext nw );
 extern int cmp_string_tmtext( const char *s, const_tmtext t );
-extern tmstring tmtext_to_tmstring_nolognew( const_tmtext t );
-extern tmstring tmtext_to_tmstring_lognew( const_tmtext t, const char *file, const int line );
+extern /*@only@*/ tmstring tmtext_to_tmstring_nolognew( const_tmtext t );
+extern /*@only@*/ tmstring tmtext_to_tmstring_lognew( const_tmtext t, const char *file, const int line );
 extern /*@only@*/ tmtext string_to_tmtext_lognew( const char *s, const char *file, const int line ); 
 extern /*@only@*/ tmtext string_to_tmtext_nolognew( const char *s ); 
 extern /*@only@*/ tmtext puts_tmtext( const char *s, /*@only@*/ tmtext t );
 extern /*@only@*/ tmtext putc_tmtext( const char c, /*@only@*/ tmtext t );
 extern void print_tmtext( /*@observer@*/ TMPRINTSTATE *st, const_tmtext t );
 extern void fprint_tmtext( FILE *f, const_tmtext t );
-extern int fscan_tmtext_lognew( FILE *f, tmtext *s, const char *file, int line );
-extern int fscan_tmtext_nolognew( FILE *f, tmtext *s );
+extern tmbool fscan_tmtext_lognew( FILE *f, /*@out@*/ tmtext *s, const char *file, int line );
+extern tmbool fscan_tmtext_nolognew( FILE *f, /*@out@*/ tmtext *s );
 extern tmtext slice_tmtext_lognew( const_tmtext t, long from, long to, const char *file, int line );
 extern tmtext slice_tmtext_nolognew( const_tmtext t, long from, long to );
 
 /* The functions below are undocumented. */
 extern void copyblock_tmtext( /*@unique@*/ tmtextptr d, /*@unique@*/ const_tmtextptr s, long sz );
-extern void insblock_tmtext( tmtext t, long pos, long sz );
+extern /*@only@*/ tmtext insblock_tmtext( /*@returned@*/ tmtext t, long pos, long sz );
 
 /* 'tmbool' functions */
 #define TMTRUESTR "True"
@@ -303,17 +303,17 @@ extern void insblock_tmtext( tmtext t, long pos, long sz );
 #define null_tmbool() tmboolNIL
 
 /* 'tmsymbol' functions */
-extern /*@null@*/ tmsymbol find_tmsymbol( const char *name );
-extern tmsymbol add_tmsymbol( const char *name );
-extern tmsymbol gen_tmsymbol( const char *pre );
+extern /*@null@*/ /*@observer@*/ tmsymbol find_tmsymbol( const char *name );
+extern /*@observer@*/ tmsymbol add_tmsymbol( const char *name );
+extern /*@observer@*/ tmsymbol gen_tmsymbol( const char *pre );
 extern void flush_tmsymbol( void );
-extern int fscan_tmsymbol( FILE *f, tmsymbol *s );
+extern tmbool fscan_tmsymbol( FILE *f, /*@out@*/ tmsymbol *s );
 extern void print_tmsymbol( TMPRINTSTATE *st, const_tmsymbol s );
 extern void fprint_tmsymbol( FILE *f, const tmsymbol s );
 
-extern /*@only@*/ tm_neutralp tm_malloc( size_t sz );
-extern /*@only@*/ tm_neutralp tm_calloc( size_t n, size_t sz );
-extern /*@only@*/ tm_neutralp tm_realloc( /*@only@*/ tm_neutralp p, size_t sz );
+extern /*@only@*/ /*@out@*/ tm_neutralp tm_malloc( size_t sz );
+extern /*@only@*/ /*@out@*/ tm_neutralp tm_calloc( size_t n, size_t sz );
+extern /*@only@*/ /*@out@*/ tm_neutralp tm_realloc( /*@only@*/ tm_neutralp p, size_t sz );
 
 #ifdef __cplusplus
 #define TM_MALLOC(t,n) (t) tm_malloc(n)
@@ -341,7 +341,7 @@ extern TMPRINTSTATE *tm_setprint(
     const int tabwidth,
     const unsigned int flags
 );
-extern int tm_endprint( TMPRINTSTATE *st );
+extern int tm_endprint( /*@only@*/ TMPRINTSTATE *st );
 extern void tm_openlist( TMPRINTSTATE *st );
 extern void tm_closelist( TMPRINTSTATE *st );
 extern void tm_opencons( TMPRINTSTATE *st );
@@ -352,60 +352,60 @@ extern void tm_printword( TMPRINTSTATE *st, const char *w );
 
 /* 'tmschar' functions. */
 typedef signed char tmschar;
-extern int fscan_tmschar( FILE *f, tmschar *c );
+extern tmbool fscan_tmschar( FILE *f, /*@out@*/ tmschar *c );
 extern void print_tmschar( TMPRINTSTATE *st, const tmschar c );
 extern void fprint_tmschar( FILE *f, const tmschar c );
 
 /* 'tmuchar' functions. */
 typedef unsigned char tmuchar;
-extern int fscan_tmuchar( FILE *f, tmuchar *c );
+extern tmbool fscan_tmuchar( FILE *f, /*@out@*/ tmuchar *c );
 extern void print_tmuchar( TMPRINTSTATE *st, const tmuchar c );
 extern void fprint_tmuchar( FILE *f, const tmuchar c );
 
 /* 'tmshort' functions. */
 typedef short int tmshort;
-extern int fscan_tmshort( FILE *f, tmshort *c );
+extern tmbool fscan_tmshort( FILE *f, /*@out@*/ tmshort *c );
 extern void print_tmshort( TMPRINTSTATE *st, const tmshort c );
 extern void fprint_tmshort( FILE *f, const tmshort c );
 
 /* 'tmushort' functions. */
 typedef unsigned short int tmushort;
-extern int fscan_tmushort( FILE *f, tmushort *c );
+extern tmbool fscan_tmushort( FILE *f, /*@out@*/ tmushort *c );
 extern void print_tmushort( TMPRINTSTATE *st, const tmushort c );
 extern void fprint_tmushort( FILE *f, const tmushort c );
 
 /* 'double' functions */
-extern int fscan_double( FILE *f, double *d );
+extern tmbool fscan_double( FILE *f, /*@out@*/ double *d );
 extern void print_double( TMPRINTSTATE *st, const double d );
 extern void fprint_double( FILE *f, const double d );
 extern int cmp_double( const double a, const double b );
 
 /* 'float' functions */
-extern int fscan_float( FILE *f, float *d );
+extern tmbool fscan_float( FILE *f, /*@out@*/ float *d );
 
 /* 'int' functions */
-extern int fscan_int( FILE *f, int *i );
+extern tmbool fscan_int( FILE *f, int *i );
 extern void print_int( TMPRINTSTATE *st, const int i );
 extern void fprint_int( FILE *f, const int i );
 
 /* 'tmuint' functions */
-extern int fscan_tmuint( FILE *f, tmuint *p );
+extern tmbool fscan_tmuint( FILE *f, /*@out@*/ tmuint *p );
 extern void print_tmuint( TMPRINTSTATE *st, const tmuint u );
 extern void fprint_tmuint( FILE *f, const tmuint u );
 
 /* 'long' functions */
-extern int fscan_long( FILE *f, long *i );
+extern tmbool fscan_long( FILE *f, /*@out@*/ long *i );
 extern void print_long( TMPRINTSTATE *st, long i );
 extern void fprint_long( FILE *f, long i );
 
 /* 'tmulong' functions */
-extern int fscan_tmulong( FILE *f, tmulong *p );
+extern tmbool fscan_tmulong( FILE *f, /*@out@*/ tmulong *p );
 extern void print_tmulong( TMPRINTSTATE *st, const tmulong u );
 extern void fprint_tmulong( FILE *f, const tmulong u );
 
 /* 'tmword' functions */
-extern int fscan_tmword_nolognew( FILE *f, tmword *s );
-extern int fscan_tmword_lognew( FILE *f, tmword *p, const char *file, const int line );
+extern tmbool fscan_tmword_nolognew( FILE *f, /*@out@*/ tmword *s );
+extern tmbool fscan_tmword_lognew( FILE *f, /*@out@*/ tmword *p, const char *file, const int line );
 extern void print_tmword( TMPRINTSTATE *st, /*@null@*/ const const_tmword s );
 extern void fprint_tmword( FILE *f, /*@null@*/ const const_tmword s );
 
@@ -416,10 +416,10 @@ extern /*@only@*/ tmstring create_tmstring_nolognew( const size_t sz );
 extern /*@only@*/ tmstring create_tmstring_lognew( const size_t sz, const char *file, const int line );
 extern /*@null@*/ /*@only@*/ tmstring new_tmstring_lognew( const char *s, const char *file, const int line );
 extern void fre_tmstring_lognew( /*@null@*/ /*@out@*/ /*@only@*/ tmstring s );
-extern int fscan_tmstring_lognew( FILE *f, tmstring *p, const char *file, const int line );
+extern tmbool fscan_tmstring_lognew( FILE *f, /*@out@*/ tmstring *p, const char *file, const int line );
 extern /*@null@*/ /*@only@*/ tmstring new_tmstring_nolognew( const char *s );
 extern void fre_tmstring_nolognew( /*@null@*/ /*@out@*/ /*@only@*/ tmstring s );
-extern int fscan_tmstring_nolognew( FILE *f, tmstring *p );
+extern tmbool fscan_tmstring_nolognew( FILE *f, /*@out@*/ tmstring *p );
 extern void print_tmstring( TMPRINTSTATE *st, /*@null@*/ const_tmstring s );
 extern void fprint_tmstring( FILE *f, /*@null@*/ const_tmstring s );
 extern void stat_tmstring( FILE *f );
@@ -429,16 +429,16 @@ extern int get_balance_tmstring( void );
 extern tmbool isequal_tmtext( const_tmtext ta, const_tmtext tb );
 
 /* 'tmbool' functions */
-extern int fscan_tmbool( FILE *f, tmbool *bp );
+extern tmbool fscan_tmbool( FILE *f, /*@out@*/ tmbool *bp );
 
 /* General low-level service functions */
 extern unsigned int tm_fscanopenbrac( FILE *f );
 extern tmbool tm_fscanclosebrac( FILE *f, unsigned int n );
 extern tmbool tm_fneedc( FILE *f, int c );
-extern tmbool tm_fscancons( FILE *f, char *s, int sz );
+extern tmbool tm_fscancons( FILE *f, /*@out@*/ char *s, unsigned int sz );
 extern tmbool tm_fscanspace( FILE *f );
-extern char *tm_escapestring( unsigned int code );
-extern tmbool tm_fscanescapedchar( FILE *f, int *code );
+extern /*@observer@*/ const char *tm_escapestring( int code );
+extern tmbool tm_fscanescapedchar( FILE *f, /*@out@*/ int *code );
 
 extern /*@noreturn@*/ void tm_fatal( const char *file, int line, const char *s );
 extern /*@noreturn@*/ void tm_badtag( const char *file, int line, const int tag );

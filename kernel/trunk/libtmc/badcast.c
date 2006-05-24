@@ -12,5 +12,6 @@
 tm_neutralp tm_badcast( const char *file, const int line )
 {
     tm_fatal( file, line, "Bad cast" );
+    /*@notreached@*/
     return (tm_neutralp) 0;
 }

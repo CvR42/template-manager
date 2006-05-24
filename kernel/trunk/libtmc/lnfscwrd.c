@@ -11,7 +11,7 @@
 /* Try to read a tmword in the buffer 'buf'. Give an error
  * message if this is not successful. 
  */
-int fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
+tmbool fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
 {
     int c;
     unsigned int brac;
@@ -22,7 +22,7 @@ int fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
     if( c != '@' ){
 	size_t sz = INITIAL_STRINGSIZE;
 	tmstring buf = create_tmstring_lognew( sz, file, line );
-	unsigned int ix = 0;
+	size_t ix = 0;
 
 	for(;;){
 	    if( isspace( c ) || strchr( "()|,@[]", c ) != NULL ){
@@ -33,7 +33,7 @@ int fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
                         (unsigned int) (c & 0xff) 
                     );
 		    fre_tmstring_lognew( buf );
-                    return 1;
+                    return TMTRUE;
                 }
 		(void) ungetc( c, f );
 		break;
@@ -42,7 +42,7 @@ int fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line )
 		sz += sz+1;
 		buf = realloc_tmstring_lognew( buf, sz, file, line );
 	    }
-	    buf[ix++] = c;
+	    buf[ix++] = (char) c;
 	    c = fgetc( f );
 	}
 	buf[ix] = '\0';

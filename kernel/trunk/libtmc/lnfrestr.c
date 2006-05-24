@@ -9,9 +9,8 @@
 /* De-allocate space for tmstring 's', and report it to lognew. */
 void fre_tmstring_lognew( tmstring s )
 {
-    if( s==NULL ){
-	return;
+    if( s != tmstringNIL ){
+        tm_logfre( s );
     }
-    tm_logfre( s );
     fre_tmstring_nolognew( s );
 }

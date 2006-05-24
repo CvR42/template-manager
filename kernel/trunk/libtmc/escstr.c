@@ -8,7 +8,6 @@
 
 /* Convert a character to an escape sequence suitable for use in a string.  */
 
-/* The header of this library */
 #include "config.h"
 #include "tmc.h"
 
@@ -22,7 +21,7 @@ static char escchar_buf[6];
  * The returned pointer points to a static buffer that is overwritten
  * upon the next invocation of the function.
  */
-char *tm_escapestring( const unsigned int code )
+const char *tm_escapestring( const int code )
 {
     char *p = escchar_buf;
     char code1 = (char) (code & 0xffU);

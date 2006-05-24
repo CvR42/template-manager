@@ -13,11 +13,11 @@
  * escape sequences with a '\', but no newlines. The '"'
  * around the tmstring are stripped.
  */
-int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int line )
+tmbool fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int line )
 {
     int c;
     unsigned int brac;
-    unsigned int ix = 0;
+    size_t ix = 0;
     size_t sz = INITIAL_STRINGSIZE;
     tmstring buf;
 
@@ -25,11 +25,11 @@ int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int lin
     brac = tm_fscanopenbrac( f );
     c = fgetc( f );
     if( c == '@' ){
-	return 0;
+	return TMFALSE;
     }
     if( c != '"' ){
 	(void) sprintf( tm_errmsg, "tmstring expected, but got ascii code 0x%02x", (c & 0xffU) );
-	return 1;
+	return TMTRUE;
     }
     buf = create_tmstring_lognew( sz, file, line );
     for(;;){
@@ -37,20 +37,21 @@ int fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int lin
 	if( c == '\n' ){
 	    (void) strcpy( tm_errmsg, "newline in tmstring" );
 	    fre_tmstring_nolognew( buf );
-	    return 1;
+	    return TMTRUE;
 	}
 	if( c == '"' ){
 	    break;
 	}
 	(void) ungetc( c, f );
 	if( tm_fscanescapedchar( f, &c ) ){
-	    return 1;
+	    fre_tmstring_nolognew( buf );
+	    return TMTRUE;
 	}
 	if( ix+1>sz ){
 	    sz += sz+1;
 	    buf = realloc_tmstring_lognew( buf, sz, file, line );
 	}
-	buf[ix++] = c;
+	buf[ix++] = (char) c;
     }
     buf[ix] = '\0';
     *s = buf;

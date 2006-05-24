@@ -22,9 +22,9 @@ void print_tmstring( TMPRINTSTATE *st, const_tmstring s )
     while( *sp != '\0' ){
 	size_t esz;
 	const char *pp;
-	unsigned int c;
+	int c;
 
-	c = ((unsigned int) *sp++) & 0xff;
+	c = ((int) *sp++) & 0xff;
 	pp = tm_escapestring( c );
 	esz = strlen( pp );
 	if( ix+esz+2>=sz ){

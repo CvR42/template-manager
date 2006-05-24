@@ -239,7 +239,7 @@ depend:
 
 # ---- lint rules ----
 
-LINTFLAGS =
+LINTFLAGS = #+posixstrictlib
 
 lint: $(LINTSRCS) splint.flags config.h tmc.h
 	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint

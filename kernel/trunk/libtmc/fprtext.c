@@ -20,7 +20,7 @@ void fprint_tmtext( FILE *f, const_tmtext t )
     }
     (void) fputc( '"', f );
     for( ix=0; ix<t->sz; ix++ ){
-	(void) fputs( tm_escapestring( t->arr[ix] ), f );
+	(void) fputs( tm_escapestring( (int) t->arr[ix] ), f );
     }
     (void) fputc( '"', f );
 }
