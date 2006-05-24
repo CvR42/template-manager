@@ -3,10 +3,12 @@
 #include "tmc.h"
 #include "config.h"
 
+#define SZ 10
+
 void print_tmuchar( TMPRINTSTATE *st, const tmuchar c )
 {
-    char buf[10];
+    char buf[SZ];
 
-    sprintf( buf, "'%s'", tm_escapestring( (int) c ) );
+    (void) snprintf( buf, SZ, "'%s'", tm_escapestring( (int) c ) );
     tm_printword( st, buf );
 }

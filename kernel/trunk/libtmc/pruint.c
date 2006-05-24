@@ -3,10 +3,11 @@
 #include "tmc.h"
 #include "config.h"
 
+#define SZ (sizeof(tmuint)*8)
 void print_tmuint( TMPRINTSTATE *st, const tmuint u )
 {
-    char buf[sizeof(tmuint)*8];
+    char buf[SZ];
 
-    sprintf( buf, "%u", u );
+    (void) snprintf( buf, SZ, "%u", u );
     tm_printword( st, buf );
 }

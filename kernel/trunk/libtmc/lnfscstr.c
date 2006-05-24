@@ -28,14 +28,14 @@ tmbool fscan_tmstring_lognew( FILE *f, tmstring *s, const char *file, const int 
 	return TMFALSE;
     }
     if( c != '"' ){
-	(void) sprintf( tm_errmsg, "tmstring expected, but got ascii code 0x%02x", (c & 0xffU) );
+	(void) snprintf( tm_errmsg, TM_ERRLEN, "tmstring expected, but got ascii code 0x%02x", (c & 0xffU) );
 	return TMTRUE;
     }
     buf = create_tmstring_lognew( sz, file, line );
     for(;;){
 	c = fgetc( f );
 	if( c == '\n' ){
-	    (void) strcpy( tm_errmsg, "newline in tmstring" );
+	    (void) snprintf( tm_errmsg, TM_ERRLEN, "newline in tmstring" );
 	    fre_tmstring_nolognew( buf );
 	    return TMTRUE;
 	}

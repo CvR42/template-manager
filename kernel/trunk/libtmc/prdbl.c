@@ -14,10 +14,10 @@ void print_double( TMPRINTSTATE *st, const double d )
     char buf[SZ];
 
     if( d<0 ){
-	snprintf( buf, SZ, "(%.60g)", d );
+	(void) snprintf( buf, SZ, "(%.60g)", d );
     }
     else {
-	snprintf( buf, SZ, "%.60g", d );
+	(void) snprintf( buf, SZ, "%.60g", d );
     }
     tm_printword( st, buf );
 }

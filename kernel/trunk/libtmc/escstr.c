@@ -13,7 +13,8 @@
 
 #define BACKSLASH '\\'
 
-static char escchar_buf[6];
+#define SZ 6
+static char escchar_buf[SZ];
 
 /* Given an unsigned int 'code' representing the ASCII code of a character, 
  * return a pointer to a string representing this character in an
@@ -42,7 +43,7 @@ const char *tm_escapestring( const int code )
 	    case '\t': *p++ = BACKSLASH; *p++ = 't'; break;
 	    case '\v': *p++ = BACKSLASH; *p++ = 'v'; break;
 	    default:
-		sprintf( escchar_buf, "\\%03o", (code & 0xffU) );
+		(void) snprintf( escchar_buf, SZ, "\\%03o", (code & 0xffU) );
 		return escchar_buf;
 	}
     }

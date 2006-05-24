@@ -10,7 +10,7 @@
 /* Reallocate tmstring size to 'sz'. Notice that the tmstring
  * count is unaffected.
  */
-tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz )
+tmstring realloc_tmstring_nolognew( tmstring s, size_t sz )
 {
     tmstring adr;
     size_t realsz = sz;
@@ -20,6 +20,7 @@ tmstring realloc_tmstring_nolognew( tmstring s, const size_t sz )
     }
     if( s == NULL ){
 	adr = TM_MALLOC( char *, realsz*sizeof( char ) );
+        adr[0] = '\0';
     }
     else {
 	adr = TM_REALLOC( char *, s, realsz*sizeof( char ) );

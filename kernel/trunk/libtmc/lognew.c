@@ -29,12 +29,10 @@ static /*@null@*/ /*@only@*/ id *idlist = NULL;	/* The array of block info. */
 static /*@null@*/ /*@only@*/ ptrlog *plist = NULL; 
 static size_t plistsz = 0;	/* The index of the first free element in the list. */
 static size_t plistroom = 0;	/* The number of elements in the array. */
-static tmbool plistofl = TMFALSE;	/* Overflow in the pointer list? */
 static long int idsz = 0;	/* The index of the first free element in the array. */
 static size_t idroom = 0;	/* The number of elements in the array. */
 static long int idfree = -1;	/* The linked list of free blocks. */
 static long int idcnt = 0;	/* The number of pending blocks. */
-static tmbool idofl = TMFALSE;	/* Overflow in the id list? */
 
 /***********************************************************
  *   pointer list                                          *
@@ -89,14 +87,14 @@ void tm_lognew( const_tm_neutralp p, const char *file, const int line )
     size_t newroom;
     long pos;
 
-    if( plistofl || p == (tm_neutralp) 0 ){
+    if( p == (tm_neutralp) 0 ){
 	return;
     }
     pos = search_plist( p );
     if( pos>=0 ){
 	tm_fatal( "", 0, "lognew: pointer already registered" );
     }
-    if( plistsz>=plistroom ){
+    if( plist == NULL || plistsz>=plistroom ){
 	if( plist == NULL ){
 	    newroom = FIRSTLOGNEWSZ;
 	    plist = TM_MALLOC( ptrlog *, newroom*sizeof( ptrlog ) );
@@ -107,10 +105,6 @@ void tm_lognew( const_tm_neutralp p, const char *file, const int line )
 	    plist = TM_REALLOC( ptrlog *, plist, newroom*sizeof( ptrlog ) );
 	    plistroom = newroom;
 	}
-    }
-    if( plist == NULL ){
-        plistofl = TMTRUE;
-        return;
     }
     plist[plistsz].file = file;
     plist[plistsz].line = line;
@@ -123,7 +117,7 @@ void tm_logfre( const_tm_neutralp p )
 {
     long pos;		/* Position of the entry in the table. */
 
-    if( plistofl || p == (tm_neutralp) 0 || plist == NULL ){
+    if( p == (tm_neutralp) 0 || plist == NULL ){
 	return;
     }
     pos = search_plist( p );
@@ -166,10 +160,7 @@ long int tm_new_logid( const char *file, const int line )
 	idfree = idlist[theid].u.next;
     }
     else {
-	if( idofl ){
-	    return 0L;
-	}
-	if( idsz>=(long int) idroom ){
+	if( idlist==NULL || idsz>=(long int) idroom ){
 	    if( idlist == NULL ){
 		newroom = FIRSTLOGNEWSZ;
 		idlist = TM_MALLOC( id *, newroom*sizeof( id ) );
@@ -183,12 +174,6 @@ long int tm_new_logid( const char *file, const int line )
 	}
 	theid = idsz++;
     }
-    if( idlist == NULL ){
-       idofl = TMTRUE;
-       idroom = 0;
-       idfree = 0;
-       return 0L;
-    }
     idcnt++;
     idlist[theid].u.filenm = file;
     idlist[theid].line = line;
@@ -198,17 +183,17 @@ long int tm_new_logid( const char *file, const int line )
 /* Remove the block with id 'i' from the list of pending blocks. */
 void tm_fre_logid( const long int i )
 {
-    char buf[256];
+    char buf[TM_ERRLEN];
 
    if( idlist == NULL ){
        return;
    }
    if( i<0l || i>idsz ){
-	sprintf( buf, "Id out of range in tm_fre_logid(): %ld", i );
+	(void) snprintf( buf, TM_ERRLEN, "Id out of range in tm_fre_logid(): %ld", i );
         tm_fatal( "", 0, buf );
    }
    if( idlist[i].line<0l ){
-	sprintf( buf, "Free id in tm_fre_logid(): %ld", i );
+	(void) snprintf( buf, TM_ERRLEN, "Free id in tm_fre_logid(): %ld", i );
         tm_fatal( "", 0, buf );
    }
    idcnt--;
@@ -253,18 +238,8 @@ void report_lognew( FILE *f )
     if( plistsz>0 || idcnt>0 ){
 	(void) fputs( "lognew: pending blocks:\n", f );
     }
-    if( plistofl ){
-	(void) fputs( "lognew: pointer list overflow.\n", f );
-    }
-    else {
-	print_plist( f );
-    }
-    if( idofl ){
-	(void) fputs( "lognew: id list overflow.\n", f );
-    }
-    else {
-	print_idlist( f );
-    }
+    print_plist( f );
+    print_idlist( f );
 }
 
 /* Print the remaining entries in the new log to file 'f'. */
@@ -273,18 +248,8 @@ void simple_report_lognew( FILE *f )
     if( plistsz>0 || idcnt>0 ){
 	(void) fputs( "lognew: pending blocks:\n", f );
     }
-    if( plistofl ){
-	(void) fputs( "lognew: pointer list overflow.\n", f );
-    }
-    else {
-	print_simple_plist( f );
-    }
-    if( idofl ){
-	(void) fputs( "lognew: id list overflow.\n", f );
-    }
-    else {
-	print_idlist( f );
-    }
+    print_simple_plist( f );
+    print_idlist( f );
 }
 
 /* Flush the log. */
@@ -294,12 +259,10 @@ void flush_lognew( void )
     idroom = 0;
     idsz = 0;
     idfree = -1;
-    idofl = TMFALSE;
     TM_FREE( idlist );
     TM_FREE( plist );
     idlist = NULL;
     plist = NULL;
     plistsz = 0;
     plistroom = 0;
-    plistofl = TMFALSE;
 }

@@ -150,15 +150,16 @@ tmsymbol gen_tmsymbol( const char *pre )
     unsigned int gensymnum;
     unsigned int prehash;
     tmbool found = TMFALSE;
+    size_t sz = strlen( pre )+30;
 
     if( !initdone ){
 	init_tmsymbol();
     }
-    name = create_tmstring_nolognew( strlen( pre ) + 30 );
+    name = create_tmstring_nolognew( sz );
     prehash = hash( pre );
     gensymnum = gencount[prehash];
     do {
-	sprintf( name, "%s%x", pre, gensymnum++ );
+	(void) snprintf( name, sz, "%s%x", pre, gensymnum++ );
 	hashval = hash( name );
 	found = (dofind_tmsymbol( name, symtab[hashval] ) == tmsymbolNIL);
     } while( !found );

@@ -27,8 +27,9 @@ tmbool fscan_tmword_lognew( FILE *f, tmword *s, const char *file, const int line
 	for(;;){
 	    if( isspace( c ) || strchr( "()|,@[]", c ) != NULL ){
                 if( ix == 0 ){
-                    (void) sprintf(
+                    (void) snprintf(
                         tm_errmsg,
+                        TM_ERRLEN,
                         "tmword expected, but got ascii code 0x%02x",
                         (unsigned int) (c & 0xff) 
                     );
