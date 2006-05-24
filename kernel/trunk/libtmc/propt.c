@@ -492,7 +492,7 @@ static tmstring horprinttuple( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
     *bufp++ = '(';
     while( l != sunitNIL ){
 	v = ((SuWord)l)->word;
-	while( *v ){
+	while( *v != '\0' ){
 	    *bufp++ = *v++;
 	}
 	l = l->next;
@@ -524,7 +524,7 @@ static tmstring horprintcons( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
     *bufp++ = '(';
     while( l != sunitNIL ){
 	v = ((SuWord)l)->word;
-	while( *v ){
+	while( *v != '\0' ){
 	    *bufp++ = *v++;
 	}
 	l = l->next;

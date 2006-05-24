@@ -14,6 +14,8 @@
 #include <ctype.h>
 #include "tmc.h"
 
+#define SZ 15
+
 /* Skip all `isspace()' characters, and try to character 'needc'.
    Compose an error message in 'tm_errmsg' and return 1 if this
    is not possible, else return 0.
@@ -21,8 +23,8 @@
 tmbool tm_fneedc( FILE *f, int needc )
 {
     int c;
-    char charstr[15];
-    char needcharstr[15];
+    char charstr[SZ];
+    char needcharstr[SZ];
 
     if( tm_fscanspace( f ) ){
 	return TMTRUE;
@@ -30,22 +32,23 @@ tmbool tm_fneedc( FILE *f, int needc )
     c = fgetc( f );
     if( c != needc ){
 	if( c == EOF ){
-	    (void) sprintf( charstr, "EOF" );
+	    (void) snprintf( charstr, SZ, "EOF" );
 	}
 	else if( c>=' ' && c<='~' ){
-	    (void) sprintf( charstr, "char '%c'", c );
+	    (void) snprintf( charstr, SZ, "char '%c'", c );
 	}
 	else {
-	    (void) sprintf( charstr, "char 0x%02x", (unsigned int) c );
+	    (void) snprintf( charstr, SZ, "char 0x%02x", (unsigned int) c );
 	}
 	if( c>=' ' && c<='~' ){
-	    (void) sprintf( needcharstr, "'%c'", needc );
+	    (void) snprintf( needcharstr, SZ, "'%c'", needc );
 	}
 	else {
-	    (void) sprintf( needcharstr, "0x%02x", (unsigned int) needc );
+	    (void) snprintf( needcharstr, SZ, "0x%02x", (unsigned int) needc );
 	}
-	(void) sprintf(
+	(void) snprintf(
 	    tm_errmsg,
+            TM_ERRLEN,
 	    "Expected character %s but got %s",
 	    needcharstr,
 	    charstr
