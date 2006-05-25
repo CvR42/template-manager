@@ -18,6 +18,7 @@ sublevel_list_list  :    207 allocated,    205 freed.<-
 thing_list          :    828 allocated,    820 freed.<-
 toplevel_list       :    106 allocated,    105 freed.<-
 lognew: pending blocks:
+plist is NULL
 llutest.c(220) id=42
 llutest.c(220) id=43
 llutest.c(220) id=44

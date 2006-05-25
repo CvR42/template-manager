@@ -24,7 +24,7 @@ int main( void )
     toplevel_list dscopy;
     toplevel_list l;
     toplevel e;
-    int valid;
+    tmbool valid;
     int n;
     FILE *infile;
     FILE *outfile;
@@ -50,56 +50,56 @@ int main( void )
     if( ds->room<42 ){
         fprintf( stderr, "setroom_toplevel_list() fails\n" );
         fprintf( stderr, "actual size is %u\n", ds->sz );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 #endif
 #ifdef CODEtmc
     if( ds->room<42 ){
         fprintf( stderr, "setroom_toplevel_list() fails\n" );
         fprintf( stderr, "actual size is %u\n", ds->sz );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 #endif
     rfre_toplevel_list( ds );
     infile = fopen( "XXXtesti", "r" );
     if( infile == NULL ){
         fprintf( stderr, "Cannot open input file" );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     outfile = fopen( "testout", "w" );
     if( outfile == NULL ){
         fprintf( stderr, "Cannot open output file" );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     if( freopen( "testerr", "w", stderr ) == NULL ){
         fprintf( stderr, "Cannot redirect error file" );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     tm_lineno = 1;
     if( fscan_toplevel_list( infile, &ds ) ){
 	fprintf( stderr, "Read error at line XXXtesti(%d): %s\n", tm_lineno, tm_errmsg );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     dscopy = rdup_toplevel_list( ds );
     rfre_toplevel_list( dscopy );	/* put something in caches */
     dscopy = rdup_toplevel_list( ds );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "cmp of copy and original does not yield 0??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     if( !isequal_toplevel_list( ds, dscopy ) ){
 	fprintf( stderr, "Copy not equal to original??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     dscopy = reverse_toplevel_list( dscopy );
     if( cmp_toplevel_list( ds, dscopy ) == 0 ){
 	fprintf( stderr, "Reversed copy equal to original??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     dscopy = reverse_toplevel_list( dscopy );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "Doubly reversed copy not equal to original??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 #ifdef CODEtmc
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
@@ -112,7 +112,7 @@ int main( void )
 #endif
     if( cmp_toplevel_list( ds, dscopy ) == 0 ){
 	fprintf( stderr, "Insertion does not change comparison??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 #ifdef CODEtmc
     ds = insert_toplevel_list( ds, (unsigned int) 0, rdup_toplevel( ds->arr[0] ) );
@@ -146,32 +146,32 @@ int main( void )
     ds = extract_toplevel_list( ds, (unsigned int) 1, &e, &valid );
     if( !valid ){
 	fprintf( stderr, "Extraction from position 1 invalid?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     rfre_toplevel( e );
     ds = extract_toplevel_list( ds, (unsigned int) 0, &e, &valid );
     if( !valid ){
 	fprintf( stderr, "Extraction from position 0 invalid?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     rfre_toplevel( e );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "Deletions and extractions do not restore old ds??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     ds = extract_toplevel_list( ds, 10000, &e, &valid );
     if( valid ){
 	fprintf( stderr, "Extraction from beyond the list size?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "Out of bounds extraction affects datastructure?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     ds = delete_toplevel_list( ds, 10000 );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "Out of bounds delete affects datastructure?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 #ifdef CODEtmc
     ds = insert_toplevel_list( ds, 0, to_toplevel( new_TopNone() ) );
@@ -184,12 +184,12 @@ int main( void )
 #endif
     if( isequal_toplevel_list( ds, dscopy ) ){
 	fprintf( stderr, "Inserts fail?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     ds = deletelist_toplevel_list( ds, 0, 3 );
     if( !isequal_toplevel_list( ds, dscopy ) ){
 	fprintf( stderr, "deletelist does not affect datastructure?\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 #ifdef CODEtmc
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
@@ -202,7 +202,7 @@ int main( void )
 #endif
     if( cmp_toplevel_list( ds, dscopy ) == 0 ){
 	fprintf( stderr, "Append does not change comparison??\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 #ifdef CODEtmc
     ds = append_toplevel_list( ds, rdup_toplevel( ds->arr[0] ) );
@@ -246,9 +246,9 @@ int main( void )
     stat_ds( stderr );
     report_lognew( stderr );
     flush_lognew();
-    fclose( infile );
-    fclose( outfile );
-    exit( 0 );
+    (void) fclose( infile );
+    (void) fclose( outfile );
+    exit( EXIT_SUCCESS );
     /* UNREACHABLE */
     return 0;
 }

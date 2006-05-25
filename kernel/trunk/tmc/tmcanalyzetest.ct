@@ -74,17 +74,17 @@ int main( void )
     infile = fopen( "tmcwalkin", "r" );
     if( infile == NULL ){
         fprintf( stderr, "Cannot open input file" );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     outfile = fopen( "testout", "w" );
     if( outfile == NULL ){
         fprintf( stderr, "Cannot open output file" );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     tm_lineno = 1;
     if( fscan_expr( infile, &x ) ){
         fprintf( stderr, "tmcwalktest: %d: %s\n", tm_lineno, tm_errmsg );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     res = add_expr${call generate_actual_parameters x expr expr};
     rfre_expr( x );
@@ -94,9 +94,9 @@ int main( void )
         stat_ds( stderr );
         stat_tmstring( stderr );
         report_lognew( stderr );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
-    exit( 0 );
+    exit( EXIT_SUCCESS );
     return 0;             
 }
 

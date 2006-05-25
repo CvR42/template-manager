@@ -47,7 +47,7 @@
  */
 
 #ifndef FIRSTROOM
-#define FIRSTROOM 0
+#define FIRSTROOM 1
 #endif
 
 .if ${len $(need_stat_list) $(need_stat)}
@@ -70,9 +70,6 @@ static char tm_srcfile[] = __FILE__;
 /* Error strings. */
 .if ${len $(need_delete_list) $(need_deletelist_list) $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
 static char tm_nilptr[] = "NIL pointer";
-.endif
-.if ${len ${comm $(need_fscan) "" ${ctypelist} ${classlist}}}
-static char tm_badcons[] = "bad constructor for '%s': '%s'";
 .endif
 .if ${len $(need_fscan_list)}
 static char tm_badeof[] = "unexpected end of file";
@@ -100,13 +97,19 @@ static char tm_badslice[] = "bad slice";
 /* Announce that you will need room for 'rm' elements in
  *  $t_list 'l'.
  */
-$(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
+$(stic_$t)/*@notnull@*/ $t_list setroom_$t_list( /*@notnull@*//*@returned@*/ $t_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
 	return l;
     }
-    if( l->room==0 ){
+    if( l->arr==NULL ){
 	l->arr = TM_MALLOC( $t *, rm * sizeof(*(l->arr)) );
+#ifdef S_SPLINT_S
+        /* We know arr can only be null if room is null, but
+         * try explaining that to Splint.
+         */
+        l->arr[0] = $tNIL;
+#endif
     }
     else {
 	l->arr = TM_REALLOC( $t *, l->arr, rm * sizeof(*(l->arr)) );
@@ -145,9 +148,9 @@ $(stic_$t)$t_list setroom_$t_list( $t_list l, const unsigned int rm )
 .endforeach
 .foreach t $(need_new_list)
 #ifdef LOGNEW
-$(stic_$t)$t_list real_new_$t_list( const char *_f, const int _l )
+$(stic_$t)/*@only@*//*@notnull@*/ $t_list real_new_$t_list( const char *_f, const int _l )
 #else
-$(stic_$t)$t_list new_$t_list( void )
+$(stic_$t)/*@only@*//*@notnull@*/ $t_list new_$t_list( void )
 #endif
 {
     $t_list nw;
@@ -158,7 +161,7 @@ $(stic_$t)$t_list new_$t_list( void )
     nw->arr = ($t *) 0;
     nw->room = 0;
 #else
-    nw->arr = TM_MALLOC( $t *, FIRSTROOM*sizeof($t) );
+    nw->arr = TM_CALLOC( $t *, sizeof($t), FIRSTROOM );
     nw->room = FIRSTROOM;
 #endif
 .if ${member $t $(need_stat_list)}
@@ -180,10 +183,10 @@ $(stic_$t)$t_list new_$t_list( void )
 .foreach t ${nonvirtual $(need_new)}
 /* Allocate a new instance of ${metatype $t} '$t'. */
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${allfields $t}"}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}" /*@only@*/}
 $(stic_$t)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${allfields $t}"}
+.set tl ${call ansi_nproto $t "${allfields $t}" /*@only@*/}
 $(stic_$t)$t new_$t( $(tl) )
 #endif
 {
@@ -229,8 +232,8 @@ $(stic_$t)$t new_$t( $(tl) )
  *    Freeing routines                            *
  **************************************************/
 
-.call ansi_static fre_list "void fre_$$t_list( $$t_list )"
-.call ansi_static fre "void fre_$$t( $$t )"
+.call ansi_static fre_list "void fre_$$t_list( /*@only@*/ /*@null@*/ $$t_list )"
+.call ansi_static fre "void fre_$$t( /*@only@*/ /*@null@*/ $$t )"
 .foreach t $(need_fre)
 .set stic_$t "static "
 .endforeach
@@ -299,7 +302,7 @@ $(stic_$t)void fre_$t( $t e )
 .endforeach
 .foreach t $(need_fre_list)
 /* Free a list of $t elements 'l'. */
-$(stic_$t)void fre_$t_list( $t_list l )
+$(stic_$t)void fre_$t_list( /*@only@*/ /*@null@*/ $t_list l )
 {
     if( l == $t_listNIL ){
 	return;
@@ -323,7 +326,7 @@ $(stic_$t)void fre_$t_list( $t_list l )
  *    Append routines                             *
  **************************************************/
 
-.call ansi_static append_list "$$t_list append_$$t_list( $$t_list, $$t )"
+.call ansi_static append_list "/*@only@*/ $$t_list append_$$t_list( /*@returned@*/ $$t_list, /*@only@*/ $$t )"
 .foreach t $(need_append_list)
 .set stic_$t "static "
 .endforeach
@@ -335,7 +338,7 @@ $(stic_$t)void fre_$t_list( $t_list l )
 $(stic_$t)$t_list append_$t_list( $t_list l, $t e )
 {
     if( l->sz >= l->room ){
-	l = setroom_$t_list( l, 1+(l->sz)+(l->sz) );
+	l = setroom_$t_list( l, 1U+(l->sz)+(l->sz) );
     }
     l->arr[l->sz] = e;
     l->sz++;
@@ -403,10 +406,11 @@ $(stic_$t)$t_list insert_$t_list( $t_list l, const unsigned int pos, $t e )
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return l;
     }
     if( l->sz >= l->room ){
-	l = setroom_$t_list( l, 1+(l->sz)+(l->sz) );
+	l = setroom_$t_list( l, 1U+(l->sz)+(l->sz) );
     }
     if( the_pos>l->sz ){
 	the_pos = l->sz;
@@ -442,6 +446,7 @@ $(stic_$t)$t_list insertlist_$t_list( $t_list la, unsigned int pos, $t_list lb )
 
     if( la == $t_listNIL ){
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return la;
     }
     if( lb != $t_listNIL && lb->sz != 0 ){
@@ -501,6 +506,7 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 
     if( la == $t_listNIL ){
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return la;
     }
     la = setroom_$t_list( la, la->sz+lb->sz );
@@ -524,8 +530,8 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
  **************************************************/
 
 .. Forward declarations
-.call ansi_static rfre_list "void rfre_$$t_list( $$t_list )"
-.call ansi_static rfre "void rfre_$$t( $$t )"
+.call ansi_static rfre_list "void rfre_$$t_list( /*@only@*/ /*@null@*/ $$t_list )"
+.call ansi_static rfre "void rfre_$$t( /*@only@*/ /*@null@*/ $$t )"
 .foreach t ${depsort $(need_rfre)}
 .set stic_$t "static "
 .endforeach
@@ -536,7 +542,7 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 /* Recursively free an element 'e' of ${metatype $t} type '$t'
  * and all elements in it.
  */
-$(stic_$t)void rfre_$t( $t e )
+$(stic_$t)void rfre_$t( /*@only@*/ /*@null@*/ $t e )
 {
 .switch ${metatype $t}
 .case alias
@@ -723,7 +729,7 @@ $(stic_$t)void print_$t_list( TMPRINTSTATE *st, const const_$t_list l )
 $(stic_$t)void fprint_$t( FILE *f, const const_$t t )
 {
     if( t == $tNIL ){
-	fputs( "@ ", f );
+	(void) fputs( "@ ", f );
 	return;
     }
 .switch ${metatype $t}
@@ -798,7 +804,7 @@ $(stic_$t)void fprint_$t_list( FILE *f, const const_$t_list l )
     (void) putc( '[', f );
     for( ix=0; ix<l->sz; ix++ ){
 	if( ix!=0 ){
-	    fputc( ',', f );
+	    (void) fputc( ',', f );
 	}
 	fprint_$t( f, l->arr[ix] );
     }
@@ -826,11 +832,11 @@ $(stic_$t)void fprint_$t_list( FILE *f, const const_$t_list l )
 #define rdup_$t_list(l) real_rdup_$t_list(l,_f,_l)
 .endforeach
 .. Forward declarations
-.call ansi_static rdup_list "$$t_list real_rdup_$$t_list( const const_$$t_list, const char *, const int )"
-.call ansi_static rdup "$$t real_rdup_$$t( const const_$$t, const char *, const int )"
+.call ansi_static rdup_list "/*@only@*/ /*@null@*/ $$t_list real_rdup_$$t_list( const_$$t_list, const char *, const int )"
+.call ansi_static rdup "/*@only@*/ $$t /*@null@*/ real_rdup_$$t( const_$$t, const char *, const int )"
 #else
-.call ansi_static rdup_list "$$t_list rdup_$$t_list( const const_$$t_list )"
-.call ansi_static rdup "$$t rdup_$$t( const const_$$t )"
+.call ansi_static rdup_list "/*@only@*/ /*@null@*/ $$t_list rdup_$$t_list( const const_$$t_list )"
+.call ansi_static rdup "/*@only@*/ /*@null@*/ $$t rdup_$$t( const const_$$t )"
 #endif
 .foreach t $(need_rdup)
 .set stic_$t "static "
@@ -1102,7 +1108,6 @@ $(stat)int cmp_$t( const const_$t a, const const_$t b )
 .endforeach
 	default:
 	    FATALTAG( a->tag );
-	    break;
     }
 .else
 .if ${isvirtual $t}
@@ -1237,7 +1242,6 @@ $(stat)tmbool isequal_$t( const const_$t a, const const_$t b )
 .endforeach
 	default:
 	    FATALTAG( a->tag );
-	    break;
     }
 .else
 .if ${isvirtual $t}
@@ -1306,11 +1310,11 @@ $(stat)tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b )
 #define fscan_$t_list(f,lp) real_fscan_$t_list(f,lp,_f,_l)
 .endforeach
 .. Forward declarations
-.call ansi_static fscan_list "int real_fscan_$$t_list( FILE *, $$t_list *, const char *_f, const int _l )"
-.call ansi_static fscan "int real_fscan_$$t( FILE *, $$t *, const char *_f, const int _l )"
+.call ansi_static fscan_list "tmbool real_fscan_$$t_list( FILE *, $$t_list *, const char *_f, const int _l )"
+.call ansi_static fscan "tmbool real_fscan_$$t( FILE *, $$t *, const char *_f, const int _l )"
 #else
-.call ansi_static fscan_list "int fscan_$$t_list( FILE *, $$t_list * )"
-.call ansi_static fscan "int fscan_$$t( FILE *, $$t * )"
+.call ansi_static fscan_list "tmbool fscan_$$t_list( FILE *, /*@out@*/ $$t_list * )"
+.call ansi_static fscan "tmbool fscan_$$t( FILE *, /*@out@*/ $$t * )"
 #endif
 
 .foreach t $(need_fscan)
@@ -1325,16 +1329,16 @@ $(stat)tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b )
    Set the pointer 'p' to point to that structure.
  */
 #ifdef LOGNEW
-$(stic_$t)int real_fscan_$t( FILE *f, $t *p, const char *_f, const int _l )
+$(stic_$t)tmbool real_fscan_$t( FILE *f, /*@out@*/ $t *p, const char *_f, const int _l )
 #else
-$(stic_$t)int fscan_$t( FILE *f, $t *p )
+$(stic_$t)tmbool fscan_$t( FILE *f, /*@out@*/ $t *p )
 #endif
 {
 .switch ${metatype $t}
 .case alias
 .error Internal error: alias $t still present.
 .case tuple
-    int err;
+    tmbool err;
     int c;
 .foreach e ${allfields $t}
     ${type $t $e} l_$e;
@@ -1347,16 +1351,16 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .endforeach
     *p = $tNIL;
     if( tm_fscanspace( f ) ){
-	return 1;
+	return TMTRUE;
     }
-    c = getc( f );
+    c = fgetc( f );
     if( c == '@' ){
-	return 0;
+	return TMFALSE;
     }
     (void) ungetc( c, f );
     err = tm_fneedc( f, '(' );
     if( err ){
-	return 1;
+	return TMTRUE;
     }
 .set first 1
 .foreach e ${allfields $t}
@@ -1373,7 +1377,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .endforeach
     *p = new_$t( ${seplist ", " ${prefix " l_" ${allfields $t}}} );
     if( err ){
-	return 1;
+	return TMTRUE;
     }
     return tm_fneedc( f, ')' );
 .case constructorbase constructor class
@@ -1387,7 +1391,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .. Add some space for '\0' and safety..
 .set maxlen $[$(maxlen)+4]
     char tm_word[$(maxlen)];	/* Largest constructor should fit in it.. */
-    int err;
+    tmbool err;
 
 .if ${not ${len ${nonvirtual $t ${subclasses $t}}}}
 #ifdef LOGNEW
@@ -1399,7 +1403,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     n = tm_fscanopenbrac( f );
     err = tm_fscanspace( f );
     if( err ){
-	return 1;
+	return TMTRUE;
     }
     c = getc( f );
     if( c == '@' ){
@@ -1407,7 +1411,7 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
     }
     (void) ungetc( c, f );
     if( tm_fscancons( f, tm_word, $(maxlen) ) ){
-	return 1;
+	return TMTRUE;
     }
 .. First time in loop there should be no 'else' before the if,
 .. in all other cases there should.
@@ -1445,11 +1449,11 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
 .set els "else "
 .endforeach
     else {
-	(void) sprintf( tm_errmsg, tm_badcons, "$t", tm_word );
-	err = 1;
+	(void) snprintf( tm_errmsg, TM_ERRLEN, "bad constructor for '%s': '%s'", "$t", tm_word );
+	err = TMTRUE;
     }
     if( err ){
-	return 1;
+	return TMTRUE;
     }
     return tm_fscanclosebrac( f, n );
 .case constructor
@@ -1470,9 +1474,9 @@ $(stic_$t)int fscan_$t( FILE *f, $t *p )
    point to that structure.
  */
 #ifdef LOGNEW
-$(stic_$t)int real_fscan_$t_list( FILE *f, $t_list *p, const char *_f, const int _l )
+$(stic_$t)tmbool real_fscan_$t_list( FILE *f, $t_list *p, const char *_f, const int _l )
 #else
-$(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
+$(stic_$t)tmbool fscan_$t_list( FILE *f, $t_list *p )
 #endif
 {
     int c;
@@ -1482,7 +1486,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     *p = $t_listNIL;
     n = tm_fscanopenbrac( f );
     if( tm_fscanspace( f ) ){
-	return 1;
+	return TMTRUE;
     }
     c = getc( f );
     if( c == '@' ){
@@ -1490,33 +1494,33 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
     }
     (void) ungetc( c, f );
     if( tm_fneedc( f, '[' ) ){
-	return 1;
+	return TMTRUE;
     }
     *p = new_$t_list();
     if( tm_fscanspace( f ) ){
-	return 1;
+	return TMTRUE;
     }
     c = getc( f );
     if( c == ']' ){
-	return 0;
+	return TMFALSE;
     }
     if( c == EOF ){
 	(void) strcpy( tm_errmsg, tm_badeof );
-	return 1;
+	return TMTRUE;
     }
     (void) ungetc( c, f );
     for(;;){
 	if( fscan_$t( f, &nw ) ){
-	    return 1;
+	    return TMTRUE;
 	}
 	*p = append_$t_list( *p, nw );
 	if( tm_fscanspace( f ) ){
-	    return 1;
+	    return TMTRUE;
 	}
 	c = getc( f );
 	if( c == EOF ){
 	    (void) strcpy( tm_errmsg, tm_badeof );
-	    return 1;
+	    return TMTRUE;
 	}
 	if( c != ',' ){
 	    (void) ungetc( c, f );
@@ -1524,7 +1528,7 @@ $(stic_$t)int fscan_$t_list( FILE *f, $t_list *p )
 	}
     }
     if( tm_fneedc( f, ']' ) ){
-	return 1;
+	return TMTRUE;
     }
     return tm_fscanclosebrac( f, n );
 }
@@ -1551,6 +1555,7 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return l;
     }
     if( pos >= l->sz ){
@@ -1587,6 +1592,7 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return l;
     }
     if( to>=l->sz ){
@@ -1613,7 +1619,7 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
  *    extract_<type>_list routines                 *
  **************************************************/
 
-.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, $$t *, int * )"
+.call ansi_static extract_list "$$t_list extract_$$t_list( /*@returned@*/ $$t_list, const unsigned int, $$t *, tmbool * )"
 .foreach t $(need_extract_list)
 .set stic_$t "static "
 .endforeach
@@ -1626,20 +1632,23 @@ $(stic_$t)$t_list extract_$t_list(
     $t_list l,
     const unsigned int pos,
     $t *e,
-    int *valid
+    tmbool *valid
 )
 {
     unsigned int ix;
 
     if( l == $t_listNIL ){
+        *valid = TMFALSE;
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return l;
     }
     if( pos >= l->sz ){
-	*valid = 0;
+	*valid = TMFALSE;
+        *e = $tNIL;
 	return l;
     }
-    *valid = 1;
+    *valid = TMTRUE;
     *e = l->arr[pos];
     l->sz--;
     for( ix=pos; ix<l->sz; ix++ ){
@@ -1701,6 +1710,7 @@ $(stic_$t)$t_list extractlist_$t_list(
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
+        /*@notreached@*/
 	return l;
     }
     if( to>=l->sz ){
@@ -1741,12 +1751,11 @@ $(stic_$t)$t_list extractlist_$t_list(
 void stat_$(basename)( FILE *f )
 {
 .if ${len ${nonvirtual $(need_stat)} $(need_stat_list)}
-    const char tm_allocfreed[] = "%-20s: %6ld allocated, %6ld freed.%s\n";
 
 .foreach t ${sort ${nonvirtual $(need_stat)}}
     fprintf(
 	f,
-	tm_allocfreed,
+	"%-20s: %6ld allocated, %6ld freed.%s\n",
 	"$t",
 	newcnt_$t,
 	frecnt_$t,
@@ -1756,7 +1765,8 @@ void stat_$(basename)( FILE *f )
 .foreach t ${sort $(need_stat_list)}
     fprintf(
 	f,
-	tm_allocfreed, "$t_list",
+	"%-20s: %6ld allocated, %6ld freed.%s\n",
+        "$t_list",
 	newcnt_$t_list,
 	frecnt_$t_list,
 	((newcnt_$t_list==frecnt_$t_list)? "": "<-")

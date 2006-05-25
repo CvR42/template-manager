@@ -19,6 +19,7 @@ subtuple_list       :      0 allocated,      0 freed.
 thing_list          :    621 allocated,    615 freed.<-
 toplevel_list       :    107 allocated,    106 freed.<-
 lognew: pending blocks:
+plist is NULL
 alutest.c(220) id=27
 alutest.c(220) id=53
 alutest.c(220) id=54

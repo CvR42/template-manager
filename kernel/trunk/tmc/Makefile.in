@@ -26,8 +26,10 @@ DBUGFLAGS = -g -DLOGNEW -DSTAT
 
 LDFLAGS	= $(DBUGFLAGS)
 
+INCLUDEFLAGS = -I../libtmc -I$(LOCALINCLUDE)
+
 # C compilation flags
-CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I../libtmc -I$(LOCALINCLUDE)
+CFLAGS = @CFLAGS@ $(DBUGFLAGS) $(INCLUDEFLAGS)
 
 # Some names of programs
 TM  = ../tm/tm
@@ -37,7 +39,7 @@ TMCLIB = ../libtmc/libtmc.a
 
 LIBS = @LIBS@ $(TMCLIB)
 
-LINTFLAGS = -i$(LOCALINCLUDE) -i../libtmc
+LINTFLAGS = $(INCLUDEFLAGS)
 
 MAKEFILE = Makefile
 
@@ -263,22 +265,22 @@ llutest.c: xxtest.c
 
 lint: tmcwalktest.lint tmcanalyzetest.lint tmctest.lint alutest.lint llutest.lint
 
-LINTRUN = lint -zero co-gnu fnprop suppress $(LINTFLAGS)
+LINTRUN = splint -f splint.flags $(LINTFLAGS)
 
 tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h
-	$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
+	-$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
 
 tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h
-	$(LINTRUN) tmcanalyzetest.c tmccode.c > tmcanalyzetest.lint
+	-$(LINTRUN) tmcanalyzetest.c tmccode.c > tmcanalyzetest.lint
 
 tmctest.lint: tmctest.c tmccode.c tmccode.h
-	$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
+	-$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
 
 alutest.lint: alutest.c alucode.c alucode.h
-	$(LINTRUN) alutest.c alucode.c > alutest.lint
+	-$(LINTRUN) alutest.c alucode.c > alutest.lint
 
 llutest.lint: llutest.c llucode.c llucode.h
-	$(LINTRUN) llutest.c llucode.c > llutest.lint
+	-$(LINTRUN) llutest.c llucode.c > llutest.lint
 
 stats:
 	wc -l $(TMMODULES)
