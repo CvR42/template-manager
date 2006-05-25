@@ -1,5 +1,8 @@
++checks
+-isoreserved
 -temptrans
 -booltype tmbool
 -boolfalse TMFALSE
 -booltrue TMTRUE
+-annotationerror
 +charintliteral

@@ -232,8 +232,8 @@ $(stic_$t)$t new_$t( $(tl) )
  *    Freeing routines                            *
  **************************************************/
 
-.call ansi_static fre_list "void fre_$$t_list( /*@only@*/ /*@null@*/ $$t_list )"
-.call ansi_static fre "void fre_$$t( /*@only@*/ /*@null@*/ $$t )"
+.call ansi_static fre_list "void fre_$$t_list( /*@partial@*/ /*@null@*/ $$t_list )"
+.call ansi_static fre "void fre_$$t( /*@partial@*/ /*@null@*/ $$t )"
 .foreach t $(need_fre)
 .set stic_$t "static "
 .endforeach
@@ -313,7 +313,7 @@ $(stic_$t)void fre_$t_list( /*@only@*/ /*@null@*/ $t_list l )
 #endif
     frecnt_$t_list++;
 .endif
-    if( l->room!=0 ){
+    if( l->arr != NULL ){
 	TM_FREE( l->arr );
     }
     TM_FREE( l );
@@ -326,7 +326,7 @@ $(stic_$t)void fre_$t_list( /*@only@*/ /*@null@*/ $t_list l )
  *    Append routines                             *
  **************************************************/
 
-.call ansi_static append_list "/*@only@*/ $$t_list append_$$t_list( /*@returned@*/ $$t_list, /*@only@*/ $$t )"
+.call ansi_static append_list "/*@only@*/ $$t_list append_$$t_list( /*@notnull@*//*@returned@*/ $$t_list, /*@only@*/ $$t )"
 .foreach t $(need_append_list)
 .set stic_$t "static "
 .endforeach
@@ -607,7 +607,7 @@ $(stic_$t)void rfre_$t_list( $t_list e )
 	return;
     }
     for( ix=0; ix<e->sz; ix++ ){
-	rfre_$t( e->arr[ix] );
+        rfre_$t( e->arr[ix] );
     }
     fre_$t_list( e );
 }
@@ -1410,7 +1410,7 @@ $(stic_$t)tmbool fscan_$t( FILE *f, /*@out@*/ $t *p )
 	return tm_fscanclosebrac( f, n );
     }
     (void) ungetc( c, f );
-    if( tm_fscancons( f, tm_word, $(maxlen) ) ){
+    if( tm_fscancons( f, tm_word, $(maxlen)U ) ){
 	return TMTRUE;
     }
 .. First time in loop there should be no 'else' before the if,
@@ -1709,6 +1709,7 @@ $(stic_$t)$t_list extractlist_$t_list(
     unsigned int ressz;
 
     if( l == $t_listNIL ){
+        *res = $t_listNIL;
 	FATAL( tm_nilptr );
         /*@notreached@*/
 	return l;

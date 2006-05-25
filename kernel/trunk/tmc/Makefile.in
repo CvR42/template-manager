@@ -263,30 +263,40 @@ alutest.c: xxtest.c
 llutest.c: xxtest.c
 	sed -e 's/XXX/llu/' xxtest.c > llutest.c
 
-lint: tmcwalktest.lint tmcanalyzetest.lint tmctest.lint alutest.lint llutest.lint
+
+# ---- Lint rules
+
+LINTTARGETS = tmcwalktest.lint tmcanalyzetest.lint tmctest.lint alutest.lint llutest.lint
+lint: $(LINTTARGETS)
+
+JUNK += LINTTARGETS
 
 LINTRUN = splint -f splint.flags $(LINTFLAGS)
 
-tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h
+tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h splint.flags
 	-$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
 
-tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h
+tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h splint.flags
 	-$(LINTRUN) tmcanalyzetest.c tmccode.c > tmcanalyzetest.lint
 
-tmctest.lint: tmctest.c tmccode.c tmccode.h
+tmctest.lint: tmctest.c tmccode.c tmccode.h splint.flags
 	-$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
 
-alutest.lint: alutest.c alucode.c alucode.h
+alutest.lint: alutest.c alucode.c alucode.h splint.flags
 	-$(LINTRUN) alutest.c alucode.c > alutest.lint
 
-llutest.lint: llutest.c llucode.c llucode.h
+llutest.lint: llutest.c llucode.c llucode.h splint.flags
 	-$(LINTRUN) llutest.c llucode.c > llutest.lint
+
+
+# ---- Code statistics
 
 stats:
 	wc -l $(TMMODULES)
 
 
-# Configure-related rules.
+
+# ---- Configure-related rules.
 
 configure: configure.in
 	autoconf
