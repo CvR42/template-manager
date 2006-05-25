@@ -45,22 +45,23 @@ int main( void )
     );
 #endif
     ds = new_toplevel_list();
-    ds = setroom_toplevel_list( ds, 42 );
+    ds = setroom_toplevel_list( ds, 42U );
 #ifdef CODEalu
-    if( ds->room<42 ){
+    if( ds->room<42U ){
         fprintf( stderr, "setroom_toplevel_list() fails\n" );
         fprintf( stderr, "actual size is %u\n", ds->sz );
         exit( EXIT_FAILURE );
     }
 #endif
 #ifdef CODEtmc
-    if( ds->room<42 ){
+    if( ds->room<42U ){
         fprintf( stderr, "setroom_toplevel_list() fails\n" );
         fprintf( stderr, "actual size is %u\n", ds->sz );
         exit( EXIT_FAILURE );
     }
 #endif
     rfre_toplevel_list( ds );
+    ds = toplevel_listNIL;
     infile = fopen( "XXXtesti", "r" );
     if( infile == NULL ){
         fprintf( stderr, "Cannot open input file" );
@@ -149,17 +150,19 @@ int main( void )
 	exit( EXIT_FAILURE );
     }
     rfre_toplevel( e );
+    e = toplevelNIL;
     ds = extract_toplevel_list( ds, (unsigned int) 0, &e, &valid );
     if( !valid ){
 	fprintf( stderr, "Extraction from position 0 invalid?\n" );
 	exit( EXIT_FAILURE );
     }
     rfre_toplevel( e );
+    e = toplevelNIL;
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "Deletions and extractions do not restore old ds??\n" );
 	exit( EXIT_FAILURE );
     }
-    ds = extract_toplevel_list( ds, 10000, &e, &valid );
+    ds = extract_toplevel_list( ds, 10000U, &e, &valid );
     if( valid ){
 	fprintf( stderr, "Extraction from beyond the list size?\n" );
 	exit( EXIT_FAILURE );
@@ -168,7 +171,7 @@ int main( void )
 	fprintf( stderr, "Out of bounds extraction affects datastructure?\n" );
 	exit( EXIT_FAILURE );
     }
-    ds = delete_toplevel_list( ds, 10000 );
+    ds = delete_toplevel_list( ds, 10000U );
     if( cmp_toplevel_list( ds, dscopy ) != 0 ){
 	fprintf( stderr, "Out of bounds delete affects datastructure?\n" );
 	exit( EXIT_FAILURE );
@@ -186,7 +189,7 @@ int main( void )
 	fprintf( stderr, "Inserts fail?\n" );
 	exit( EXIT_FAILURE );
     }
-    ds = deletelist_toplevel_list( ds, 0, 3 );
+    ds = deletelist_toplevel_list( ds, 0, 3U );
     if( !isequal_toplevel_list( ds, dscopy ) ){
 	fprintf( stderr, "deletelist does not affect datastructure?\n" );
 	exit( EXIT_FAILURE );
@@ -214,6 +217,7 @@ int main( void )
     ds = append_toplevel_list( ds, rdup_toplevel( ds ) );
 #endif
     ds = concat_toplevel_list( ds, dscopy );
+    dscopy = toplevel_listNIL;
     ds = extractlist_toplevel_list( ds, 2, 5, &dscopy );
     ds = insertlist_toplevel_list( ds, 2, dscopy );
     /* 'dscopy' is not freed to test lognew routines. */

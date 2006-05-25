@@ -181,11 +181,13 @@ struct str_$t {
 .endforeach
 #endif
 
+
 .foreach t $(need_ds_list)
+typedef /*@only@*/ $t __splint_only_$t;
 struct str_$t_list {
     unsigned int sz;
     unsigned int room;
-    $t *arr;
+    /*@notnull@*/ __splint_only_$t *arr;
 #ifdef LOGNEW
     long int lognew_id;
 #endif
@@ -299,7 +301,7 @@ extern /*@notnull@*/ $t_list setroom_$t_list( /*@notnull@*//*@returned@*/ $t_lis
 ..
 .. append_<type>_list() routines.
 .foreach t $(want_append_list)
-extern $t_list append_$t_list( /*@returned@*/ $t_list, /*@only@*/ $t );
+extern $t_list append_$t_list( /*@notnull@*//*@returned@*/ $t_list, /*@only@*/ $t );
 .endforeach
 ..
 .. reverse_<type>_list() routines.
@@ -329,7 +331,7 @@ extern $t_list deletelist_$t_list( /*@returned@*/ $t_list, unsigned int, unsigne
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( /*@returned@*/ $t_list, unsigned int, /*@out@*/ $t *, /*@out@*/ tmbool * );
+extern $t_list extract_$t_list( /*@returned@*/ $t_list, unsigned int, /*@out@*//*@only@*/ $t *, /*@out@*/ tmbool * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.
@@ -394,7 +396,7 @@ extern /*@only@*/ $t_list real_slice_$t_list(
 .endforeach
 #else
 .foreach t $(want_slice_list)
-extern /*@only@*/ $t_list slice_$t_list( const_$t_list, unsigned int, unsigned int );
+extern /*@only@*/ $t_list slice_$t_list( const_$t_list, unsigned int, unsigned int ) /*@*/;
 .endforeach
 #endif
 .endif
@@ -406,14 +408,14 @@ extern /*@only@*/ $t_list slice_$t_list( const_$t_list, unsigned int, unsigned i
 extern /*@only@*/ $t real_rdup_$t( const_$t, const char *_f, int _l );
 .endforeach
 .foreach t $(want_rdup_list)
-extern /*@only@*/ $t_list real_rdup_$t_list( const_$t_list, const char *_f, int _l );
+extern /*@only@*/ $t_list real_rdup_$t_list( const_$t_list, const char *_f, int _l ) /*@*/;
 .endforeach
 #else
 .foreach t $(want_rdup)
-extern /*@only@*/ $t rdup_$t( const_$t );
+extern /*@only@*/ $t rdup_$t( const_$t ) /*@*/;
 .endforeach
 .foreach t $(want_rdup_list)
-extern /*@only@*/ $t_list rdup_$t_list( const_$t_list );
+extern /*@only@*/ $t_list rdup_$t_list( const_$t_list ) /*@*/;
 .endforeach
 #endif
 .endif
@@ -439,26 +441,26 @@ extern tmbool fscan_$t_list( FILE *, /*@out@*/ $t_list * );
 ..
 .. cmp_<type>() routines
 .foreach t $(want_cmp)
-extern int cmp_$t( const_$t a, const_$t b );
+extern int cmp_$t( const_$t a, const_$t b ) /*@*/;
 .endforeach
 .foreach t $(want_cmp_list)
-extern int cmp_$t_list( const_$t_list a, const_$t_list b );
+extern int cmp_$t_list( const_$t_list a, const_$t_list b ) /*@*/;
 .endforeach
 ..
 .. isequal_<type>() routines
 .foreach t $(want_isequal)
-extern tmbool isequal_$t( const_$t a, const_$t b );
+extern tmbool isequal_$t( const_$t a, const_$t b ) /*@*/;
 .endforeach
 .foreach t $(want_isequal_list)
-extern tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b );
+extern tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b ) /*@*/;
 .endforeach
 ..
 .. Misc. functions.
 .if ${member flush_$(basename) $(want_misc)}
-extern void flush_$(basename)( void );
+extern void flush_$(basename)( void ) /*@modifies filesystem@*/;
 .endif
 .if ${member stat_$(basename) $(want_misc)}
-extern void stat_$(basename)( FILE * );
+extern void stat_$(basename)( FILE *f ) /*@modifies *f@*/;
 .endif
 .if ${member get_balance_$(basename) $(want_misc)}
 extern int get_balance_$(basename)( void );
