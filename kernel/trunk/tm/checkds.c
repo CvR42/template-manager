@@ -19,14 +19,21 @@ void cktuple( const_tmsymbol nm, const_Field_list fields, const_tmsymbol_list in
 {
     unsigned int ix;	/* index of currently checked field */
 
+    if( fields == Field_listNIL ){
+        return;
+    }
     for( ix=0; ix<fields->sz; ix++ ){
 	const_Field fx = fields->arr[ix];
-	const_origsymbol fnm = fx->name;
+	const_origsymbol fnm;
 	unsigned int iy;	/* index of searched subsequent fields */
 
+        assert( fx != FieldNIL );
+        fnm = fx->name;
+        assert( fnm != origsymbolNIL );
 	for( iy=ix+1; iy<fields->sz; iy++ ){
 	    const_Field fy = fields->arr[iy];
 
+            assert( fy != FieldNIL );
 	    if( fy->name->sym == fnm->sym ){
 		origsymbol_error( fy->name, "double use of field name in type `%s'", nm->name );
 		return;
@@ -142,14 +149,14 @@ tmbool check_ds_list( const_ds_list dl )
 	tmsymbol_list tl = new_tmsymbol_list();
 
 	collect_superclasses( &tl, dl, nmx );
-	sprintf( msg, "Duplicate superclass in type '%s'", nmx->name );
+	(void) snprintf( msg, 200, "Duplicate superclass in type '%s'", nmx->name );
 	ok &= check_double_symbols( msg, tl );
 	rfre_tmsymbol_list( tl );
 	if( ok ){
 	    tmsymbol_list fields = new_tmsymbol_list();
 
 	    collect_all_fields( &fields, dl, nmx );
-	    sprintf( msg, "Duplicate field in type '%s'", nmx->name );
+	    (void) snprintf( msg, 200, "Duplicate field in type '%s'", nmx->name );
 	    ok &= check_double_symbols( msg, fields );
 	    rfre_tmsymbol_list( fields );
 	}

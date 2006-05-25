@@ -6,9 +6,9 @@
 extern FILE *tracestream;
 extern FILE *statstream;
 
-extern tmstring tplfilename;
-extern tmstring dsfilename;
-extern ds_list allds;
+/*@only@*/ extern tmstring tplfilename;
+/*@only@*/ extern tmstring dsfilename;
+/*@only@*/ extern ds_list allds;
 
 extern clock_t start_time;
 

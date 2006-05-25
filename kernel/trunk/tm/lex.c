@@ -25,7 +25,7 @@ static char linebuf[LINESIZE] = "";
 static unsigned int lineix = 0;
 static unsigned int oldlineix = 0;
 static unsigned int lexlineno = 0;
-static tmstring lexfilename = tmstringNIL;
+static /*@only@*/ tmstring lexfilename = tmstringNIL;
 static FILE *lexfile;	/* file to read from. */
 static tmbool lextr = TMFALSE;
 
@@ -40,12 +40,12 @@ static tmbool lextr = TMFALSE;
  */
 
 struct sctnode {
-    struct sctnode *next;	/* next possibility in list */
-    int sctchar;		/* char to match            */
-    struct sctnode *sub;	/* subtree to use on match. */
-    tmbool valid;			/* is acceptable token?     */
-    lextok tokval;		/* token value for yacc     */
-    const char *toknm;		/* token name for debugging */
+    /*@null@*/ struct sctnode *next;	/* next possibility in list */
+    int sctchar;        		/* char to match            */
+    /*@null@*/ struct sctnode *sub;	/* subtree to use on match. */
+    tmbool valid;       		/* is acceptable token?     */
+    lextok tokval;      		/* token value for yacc     */
+    /*@observer@*/ const char *toknm;  	/* token name for debugging */
 };
 
 #define SCTNIL (struct sctnode *)0
@@ -59,7 +59,7 @@ static struct sctnode *toktree;
    to be considered is described by node 'nxt'. The subtree is set empty,
    and token is set invalid.
  */
-static struct sctnode *newsctnode( struct sctnode *nxt, int c )
+static struct sctnode *newsctnode( /*@null@*/ struct sctnode *nxt, int c )
 {
     struct sctnode *nw;
 
@@ -69,11 +69,13 @@ static struct sctnode *newsctnode( struct sctnode *nxt, int c )
     nw->sctchar = c;
     nw->sub     = SCTNIL;
     nw->valid   = FALSE;
+    nw->tokval = 0;
+    nw->toknm = NULL;
     return nw;
 }
 
 /* Recursively free scan tree node 'n'. */
-static void rfre_sctnode( struct sctnode *n )
+static void rfre_sctnode( /*@out@*//*@null@*/ struct sctnode *n )
 {
     if( n == SCTNIL ){
 	return;
@@ -88,11 +90,11 @@ static void rfre_sctnode( struct sctnode *n )
    YACC value 'val' and (debugging) name 'nm'.
    Return a pointer to the modified tree.
  */
-static struct sctnode *addtok(
-    struct sctnode *tree,
+static /*@null@*/ struct sctnode *addtok(
+    /*@returned@*//*@null@*/ struct sctnode *tree,
     const char *str,
     lextok val,
-    const char *nm
+    /*@observer@*/ const char *nm
 )
 {
     struct sctnode *tp;
@@ -170,7 +172,7 @@ static struct tok rwtab[] =
  * length, pointer to buffer and index of next char to un-get.
  */
 static unsigned int ungetbuflen;
-static int *ungetbuf;
+static /*@only@*/ int *ungetbuf;
 static unsigned int ungetbufix;
 
 /* Push back character 'c' in local pushback queue.
@@ -221,26 +223,26 @@ static void show_parse_context( FILE *f )
     unsigned int ix;
     tmbool shown = FALSE;
 
-    fputs( linebuf, f );
+    (void) fputs( linebuf, f );
     if( oldlineix>lineix ){
 	oldlineix = lineix;
     }
     for( ix=0; ix<oldlineix; ix++ ){
 	if( linebuf[ix] == '\t' ){
-	    fputc( '\t', f );
+	    (void) fputc( '\t', f );
 	}
 	else {
-	    fputc( ' ', f );
+	    (void) fputc( ' ', f );
 	}
     }
     for( ix=ix; ix<lineix; ix++ ){
-	fputc( '^', f );
+	(void) fputc( '^', f );
 	shown = TRUE;
     }
     if( !shown ){
-	fputc( '^', f );
+	(void) fputc( '^', f );
     }
-    fputc( '\n', f );
+    (void) fputc( '\n', f );
 }
 
 void parserror( const char *message )
@@ -489,7 +491,7 @@ void end_lex( void )
 /* Give allocation statistics of lex routines. */
 void stat_lex( FILE *f )
 {
-    fprintf( f, "ungetbuflen=%d\n", ungetbuflen );
+    fprintf( f, "ungetbuflen=%u\n", ungetbuflen );
     fprintf(
 	f,
 	"%-20s: %6ld allocated, %6ld freed.%s\n",

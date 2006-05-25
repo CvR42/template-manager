@@ -85,7 +85,7 @@ static Type split_type( const char *pre, const char *suff, const_tmstring t )
 /* Given a list of types, return a list of strings representing these
  * types.
  */
-static tmstring make_typename( const char *pre, const char *suff, const Type t )
+static tmstring make_typename( const char *pre, const char *suff, const_Type t )
 {
     return mklistnm( pre, t->basetype->name, suff, t->level );
 }
@@ -93,7 +93,7 @@ static tmstring make_typename( const char *pre, const char *suff, const Type t )
 /* Given a list of types, return a list of strings representing these
  * types.
  */
-static tmstring_list make_typename_list( const Type_list tl )
+static tmstring_list make_typename_list( const_Type_list tl )
 {
     unsigned int ix;
     tmstring_list sl;
@@ -116,7 +116,7 @@ static tmstring_list make_typename_list( const Type_list tl )
 }
 
 /* Given a list of types, return a list of strings representing these types. */
-static tmstring flat_Type_list( const Type_list tl )
+static tmstring flat_Type_list( const_Type_list tl )
 {
     tmstring_list sl = make_typename_list( tl );
     tmstring ans;
@@ -148,7 +148,7 @@ static tmstring fnmax( const_origin org, const_tmstring_list sl )
     for( ix=0; ix<sl->sz; ix++ ){
         int n;
 
-	cknumpar( org, sl->arr[ix] );
+	(void) cknumpar( org, sl->arr[ix] );
 	n = atoi( sl->arr[ix] );
 	if( n>max )
 	    max = n;
@@ -397,7 +397,7 @@ static tmstring fnstrpad( const_origin org, const_tmstring_list sl )
 {
     tmstring w;
     tmstring wp;
-    unsigned int len;
+    size_t len;
     tmstring pw;
     tmstring buf;
     tmstring bufp;
@@ -413,7 +413,7 @@ static tmstring fnstrpad( const_origin org, const_tmstring_list sl )
 	return new_tmstring( "" );
     }
     (void) cknumpar( org, sl->arr[1] );
-    len = atoi( sl->arr[1] );
+    len = (size_t) atoi( sl->arr[1] );
     buf = create_tmstring( len+1 );
     wp = w;
     bufp = buf;
@@ -568,7 +568,7 @@ static tmstring fntr( const_origin org, const_tmstring_list sl )
 {
     tmstring oldchars;
     tmstring newchars;
-    int ok;
+    tmbool ok;
     tmstring_list nl;
     tmstring ans;
 
@@ -622,7 +622,7 @@ static tmstring fnstrindex( const_origin org, const_tmstring_list sl )
 static tmstring fnleftstr( const_origin org, const_tmstring_list sl )
 {
     int n;
-    tmstring_list nl = new_tmstring_list();
+    tmstring_list nl;
     unsigned int ix;
     tmstring ans;
 
@@ -640,6 +640,7 @@ static tmstring fnleftstr( const_origin org, const_tmstring_list sl )
     else {
         n = 0;
     }
+    nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
         tmstring s = rdup_tmstring( sl->arr[ix] );
         size_t sz = strlen( s );
@@ -659,7 +660,7 @@ static tmstring fnleftstr( const_origin org, const_tmstring_list sl )
 static tmstring fnrightstr( const_origin org, const_tmstring_list sl )
 {
     int n;
-    tmstring_list nl = new_tmstring_list();
+    tmstring_list nl;
     unsigned int ix;
     tmstring ans;
 
@@ -677,6 +678,7 @@ static tmstring fnrightstr( const_origin org, const_tmstring_list sl )
     else {
         n = 0;
     }
+    nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
         tmstring s = rdup_tmstring( sl->arr[ix] );
         size_t sz = strlen( s );
@@ -789,7 +791,7 @@ static tmstring fnprefix( const_origin org, const_tmstring_list sl )
     buf = create_tmstring( len );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
-	(void) sprintf( buf, "%s%s", pfstr, sl->arr[ix] );
+	(void) snprintf( buf, len, "%s%s", pfstr, sl->arr[ix] );
 	nl = append_tmstring_list( nl, new_tmstring( buf ) );
     }
     fre_tmstring( buf );
@@ -825,7 +827,7 @@ static tmstring fnsuffix( const_origin org, const_tmstring_list sl )
     buf = create_tmstring( len );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
-	(void) sprintf( buf, "%s%s", sl->arr[ix], sfstr );
+	(void) snprintf( buf, len, "%s%s", sl->arr[ix], sfstr );
 	nl = append_tmstring_list( nl, new_tmstring( buf ) );
     }
     fre_tmstring( buf );
@@ -1372,7 +1374,7 @@ static tmstring fnmklist( const_origin org, const_tmstring_list sl )
 	origin_error( org, "'mklist' requires at least one parameter" );
 	return new_tmstring( "" );
     }
-    cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[0] );
     n = atoi( sl->arr[0] );
     nl = new_tmstring_list();
     for( ix=1; ix<sl->sz; ix++ ){
@@ -1994,7 +1996,7 @@ static tmstring fnalltypes( const_origin org, const_tmstring_list tl )
 
 	collect_all_fields( &fields, allds, tnm );
 	for( fix=0; fix<fields->sz; fix++ ){
-	    const Field e = find_field( allds, tnm, fields->arr[fix] );
+	    const_Field e = find_field( allds, tnm, fields->arr[fix] );
 
 	    /* Since we only enumerate the fields we know exist for this
 	     * type, this should never fail.
@@ -2138,7 +2140,7 @@ static Type_list update_reach( Type_list tl, tmbool *visited, Type_list blocking
 	    fieldnames = new_tmsymbol_list();
 	    collect_all_fields( &fieldnames, allds, tnm );
 	    for( tix=0; tix<fieldnames->sz; tix++ ){
-		Field f = find_field( allds, tnm, fieldnames->arr[tix] );
+		const_Field f = find_field( allds, tnm, fieldnames->arr[tix] );
 
 		if( f != FieldNIL ){
 		    tl = update_reach_Type( tl, visited, blocking, f->type );
@@ -2613,7 +2615,7 @@ static tmstring fndepsort( const_origin org, const_tmstring_list real_sl )
 static tmbool inherit_depends_on( const_tmstring t, const_tmstring_list tl )
 {
     unsigned int ix;
-    tmsymbol_list inherits;
+    const_tmsymbol_list inherits;
 
     inherits = extract_inherits( allds, add_tmsymbol( t ) );
     if( inherits == tmsymbol_listNIL ){
@@ -2703,7 +2705,7 @@ static tmstring fntpllineno( const_origin org, const_tmstring_list sl )
 /* Return true iff the given argument is the name of a variable. */
 static tmstring fndefined( const_origin org, const_tmstring_list sl )
 {
-    char *v;
+    const_tmstring v;
 
     if( sl->sz != 1 ){
 	origin_error( org, "'defined' requires exactly one parameter, not %u", sl->sz );
@@ -2716,7 +2718,7 @@ static tmstring fndefined( const_origin org, const_tmstring_list sl )
 /* Return true iff the given argument is the name of a defined macro. */
 static tmstring fndefinedmacro( const_origin org, const_tmstring_list sl )
 {
-    macro v;
+    const_macro v;
 
     if( sl->sz != 1 ){
 	origin_error( org, "'definedmacro' requires exactly one parameter, not %u", sl->sz );
@@ -2925,7 +2927,7 @@ static tmstring fnprocessortime( const_origin org, const_tmstring_list sl )
 	origin_error( org, "'processortime' does not need any parameters" );
 	return new_tmstring( "0" );
     }
-    sprintf( buf, "%ld", t_ms );
+    (void) snprintf( buf, 30, "%ld", t_ms );
     return new_tmstring( buf );
 }
 
@@ -2938,7 +2940,7 @@ static tmstring fnnow( const_origin org, const_tmstring_list sl )
 	origin_error( org, "'now' does not need any parameters" );
 	return new_tmstring( "0" );
     }
-    sprintf( buf, "%ld", time( NULL )  );
+    (void) snprintf( buf, 30, "%lu", (unsigned long) time( NULL )  );
     return new_tmstring( buf );
 }
 
@@ -2965,7 +2967,7 @@ static tmstring fnformattime( const_origin org, const_tmstring_list sl )
 	origin_error( org, "'formattime' requires one or two" );
 	return new_tmstring( "" );
     }
-    cknumpar( org, sl->arr[0] );
+    (void) cknumpar( org, sl->arr[0] );
     t = (time_t) atol( sl->arr[0] );
     (void) strftime( buf, STRBUFSIZE, fmt, gmtime( &t ) );
     return new_tmstring( buf );
@@ -3106,7 +3108,7 @@ tmstring evalfn( const_origin org, const tmstring f )
 	fprintf( tracestream, "evaluating function ${%s}\n", f );
     }
     par = scanword( org, f, &fnname );
-    if( fnname == CHARNIL ){
+    if( fnname == NULL ){
 	origin_error( org, "no name specified" );
 	return new_tmstring( "" );
     }

@@ -5,10 +5,10 @@
 
 #include <assert.h>
 #include <time.h>
+#include <tmc.h>
 
 #include "tmdefs.h"
 
-#include <tmc.h>
 
 #include "flag.h"
 #include "tmcode.h"
@@ -94,7 +94,7 @@ static void scanargs( int argc, char **argv, tmstring lp )
     searchpath = new_tmstring_list();
     searchpath = append_tmstring_list( searchpath, rdup_tmstring( lp ) );
     prognm = argv[0];
-    if( prognm[0] == 0 ){
+    if( prognm[0] == '\0' ){
 	prognm = "tm";
     }
     argv++;
@@ -221,7 +221,7 @@ static void scanargs( int argc, char **argv, tmstring lp )
     }
     if( printusage ){
 	fprintf( stdout, "Tm version %d, tmkernel version %s\n", VERSION, TMKERNEL_VERSION );
-	fputs( helptext, stdout);
+	(void) fputs( helptext, stdout);
 	helpdbflags( stdout, flagtab );
 	exit( exitcode );
     }
@@ -257,12 +257,14 @@ static void scanargs( int argc, char **argv, tmstring lp )
     set_lex_debugging( mylextr );
 }
 
+#define SZ 10
+
 int main( int argc, char **argv )
 {
     tmstring active_libpath;		/* The libpath really used. */
     TMPRINTSTATE *st;
     int lev;
-    char buf[10];
+    char buf[SZ];
     int exitcode = EXIT_SUCCESS;
 
     tracestream = stderr;
@@ -297,7 +299,7 @@ int main( int argc, char **argv )
 	}
     }
     errcheck();
-    sprintf( buf, "%d", VERSION );
+    (void) snprintf( buf, SZ, "%d", VERSION );
     setvar( "tmvers", buf );
     setvar( "kernel-version", TMKERNEL_VERSION );
     setvar( "libpath", active_libpath );

@@ -3,8 +3,8 @@
  * A recursive descend parser for Tm datastructure definitions.
  */
 
-#include "tmdefs.h"
 #include <tmc.h>
+#include "tmdefs.h"
 
 #include "tmcode.h"
 #include "error.h"
@@ -32,7 +32,7 @@ static void update_class_info(
  * list 'l' and return the newly constructed list. Reject strings
  * that are already defined.
  */
-static tmsymbol_list add_inherit_list( tmsymbol_list l, tmsymbol s )
+static tmsymbol_list add_inherit_list( /*@returned@*/ tmsymbol_list l, tmsymbol s )
 {
     if( member_tmsymbol_list( s, l ) ){
         /* FIXME: do something smarter. */
@@ -484,6 +484,7 @@ static tmbool parse_tuple_type( tmsymbol nm, ds *tp )
     }
     ok = parse_tuplebody( &body );
     if( !ok ){
+	rfre_tmsymbol_list( inherits );
 	return FALSE;
     }
     if( curr_token==RRBRAC ){

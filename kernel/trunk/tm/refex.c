@@ -46,9 +46,9 @@
  */
 
 #include <stdio.h>
+#include <tmc.h>
 #include "tmdefs.h"
 #include "refex.h"
-#include <tmc.h>
 
 #define MAXDFA 1024 /* Maximal size of the DFA. */
 #define MAXTAG 10   /* Maximal number of tagged patterns. */
@@ -133,7 +133,7 @@ const char *ref_comp( const char *pat )
 		if( *p == ']' ){    /* real brac */
 		    chset( *p++ );
 		}
-		while (*p && *p != ']' ){
+		while (*p != '\0' && *p != ']' ){
 		    if( *p == '-' && (*(p+1) != '\0') && *(p+1) != ']' ){
 			p++;
 			c1 = *(p-2) + 1;
@@ -204,7 +204,7 @@ const char *ref_comp( const char *pat )
  * return 0. If the pattern matches, bopat[0] and eopat[0] are set
  * to the beginning and the end of the matched fragment, respectively.
  */
-int ref_exec( const char *lp )
+tmbool ref_exec( const char *lp )
 {
     const char *ep;
     char *ap = dfa;
@@ -221,18 +221,18 @@ int ref_exec( const char *lp )
     bopat[9] = 0;
 
     if( *ap == PAT_END ){
-	return 0;	/* Bad dfa. fail always */
+	return TMFALSE;	/* Bad dfa. fail always */
     }
     ep = pmatch( lp, ap );
     if( !ep ){
-	return 0;
+	return TMFALSE;
     }
     bopat[0] = lp;
     eopat[0] = ep;
-    return 1;
+    return TMTRUE;
 }
 
-#define isinset(x,y) ((x)[((y)&BLKIND)>>3] & (1<<((y)&BITIND)))
+#define isinset(x,y) (((x)[((y)&BLKIND)>>3] & (1<<((y)&BITIND)))!=0)
 
 /* pmatch:
  *	internal routine for the hard part
@@ -297,7 +297,7 @@ static const char *pmatch( const char *lp, const char *ap )
 
 	    case PAT_ANYSPAN:
 		are = lp;
-		while( *lp ){
+		while( *lp != '\0' ){
 		    lp++;
 		}
 		while( lp >= are ){
@@ -311,7 +311,7 @@ static const char *pmatch( const char *lp, const char *ap )
 
 	    default:
 		fprintf( stderr, "ref_exec: bad dfa opcode: %d.\n", op );
-		exit( 2 );
+		exit( EXIT_FAILURE );
 	}
     }
     if( *lp != '\0' ){
@@ -362,7 +362,7 @@ void ref_subs( const char *src, char *dst )
 	}
 	bp = bopat[pin];
 	ep = eopat[pin];
-	if( bp && ep ){
+	if( bp != NULL && ep != NULL ){
 	    while( *bp != '\0' && bp < ep ){
 		*dst++ = *bp++;
 	    }
