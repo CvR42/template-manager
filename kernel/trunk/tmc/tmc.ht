@@ -306,32 +306,32 @@ extern $t_list append_$t_list( /*@notnull@*//*@returned@*/ $t_list, /*@only@*/ $
 ..
 .. reverse_<type>_list() routines.
 .foreach t $(want_reverse_list)
-extern $t_list reverse_$t_list( /*@returned@*/ $t_list );
+extern $t_list reverse_$t_list( /*@only@*/ $t_list );
 .endforeach
 ..
 .. insert_<type>_list() routines.
 .foreach t $(want_insert_list)
-extern $t_list insert_$t_list( /*@returned@*/ $t_list, unsigned int, /*@only@*/ $t  );
+extern /*@only@*/ $t_list insert_$t_list( /*@notnull@*//*@only@*/ $t_list, unsigned int, /*@only@*/ $t  );
 .endforeach
 ..
 .. insertlist_<type>_list() routines.
 .foreach t $(want_insertlist_list)
-extern $t_list insertlist_$t_list( /*@returned@*/ $t_list, unsigned int, /*@only@*/ $t_list  );
+extern $t_list insertlist_$t_list( /*@notnull@*//*@only@*/ $t_list, unsigned int, /*@only@*/ $t_list  );
 .endforeach
 ..
 .. delete_<type>_list() routines.
 .foreach t $(want_delete_list)
-extern $t_list delete_$t_list( /*@returned@*/ $t_list, unsigned int );
+extern /*@only@*/ /*@notnull@*/ $t_list delete_$t_list( /*@notnull@*//*@only@*/ $t_list, unsigned int );
 .endforeach
 ..
 .. deletelist_<type>_list() routines.
 .foreach t $(want_deletelist_list)
-extern $t_list deletelist_$t_list( /*@returned@*/ $t_list, unsigned int, unsigned int );
+extern /*@only@*//*@notnull@*/ $t_list deletelist_$t_list( /*@notnull@*//*@only@*/ $t_list, unsigned int, unsigned int );
 .endforeach
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( /*@returned@*/ $t_list, unsigned int, /*@out@*//*@only@*/ $t *, /*@out@*/ tmbool * );
+extern $t_list extract_$t_list( /*@returned@*/ $t_list, unsigned int, /*@out@*/ __splint_only_$t *, /*@out@*/ tmbool * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.
@@ -347,7 +347,7 @@ extern $t_list extractlist_$t_list( /*@returned@*/ $t_list, unsigned int, unsign
 ..
 .. concat_<type>_list() routines
 .foreach t $(want_concat_list)
-extern $t_list concat_$t_list( /*@returned@*/ $t_list, /*@only@*/ $t_list );
+extern /*@only@*/ $t_list concat_$t_list( /*@notnull@*//*@only@*/ $t_list, /*@only@*/ $t_list );
 .endforeach
 ..
 .. fre_<type>_list() routines
@@ -368,18 +368,18 @@ extern void rfre_$t( /*@only@*/ $t );
 ..
 .. print_<type>() routines
 .foreach t $(want_print)
-extern void print_$t( TMPRINTSTATE *, const_$t );
+extern void print_$t( TMPRINTSTATE *st, const_$t t );
 .endforeach
 .foreach t $(want_print_list)
-extern void print_$t_list( TMPRINTSTATE *, const_$t_list );
+extern void print_$t_list( TMPRINTSTATE *st, const_$t_list l );
 .endforeach
 ..
 .. fprint_<type>() routines
 .foreach t $(want_fprint)
-extern void fprint_$t( FILE *, const_$t );
+extern void fprint_$t( FILE *f, const_$t ) /*@modifies *f@*/;
 .endforeach
 .foreach t $(want_fprint_list)
-extern void fprint_$t_list( FILE *, const_$t_list );
+extern void fprint_$t_list( FILE *f, const_$t_list ) /*@modifies *f@*/;
 .endforeach
 ..
 .. slice_<type>() routines
@@ -392,7 +392,7 @@ extern /*@only@*/ $t_list real_slice_$t_list(
  unsigned int e,
  const char *_f,
  int _l
-);
+) /*@modifies internalState@*/;
 .endforeach
 #else
 .foreach t $(want_slice_list)
@@ -405,7 +405,7 @@ extern /*@only@*/ $t_list slice_$t_list( const_$t_list, unsigned int, unsigned i
 .if ${len $(want_rdup) $(want_rdup_list)}
 #ifdef LOGNEW
 .foreach t $(want_rdup)
-extern /*@only@*/ $t real_rdup_$t( const_$t, const char *_f, int _l );
+extern /*@only@*/ $t real_rdup_$t( const_$t, const char *_f, int _l ) /*@modifies internalState@*/;
 .endforeach
 .foreach t $(want_rdup_list)
 extern /*@only@*/ $t_list real_rdup_$t_list( const_$t_list, const char *_f, int _l ) /*@*/;
@@ -456,9 +456,6 @@ extern tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b ) /*
 .endforeach
 ..
 .. Misc. functions.
-.if ${member flush_$(basename) $(want_misc)}
-extern void flush_$(basename)( void ) /*@modifies filesystem@*/;
-.endif
 .if ${member stat_$(basename) $(want_misc)}
 extern void stat_$(basename)( FILE *f ) /*@modifies *f@*/;
 .endif

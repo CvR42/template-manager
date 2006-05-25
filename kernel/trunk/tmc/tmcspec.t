@@ -18,7 +18,6 @@
 .append wantdefs deletelist_toplevel_list
 .append wantdefs extract_toplevel_list
 .append wantdefs extractlist_toplevel_list
-.append wantdefs flush_$(basename)
 .append wantdefs fprint_expr
 .append wantdefs fprint_label
 .append wantdefs fprint_thing
