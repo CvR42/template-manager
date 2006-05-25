@@ -288,17 +288,17 @@ extern $t_list deletelist_$t_list( $t_list, unsigned int, unsigned int );
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( $t_list, unsigned int, $t *, int * );
+extern $t_list extract_$t_list( $t_list, unsigned int, /*@out@*/ $t *, /*@out@*/ tmbool * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.
 #ifdef LOGNEW
 .foreach t $(want_extractlist_list)
-extern $t_list real_extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list *, const char *, const int );
+extern $t_list real_extractlist_$t_list( $t_list, unsigned int, unsigned int, /*@out@*/ $t_list *, const char *, const int );
 .endforeach
 #else
 .foreach t $(want_extractlist_list)
-extern $t_list extractlist_$t_list( $t_list, unsigned int, unsigned int, $t_list * );
+extern $t_list extractlist_$t_list( $t_list, unsigned int, unsigned int, /*@out@*/ $t_list * );
 .endforeach
 #endif
 ..
