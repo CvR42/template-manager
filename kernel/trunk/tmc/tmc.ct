@@ -61,25 +61,17 @@ static long newcnt_$t = 0, frecnt_$t = 0;
 
 .endif
 
-static char tm_srcfile[] = __FILE__;
-
 #ifndef FATAL
-#define FATAL(msg) tm_fatal(tm_srcfile,__LINE__,msg)
+#define FATAL(msg) tm_fatal(__FILE__,__LINE__,msg)
 #endif
 
 /* Error strings. */
 .if ${len $(need_delete_list) $(need_deletelist_list) $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
 static char tm_nilptr[] = "NIL pointer";
 .endif
-.if ${len $(need_fscan_list)}
-static char tm_badeof[] = "unexpected end of file";
-.endif
-.if ${len $(need_slice_list)}
-static char tm_badslice[] = "bad slice";
-.endif
 
 #ifndef FATALTAG
-#define FATALTAG(tag) tm_badtag(tm_srcfile,__LINE__,(int) tag)
+#define FATALTAG(tag) tm_badtag(__FILE__,__LINE__,(int) tag)
 #endif
 
 .if ${len $(need_setroom_list)}
@@ -1007,7 +999,7 @@ $(stic_$t)$t_list slice_$t_list(
 	e = l->sz;
     }
     if( b>e ){
-	FATAL( tm_badslice );
+	FATAL( "bad slice" );
     }
     nw = setroom_$t_list( nw, e-b );
     for( ix=b; ix<e; ix++ ){
@@ -1488,7 +1480,7 @@ $(stic_$t)tmbool fscan_$t_list( FILE *f, $t_list *p )
     if( tm_fscanspace( f ) ){
 	return TMTRUE;
     }
-    c = getc( f );
+    c = fgetc( f );
     if( c == '@' ){
 	return tm_fscanclosebrac( f, n );
     }
@@ -1505,7 +1497,7 @@ $(stic_$t)tmbool fscan_$t_list( FILE *f, $t_list *p )
 	return TMFALSE;
     }
     if( c == EOF ){
-	(void) strcpy( tm_errmsg, tm_badeof );
+	(void) strcpy( tm_errmsg, "unexpected end of file" );
 	return TMTRUE;
     }
     (void) ungetc( c, f );
@@ -1517,9 +1509,9 @@ $(stic_$t)tmbool fscan_$t_list( FILE *f, $t_list *p )
 	if( tm_fscanspace( f ) ){
 	    return TMTRUE;
 	}
-	c = getc( f );
+	c = fgetc( f );
 	if( c == EOF ){
-	    (void) strcpy( tm_errmsg, tm_badeof );
+            (void) strcpy( tm_errmsg, "unexpected end of file" );
 	    return TMTRUE;
 	}
 	if( c != ',' ){
@@ -1555,8 +1547,6 @@ $(stic_$t)$t_list delete_$t_list( $t_list l, const unsigned int pos )
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-        /*@notreached@*/
-	return l;
     }
     if( pos >= l->sz ){
 	return l;
@@ -1592,8 +1582,6 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
 
     if( l == $t_listNIL ){
 	FATAL( tm_nilptr );
-        /*@notreached@*/
-	return l;
     }
     if( to>=l->sz ){
 	to = l->sz;
@@ -1638,10 +1626,7 @@ $(stic_$t)$t_list extract_$t_list(
     unsigned int ix;
 
     if( l == $t_listNIL ){
-        *valid = TMFALSE;
 	FATAL( tm_nilptr );
-        /*@notreached@*/
-	return l;
     }
     if( pos >= l->sz ){
 	*valid = TMFALSE;
@@ -1709,10 +1694,7 @@ $(stic_$t)$t_list extractlist_$t_list(
     unsigned int ressz;
 
     if( l == $t_listNIL ){
-        *res = $t_listNIL;
 	FATAL( tm_nilptr );
-        /*@notreached@*/
-	return l;
     }
     if( to>=l->sz ){
 	to = l->sz;

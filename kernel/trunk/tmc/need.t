@@ -65,7 +65,7 @@
 .set listgroups append concat slice setroom insert delete reverse extract
 .append listgroups extractlist insertlist deletelist
 .append groups $(listgroups)
-.set misccode stat_$(basename) get_balance_$(basename) flush_$(basename)
+.set misccode stat_$(basename) get_balance_$(basename)
 .if ${eq $(template) ald}
 .append groups null
 .endif

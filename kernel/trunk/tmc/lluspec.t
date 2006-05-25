@@ -41,4 +41,3 @@
 .append wantdefs setroom_toplevel_list
 .append wantdefs slice_toplevel_list
 .append wantdefs stat_$(basename)
-.append wantdefs flush_$(basename)
