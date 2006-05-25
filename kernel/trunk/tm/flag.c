@@ -31,13 +31,13 @@ void helpdbflags( FILE *f, const dbflag *flagtab )
 {
     const dbflag *p;
 
-    fputs( "Debugging flags:\n", f );
+    (void) fputs( "Debugging flags:\n", f );
     p = flagtab;
     while( p->flagchar != '\0' ){
 	fprintf( f, " %c - %s.\n", p->flagchar, p->flagdescr );
 	p++;
     }
-    fputs( " . - all flags.\n", f );
+    (void) fputs( " . - all flags.\n", f );
 }
 
 /* Given a string 's' containing debug flags, a flag table 'flagtab' and
@@ -62,8 +62,8 @@ void setdbflags( const char *s, const dbflag *flagtab, tmbool val )
 	else {
 	    e = finddbflag( c, flagtab );
 	    if( e == dbflagNIL ){
-		fprintf( stderr, "Unknown debug flag: '%c'\n", c );
-		exit( 1 );
+		(void) fprintf( stderr, "Unknown debug flag: '%c'\n", c );
+		exit( EXIT_FAILURE );
 	    }
 	    *e->flagadr = val;
 	}

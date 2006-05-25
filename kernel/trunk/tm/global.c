@@ -12,8 +12,8 @@
 #include "tmcode.h"
 #include "global.h"
 
-FILE *tracestream = 0;
-FILE *statstream = 0;
+FILE *tracestream;
+FILE *statstream;
 
 tmstring tplfilename = tmstringNIL;
 tmstring dsfilename = tmstringNIL;
@@ -22,10 +22,10 @@ tmstring_list searchpath = tmstring_listNIL;
 
 clock_t start_time;
 
-tmbool fntracing = FALSE;
-tmbool listing = FALSE;
-tmbool maintr = FALSE;
-tmbool prstat = FALSE;
-tmbool sevaltr = FALSE;
-tmbool vartr = FALSE;
-tmbool noerrorline = FALSE;
+tmbool fntracing = TMFALSE;
+tmbool listing = TMFALSE;
+tmbool maintr = TMFALSE;
+tmbool prstat = TMFALSE;
+tmbool sevaltr = TMFALSE;
+tmbool vartr = TMFALSE;
+tmbool noerrorline = TMFALSE;

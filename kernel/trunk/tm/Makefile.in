@@ -218,7 +218,7 @@ PRECIOUSJUNK += config.status configure
 #lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
 #	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
 
-lint: $(LINTSRCS) splint.flags
+lint: $(LINTSRCS) $(HDRS) splint.flags
 	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint
 
 JUNK += lint

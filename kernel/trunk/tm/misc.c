@@ -19,7 +19,7 @@ FILE *ckfopen( const char *nm, const char *acc )
 
     if( NULL == hnd ){
 	sys_error( errno, "%s", nm );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     return hnd;
 }
@@ -31,7 +31,7 @@ void ckfreopen( const char *nm, const char *acc, FILE *f )
 {
     if( freopen( nm, acc, f ) == NULL ){
 	sys_error( errno, "%s", nm );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 }
 
@@ -57,7 +57,7 @@ static unsigned int types_hashval( const char *s )
     while( *s!= '\0' ){
 	 v = (v ^ *s);
 	 v<<=1;
-	 if( v & TYPES_HASHWIDTH ) v++;
+	 if( (v & TYPES_HASHWIDTH) != 0 ) v++;
 	 v &= TYPES_HASHMASK;
 	 s++;
     }
@@ -172,12 +172,12 @@ tmbool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l )
     return FALSE;
 }
 
-static Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm )
+static const_Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm )
 {
     unsigned int ix;
 
     for( ix=0; ix<supers->sz; ix++ ){
-	Field f = find_field( types, supers->arr[ix], nm );
+	const_Field f = find_field( types, supers->arr[ix], nm );
 
 	if( f != FieldNIL ){
 	    return f;
@@ -186,7 +186,7 @@ static Field find_field_super( const_ds_list types, tmsymbol_list supers, const_
     return FieldNIL;
 }
 
-Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
+const_Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
 {
     unsigned int pos;
     ds t;
@@ -228,7 +228,7 @@ Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm )
     return find_field_super( types, inherits, nm );
 }
 
-tmsymbol_list extract_inherits( const_ds_list types, const_tmsymbol type )
+const_tmsymbol_list extract_inherits( const_ds_list types, const_tmsymbol type )
 {
     unsigned int ix;
 
@@ -251,7 +251,7 @@ void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type 
     collect_inheritors( &queue, types, type );
     while( queue->sz>0 ){
 	tmsymbol nm;
-	int valid;
+	tmbool valid;
 
 	queue = extract_tmsymbol_list( queue, 0, &nm, &valid );
 	if( valid ){
@@ -392,7 +392,7 @@ void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol 
  */
 static void collect_inherited_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type )
 {
-    tmsymbol_list inherits;
+    const_tmsymbol_list inherits;
     unsigned int ix;
 
     inherits = extract_inherits( types, type );

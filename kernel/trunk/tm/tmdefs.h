@@ -21,7 +21,7 @@
 #endif
 
 #ifndef __cplusplus
-typedef int bool;
+typedef tmbool bool;
 #endif
 
 #define CHARNIL (char *)0

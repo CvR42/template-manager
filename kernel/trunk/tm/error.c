@@ -27,10 +27,10 @@ static tmbool goterr = FALSE;
 static void fileline_errpos( const char *fnm, unsigned int lineno )
 {
     if( noerrorline ){
-        sprintf( errpos, "%s", fnm );
+        (void) snprintf( errpos, ERRARGLEN, "%s", fnm );
     }
     else {
-        sprintf( errpos, "%s:%u", fnm, lineno );
+        (void) snprintf( errpos, ERRARGLEN, "%s:%u", fnm, lineno );
     }
 }
 
@@ -52,14 +52,14 @@ static void origsymbol_errpos( const_origsymbol s )
     }
     org = s->org;
     if( org == originNIL ){
-        sprintf( errpos, "%s", s->sym->name );
+        (void) snprintf( errpos, ERRARGLEN, "%s", s->sym->name );
     }
     else {
         if( noerrorline ){
-            sprintf( errpos, "%s: %s", org->file->name, s->sym->name );
+            (void) snprintf( errpos, ERRARGLEN, "%s: %s", org->file->name, s->sym->name );
         }
         else {
-            sprintf( errpos, "%s:%u: %s", org->file->name, org->line, s->sym->name );
+            (void) snprintf( errpos, ERRARGLEN, "%s:%u: %s", org->file->name, org->line, s->sym->name );
         }
     }
 }
@@ -68,15 +68,15 @@ static void origsymbol_errpos( const_origsymbol s )
 static void vmessage( const char *prefix, const char *msg, va_list args )
 {
     if( errpos[0] != '\0' ){
-        fputs( errpos, stderr );
-        fputs( ": ", stderr );
+        (void) fputs( errpos, stderr );
+        (void) fputs( ": ", stderr );
     }
     if( prefix != NULL ){
-        fputs( prefix, stderr );
-        fputs( ": ", stderr );
+        (void) fputs( prefix, stderr );
+        (void) fputs( ": ", stderr );
     }
     (void) vfprintf( stderr, msg, args );
-    fputs( "\n", stderr );
+    (void) fputs( "\n", stderr );
     errpos[0] = '\0';
 }
 
@@ -99,14 +99,14 @@ static void vwarning( const char *msg, va_list args )
 static void vinternal( const char *msg, va_list args )
 {
     vmessage( "Internal error", msg, args );
-    exit( 2 );
+    exit( EXIT_FAILURE );
 }
 
 /* General error printing routine: print error message 'msg' possibly preceded
  * by string in 'errpos'.
  *
- * Set a flag to indicate an error has occurred. If the function
- * errcheck() is called, it will cause an exit( 1 ) if 'goterr' is now
+ * Set a flag to indicate an error has occurred. If the function errcheck()
+ * is called, it will cause an exit( EXIT_FAILURE ) if 'goterr' is now
  * true.
  */
 void error( const char *msg, ... )
@@ -156,12 +156,12 @@ void origsymbol_internal_error( const_origsymbol s, const char *msg, ... )
     va_end( args );
 }
 
-/* Check if 'goterr' flag is set, and do exit(1) if it is. */
+/* Check if 'goterr' flag is set, and do exit(EXIT_FAILURE) if it is. */
 void errcheck( void )
 {
     if( goterr ){
         fprintf( stderr, "errors detected, program aborted\n" );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
 }
 
@@ -234,8 +234,8 @@ void sys_error( int no, const char *msg, ... )
     va_list args;
 
     va_start( args, msg );
-    fputs( strerror( no ), stderr );
-    fputs( ": ", stderr );
+    (void) fputs( strerror( no ), stderr );
+    (void) fputs( ": ", stderr );
     verror( msg, args );
     va_end( args );
 }

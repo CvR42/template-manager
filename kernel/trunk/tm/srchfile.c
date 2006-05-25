@@ -47,7 +47,7 @@ tmstring search_file(
     maxlen++;
     ans = create_tmstring( maxlen );
     for( ix=0; ix<path->sz; ix++ ){
-	sprintf( ans, "%s%s%s", path->arr[ix], sep, fnm );
+	(void) snprintf( ans, maxlen, "%s%s%s", path->arr[ix], sep, fnm );
 	f = fopen( ans, mode );
 	if( f!=NULL ){
 	    fclose( f );

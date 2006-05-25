@@ -185,32 +185,32 @@ static const char *evalcmp( const_origin org, const char *x, long *vp )
     while( isspace( *s ) ) s++;
     if( s[0] == '!' && s[1] == '=' ){
 	s = evalsum( org, s+2, &v2 );
-	*vp = (v1!=v2);
+	*vp = (long) (v1!=v2);
 	return s;
     }
     if( s[0] == '=' && s[1] == '=' ){
 	s = evalsum( org, s+2, &v2 );
-	*vp = (v1==v2);
+	*vp = (long) (v1==v2);
 	return s;
     }
     if( s[0] == '<' && s[1] == '=' ){
 	s = evalsum( org, s+2, &v2 );
-	*vp = (v1<=v2);
+	*vp = (long) (v1<=v2);
 	return s;
     }
     if( s[0] == '<' ){
 	s = evalsum( org, s+1, &v2 );
-	*vp = (v1<v2);
+	*vp = (long) (v1<v2);
 	return s;
     }
     if( s[0] == '>' && s[1] == '=' ){
 	s = evalsum( org, s+2, &v2 );
-	*vp = (v1>=v2);
+	*vp = (long) (v1>=v2);
 	return s;
     }
     if( s[0] == '>' ){
 	s = evalsum( org, s+1, &v2 );
-	*vp = (v1>v2);
+	*vp = (long) (v1>v2);
 	return s;
     }
     *vp = v1;
@@ -228,12 +228,12 @@ static const char *evalbool( const_origin org, const char *x, long *vp )
     while( isspace( *s ) ) s++;
     if( s[0] == '&' ){
 	s = evalbool( org, s+1, &v2 );
-	*vp = v1 && v2;
+	*vp = (long) ((v1 != 0) && (v2 != 0));
 	return s;
     }
     if( s[0] == '|' ){
 	s = evalbool( org, s+1, &v2 );
-	*vp = v1 || v2;
+	*vp = (long) ((v1 != 0) || (v2 != 0));
 	return s;
     }
     *vp = v1;
@@ -257,7 +257,7 @@ char *evalexpr( const_origin org, const_tmstring x )
     if( *s != '\0' ){
 	origin_error( org, "bad expression '%s'", s );
     }
-    (void) sprintf( buf, "%ld", v );
+    (void) snprintf( buf, NUMBUFSIZE, "%ld", v );
     if( fntracing ){
 	fprintf( tracestream, "expression value: '%s'\n", buf );
     }

@@ -25,8 +25,8 @@
  ******************************************************/
 
 /* NOTE: The remainder of the code assumes HASHWIDTH is a power of 2. */
-#define HASHBITS 6
-#define HASHWIDTH (1<<HASHBITS)
+#define HASHBITS 6U
+#define HASHWIDTH (1U<<HASHBITS)
 #define HASHMASK (HASHWIDTH-1)
 
 /******************************************************
@@ -52,7 +52,7 @@ static unsigned int hashval( const char *s )
     while( *s!= '\0' ){
 	 v = (v ^ (unsigned int) *s);
 	 v<<=1;
-	 if( v & HASHWIDTH ) v++;
+	 if( (v & HASHWIDTH) != 0 ) v++;
 	 v &= HASHMASK;
 	 s++;
     }
@@ -75,12 +75,12 @@ static tmbool findlocmacro(
     macro_list l;
     unsigned int hv;
     unsigned int ix;
-    macro m;
 
     hv = hashval( nm );
     l = macros[hv];
     for( ix=0; ix<l->sz; ix++ ){
-	m = l->arr[ix];
+        const_macro m = l->arr[ix];
+
 	if( m->lvl==ctxlvl && strcmp( nm, m->name ) == 0 ){
 	    *hvp = hv;
 	    *ixp = ix;
@@ -93,7 +93,7 @@ static tmbool findlocmacro(
 /* Search in all contexts for variable with name 'nm'. Return pointer to
    struct macro of variable, or variableNIL if not found.
  */
-macro findmacro( const char *nm )
+const_macro findmacro( const char *nm )
 {
     macro_list l;
     unsigned int hv;
@@ -201,7 +201,7 @@ void setmacro(
 /* Search in current context level 'lvl' for variable with name 'nm'.
    Return pointer to struct variable of variable, or variableNIL if not found.
  */
-static variable findlocvar( const char *nm )
+static /*@observer@*//*@null@*/ variable findlocvar( const char *nm )
 {
     variable_list l;
     unsigned int hv;
@@ -222,7 +222,7 @@ static variable findlocvar( const char *nm )
 /* Search in all contexts for variable with name 'nm'. Return pointer to
    struct variable of variable, or variableNIL if not found.
  */
-static variable findvar( const char *nm )
+static /*@observer@*//*@null@*/ variable findvar( const char *nm )
 {
     variable_list l;
     unsigned int hv;
@@ -361,9 +361,9 @@ void flushvar( void )
 /* Search for variable with name 'nm'. Return pointer to the value of
    'nm', or NULL of not found.
  */
-tmstring getvar( const char *nm )
+const_tmstring getvar( const char *nm )
 {
-    variable v = findvar( nm );
+    const_variable v = findvar( nm );
 
     if( v != variableNIL ){
 	if( vartr )
@@ -379,7 +379,7 @@ tmstring getvar( const char *nm )
  */
 tmstring getretval( void )
 {
-    variable v = findlocvar( RETVALNAME );
+    const_variable v = findlocvar( RETVALNAME );
 
     if( v != variableNIL ){
 	if( vartr ){
@@ -424,7 +424,7 @@ void end_var( void )
     if( ctxlvl!=0 ){
 	fprintf(
 	    stderr,
-	    "Warning: still %d context levels pending!\n",
+	    "Warning: still %u context levels pending!\n",
 	    ctxlvl
 	);
     }

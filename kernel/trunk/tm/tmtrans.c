@@ -292,7 +292,7 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
 			origin_error( org, "unknown dot command '%s'", com );
                         rfre_origin( org );
                         /* FIXME: that's a bit rude! */
-			exit( 1 );
+			exit( EXIT_FAILURE );
 		    }
 		    cp++;
 		}
@@ -527,13 +527,13 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 {
     tmstring si;
     tmstring cp;		/* pointer to constructed tmstring */
-    unsigned int croom;		/* room in constructed tmstring */
-    unsigned int six;		/* index in constructed tmstring */
+    size_t croom;		/* room in constructed tmstring */
+    size_t six;		        /* index in constructed tmstring */
     char var1[2];		/* buffer for 1 char variable */
     char *fnval;
-    char *v;
+    const char *v;
     tmstring ans;
-    unsigned int len;
+    size_t len;
 
     si = *spi;
     cp = new_tmstring( si );
@@ -1128,7 +1128,7 @@ static void dorename( const_Rename tpl )
     allds = rename_ds_list( allds, add_tmsymbol( sl->arr[0] ), add_tmsymbol( sl->arr[1] ) );
     if( !check_ds_list( allds ) ){
 	origin_error( tpl->org, "The problems were caused by .rename of `%s' to `%s'", sl->arr[0], sl->arr[1] );
-	exit( 1 );
+	exit( EXIT_FAILURE );
     }
     rfre_tmstring_list( sl );
 }
@@ -1156,7 +1156,8 @@ static void doappend( const_Append tpl )
 {
     char *is;
     char *os;
-    tmstring val;
+    const_tmstring val;
+    tmstring new_val;
     tmstring nm;
     tmstring_list sl;
 
@@ -1175,10 +1176,10 @@ static void doappend( const_Append tpl )
     if( val != tmstringNIL && val[0] != '\0' ){
 	sl = insert_tmstring_list( sl, 0, rdup_tmstring( val ) );
     }
-    val = flatstrings( sl );
+    new_val = flatstrings( sl );
     rfre_tmstring_list( sl );
-    setvar( nm, val );
-    fre_tmstring( val );
+    setvar( nm, new_val );
+    fre_tmstring( new_val );
     fre_tmstring( nm );
 }
 
@@ -1187,7 +1188,8 @@ static void doglobalappend( const_GlobalAppend tpl )
 {
     char *is;
     char *os;
-    tmstring val;
+    const_tmstring val;
+    tmstring new_val;
     tmstring nm;
     tmstring_list sl;
 
@@ -1206,10 +1208,10 @@ static void doglobalappend( const_GlobalAppend tpl )
     if( val != tmstringNIL && val[0] != '\0' ){
 	sl = insert_tmstring_list( sl, 0, rdup_tmstring( val ) );
     }
-    val = flatstrings( sl );
+    new_val = flatstrings( sl );
     rfre_tmstring_list( sl );
-    globalsetvar( nm, val );
-    fre_tmstring( val );
+    globalsetvar( nm, new_val );
+    fre_tmstring( new_val );
     fre_tmstring( nm );
 }
 
@@ -1412,7 +1414,7 @@ static void dofor( const_For tpl, FILE *outfile )
     for( v=start; v<end; v += stride ){
 	char vstr[50];
 
-	sprintf( vstr, "%d", v );
+	(void) snprintf( vstr, 50, "%d", v );
 	setvar( nm, vstr );	/* Set the iteration variable. */
 	dotrans( tpl->body, outfile );
     }
@@ -1479,7 +1481,7 @@ static void docall( const_Call tpl, FILE *outfile )
     tmstring_list fpl;
     unsigned int ix;
     const_macro m;
-    int valid;
+    tmbool valid;
 
     is = tpl->line;
     os = alevalto( tpl->org, &is, '\0' );
@@ -1650,9 +1652,10 @@ static void internal_translate( FILE *infile, const char *filenm, FILE *outfile 
     tpl = readtemplate( infile, filenm, &endcom, &lineno );
     if( endcom != EOFLINE ){
 	unbalance( filenm, lineno, lineno, endcom, EOFLINE );
-	return;
     }
-    dotrans( tpl, outfile );
+    else {
+        dotrans( tpl, outfile );
+    }
     rfre_tplelm_list( tpl );
 }
 

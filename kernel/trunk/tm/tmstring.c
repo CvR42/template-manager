@@ -5,9 +5,9 @@
 
 #include "config.h"
 
-#include "tmdefs.h"
 #include <ctype.h>
 #include <tmc.h>
+#include "tmdefs.h"
 
 #include "tmcode.h"
 #include "tmstring.h"
@@ -145,7 +145,7 @@ char *newintstr( int n )
 {
     char buf[NUMBUFSIZE];
 
-    (void) sprintf( buf, "%d", n );
+    (void) snprintf( buf, NUMBUFSIZE, "%d", n );
     return new_tmstring( buf );
 }
 
@@ -154,7 +154,7 @@ char *newuintstr( tmuint n )
 {
     char buf[NUMBUFSIZE];
 
-    (void) sprintf( buf, "%u", n );
+    (void) snprintf( buf, NUMBUFSIZE, "%u", n );
     return new_tmstring( buf );
 }
 

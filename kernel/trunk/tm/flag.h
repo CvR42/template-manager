@@ -1,10 +1,10 @@
 /* File: $Id$ */
 
 /* Structure to describe debugging flags. */
-typedef struct _cvr_db_flags {
-    const char flagchar;	/* char to switch the flag on */
-    tmbool *flagadr;		/* pointer to the flag */
-    const char *flagdescr;	/* description string */
+typedef struct _str_dbflags {
+    const char flagchar;	        /* char to switch the flag on */
+    /*@exposed@*/ tmbool *flagadr;	/* pointer to the flag */
+    const char *flagdescr;      	/* description string */
 } dbflag;
 
 #define dbflagNIL (dbflag *)0
