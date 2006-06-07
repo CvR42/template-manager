@@ -17,10 +17,19 @@ $(indent)(void) n;
 .endmacro
 ..
 .. Given an indent 'indent', the name 'var' of the variable that holds
-.. the datastructure we're walking on, and a type 't', of that variable,
+.. the datastructure we're walking on, and a type 't' of that variable,
 .. generate a return statement.
 .macro generate_walker_return indent var t
 $(indent)return $(var);
+.endmacro
+..
+.. Given an indent 'indent', the name 'var' of the variable that holds
+.. the datastructure we're walking on, and a type 't' of that variable,
+.. generate a prelude for a walker function. This one tests for null.
+.macro generate_walker_locals indent var t
+$(indent)if( $(var) == 0 ){
+$(indent)    return $(var);
+$(indent)}
 .endmacro
 ..
 .. Given the name 'var' of the variable that holds the datastructure
@@ -34,7 +43,7 @@ static $t add_$t_walker( $t $(var), const int n )
 .. we're walking on, and the type 't' of that variable, generate a forward
 .. declaration for the walker function of the given type.
 .macro generate_walker_declaration var t
-static $t add_$t_walker( $t $(var), const int n );
+static $t /*@only@*/ add_$t_walker( /*@only@*/ $t $(var), const int n );
 .endmacro
 ..
 .. Given an indent 'indent', a variable 'var' to walk into, the type of
@@ -101,7 +110,7 @@ static int add_int_action( int elm, int n )
 }
 
 /* Add action for 'foldexpr'. */
-static foldexpr add_foldexpr_action( foldexpr elm, int n )
+static /*@only@*/ foldexpr add_foldexpr_action( /*@only@*/ foldexpr elm, int n )
 {
 .call generate_walker_call "    " elm foldexpr foldexpr
     return elm;
