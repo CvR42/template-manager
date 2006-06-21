@@ -24,7 +24,7 @@ int main( void )
     toplevel_list dscopy;
     toplevel_list l;
     toplevel e;
-    tmbool valid;
+    int valid;
     int n;
     FILE *infile;
     FILE *outfile;

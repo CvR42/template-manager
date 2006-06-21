@@ -511,7 +511,7 @@ $(stat)$t_list deletelist_$t_list( $t_list l, const unsigned int from, unsigned 
  *    extract_<type>_list routines               *
  ************************************************/
 
-.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, /*@out@*/ $t *, /*@out@*/ tmbool * )"
+.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, /*@out@*/ $t *, /*@out@*/ int * )"
 .foreach t $(need_extract_list)
 .if ${member $t $(want_extract_list)}
 .set stat
@@ -523,7 +523,7 @@ $(stat)$t_list extract_$t_list(
     $t_list l,
     const unsigned int p,
     $t *e,
-    tmbool *valid
+    int *valid
 )
 {
     $t_list nl;

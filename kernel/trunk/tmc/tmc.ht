@@ -331,7 +331,7 @@ extern /*@only@*//*@notnull@*/ $t_list deletelist_$t_list( /*@notnull@*//*@only@
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( /*@returned@*/ $t_list, unsigned int, /*@out@*/ __splint_only_$t *, /*@out@*/ tmbool * );
+extern $t_list extract_$t_list( /*@returned@*/ $t_list, unsigned int, /*@out@*/ __splint_only_$t *, /*@out@*/ int * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.
