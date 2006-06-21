@@ -288,7 +288,7 @@ extern $t_list deletelist_$t_list( $t_list, unsigned int, unsigned int );
 ..
 .. extract_<type>_list() routines.
 .foreach t $(want_extract_list)
-extern $t_list extract_$t_list( $t_list, unsigned int, /*@out@*/ $t *, /*@out@*/ tmbool * );
+extern $t_list extract_$t_list( $t_list, unsigned int, /*@out@*/ $t *, /*@out@*/ int * );
 .endforeach
 ..
 .. extractlist_<type>_list() routines.

@@ -1607,7 +1607,7 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
  *    extract_<type>_list routines                 *
  **************************************************/
 
-.call ansi_static extract_list "$$t_list extract_$$t_list( /*@returned@*/ $$t_list, const unsigned int, $$t *, tmbool * )"
+.call ansi_static extract_list "$$t_list extract_$$t_list( /*@returned@*/ $$t_list, const unsigned int, $$t *, int * )"
 .foreach t $(need_extract_list)
 .set stic_$t "static "
 .endforeach
@@ -1620,7 +1620,7 @@ $(stic_$t)$t_list extract_$t_list(
     $t_list l,
     const unsigned int pos,
     $t *e,
-    tmbool *valid
+    int *valid
 )
 {
     unsigned int ix;
