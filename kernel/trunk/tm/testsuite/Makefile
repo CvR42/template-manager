@@ -53,6 +53,9 @@ tests: $(DONEFILES)
 clean:
 	rm -f $(JUNK)
 
+distclean:
+	rm -f $(JUNK) $(PRECIOUSJUNK)
+
 empty:
 	rm -f $(JUNK) $(PRECIOUSJUNK)
 
