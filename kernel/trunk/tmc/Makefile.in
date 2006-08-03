@@ -302,7 +302,7 @@ configure: configure.in
 	autoconf
 
 config.status: configure
-	./config.status --recheck
+	-./config.status --recheck
 
 Makefile: Makefile.in config.status
 	./config.status
