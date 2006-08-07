@@ -120,5 +120,18 @@ $(DISTBASENAME).tar.gz $(DISTBASENAME).zip: distlist
 	tar cf $(DISTBASENAME).tar `cat distlist`
 	gzip --best -f $(DISTBASENAME).tar
 	zip -q -9 $(DISTBASENAME).zip `cat distlist`
+	rm -rf $(DISTBASENAME)
+
+deb: distlist
+	rm -rf $(DISTBASENAME)
+	svn export . $(DISTBASENAME)
+	echo '#define TMKERNEL_VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
+	cd $(DISTBASENAME)/libtmc; autoconf
+	cd $(DISTBASENAME)/tm; autoconf
+	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ct > tmcode.c
+	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ht > tmcode.h
+	cd $(DISTBASENAME)/tmc; autoconf
+	cd $(DISTBASENAME)/manual; make dist.lst
+	cd $(DISTBASENAME); autoconf
 	-cd $(DISTBASENAME); dpkg-buildpackage -rfakeroot
 	rm -rf $(DISTBASENAME)
