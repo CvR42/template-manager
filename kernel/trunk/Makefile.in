@@ -10,6 +10,7 @@ CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoco
 DISTFILES = $(CONFIGUREFILES) $(DEBIANFILES) README CHANGES gpl.txt lgpl.txt version.h
 DEBIANFILES = \
     debian/changelog \
+    debian/compat \
     debian/control \
     debian/copyright \
     debian/docs \
