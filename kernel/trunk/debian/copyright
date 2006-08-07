@@ -1,0 +1,24 @@
+This package was debianized by Kees van Reeuwijk <reeuwijk@cs.vu.nl> on
+Thu,  3 Aug 2006 15:24:37 +0200.
+
+It was downloaded from http://gforge.cs.vu.nl/projects/templatemanager
+
+Upstream Author: Kees van Reeuwijk <reeuwijk@cs.vu.nl>
+
+Copyright: This software is (c) 1990-2006 Kees van Reeuwijk
+
+License:
+
+Tm is licensed under the Gnu Public License (GPL), see
+/usr/share/common-licenses/GPL, except for the templates and support
+libraries, which are licensed under the Librargy Gnu Public License
+(LGPL), see /usr/share/common-licenses/LGPL.
+
+
+The Debian packaging is (C) 2006, Kees van Reeuwijk <reeuwijk@cs.vu.nl> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
+

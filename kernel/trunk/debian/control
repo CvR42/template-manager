@@ -1,0 +1,13 @@
+Source: templatemanager
+Section: devel
+Priority: optional
+Maintainer: Kees van Reeuwijk <reeuwijk@cs.vu.nl>
+Build-Depends: debhelper (>= 5), autotools-dev
+Standards-Version: 3.7.2
+
+Package: templatemanager
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Templatemanager (also known as `tm') is a
+ tool to build manipulation code for parse trees and other
+ structured data.
