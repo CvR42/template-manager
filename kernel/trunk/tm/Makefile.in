@@ -14,10 +14,18 @@ MAKEFILE = Makefile
 DEPENDFILE = $(MAKEFILE).d
 CC = @CC@
 LINKER = $(CC)
-LOCALBIN = @prefix@/bin
-LOCALLIB = @prefix@/lib
-LOCALINCLUDE = @prefix@/include
-LOCALMAN = @prefix@/man
+prefix = @prefix@
+datarootdir = @datarootdir@
+datadir = @datadir@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
+mandir = @mandir@
+LOCALBIN = $(bindir)
+LOCALLIB = $(libdir)
+LOCALINCLUDE = $(includedir)
+LOCALMAN = $(mandir)
 LIBS = @LIBS@ ../libtmc/libtmc.a
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -94,7 +102,7 @@ TMOUTPUT = tmcode.c tmcode.h
 GENFILES = $(TMOUTPUT) tmpath.c version.h
 
 JUNK         = y.output testerr testout testrdir index.sed \
-		dsneed.t makelog testscr tm.1c tm.prof log tags dist.lst \
+		dsneed.t makelog testscr tm.prof log tags dist.lst \
 		config.log
 PRECIOUSJUNK =
 
@@ -126,12 +134,15 @@ help :
 $(PROG): $(OBJS)
 	$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) -o $(PROG)
 
-install: $(PROG)
+install: $(PROG) tm.1
 	-$(INSTALL) -d $(LOCALBIN)
+	-$(INSTALL) -d $(LOCALMAN)/man1
 	$(INSTALL) $(PROG) $(LOCALBIN)/$(PROG)
+	$(INSTALL) tm.1 $(LOCALMAN)/man1//tm.1
 
 uninstall:
 	$(UNINSTALL) $(LOCALBIN)/$(PROG)
+	$(UNINSTALL) $(LOCALMAN)/man1//tm.1
 
 distclean:
 	rm -f $(OBJS) $(JUNK) $(PROG)
@@ -159,9 +170,6 @@ tmpath.c: $(MAKEFILE)
 
 tags: $(SRCS) $(HDRS)
 	ctags $(SRCS) $(HDRS)
-
-man:
-	nroff -man tm.1 > tm.1c
 
 version.h: ../version.h
 	cp ../version.h version.h

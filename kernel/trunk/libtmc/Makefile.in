@@ -17,8 +17,13 @@
 # see the README file for details.
 
 # The variables below are set by config
-LOCALLIB = @prefix@/lib
-LOCALINCLUDE = @prefix@/include
+prefix = @prefix@
+datarootdir = @datarootdir@
+datadir = @datadir@
+includedir = @includedir@
+libdir = @includedir@
+LOCALLIB = $(libdir)
+LOCALINCLUDE = $(includedir)
 CC = @CC@
 RANLIB=@RANLIB@
 INSTALL=@INSTALL@

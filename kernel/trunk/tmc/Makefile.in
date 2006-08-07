@@ -4,21 +4,22 @@
 # All rights reserved.
 #
 # To customize this Makefile, run configure.
-#
-# Compilation for Atari ST with Pure C is done with a separate project
-# file 'tmc.prj'.
-# Compilation for MSDOS/MS-Windows with Borland C is done with a
-# makefile. See the file 'README' for details.
  
 CC = @CC@
 LINKER = $(CC)
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
-LOCALBIN = @prefix@/bin
-LOCALLIB = @prefix@/lib
-LOCALINCLUDE = @prefix@/include
-LOCALMAN = @prefix@/man
-TMPFILE = @prefix@/tmp4242
+# the Debian packing infrastructure wants prefix  to be a make variable
+# it can override.
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
+LOCALBIN = $(bindir)
+LOCALLIB = $(libdir)
+LOCALINCLUDE = $(includedir)
+TMPFILE = $(prefix)/tmp4242
 UNINSTALL_DATA = rm -f
 
 # System dependent flags for compilation with debugging
