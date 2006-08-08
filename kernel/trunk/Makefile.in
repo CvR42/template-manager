@@ -7,7 +7,7 @@ MAKEFILE = Makefile
 DIRLIST=libtmc tm tmc
 DOCDIRLIST=$(DIRLIST) manual
 CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoconfall
-DISTFILES = $(CONFIGUREFILES) $(DEBIANFILES) README CHANGES gpl.txt lgpl.txt version.h
+DISTFILES = $(CONFIGUREFILES) $(DEBIANFILES) README INSTALL CHANGES gpl.txt lgpl.txt version.h
 DEBIANFILES = \
     debian/changelog \
     debian/compat \
