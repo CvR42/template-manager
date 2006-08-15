@@ -3,21 +3,14 @@
 #
 # All rights reserved.
  
-#  tm C support library makefile
+#  Tm C support library makefile
 
-# This makefile uses the UNIX command 'uname' to determine on which
-# system it is running.
-#
 # To customize this Makefile for your system, run config in the
 # parent directory.
-#     LOCALLIB		place for local libraries (code or tm)
-#     LOCALINCLUDE	place for local include files
-#
-# Compilation for Atari ST and MSDOS/MS-Windows is done with other files,
-# see the README file for details.
 
 # The variables below are set by config
 prefix = @prefix@
+exec_prefix = @exec_prefix@
 datarootdir = @datarootdir@
 datadir = @datadir@
 includedir = @includedir@
