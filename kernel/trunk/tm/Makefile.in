@@ -4,9 +4,6 @@
 # All rights reserved.
 #
 # To configure this Makefile, run 'configure'
-#
-# Compilation for Atari ST and MSDOS/MS-Windows is done with a
-# separately. See the file 'README' for details.
 
 VERSION=36
 
@@ -21,6 +18,7 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 libdir = @libdir@
 includedir = @includedir@
+srcdir = @srcdir@
 mandir = @mandir@
 LOCALBIN = $(bindir)
 LOCALLIB = $(libdir)

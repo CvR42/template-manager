@@ -1,8 +1,8 @@
-New in version 2.2.0 ???
+New in version 2.3.0 ???
 
 - regular expressions in .switch cases.
 - Added the .split and .globalsplit statements.
-- Added the 'tochar' template function.
+- Added the 'tochar' and 'tohex' template functions.
 - Added the 'leftstr' and 'rightstr' template functions.
 - Lots of const correctness.
 - Fixed an obscure bug in the append_ function in the llu template.
