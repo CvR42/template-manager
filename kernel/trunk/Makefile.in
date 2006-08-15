@@ -4,6 +4,7 @@ SHELL=/bin/sh
 MAKEFILE = Makefile
 
 # The Tm directories that may require compilation, testing or installation
+srcdir=@srcdir@
 DIRLIST=libtmc tm tmc
 DOCDIRLIST=$(DIRLIST) manual
 CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoconfall
@@ -20,6 +21,9 @@ DEBIANFILES = \
     debian/prerm.ex \
     debian/rules
 JUNK = dist.lst
+
+all:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
 
 help:
 	@echo "possible targets:"
@@ -40,13 +44,10 @@ tests:
 test:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done
 
-all:
-	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
-
 depend:
 	for i in $(DIRLIST); do cd $$i; $(MAKE) depend; cd ..; done
 
-install:
+install: all
 	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done
 
 uninstall:
@@ -71,14 +72,14 @@ dist.lst:
 
 # ----- Configuration
 
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
+$(srcdir)/configure: configure.in
+	cd $(srcdir) && autoconf
 
 Makefile: Makefile.in config.status
 	./config.status
+
+config.status: configure
+	./config.status --recheck
 
 # Makefile for the root of the Tm distribution
 
