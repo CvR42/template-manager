@@ -568,7 +568,7 @@ static tmstring fntr( const_origin org, const_tmstring_list sl )
 {
     tmstring oldchars;
     tmstring newchars;
-    tmbool ok;
+    int ok;
     tmstring_list nl;
     tmstring ans;
 
