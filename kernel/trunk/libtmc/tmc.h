@@ -51,8 +51,8 @@ struct _tmc_sym {
 #endif
 };
 
-typedef /*@dependent@*/ struct _tmc_sym *tmsymbol;
-typedef /*@dependent@*/ const struct _tmc_sym *const_tmsymbol;
+typedef struct _tmc_sym *tmsymbol;
+typedef const struct _tmc_sym *const_tmsymbol;
 
 struct str_tmprintstate {
     /*@exposed@*/ FILE *file;	/* output file */
