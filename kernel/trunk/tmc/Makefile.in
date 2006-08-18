@@ -3,7 +3,7 @@
 #
 # All rights reserved.
 #
-# To customize this Makefile, run configure.
+# To customize this Makefile, run configure in the parent directory.
  
 CC = @CC@
 LINKER = $(CC)
@@ -60,14 +60,10 @@ TESTFILES = \
     tmcwalktest.ct tmcanalyzetest.ct tmcwalkin tmcwalkok \
     tmcanalyzein tmcanalyzeok
 
-FOREIGNFILES = alutos.prj llutos.prj makefile.tc config.htc \
-         	makefile.tos config.hts
-
 # Files for configuration
 CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
-DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(FOREIGNFILES) \
-	    $(CONFIGUREFILES)
+DISTFILES = $(TMMODULES) $(TESTFILES) $(DOC) $(CONFIGUREFILES)
 
 TMMODULES     = tmc.ct tmc.ht \
 		calu.ct calu.ht \
@@ -112,6 +108,12 @@ OBJS = $(TMCWALKTESTOBJS) $(TMCANALIZETESTOBJS) tmccode.o alutest.o alucode.o al
 TMOUT = tmccode.c tmccode.h alucode.c alucode.h llucode.c llucode.h \
  tmcwalktest.c tmcanalyzetest.c
 
+all: tmctest llutest alutest tmcwalktest tmcanalyzetest
+
+test: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
+
+check: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
+
 help :
 	@echo " Possible make targets:"
 	@echo "all		Create local running programs."
@@ -120,15 +122,6 @@ help :
 	@echo "distfiles	List distribution files."
 	@echo "install		Install relevant files."
 	@echo "check		Run tests."
-
-#
-all: tmctest llutest alutest tmcwalktest tmcanalyzetest
-
-# Add rules for the programs themselves here.
-
-test: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
-
-check: tmctestrun llutestrun alutestrun tmcwalktestrun tmcanalyzetestrun
 
 tmcwalktest: $(TMCWALKTESTOBJS)
 	$(LINKER) $(LDFLAGS) $(TMCWALKTESTOBJS) $(LIBS) -o tmcwalktest

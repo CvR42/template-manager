@@ -1,9 +1,0 @@
-llutest.tos
-.c [-DLOGNEW -DSTAT]
-=
-PCSTART.O
-llutest.c
-llucode.c
-tmc.lib
-pcfltlib.lib
-PCSTDLIB.LIB
