@@ -7,7 +7,7 @@ MAKEFILE = Makefile
 srcdir=@srcdir@
 DIRLIST=libtmc tm tmc
 DOCDIRLIST=$(DIRLIST) manual
-CONFIGUREFILES = Makefile.in configure configure.in install-sh config.bat autoconfall
+CONFIGUREFILES = Makefile.in configure configure.in install-sh autoconfall
 DISTFILES = $(CONFIGUREFILES) $(DEBIANFILES) README INSTALL CHANGES gpl.txt lgpl.txt version.h
 DEBIANFILES = \
     debian/changelog \
@@ -93,7 +93,7 @@ MAKEFILE=Makefile
 
 # ---- Distribution-related rules ----
 
-DISTBASENAME=tm-$(VERSION)
+DISTBASENAME=tmkernel-$(VERSION)
 
 JUNK += distlist
 

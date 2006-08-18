@@ -155,13 +155,9 @@ PROGS   =
 
 MAKEFILE = Makefile
 
-FOREIGNFILES = tmc.prj testprog.prj makefile.tc objlist config.htc \
-    config.hts makefile.tos
-
 CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
-DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(FOREIGNFILES) \
-	    $(CONFIGUREFILES)
+DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(CONFIGUREFILES)
 
 $(LIBNAME): $(LIBOBJS)
 	rm -f $@

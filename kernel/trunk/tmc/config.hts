@@ -1,4 +1,0 @@
-/* Config.h, specific for Pure C for Atari ST */
-
-#define STDC_HEADERS 1
-#define HAVE_STRERROR 1

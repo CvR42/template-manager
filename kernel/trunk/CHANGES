@@ -1,16 +1,17 @@
-New in version 2.3.0 ???
+New in version 2.2.0
 
+- Preliminary support for building a Debian package.
 - regular expressions in .switch cases.
 - Added the .split and .globalsplit statements.
 - Added the 'tochar' and 'tohex' template functions.
 - Added the 'leftstr' and 'rightstr' template functions.
-- Lots of const correctness.
+- Lots of const correctness and other code cleanup.
 - Fixed an obscure bug in the append_ function in the llu template.
+- In libtmc, made cmp_tmsymbol() use strcmp(), since ordering based on
+  pointer value is non-portable.
 
 New in version 2.1.0 Tue Feb 22 17:34:14 CET 2005
 
-- In libtmc, made cmp_tmsymbol() use strcmp(), since ordering based on
-  pointer value is non-portable.
 - Some changes to the Tm macro language:
   * Added a 'for' command in the Tm macro language.
   * Changed the '-' and '/' operator in '$[]'

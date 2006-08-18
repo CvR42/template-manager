@@ -3,7 +3,7 @@
 #
 # All rights reserved.
 #
-# To configure this Makefile, run 'configure'
+# To configure this Makefile, run 'configure' in the parent directory
 
 VERSION=36
 
@@ -104,8 +104,6 @@ JUNK         = y.output testerr testout testrdir index.sed \
 		config.log
 PRECIOUSJUNK =
 
-FOREIGNFILES = tmtos.prj makefile.tc config.htc makefile.tos config.hts
-
 # Files for configuration
 CONFIGUREFILES = configure config.hin Makefile.in configure.in
 
@@ -113,7 +111,7 @@ CONFIGUREFILES = configure config.hin Makefile.in configure.in
 #       to ensure that they are more recent than them. Otherwise
 #       tm would be needed to make tm...
 DISTFILES = $(DSFILES) $(TMFILES) $(NORMALSRCS) $(HDRS) \
-    $(TMOUTPUT) $(TESTFILES) $(DOC) $(FOREIGNFILES) $(CONFIGUREFILES)
+    $(TMOUTPUT) $(TESTFILES) $(DOC) $(CONFIGUREFILES)
 
 
 all: $(PROG)
