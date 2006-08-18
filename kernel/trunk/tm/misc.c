@@ -251,7 +251,7 @@ void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type 
     collect_inheritors( &queue, types, type );
     while( queue->sz>0 ){
 	tmsymbol nm;
-	tmbool valid;
+	int valid;
 
 	queue = extract_tmsymbol_list( queue, 0, &nm, &valid );
 	if( valid ){

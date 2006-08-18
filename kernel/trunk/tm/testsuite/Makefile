@@ -17,11 +17,11 @@ PRECIOUSJUNK = *.gprof $(CHECKDONEFILES)
 
 MAKEFILE = Makefile
 
-SCRIPTS = runerr rungen runall
+SCRIPTS = runerr rungen runall rundserr
 
-TESTFILES = $(wildcard *.flags *.err *.t *.out err*.status gen*.status dserr*.status)
+TESTFILES = $(wildcard *.flags *.err *.t *.out err*.status gen*.status dserr*.status *.ds) testsub
 
-DISTFILES = $(MAKEFILE) $(TESTFILES) $(SCRIPTS) sub.ds
+DISTFILES = $(MAKEFILE) $(TESTFILES) $(SCRIPTS)
 
 all:
 

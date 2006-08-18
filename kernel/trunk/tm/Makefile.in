@@ -37,8 +37,6 @@ CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION) -g
 LDFLAGS	      = $(CFLAGS)
 LINTFLAGS = $(IPATH)
 
-TM            = tm
-
 DOC	      = README tm.1
 
 DSFILES       = tm.ds
@@ -156,10 +154,10 @@ clean:
 	cd testsuite && make clean
 
 tmcode.h: tmcode.ht tm.ds tmspec.t
-	tm tm.ds tmcode.ht > tmcode.h
+	./$(PROG) tm.ds tmcode.ht > tmcode.h
 
 tmcode.c: tmcode.ct tm.ds tmspec.t
-	tm tm.ds tmcode.ct > tmcode.c
+	./$(PROG) tm.ds tmcode.ct > tmcode.c
 
 tmpath.c: $(MAKEFILE)
 	echo 'char libpath[]="$(LOCALLIB)";' > tmpath.c
@@ -182,8 +180,10 @@ test:
 distfiles: $(MAKEFILE)
 	@echo $(DISTFILES) | tr ' ' '\012'
 
-dist.lst: $(MAKEFILE)
+dist.lst: $(MAKEFILE) testsuite
 	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+	cd testsuite && make dist.lst
+	sed -e "s/^/testsuite\//" testsuite/dist.lst >> dist.lst
 
 depend: $(DEPENDFILE)
 
