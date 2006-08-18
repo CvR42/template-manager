@@ -66,8 +66,8 @@ empty:
 	rm -f $(JUNK) $(PRECIOUSJUNK)
 	rm -f config.status config.log config.cache
 
-dist.lst:
-	echo $(DOCDISTFILES) | tr ' ' '\012' > dist.lst
+dist.lst: Makefile
+	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
 	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) dist.lst; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
 
 # ----- Configuration
@@ -112,28 +112,26 @@ $(DISTBASENAME).tar.gz $(DISTBASENAME).zip: distlist
 	rm -rf $(DISTBASENAME)
 	svn export . $(DISTBASENAME)
 	echo '#define TMKERNEL_VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
-	cd $(DISTBASENAME)/libtmc; autoconf
-	cd $(DISTBASENAME)/tm; autoconf
-	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ct > tmcode.c
-	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ht > tmcode.h
-	cd $(DISTBASENAME)/tmc; autoconf
-	cd $(DISTBASENAME)/manual; make dist.lst
-	cd $(DISTBASENAME); autoconf
+	cd $(DISTBASENAME)/libtmc && autoconf
+	cd $(DISTBASENAME)/tm && autoconf
+	cd tm && make tmcode.c tmcode.h
+	cp tm/tmcode.c tm/tmcode.h $(DISTBASENAME)/tm
+	cd $(DISTBASENAME)/tmc && autoconf
+	cd $(DISTBASENAME) && autoconf
 	tar cf $(DISTBASENAME).tar `cat distlist`
 	gzip --best -f $(DISTBASENAME).tar
 	zip -q -9 $(DISTBASENAME).zip `cat distlist`
 	rm -rf $(DISTBASENAME)
 
-deb: distlist
+deb: distlist tm-executable
 	rm -rf $(DISTBASENAME)
 	svn export . $(DISTBASENAME)
 	echo '#define TMKERNEL_VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
-	cd $(DISTBASENAME)/libtmc; autoconf
-	cd $(DISTBASENAME)/tm; autoconf
-	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ct > tmcode.c
-	cd $(DISTBASENAME)/tm; tm tm.ds tmcode.ht > tmcode.h
-	cd $(DISTBASENAME)/tmc; autoconf
-	cd $(DISTBASENAME)/manual; make dist.lst
-	cd $(DISTBASENAME); autoconf
-	-cd $(DISTBASENAME); dpkg-buildpackage -rfakeroot
+	cd $(DISTBASENAME)/libtmc && autoconf
+	cd $(DISTBASENAME)/tm && autoconf
+	cd tm && make tmcode.c tmcode.h
+	cp tm/tmcode.c tm/tmcode.h $(DISTBASENAME)/tm
+	cd $(DISTBASENAME)/tmc && autoconf
+	cd $(DISTBASENAME) && autoconf
+	-cd $(DISTBASENAME) && dpkg-buildpackage -rfakeroot
 	rm -rf $(DISTBASENAME)
