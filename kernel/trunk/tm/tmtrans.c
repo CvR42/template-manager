@@ -1481,7 +1481,7 @@ static void docall( const_Call tpl, FILE *outfile )
     tmstring_list fpl;
     unsigned int ix;
     const_macro m;
-    tmbool valid;
+    int valid;
 
     is = tpl->line;
     os = alevalto( tpl->org, &is, '\0' );
