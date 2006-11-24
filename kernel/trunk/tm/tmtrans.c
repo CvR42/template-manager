@@ -596,13 +596,16 @@ tmstring alevalto( const_origin org, char **spi, const int sc )
 	    }
 	    si++;
 	    fnval = evalfn( org, ans );
-	    v = fnval;
 	    fre_tmstring( ans );
+            if( fnval == tmstringNIL ){
+                continue;
+            }
 	    len = six + (unsigned int) strlen( fnval ) + (unsigned int) strlen( si );
 	    if( len > croom ){
 		croom = len;
 		cp = realloc_tmstring( cp, croom+1 );
 	    }
+	    v = fnval;
 	    while( *v!='\0' ){
 		cp[six++] = *v++;
 	    }
