@@ -635,6 +635,13 @@ Return $\texttt{na} / \texttt{nb}$.
 \item[\texttt{\% na nb}]\index{"%@\verb+%+}
 Return the remainder of the division of \texttt{na} by \texttt{nb}.
 
+\item[\texttt{bits n1..nn}\index{bits@\texttt{bits}}]
+Return the number of bits required to represent each
+of the values of $\texttt{n1} \cdots \texttt{nn}$.
+A value must be non-negative. The given number is assumed to be
+part of a range of values starting at 0, so the value
+$3$ requires $2$ bits, and the value $4$ requires $3$ bits.
+
 \item[\texttt{max n1..nn}\index{max@\texttt{max}}]
 Return the maximum of $\texttt{n1} \cdots \texttt{nn}$.
 The list must contain at least 1 element.
