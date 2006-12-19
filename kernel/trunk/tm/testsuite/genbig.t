@@ -243,6 +243,7 @@ Aritmetic functions:
 %: '${% 12 3}' '${% 11 3}' '${% 13 3}' '${% 3 13}'
 max: '${max -1 1 2 3 4 5}' '${max 3}' '${max}'
 min: '${min -1 1 2 3 4 5}' '${min 3}' '${min}'
+bits: '${bits -1 0 1 2 3 4 5 6 7 8}' '${bits 3}' '${bits}'
 ----
 
 Boolean:

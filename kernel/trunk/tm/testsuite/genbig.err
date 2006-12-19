@@ -21,6 +21,7 @@ genbig.t: malformed number `a'
 genbig.t: 'subtract' requires exactly two parameters, not 1
 genbig.t: 'max' requires at least one parameter
 genbig.t: 'min' requires at least one parameter
+genbig.t: The function 'bits' requires a non-negative value, but this is -1
 genbig.t: 'if' requires at least a condition expression
 genbig.t: 'index' requires at least one parameter
 genbig.t: 'member' requires at least one parameter
