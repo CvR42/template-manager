@@ -1,3 +1,8 @@
+New in version 2.2.1
+
+- A new function in the template language: 'bits'. It returns
+the number of bits required to represent a value: e.g. ${bits 255} yields 8.
+
 New in version 2.2.0
 
 - Preliminary support for building a Debian package.
