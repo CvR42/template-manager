@@ -249,6 +249,37 @@ static tmstring fnmod( const_origin org, const_tmstring_list sl )
     return newintstr( a );
 }
 
+/* bits <val>..<val>
+ *
+ * Given a range of values, return the number of bits needed to represent each
+ * value. The numbers must be positive. Value 0 requires 0 bits.
+ */
+static tmstring fnbits( const_origin org, const_tmstring_list sl )
+{
+    tmstring_list tl = new_tmstring_list();
+    tmstring ans;
+    unsigned int ix;
+
+    for( ix=0; ix<sl->sz; ix++ ){
+	int n;
+        int bits = 0;
+
+	(void) cknumpar( org, sl->arr[ix] );
+        n = atoi( sl->arr[ix] );
+	if( n<0 ){
+            origin_error( org, "The function 'bits' requires a non-negative value, but this is %d", n );
+            n = 0;
+        }
+        while( (1u<<bits)<=(unsigned int) n ){
+            bits++;
+        }
+        tl = append_tmstring_list( tl, newuintstr( (unsigned int) bits ) );
+    }
+    ans = flatstrings( tl );
+    rfre_tmstring_list( tl );
+    return ans;
+}
+
 /* -- comparison functions -- */
 
 /* < */
@@ -3003,6 +3034,7 @@ static struct fnentry fntab[] = {
      { "allfields", fnallfields },
      { "alltypes", fnalltypes },
      { "and", fnand },
+     { "bits", fnbits },
      { "call", fncall },
      { "capitalize", fncapitalize },
      { "celmlist", fncelmlist },
