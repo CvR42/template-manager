@@ -8,8 +8,8 @@
 
 /* An entry in the pending pointer list. */
 typedef struct str_ptrlog {
-    /*@observer@*/ const_tm_neutralp ptr;
-    /*@observer@*/ const char *file;
+    const_tm_neutralp ptr;
+    const char *file;
     int line;
 } ptrlog;
 
@@ -25,8 +25,8 @@ typedef struct str_id {
     } u;
 } id;
 
-static /*@null@*/ /*@only@*/ id *idlist = NULL;	/* The array of block info. */
-static /*@null@*/ /*@only@*/ ptrlog *plist = NULL; 
+static id *idlist = NULL;	/* The array of block info. */
+static ptrlog *plist = NULL; 
 static size_t plistsz = 0;	/* The index of the first free element in the list. */
 static size_t plistroom = 0;	/* The number of elements in the array. */
 static long int idsz = 0;	/* The index of the first free element in the array. */

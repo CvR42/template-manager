@@ -9,7 +9,7 @@
 static tmbool gensymworking = TMFALSE;
 static tmbool initdone = TMFALSE;
 
-typedef /*@only@*/ /*@null@*/ struct _tmc_sym *null_tmsymbol;
+typedef struct _tmc_sym *null_tmsymbol;
 
 /* This is the table of symbol strings. Each used symbol string should
  * occur here exactly once, so that a compare on equal names is
@@ -53,7 +53,7 @@ static unsigned int hash( const char *s )
 }
 
 /* Make a new storage space for a tmsymbol. */
-static /*@only@*/ tmsymbol new_tmsymbol( tmsymbol l, /*@only@*/ tmstring s )
+static tmsymbol new_tmsymbol( tmsymbol l, tmstring s )
 {
     tmsymbol nw = TM_MALLOC( tmsymbol, sizeof( *nw )  );
 
@@ -68,7 +68,7 @@ static /*@only@*/ tmsymbol new_tmsymbol( tmsymbol l, /*@only@*/ tmstring s )
    If the name occurs in the list, a pointer to the entry is returned,
    else tmsymbolNIL is returned.
  */
-static /*@null@*/ /*@dependent@*/ tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
+static tmsymbol dofind_tmsymbol( const char *name, tmsymbol list )
 {
     while( list != tmsymbolNIL ){
 	if( strcmp( list->name, name ) == 0 ){
