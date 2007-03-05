@@ -89,19 +89,13 @@ static char tm_nilptr[] = "NIL pointer";
 /* Announce that you will need room for 'rm' elements in
  *  $t_list 'l'.
  */
-$(stic_$t)/*@notnull@*/ $t_list setroom_$t_list( /*@notnull@*//*@returned@*/ $t_list l, const unsigned int rm )
+$(stic_$t) $t_list setroom_$t_list(  $t_list l, const unsigned int rm )
 {
     if( l->room>=rm ){
 	return l;
     }
     if( l->arr==NULL ){
 	l->arr = TM_MALLOC( $t *, rm * sizeof(*(l->arr)) );
-#ifdef S_SPLINT_S
-        /* We know arr can only be null if room is null, but
-         * try explaining that to Splint.
-         */
-        l->arr[0] = $tNIL;
-#endif
     }
     else {
 	l->arr = TM_REALLOC( $t *, l->arr, rm * sizeof(*(l->arr)) );
@@ -140,9 +134,9 @@ $(stic_$t)/*@notnull@*/ $t_list setroom_$t_list( /*@notnull@*//*@returned@*/ $t_
 .endforeach
 .foreach t $(need_new_list)
 #ifdef LOGNEW
-$(stic_$t)/*@only@*//*@notnull@*/ $t_list real_new_$t_list( const char *_f, const int _l )
+$(stic_$t) $t_list real_new_$t_list( const char *_f, const int _l )
 #else
-$(stic_$t)/*@only@*//*@notnull@*/ $t_list new_$t_list( void )
+$(stic_$t) $t_list new_$t_list( void )
 #endif
 {
     $t_list nw;
@@ -175,10 +169,10 @@ $(stic_$t)/*@only@*//*@notnull@*/ $t_list new_$t_list( void )
 .foreach t ${nonvirtual $(need_new)}
 /* Allocate a new instance of ${metatype $t} '$t'. */
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${allfields $t}" /*@only@*/}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}" }
 $(stic_$t)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${allfields $t}" /*@only@*/}
+.set tl ${call ansi_nproto $t "${allfields $t}" }
 $(stic_$t)$t new_$t( $(tl) )
 #endif
 {
@@ -224,8 +218,8 @@ $(stic_$t)$t new_$t( $(tl) )
  *    Freeing routines                            *
  **************************************************/
 
-.call ansi_static fre_list "void fre_$$t_list( /*@partial@*/ /*@null@*/ $$t_list )"
-.call ansi_static fre "void fre_$$t( /*@partial@*/ /*@null@*/ $$t )"
+.call ansi_static fre_list "void fre_$$t_list( $$t_list )"
+.call ansi_static fre "void fre_$$t( $$t )"
 .foreach t $(need_fre)
 .set stic_$t "static "
 .endforeach
@@ -294,7 +288,7 @@ $(stic_$t)void fre_$t( $t e )
 .endforeach
 .foreach t $(need_fre_list)
 /* Free a list of $t elements 'l'. */
-$(stic_$t)void fre_$t_list( /*@only@*/ /*@null@*/ $t_list l )
+$(stic_$t)void fre_$t_list( $t_list l )
 {
     if( l == $t_listNIL ){
 	return;
@@ -318,7 +312,7 @@ $(stic_$t)void fre_$t_list( /*@only@*/ /*@null@*/ $t_list l )
  *    Append routines                             *
  **************************************************/
 
-.call ansi_static append_list "/*@only@*/ $$t_list append_$$t_list( /*@notnull@*//*@returned@*/ $$t_list, /*@only@*/ $$t )"
+.call ansi_static append_list "$$t_list append_$$t_list( $$t_list, $$t )"
 .foreach t $(need_append_list)
 .set stic_$t "static "
 .endforeach
@@ -522,8 +516,8 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
  **************************************************/
 
 .. Forward declarations
-.call ansi_static rfre_list "void rfre_$$t_list( /*@only@*/ /*@null@*/ $$t_list )"
-.call ansi_static rfre "void rfre_$$t( /*@only@*/ /*@null@*/ $$t )"
+.call ansi_static rfre_list "void rfre_$$t_list( $$t_list )"
+.call ansi_static rfre "void rfre_$$t( $$t )"
 .foreach t ${depsort $(need_rfre)}
 .set stic_$t "static "
 .endforeach
@@ -534,7 +528,7 @@ $(stic_$t)$t_list concat_$t_list( $t_list la, $t_list lb )
 /* Recursively free an element 'e' of ${metatype $t} type '$t'
  * and all elements in it.
  */
-$(stic_$t)void rfre_$t( /*@only@*/ /*@null@*/ $t e )
+$(stic_$t)void rfre_$t( $t e )
 {
 .switch ${metatype $t}
 .case alias
@@ -824,11 +818,11 @@ $(stic_$t)void fprint_$t_list( FILE *f, const const_$t_list l )
 #define rdup_$t_list(l) real_rdup_$t_list(l,_f,_l)
 .endforeach
 .. Forward declarations
-.call ansi_static rdup_list "/*@only@*/ /*@null@*/ $$t_list real_rdup_$$t_list( const_$$t_list, const char *, const int )"
-.call ansi_static rdup "/*@only@*/ $$t /*@null@*/ real_rdup_$$t( const_$$t, const char *, const int )"
+.call ansi_static rdup_list "  $$t_list real_rdup_$$t_list( const_$$t_list, const char *, const int )"
+.call ansi_static rdup " $$t  real_rdup_$$t( const_$$t, const char *, const int )"
 #else
-.call ansi_static rdup_list "/*@only@*/ /*@null@*/ $$t_list rdup_$$t_list( const const_$$t_list )"
-.call ansi_static rdup "/*@only@*/ /*@null@*/ $$t rdup_$$t( const const_$$t )"
+.call ansi_static rdup_list "  $$t_list rdup_$$t_list( const const_$$t_list )"
+.call ansi_static rdup "  $$t rdup_$$t( const const_$$t )"
 #endif
 .foreach t $(need_rdup)
 .set stic_$t "static "
@@ -1305,8 +1299,8 @@ $(stat)tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b )
 .call ansi_static fscan_list "tmbool real_fscan_$$t_list( FILE *, $$t_list *, const char *_f, const int _l )"
 .call ansi_static fscan "tmbool real_fscan_$$t( FILE *, $$t *, const char *_f, const int _l )"
 #else
-.call ansi_static fscan_list "tmbool fscan_$$t_list( FILE *, /*@out@*/ $$t_list * )"
-.call ansi_static fscan "tmbool fscan_$$t( FILE *, /*@out@*/ $$t * )"
+.call ansi_static fscan_list "tmbool fscan_$$t_list( FILE *, $$t_list * )"
+.call ansi_static fscan "tmbool fscan_$$t( FILE *, $$t * )"
 #endif
 
 .foreach t $(need_fscan)
@@ -1321,9 +1315,9 @@ $(stat)tmbool isequal_$t_list( const const_$t_list a, const const_$t_list b )
    Set the pointer 'p' to point to that structure.
  */
 #ifdef LOGNEW
-$(stic_$t)tmbool real_fscan_$t( FILE *f, /*@out@*/ $t *p, const char *_f, const int _l )
+$(stic_$t)tmbool real_fscan_$t( FILE *f, $t *p, const char *_f, const int _l )
 #else
-$(stic_$t)tmbool fscan_$t( FILE *f, /*@out@*/ $t *p )
+$(stic_$t)tmbool fscan_$t( FILE *f, $t *p )
 #endif
 {
 .switch ${metatype $t}
@@ -1607,7 +1601,7 @@ $(stic_$t)$t_list deletelist_$t_list( $t_list l, unsigned int from, unsigned int
  *    extract_<type>_list routines                 *
  **************************************************/
 
-.call ansi_static extract_list "$$t_list extract_$$t_list( /*@returned@*/ $$t_list, const unsigned int, $$t *, int * )"
+.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, $$t *, int * )"
 .foreach t $(need_extract_list)
 .set stic_$t "static "
 .endforeach

@@ -79,10 +79,10 @@ static long int newcnt_$t_list = 0, frecnt_$t_list = 0;
 .switch ${metatype $t}
 .case tuple class constructorbase
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${allfields $t}" /*@only@*//*@null@*/}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}" }
 $(stat)$t real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${allfields $t}" /*@only@*//*@null@*/}
+.set tl ${call ansi_nproto $t "${allfields $t}" }
 $(stat)$t new_$t( $(tl) )
 #endif
 {
@@ -107,10 +107,10 @@ $(stat)$t new_$t( $(tl) )
 }
 .case constructor
 #ifdef LOGNEW
-.set tl ${call ansi_nproto_lognew $t "${allfields $t}" /*@only@*//*@null@*/}
+.set tl ${call ansi_nproto_lognew $t "${allfields $t}" }
 $(stat)${inherits $t} real_new_$t( $(tl) )
 #else
-.set tl ${call ansi_nproto $t "${allfields $t}" /*@only@*//*@null@*/}
+.set tl ${call ansi_nproto $t "${allfields $t}" }
 $(stat)${inherits $t} new_$t( $(tl) )
 #endif
 {
@@ -511,7 +511,7 @@ $(stat)$t_list deletelist_$t_list( $t_list l, const unsigned int from, unsigned 
  *    extract_<type>_list routines               *
  ************************************************/
 
-.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, /*@out@*/ $t *, /*@out@*/ int * )"
+.call ansi_static extract_list "$$t_list extract_$$t_list( $$t_list, const unsigned int, $t *, int * )"
 .foreach t $(need_extract_list)
 .if ${member $t $(want_extract_list)}
 .set stat

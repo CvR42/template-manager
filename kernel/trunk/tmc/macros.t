@@ -16,14 +16,14 @@ static ${eval "$(tpl)"};
 .endif
 .endmacro
 ..
-.. Given an element list 'el', a type inquiry function 'tf' and 
-.. a list level inquiry function 'llf', return a ANSI style function
+.. Given a type `t' representing a Tm type with elements and a list of
+.. elements of this type 'el', return a ANSI style function
 .. prototype.
-.macro ansi_nproto t el pre
+.macro ansi_nproto t el
 . set tl
 . set sep
 . foreach e $(el)
-.  set tl "$(tl)$(sep)$(pre)${type $t $e} p_$e"
+.  set tl "$(tl)$(sep)${type $t $e} p_$e"
 .  set sep ", "
 . endforeach
 . if ${== ${len $(tl)} 0}
@@ -32,14 +32,14 @@ static ${eval "$(tpl)"};
 . return "$(tl)"
 .endmacro
 ..
-.. Given a type 't' and an element list 'el', 
-.. a return a ANSI style function
+.. Given a type `t' representing a Tm type with elements and a list of
+.. elements of this type 'el', return a ANSI style function
 .. prototype, suitable for lognew purposes.
-.macro ansi_nproto_lognew t el pre
+.macro ansi_nproto_lognew t el
 . set tl
 . set sep
 . foreach e $(el)
-.  set tl "$(tl)$(sep)$(pre)${type $t $e} p_$e"
+.  set tl "$(tl)$(sep)${type $t $e} p_$e"
 .  set sep ", "
 . endforeach
 . set tl "$(tl)$(sep)const char *_f, const int _l"
