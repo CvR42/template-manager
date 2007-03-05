@@ -12,7 +12,7 @@
 static FILE *infile;
 static FILE *outfile;
 
-static /*@noreturn@*/ void bad( const char *msg )
+static void bad( const char *msg )
 {
    fprintf( stderr, "check error: %s\n", msg );
    exit( EXIT_FAILURE );

@@ -34,38 +34,38 @@ typedef struct str_SuTuple *SuTuple;
 #define TAGSuTuple 4
 
 struct str_SuWord {
-    /*@null@*/ sunit next;
+    sunit next;
     int tag;
     tmstring word;
 };
 
 struct str_SuCons {
-    /*@null@*/ sunit next;
+    sunit next;
     int tag;
-    /*@null@*/ sunit ulist;
+    sunit ulist;
 };
 
 struct str_SuList {
-    /*@null@*/ sunit next;
+    sunit next;
     int tag;
-    /*@null@*/ sunit ulist;
+    sunit ulist;
 };
 
 struct str_SuTuple {
-    /*@null@*/ sunit next;
+    sunit next;
     int tag;
-    /*@null@*/ sunit ulist;
+    sunit ulist;
 };
 
 /* Forwared declaraties. */
-static void rfresunit_list( /*@null@*/ /*@only@*/ sunit e );
-static void vertprintsunit( /*@temp@*/ TMPRINTSTATE *st, sunit l, int lev );
+static void rfresunit_list( sunit e );
+static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev );
 
 /*******************************************************************
  *    Allocation routines                                          *
  *******************************************************************/
 
-static Sstack newSstack( /*@only@*/ /*@null@*/ sunit par_ulist, /*@null@*/ /*@only@*/ Sstack next )
+static Sstack newSstack( sunit par_ulist, Sstack next )
 {
     struct str_Sstack *nw = TM_MALLOC( Sstack, sizeof( Sstack ) );
 
@@ -74,7 +74,7 @@ static Sstack newSstack( /*@only@*/ /*@null@*/ sunit par_ulist, /*@null@*/ /*@on
     return nw;
 }
 
-static sunit newSuWord( /*@null@*/ /*@only@*/ tmstring par_word )
+static sunit newSuWord( tmstring par_word )
 {
     SuWord nw;
 
@@ -85,7 +85,7 @@ static sunit newSuWord( /*@null@*/ /*@only@*/ tmstring par_word )
     return (sunit) nw;
 }
 
-static sunit newSuCons( /*@null@*/ /*@only@*/ sunit par_ulist )
+static sunit newSuCons( sunit par_ulist )
 {
     SuCons nw;
 
@@ -96,7 +96,7 @@ static sunit newSuCons( /*@null@*/ /*@only@*/ sunit par_ulist )
     return (sunit) nw;
 }
 
-static sunit newSuList( /*@null@*/ /*@only@*/ sunit par_ulist )
+static sunit newSuList( sunit par_ulist )
 {
     SuList nw;
 
@@ -107,7 +107,7 @@ static sunit newSuList( /*@null@*/ /*@only@*/ sunit par_ulist )
     return (sunit) nw;
 }
 
-static sunit newSuTuple( /*@null@*/ /*@only@*/ sunit par_ulist )
+static sunit newSuTuple( sunit par_ulist )
 {
     SuTuple nw;
 
@@ -135,7 +135,7 @@ static sunit newSuTuple( /*@null@*/ /*@only@*/ sunit par_ulist )
 /* free an element of type sunit, constructor SuWord, and all elements
    in the constructor.
  */
-static void rfreSuWord( /*@only@*/ SuWord e )
+static void rfreSuWord( SuWord e )
 {
     fre_tmstring_nolognew( e->word );
     freSuWord( e );
@@ -143,7 +143,7 @@ static void rfreSuWord( /*@only@*/ SuWord e )
 
 /* free an element of type sunit, constructor SuCons, and all elements in the constructor
  */
-static void rfreSuCons( /*@only@*/ SuCons e )
+static void rfreSuCons( SuCons e )
 {
     rfresunit_list( e->ulist );
     freSuCons( e );
@@ -152,7 +152,7 @@ static void rfreSuCons( /*@only@*/ SuCons e )
 /* free an element of type sunit, constructor SuList, and all elements in the
    constructor
  */
-static void rfreSuList( /*@only@*/ SuList e )
+static void rfreSuList( SuList e )
 {
     rfresunit_list( e->ulist );
     freSuList( e );
@@ -161,7 +161,7 @@ static void rfreSuList( /*@only@*/ SuList e )
 /* free an element of type sunit, constructor SuTuple, and all elements in the
    constructor
  */
-static void rfreSuTuple( /*@only@*/ SuTuple e )
+static void rfreSuTuple( SuTuple e )
 {
     rfresunit_list( e->ulist );
     freSuTuple( e );
@@ -171,7 +171,7 @@ static void rfreSuTuple( /*@only@*/ SuTuple e )
 /* recursively free an element of type sunit
    and all elements in it.
  */
-static void rfresunit( /*@only@*/ sunit e )
+static void rfresunit( sunit e )
 {
     switch( e->tag ){
         case TAGSuWord:
@@ -211,7 +211,7 @@ static void rfresunit_list( sunit e )
 \*******************************************************************/
 
 /* append list of sunit 'b' after list of sunit 'a' */
-static /*@null@*/ /*@only@*/ sunit appsunitlist( /*@null@*/ /*@returned@*/ sunit a, /*@null@*/ /*@only@*/ sunit b )
+static sunit appsunitlist( sunit a, sunit b )
 {
    sunit tl;
 
@@ -259,7 +259,7 @@ static void doindent( TMPRINTSTATE *st, int n )
    When counting a space for each word in the list, the netto overhead
    of the brackets is 1 spaces.
  */
-static int lencons( /*@null@*/ sunit l )
+static int lencons( sunit l )
 {
     int len = 1;	/* overhead */
 
@@ -293,7 +293,7 @@ static int lencons( /*@null@*/ sunit l )
    When counting a space and comma for each word in the list,
    the netto overhead of the brackets is 0 spaces.
  */
-static int lenlist( /*@null@*/ sunit l )
+static int lenlist( sunit l )
 {
     int len = 0;	/* overhead */
 
@@ -324,7 +324,7 @@ static int lenlist( /*@null@*/ sunit l )
    When counting a space and comma for each word in the list,
    the netto overhead of the brackets is 0 spaces.
  */
-static int lentuple( /*@null@*/ sunit l )
+static int lentuple( sunit l )
 {
     int len = 0;	/* overhead */
 
@@ -346,7 +346,7 @@ static int lentuple( /*@null@*/ sunit l )
  ******************************************************/
 
 /* Print constructor 'c' in vertical mode. */
-static void vertprintcons( /*@temp@*/ TMPRINTSTATE *st, SuCons c, int lev )
+static void vertprintcons( TMPRINTSTATE *st, SuCons c, int lev )
 {
     sunit l;
 
@@ -368,7 +368,7 @@ static void vertprintcons( /*@temp@*/ TMPRINTSTATE *st, SuCons c, int lev )
 }
 
 /* Print list 'lst' in vertical mode. */
-static void vertprintlist( /*@temp@*/ TMPRINTSTATE *st, SuList lst, int lev )
+static void vertprintlist( TMPRINTSTATE *st, SuList lst, int lev )
 {
     sunit l;
 
@@ -394,7 +394,7 @@ static void vertprintlist( /*@temp@*/ TMPRINTSTATE *st, SuList lst, int lev )
 }
 
 /* Print tuple 'tpl' in vertical mode. */
-static void vertprinttuple( /*@temp@*/ TMPRINTSTATE *st, SuTuple lst, int lev )
+static void vertprinttuple( TMPRINTSTATE *st, SuTuple lst, int lev )
 {
     sunit l;
 
@@ -426,7 +426,7 @@ static void vertprinttuple( /*@temp@*/ TMPRINTSTATE *st, SuTuple lst, int lev )
    NOTE: no return is printed after the last line, so
    that a comma can be appended when necessary.
  */
-static void vertprintsunit( /*@temp@*/ TMPRINTSTATE *st, sunit l, int lev )
+static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev )
 {
     switch( l->tag ){
 	case TAGSuWord:
@@ -451,7 +451,7 @@ static void vertprintsunit( /*@temp@*/ TMPRINTSTATE *st, sunit l, int lev )
 /* Print list consisting of sunits in 'l' in
    horizontal mode, and return a new tmstring for it.
  */
-static tmstring horprintlist( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
+static tmstring horprintlist( TMPRINTSTATE *st, sunit l )
 {
     char *bufp;
     char *v;
@@ -480,7 +480,7 @@ static tmstring horprintlist( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
 /* Print tuple consisting of sunits in 'l' in
    horizontal mode, and return a new tmstring for it.
  */
-static tmstring horprinttuple( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
+static tmstring horprinttuple( TMPRINTSTATE *st, sunit l )
 {
     char *bufp;
     char *v;
@@ -509,7 +509,7 @@ static tmstring horprinttuple( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
 /* Print constructor consisting of sunits in 'l' in
    horizontal mode, and return a new tmstring for it.
  */
-static tmstring horprintcons( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
+static tmstring horprintcons( TMPRINTSTATE *st, sunit l )
 {
     char *bufp;
     char *v;
@@ -542,14 +542,14 @@ static tmstring horprintcons( /*@temp@*/ TMPRINTSTATE *st, /*@null@*/ sunit l )
  ******************************************************/
 
 /* push current level on st->stack */
-static void pushlev( /*@temp@*/ TMPRINTSTATE *st )
+static void pushlev( TMPRINTSTATE *st )
 {
     Sstack nw = newSstack( st->curlist, st->stack );
     st->curlist = NULL;
     st->stack = nw;
 }
 
-static void poplev( /*@temp@*/ TMPRINTSTATE *st )
+static void poplev( TMPRINTSTATE *st )
 {
     Sstack e;
 
