@@ -30,7 +30,7 @@ REFMANFILES = calc.ct calc.ds calc.ht calcconf.t calclex.l \
 # Where should REFMANFILES be copied to.
 REFMANDIR = ../tmkrndoc
 
-CFLAGS        = @CFLAGS@ $(IPATH) -DCACHESZ=0 -DVERSION=$(VERSION) -DSTAT
+CFLAGS        = @CFLAGS@ $(IPATH) -DVERSION=$(VERSION) -DSTAT
 LDFLAGS	      = $(CFLAGS)
 
 TM            = @TM@
