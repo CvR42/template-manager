@@ -25,7 +25,7 @@ static void update_class_info(
     tmsymbol_list *inherits,
     Field_list *fields,
     ds_list *types,
-    const classComponent cc,
+    const_classComponent cc,
     tmbool *isvirtual
 );
 
@@ -151,7 +151,7 @@ static void check_constructor_names( const_ds_list l, const_ds t )
  * Also, ensure that if the type is a constructor type it does not have
  * the same constructor names as previous ones.
  */
-static ds_list add_ds_list( ds_list l, ds t )
+static ds_list add_ds_list( ds_list l, const_ds t )
 {
     origsymbol nm;	/* Name of the new type. */
     unsigned int ix;	/* Index of any previous def'n of it. */
@@ -632,7 +632,7 @@ static tmbool parse_class_components( classComponent_list *clp )
     return TRUE;
 }
 
-static ds_list create_subtype( tmsymbol nm, tmsymbol super, const classComponent comp )
+static ds_list create_subtype( tmsymbol nm, tmsymbol super, const_classComponent comp )
 {
     tmsymbol_list inherits;
     Field_list fields;
@@ -657,19 +657,19 @@ static void update_class_info(
     tmsymbol_list *inherits,
     Field_list *fields,
     ds_list *types,
-    const classComponent cc,
+    const_classComponent cc,
     tmbool *isvirtual
 )
 {
     switch( cc->tag ){
 	case TAGCCSuper:
-	    *inherits = append_tmsymbol_list( *inherits, to_CCSuper(cc)->super );
+	    *inherits = append_tmsymbol_list( *inherits, to_const_CCSuper(cc)->super );
 	    break;
 
 	case TAGCCFields:
 	    *fields = concat_Field_list(
 		*fields,
-		rdup_Field_list( to_CCFields(cc)->fields )
+		rdup_Field_list( to_const_CCFields(cc)->fields )
 	    );
 	    break;
 
@@ -678,7 +678,7 @@ static void update_class_info(
 	    unsigned int ix;
 	    classComponent_list ccl;
 
-	    ccl = to_CCSublist(cc)->components;
+	    ccl = to_const_CCSublist(cc)->components;
 	    for( ix=0; ix<ccl->sz; ix++ ){
 		update_class_info( nm, inherits, fields, types, ccl->arr[ix], isvirtual );
 	    }
@@ -690,7 +690,7 @@ static void update_class_info(
 	    unsigned int ix;
 	    alternative_list alts;
 
-	    alts = to_CCAlternatives(cc)->alternatives;
+	    alts = to_const_CCAlternatives(cc)->alternatives;
 	    for( ix=0; ix<alts->sz; ix++ ){
 		alternative alt = alts->arr[ix];
 
@@ -704,7 +704,7 @@ static void update_class_info(
     }
 }
 
-static ds_list normalize_class( tmsymbol nm, const classComponent_list ccl, tmbool isvirtual )
+static ds_list normalize_class( tmsymbol nm, const_classComponent_list ccl, tmbool isvirtual )
 {
     tmsymbol_list inherits;
     Field_list fields;
@@ -831,7 +831,21 @@ static tmbool parse_ds( ds_list *dl )
 	    ok = FALSE;
 	    break;
 
-	default:
+	case BAR:
+	case COLON:
+	case COMMA:
+	case INCLUDE:
+	case LCBRAC:
+	case LRBRAC:
+	case LSBRAC:
+	case NAME:
+	case NONE:
+	case PLUS:
+	case RCBRAC:
+	case RRBRAC:
+	case RSBRAC:
+	case SEMI:
+	case STRING:
 	    parserror( "'=', '~=', '::=' or '==' expected" );
 	    ok = FALSE;
 	    break;

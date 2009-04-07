@@ -3,7 +3,6 @@
  * main for 'tm': datastructure generation
  */
 
-#include <assert.h>
 #include <time.h>
 #include <tmc.h>
 
@@ -35,7 +34,7 @@ static tmbool mylextr;
 
    Table is ended by an entry with flagchar '\0'
  */
-static dbflag flagtab[] = {
+static const dbflag flagtab[] = {
     { 'e', &sevaltr, "tracing of string evaluations" },
     { 'f', &fntracing, "tracing of function evaluations" },
     { 'l', &listing, "list parsetree" },

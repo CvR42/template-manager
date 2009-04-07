@@ -27,7 +27,7 @@
 #include "srchfile.h"
 
 /* Forward declarations. */
-static Type_list update_reach_Type( Type_list tl, tmbool *visited, Type_list blocking, const Type t );
+static Type_list update_reach_Type( Type_list tl, tmbool *visited, Type_list blocking, const_Type t );
 
 /* Given a list prefix 'pre' and suffix 'suff', and a type 't',
  * return the element type of this type, or tmstringNIL if there is none.
@@ -1616,7 +1616,7 @@ static ds findtype( const_origin org, const_ds_list dl, const_tmstring t )
     return dl->arr[ix];
 }
 
-static tmbool is_virtual( ds_list types, const_tmstring type )
+static tmbool is_virtual( const_ds_list types, const_tmstring type )
 {
     tmbool ans = FALSE;
     unsigned int ix;
@@ -2519,9 +2519,9 @@ static tmbool depends_on( const char *pre, const char *suff, const_tmsymbol t, c
 
 	case TAGDsAlias:
 	{
-	    const_Type t = to_const_DsAlias(d)->type;
+	    const_Type t1 = to_const_DsAlias(d)->type;
 
-	    if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
+	    if( t1->level==0 && member_tmsymbol_list( t1->basetype, tl ) ){
 		return TRUE;
 	    }
 	    break;
@@ -2533,9 +2533,9 @@ static tmbool depends_on( const char *pre, const char *suff, const_tmsymbol t, c
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		const Field e = fl->arr[ix];
-		const Type t = e->type;
+		const Type t1 = e->type;
 
-		if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
+		if( t1->level==0 && member_tmsymbol_list( t1->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2548,9 +2548,9 @@ static tmbool depends_on( const char *pre, const char *suff, const_tmsymbol t, c
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		const Field e = fl->arr[ix];
-		const Type t = e->type;
+		const Type t1 = e->type;
 
-		if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
+		if( t1->level==0 && member_tmsymbol_list( t1->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2563,9 +2563,9 @@ static tmbool depends_on( const char *pre, const char *suff, const_tmsymbol t, c
 
 	    for( ix=0; ix<fl->sz; ix++ ){
 		const Field e = fl->arr[ix];
-		const Type t = e->type;
+		const Type t1 = e->type;
 
-		if( t->level==0 && member_tmsymbol_list( t->basetype, tl ) ){
+		if( t1->level==0 && member_tmsymbol_list( t1->basetype, tl ) ){
 		    return TRUE;
 		}
 	    }
@@ -2607,16 +2607,16 @@ static tmstring fndepsort( const_origin org, const_tmstring_list real_sl )
     nl = new_tmsymbol_list();
     while( sl->sz!=0 ){
 	tmbool found = FALSE;
-	unsigned int ix = 0;
+	unsigned int ix1 = 0;
 	unsigned int foundix = 0;
 
-	while( !found && ix<sl->sz ){
-	    t = sl->arr[ix];
+	while( !found && ix1<sl->sz ){
+	    t = sl->arr[ix1];
 	    if( !depends_on( pre, suff, t, sl ) ){
 		 found = TRUE;
-		 foundix = ix;
+		 foundix = ix1;
 	    }
-	    ix++;
+	    ix1++;
 	}
 	if( !found ){
             tmstring baddies = flatsymbols( sl );

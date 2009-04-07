@@ -13,9 +13,9 @@ extern tmbool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_l
 extern const_Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol nm );
 
 extern const_tmsymbol_list extract_inherits( const_ds_list types, const_tmsymbol type );
-extern void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type );
-extern void collect_superclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type );
-extern void collect_inheritors( tmsymbol_list *res, const_ds_list types, tmsymbol type );
+extern void collect_subclasses( tmsymbol_list *res, const_ds_list types, const_tmsymbol type );
+extern void collect_superclasses( tmsymbol_list *res, const_ds_list types, const_tmsymbol type );
+extern void collect_inheritors( tmsymbol_list *res, const_ds_list types, const_tmsymbol type );
 
 extern void collect_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type );
 extern void collect_all_fields( tmsymbol_list *fields, const_ds_list types, const_tmsymbol type );

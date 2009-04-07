@@ -172,7 +172,7 @@ tmbool any_member_tmsymbol_list( const_tmsymbol_list sl, const_tmsymbol_list l )
     return FALSE;
 }
 
-static const_Field find_field_super( const_ds_list types, tmsymbol_list supers, const_tmsymbol nm )
+static const_Field find_field_super( const_ds_list types, const_tmsymbol_list supers, const_tmsymbol nm )
 {
     unsigned int ix;
 
@@ -191,7 +191,7 @@ const_Field find_field( const_ds_list types, const_tmsymbol type, const_tmsymbol
     unsigned int pos;
     ds t;
     Field_list fl = Field_listNIL;
-    tmsymbol_list inherits = tmsymbol_listNIL;
+    tmsymbol_list inherits;
 
     pos = find_type_ix( types, type );
     if( pos >= types->sz ){
@@ -243,7 +243,7 @@ const_tmsymbol_list extract_inherits( const_ds_list types, const_tmsymbol type )
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types that inherit 'type'.
  */
-void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type )
+void collect_subclasses( tmsymbol_list *res, const_ds_list types, const_tmsymbol type )
 {
     tmsymbol_list queue;
 
@@ -268,7 +268,7 @@ void collect_subclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type 
  * and a type name 'type', collect into '*res' the transitive closure
  * of the types where 'type' inherits from.
  */
-void collect_superclasses( tmsymbol_list *res, const_ds_list types, tmsymbol type )
+void collect_superclasses( tmsymbol_list *res, const_ds_list types, const_tmsymbol type )
 {
     unsigned int ix;
     const_tmsymbol_list inherits = extract_inherits( types, type );
@@ -290,7 +290,7 @@ void collect_superclasses( tmsymbol_list *res, const_ds_list types, tmsymbol typ
  * and a type name 'type', collect into '*res' the types that inherit
  * 'type'.
  */
-void collect_inheritors( tmsymbol_list *res, const_ds_list types, tmsymbol type )
+void collect_inheritors( tmsymbol_list *res, const_ds_list types, const_tmsymbol type )
 {
     unsigned int tix;
     unsigned int ix;

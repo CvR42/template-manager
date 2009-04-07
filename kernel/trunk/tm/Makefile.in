@@ -70,7 +70,6 @@ NORMALSRCS = \
 		refex.c \
 		tm.c \
 		flag.c \
-		error.c \
 		tmexpr.c \
 		fn.c \
 		global.c \
@@ -80,7 +79,8 @@ NORMALSRCS = \
 		tmstring.c \
 		tmtrans.c \
 		var.c \
-		srchfile.c
+		srchfile.c \
+		error.c
 
 GENSRCS = tmcode.c tmpath.c
 

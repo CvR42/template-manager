@@ -216,7 +216,29 @@ static Switch construct_switch( origin org, const char *swval, const_tplelm_list
 		}
                 break;
 
-	    default:
+	    case TAGPlain:
+	    case TAGFor:
+	    case TAGForeach:
+	    case TAGWhile:
+	    case TAGIf:
+	    case TAGSwitch:
+	    case TAGSet:
+	    case TAGSplit:
+	    case TAGRename:
+	    case TAGGlobalSet:
+	    case TAGGlobalSplit:
+	    case TAGAppend:
+	    case TAGGlobalAppend:
+	    case TAGDeleteType:
+	    case TAGError:
+	    case TAGExit:
+	    case TAGRedirect:
+	    case TAGAppendfile:
+	    case TAGMacro:
+	    case TAGCall:
+	    case TAGReturn:
+	    case TAGInclude:
+	    case TAGInsert:
 		block = append_tplelm_list( block, rdup_tplelm( el->arr[ix] ) );
 		break;
 	}

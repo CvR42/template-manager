@@ -420,9 +420,7 @@ again:
 	return STRING;
     }
     if( scan_symbol( yytext ) ){
-	struct tok *rwp;
-
-	for( rwp = rwtab; rwp->tokstr != NULL; rwp++ ){
+	for( struct tok *rwp = rwtab; rwp->tokstr != NULL; rwp++ ){
 	    if( strcmp( rwp->tokstr, yytext ) == 0 ){
 		lexshow(rwp->tokval,rwp->toknm);
 		return rwp->tokval;
@@ -436,7 +434,7 @@ again:
 	lexshow( tokval, toknm );
 	return tokval;
     }
-    c = lexgetc();
+    (void) lexgetc();
     parserror( "bad token" );
     return NONE;
 }
