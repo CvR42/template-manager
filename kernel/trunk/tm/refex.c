@@ -47,7 +47,6 @@
 
 #include <stdio.h>
 #include <tmc.h>
-#include "tmdefs.h"
 #include "refex.h"
 
 #define MAXDFA 1024 /* Maximal size of the DFA. */
@@ -57,16 +56,14 @@
 #define DFA_BAD 0
 
 /* The dfa opcodes. */
-typedef enum en_dfacode {
-    PAT_END,
-    PAT_CHAR,
-    PAT_ANY,
-    PAT_INSET,
-    PAT_NOTINSET,
-    PAT_BEGINSPAN,
-    PAT_ENDSPAN,
-    PAT_ANYSPAN
-} dfacode;
+#define PAT_END	        ((char) 0)
+#define PAT_CHAR	((char) 1)
+#define PAT_ANY	        ((char) 2)
+#define PAT_INSET	((char) 3)
+#define PAT_NOTINSET	((char) 4)
+#define PAT_BEGINSPAN	((char) 5)
+#define PAT_ENDSPAN	((char) 6)
+#define PAT_ANYSPAN	((char) 7)
 
 #define MAXCHR	128
 #define CHRBIT	8
@@ -82,7 +79,7 @@ static char dfa[MAXDFA];		/* the deterministic finite automaton */
 static int sta = DFA_BAD;               /* status of lastpat */
 static const char *bopat[MAXTAG];
 static const char *eopat[MAXTAG];
-static unsigned char bittab[BITBLK];		/* bit table for PAT_INSET */
+static char bittab[BITBLK];		/* bit table for PAT_INSET */
 
 static void chset( const int c )
 {
@@ -166,7 +163,7 @@ const char *ref_comp( const char *pat )
 		}
 		tagstk[++tagi] = tagc;
 		*mp++ =  PAT_BEGINSPAN;
-		*mp++ =  tagc++;
+		*mp++ =  (char) (tagc++);
 		break;
 	    
 	    case ')':

@@ -219,13 +219,18 @@ PRECIOUSJUNK += config.status configure
 
 # --- lint ---
 
-#lint: $(DEPENDSRC) $(HDRS) gcc-lint.h co-gnu.lnt fnprop.lnt suppress.lnt
-#	lint co-gnu fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint
+lint_cmac.h:
+	touch _empty.c
+	gcc $(CFLAGS) -E -dM _empty.c > lint_cmac.h
+	rm -f _empty.c
 
-lint: $(LINTSRCS) $(HDRS) splint.flags
-	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint
+flint: $(DEPENDSRC) $(HDRS) gcc-lint.h std.lnt co-gcc.lnt fnprop.lnt suppress.lnt lint_cmac.h
+	flint std.lnt fnprop suppress $(LINTFLAGS) $(DEPENDSRC) > lint.out
 
-JUNK += lint
+splint: $(LINTSRCS) $(HDRS) splint.flags
+	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint.out
+
+JUNK += lint.out lint_cmac.h
 DISTFILES += splint.flags
 
 ###

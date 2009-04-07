@@ -1,3 +1,4 @@
 -strong(AJXB,TMBOOL)
 -parent(bool,TMBOOL)
 -strong(AcJcX,byte)
+-function( exit, __assert_fail )

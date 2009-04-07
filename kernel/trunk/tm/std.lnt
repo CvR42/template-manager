@@ -1,0 +1,5 @@
+--i/usr/local/include
+--i/usr/lib/gcc/i486-linux-gnu/4.3.3/include
+--i/usr/lib/gcc/i486-linux-gnu/4.3.3/include-fixed
+--i/usr/include
+co-gcc.lnt

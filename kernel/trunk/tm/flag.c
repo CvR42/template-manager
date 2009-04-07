@@ -5,7 +5,6 @@
 
 #include <tmc.h>
 
-#include "tmdefs.h"
 #include "flag.h"
 
 /* Given a character 'c' and a flag table 'flagtab',
