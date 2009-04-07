@@ -8,7 +8,6 @@
 
 #include <tmc.h>
 
-#include "tmdefs.h"
 #include "tmcode.h"
 #include "global.h"
 

@@ -6,6 +6,7 @@
 /* Standard UNIX libraries and functions */
 #include <stdio.h>
 #include <ctype.h>
+#include <time.h>
 #include <assert.h>
 
 /* Tm library */
@@ -1603,7 +1604,7 @@ static tmstring fnaliases( const_origin org, const_tmstring_list sl )
 /* Given a list of types 'dl', search for type with name 't'.
  * Give an error message if it is not found.
  */ 
-static ds findtype( const_origin org, ds_list dl, const_tmstring t )
+static ds findtype( const_origin org, const_ds_list dl, const_tmstring t )
 {
     unsigned int ix;
 
@@ -2114,7 +2115,7 @@ static Type_list add_Type_list( Type_list tl, Type t )
     return append_Type_list( tl, t );
 }
 
-static tmbool member_Type_list( Type_list tl, const_Type t )
+static tmbool member_Type_list( const_Type_list tl, const_Type t )
 {
     unsigned int ix;
 
@@ -2128,7 +2129,7 @@ static tmbool member_Type_list( Type_list tl, const_Type t )
     return FALSE;
 }
 
-static tmbool is_blocked_type( Type_list tl, tmsymbol t )
+static tmbool is_blocked_type( const_Type_list tl, const_tmsymbol t )
 {
     unsigned int ix;
 
@@ -2201,7 +2202,7 @@ static Type_list update_reach( Type_list tl, tmbool *visited, Type_list blocking
 /* Given a list of types 'tl', an array of 'visited' flags and a type 't',
  * update the list of types with the reach of this type.
  */
-static Type_list update_reach_Type( Type_list tl, tmbool *visited, Type_list blocking, const Type t )
+static Type_list update_reach_Type( Type_list tl, tmbool *visited, Type_list blocking, const_Type t )
 {
     unsigned int level;
 

@@ -6,6 +6,7 @@
 /* Standard UNIX libraries and expressions */
 #include <stdio.h>
 #include <ctype.h>
+#include <time.h>
 
 /* tm library */
 #include <tmc.h>

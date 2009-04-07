@@ -4,6 +4,7 @@
  */
 
 #include <ctype.h>
+#include <time.h>
 #include <tmc.h>
 
 #include "tmdefs.h"

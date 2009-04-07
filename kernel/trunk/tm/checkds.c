@@ -4,6 +4,7 @@
  */
 
 #include <assert.h>
+#include <stdio.h>
 #include <tmc.h>
 
 #include "tmdefs.h"

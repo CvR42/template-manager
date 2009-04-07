@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <tmc.h>
+#include <time.h>
 
 /* local definitions */
 #include "tmdefs.h"
@@ -51,17 +52,17 @@ typedef enum en_tmcommands {
     FOR,
     FOREACH,
     GLOBALAPPEND,
-    GLOBALSET,
-    GLOBALSPLIT,
+    GLOBALSET_COMMAND,
+    GLOBALSPLIT_COMMAND,
     IF,
-    INCLUDE,
+    INCLUDE_COMMAND,
     INSERT,
     MACRO,
     REDIRECT,
     RENAME,
     RETURN,
-    SET,
-    SPLIT,
+    SET_COMMAND,
+    SPLIT_COMMAND,
     SWITCH,
     WHILE
 } tmcommand;
@@ -99,20 +100,20 @@ static struct dotcom dotcomlist[] = {
     { "for", FOR },
     { "foreach", FOREACH },
     { "globalappend", GLOBALAPPEND },
-    { "globalset", GLOBALSET },
-    { "globalsplit", GLOBALSPLIT },
+    { "globalset", GLOBALSET_COMMAND },
+    { "globalsplit", GLOBALSPLIT_COMMAND },
     { "if", IF },
-    { "include", INCLUDE },
+    { "include", INCLUDE_COMMAND },
     { "insert", INSERT },
     { "macro", MACRO },
     { "redirect", REDIRECT },
     { "rename", RENAME },
     { "return", RETURN },
-    { "set", SET },
-    { "split", SPLIT },
+    { "set", SET_COMMAND },
+    { "split", SPLIT_COMMAND },
     { "switch", SWITCH },
     { "while", WHILE },
-    { "", SET }		/* end of table mark */
+    { "", SET_COMMAND }		/* end of table mark */
 };
 
 static const char *comname( tmcommand com )
@@ -161,7 +162,7 @@ typedef enum en_switchstate {
  * from these statements, by searching for the 'case' and 'default'
  * lines.
  */
-static Switch construct_switch( origin org, const char *swval, tplelm_list el )
+static Switch construct_switch( origin org, const char *swval, const_tplelm_list el )
 {
     unsigned int ix;
     tplelm_list block;
@@ -443,7 +444,7 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
 			tel = append_tplelm_list( tel, te );
 			break;
 
-		    case INCLUDE:
+		    case INCLUDE_COMMAND:
 			te = to_tplelm( new_Include( org, new_tmstring( p ) ) );
 			tel = append_tplelm_list( tel, te );
 			break;
@@ -453,22 +454,22 @@ static tplelm_list readtemplate( FILE *f, const_tmstring filenm, tmcommand *endc
 			tel = append_tplelm_list( tel, te );
 			break;
 
-		    case SET:
+		    case SET_COMMAND:
 			te = to_tplelm( new_Set( org, new_tmstring( p ) ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
-		    case GLOBALSET:
+		    case GLOBALSET_COMMAND:
 			te = to_tplelm( new_GlobalSet( org, new_tmstring( p ) ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
-		    case SPLIT:
+		    case SPLIT_COMMAND:
 			te = to_tplelm( new_Split( org, new_tmstring( p ) ) );
 			tel = append_tplelm_list( tel, te );
 			break;
 
-		    case GLOBALSPLIT:
+		    case GLOBALSPLIT_COMMAND:
 			te = to_tplelm( new_GlobalSplit( org, new_tmstring( p ) ) );
 			tel = append_tplelm_list( tel, te );
 			break;

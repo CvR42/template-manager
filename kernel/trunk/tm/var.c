@@ -5,6 +5,7 @@
 
 /* standard UNIX libraries */
 #include <stdio.h>
+#include <time.h>
 
 /* Tm library definitions */
 #include <tmc.h>

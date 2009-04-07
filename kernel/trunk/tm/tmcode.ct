@@ -12,8 +12,8 @@
 /* Standard tm library */
 #include <tmc.h>
 
-/* Local definitions */
-#include "tmdefs.h"
+#include <time.h>
+
 
 #include "tmcode.h"
 #include "tmstring.h"

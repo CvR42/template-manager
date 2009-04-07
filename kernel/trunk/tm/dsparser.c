@@ -3,6 +3,7 @@
  * A recursive descend parser for Tm datastructure definitions.
  */
 
+#include <time.h>
 #include <tmc.h>
 #include "tmdefs.h"
 
