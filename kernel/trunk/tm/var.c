@@ -16,7 +16,6 @@
 #include "tmcode.h"
 #include "tmstring.h"
 #include "misc.h"
-#include "error.h"
 #include "var.h"
 #include "global.h"
 #include "refex.h"

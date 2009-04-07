@@ -172,7 +172,7 @@ const char *ref_comp( const char *pat )
 		    return "Unmatched ')'";
 		}
 		*mp++ =  PAT_ENDSPAN;
-		*mp++ =  tagstk[tagi--];
+		*mp++ =  (char) tagstk[tagi--];
 		break;
 
 	    case '\\':              /* tags, backrefs .. */
