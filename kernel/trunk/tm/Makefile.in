@@ -160,7 +160,7 @@ tmcode.c: tmcode.ct tm.ds tmspec.t
 	./$(PROG) tm.ds tmcode.ct > tmcode.c
 
 tmpath.c: $(MAKEFILE)
-	echo 'char libpath[]="$(LOCALLIB)";' > tmpath.c
+	echo 'const char libpath[]="$(LOCALLIB)";' > tmpath.c
 
 tags: $(SRCS) $(HDRS)
 	ctags $(SRCS) $(HDRS)

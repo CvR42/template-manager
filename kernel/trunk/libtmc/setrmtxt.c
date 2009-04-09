@@ -1,6 +1,5 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Given a tmtext 't', ensure that it has room for at least 'sz'

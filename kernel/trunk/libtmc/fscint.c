@@ -2,7 +2,6 @@
  *
  */
 
-#include "config.h"
 #include "tmc.h"
 
 tmbool fscan_int( FILE *f, int *p )

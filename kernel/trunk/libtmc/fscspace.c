@@ -4,7 +4,6 @@
  */
 
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
 
 /* line number counter */

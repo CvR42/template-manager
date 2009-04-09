@@ -5,8 +5,8 @@
  */
 
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
+#include "config.h"
 
 /* Try to read a tmword in the buffer 'buf'. Give an error
  * message if this is not successful. 

@@ -1,6 +1,5 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
 
 tmbool fscan_tmsymbol( FILE *f, tmsymbol *s )

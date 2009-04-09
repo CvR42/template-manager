@@ -1,7 +1,6 @@
 /* File: $Id$ */
 
 #include "tmc.h"
-#include "config.h"
 
 #define SZ 10
 

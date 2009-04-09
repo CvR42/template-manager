@@ -6,8 +6,8 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
+#include "config.h"
 
 /* Given a tmtext 't', a position 'from' and a size 'sz', delete 'sz'
  * characters from the tmtext, starting at position 'from'.

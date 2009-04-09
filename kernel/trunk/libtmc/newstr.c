@@ -5,7 +5,6 @@
 
 /* other standard UNIX functions */
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
 
 static long newcnt_tmstring = 0;

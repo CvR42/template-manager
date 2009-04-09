@@ -6,12 +6,11 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include <ctype.h>
 #include "tmc.h"
 
 /* Implementation of 'print' for a 'tmsymbol'. */
-void fprint_tmsymbol( FILE *f, const tmsymbol s )
+void fprint_tmsymbol( FILE *f, const_tmsymbol s )
 {
     if( s == tmsymbolNIL ){
 	(void) fputs( "@", f );

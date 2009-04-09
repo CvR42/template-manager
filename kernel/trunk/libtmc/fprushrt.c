@@ -6,7 +6,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 void fprint_tmushort( FILE *f, const tmushort i )

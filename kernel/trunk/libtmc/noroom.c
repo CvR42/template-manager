@@ -1,6 +1,5 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Print 'out of memory' using tm_fatal. */

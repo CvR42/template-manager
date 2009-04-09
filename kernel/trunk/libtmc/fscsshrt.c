@@ -2,7 +2,6 @@
  *
  */
 
-#include "config.h"
 #include "tmc.h"
 
 tmbool fscan_tmshort( FILE *f, tmshort *p )

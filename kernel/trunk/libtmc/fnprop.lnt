@@ -4,5 +4,3 @@
 -function( exit, __assert_fail )
 -function( exit, tm_fatal )
 -function( exit, tm_badtag )
--function( pure, strlen )
--function( pure, atoi )

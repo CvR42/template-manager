@@ -6,7 +6,6 @@
  * without lognew administration, since this is trusted code.
  */
 
-#include "config.h"
 #include <ctype.h>
 #include "tmc.h"
 
@@ -451,7 +450,7 @@ static void vertprintsunit( TMPRINTSTATE *st, sunit l, int lev )
 /* Print list consisting of sunits in 'l' in
    horizontal mode, and return a new tmstring for it.
  */
-static tmstring horprintlist( TMPRINTSTATE *st, sunit l )
+static tmstring horprintlist( const TMPRINTSTATE *st, sunit l )
 {
     char *bufp;
     char *v;
@@ -480,7 +479,7 @@ static tmstring horprintlist( TMPRINTSTATE *st, sunit l )
 /* Print tuple consisting of sunits in 'l' in
    horizontal mode, and return a new tmstring for it.
  */
-static tmstring horprinttuple( TMPRINTSTATE *st, sunit l )
+static tmstring horprinttuple( const TMPRINTSTATE *st, sunit l )
 {
     char *bufp;
     char *v;
@@ -509,7 +508,7 @@ static tmstring horprinttuple( TMPRINTSTATE *st, sunit l )
 /* Print constructor consisting of sunits in 'l' in
    horizontal mode, and return a new tmstring for it.
  */
-static tmstring horprintcons( TMPRINTSTATE *st, sunit l )
+static tmstring horprintcons( const TMPRINTSTATE *st, sunit l )
 {
     char *bufp;
     char *v;

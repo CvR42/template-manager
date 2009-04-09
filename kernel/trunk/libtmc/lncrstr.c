@@ -4,7 +4,6 @@
  */
 
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
 
 /* Given a size 'sz', create an empty string with that many characters.  */

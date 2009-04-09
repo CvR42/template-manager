@@ -6,7 +6,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Implementation of 'print' for a 'tmstring'. */

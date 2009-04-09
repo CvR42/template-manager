@@ -6,7 +6,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 void fprint_double( FILE *f, const double d )

@@ -2,7 +2,6 @@
 
 #include <ctype.h>
 #include "tmc.h"
-#include "config.h"
 
 #define BACKSLASH '\\'
 

@@ -257,8 +257,8 @@ typedef const struct str_tmtext *const_tmtext;
 extern int cmp_tmtext( const const_tmtext ta, const const_tmtext tb );
 #define tmtextNIL ((tmtext)0)
 #define null_tmtext() tmtextNIL
-extern tmtext rdup_tmtext_lognew( const tmtext t, const char *file, const int line );
-extern tmtext rdup_tmtext_nolognew( const tmtext t );
+extern tmtext rdup_tmtext_lognew( const_tmtext t, const char *file, const int line );
+extern tmtext rdup_tmtext_nolognew( const_tmtext t );
 #define rfre_tmtext fre_tmtext
 extern void stat_tmtext( FILE *f );
 extern int get_balance_tmtext( void );
@@ -309,7 +309,7 @@ extern tmsymbol gen_tmsymbol( const char *pre );
 extern void flush_tmsymbol( void );
 extern tmbool fscan_tmsymbol( FILE *f, tmsymbol *s );
 extern void print_tmsymbol( TMPRINTSTATE *st, const_tmsymbol s );
-extern void fprint_tmsymbol( FILE *f, const tmsymbol s );
+extern void fprint_tmsymbol( FILE *f, const_tmsymbol s );
 
 extern tm_neutralp tm_malloc( size_t sz );
 extern tm_neutralp tm_calloc( size_t n, size_t sz );

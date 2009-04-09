@@ -8,13 +8,12 @@
 
 /* Convert a character to an escape sequence suitable for use in a string.  */
 
-#include "config.h"
 #include "tmc.h"
 
 #define BACKSLASH '\\'
 
-#define SZ 6
-static char escchar_buf[SZ];
+#define ESCCHAR_BUF_SZ 6
+static char escchar_buf[ESCCHAR_BUF_SZ];
 
 /* Given an unsigned int 'code' representing the ASCII code of a character, 
  * return a pointer to a string representing this character in an
@@ -43,7 +42,7 @@ const char *tm_escapestring( const int code )
 	    case '\t': *p++ = BACKSLASH; *p++ = 't'; break;
 	    case '\v': *p++ = BACKSLASH; *p++ = 'v'; break;
 	    default:
-		(void) snprintf( escchar_buf, SZ, "\\%03o", (code & 0xffU) );
+		(void) snprintf( escchar_buf, ESCCHAR_BUF_SZ, "\\%03o", (code & 0xffU) );
 		return escchar_buf;
 	}
     }

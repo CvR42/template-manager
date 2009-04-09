@@ -6,9 +6,8 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
-#include <string.h>
+#include "config.h"
 
 /* Given two pointers to tmtext blocks 'd' and 's', and a block size 'sz',
  * copy 'sz' characters from 's' to 'd'. The blocks should not overlap,

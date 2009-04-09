@@ -1,6 +1,5 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Allocate the given amount of memory and check if

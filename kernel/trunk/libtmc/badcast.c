@@ -6,7 +6,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 tm_neutralp tm_badcast( const char *file, const int line )

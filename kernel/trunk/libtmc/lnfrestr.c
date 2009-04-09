@@ -3,7 +3,6 @@
  * fre_tmstring() version that is used when LOGNEW is activated.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 /* De-allocate space for tmstring 's', and report it to lognew. */

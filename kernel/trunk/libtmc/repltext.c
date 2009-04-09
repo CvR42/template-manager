@@ -2,7 +2,6 @@
 
 #include <string.h>
 #include "tmc.h"
-#include "config.h"
 
 /* Given a tmtext 't', a range 'from' to 'to' and a tmtext 'nw',
  * replace the tmtext in range 'from'..'to' in 't' with the

@@ -68,8 +68,8 @@
 #define MAXCHR	128
 #define CHRBIT	8
 #define BITBLK	(MAXCHR/CHRBIT)
-#define BLKIND	0170U
-#define BITIND	07U
+#define BLKIND	0170
+#define BITIND	07
 
 /* Forward declaration. */
 static const char *pmatch( const char *lp, const char *ap );
@@ -229,7 +229,11 @@ tmbool ref_exec( const char *lp )
     return TMTRUE;
 }
 
-#define isinset(x,y) (((x)[((y)&BLKIND)>>3] & (1<<((y)&BITIND)))!=0)
+static int isinset(const char *x, int y)
+{
+    return ((x[(y&BLKIND)>>3] & (1<<(y&BITIND)))!=0);
+}
+
 
 /* pmatch:
  *	internal routine for the hard part

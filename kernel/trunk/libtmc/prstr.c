@@ -1,7 +1,7 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
+#include "config.h"
 
 /* Implementation of 'print' for a 'tmstring'. */
 void print_tmstring( TMPRINTSTATE *st, const_tmstring s )

@@ -5,7 +5,6 @@
  */
 
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
 
 /* Skip all `isspace()' characters, and count the open brackets (`(')

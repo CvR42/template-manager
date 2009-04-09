@@ -1,7 +1,7 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
+#include "config.h"
 
 /* Given a tmtext datastructure 't' and a string 'str', add the string
  * to the tmtext.
