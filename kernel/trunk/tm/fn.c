@@ -585,7 +585,7 @@ static tmstring tr_tmstring( tmstring s, const_tmstring oldchars, const_tmstring
     unsigned int ix = 0;
 
     while( s[ix] != '\0' ){
-	char *pos = strchr( oldchars, s[ix] );
+	const char *pos = strchr( oldchars, s[ix] );
 
 	if( pos != (char *) NULL ){
 	    s[ix] = newchars[pos-oldchars];
@@ -691,7 +691,7 @@ static tmstring fnleftstr( const_origin org, const_tmstring_list sl )
 /* fnrightstr <n> <word> .. <word> */
 static tmstring fnrightstr( const_origin org, const_tmstring_list sl )
 {
-    int n;
+    size_t n;
     tmstring_list nl;
     unsigned int ix;
     tmstring ans;
@@ -701,11 +701,12 @@ static tmstring fnrightstr( const_origin org, const_tmstring_list sl )
 	return new_tmstring( "" );
     }
     if( cknumpar( org, sl->arr[0] ) ){
-        n = atoi( sl->arr[0] );
-        if( n<0 ){
+        int val = atoi( sl->arr[0] );
+        if( val<0 ){
             origin_error( org, "'rightstr' requires a non-negative length" );
-            n = 0;
+            val = 0;
         }
+        n = (size_t) val;
     }
     else {
         n = 0;

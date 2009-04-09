@@ -3,8 +3,8 @@
  * Symbol table manager.
  */
 
-#include "config.h"
 #include "tmc.h"
+#include "config.h"
 
 static tmbool gensymworking = TMFALSE;
 static tmbool initdone = TMFALSE;

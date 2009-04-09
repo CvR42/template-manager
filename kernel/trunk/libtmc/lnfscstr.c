@@ -4,9 +4,9 @@
  * Version for use with lognew.
  */
 
-#include "config.h"
 #include <ctype.h>
 #include "tmc.h"
+#include "config.h"
 
 /* Try to read a tmstring in the buffer 'buf'. Give an error
  * message if this is not successful. A tmstring may contain

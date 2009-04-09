@@ -2,7 +2,6 @@
    new_tmstring() version that is used when LOGNEW is activated.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Allocate space for tmstring 's', copy the text into it, and report

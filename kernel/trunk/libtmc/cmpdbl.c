@@ -6,7 +6,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 int cmp_double( const double a, const double b )

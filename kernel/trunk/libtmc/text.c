@@ -1,6 +1,5 @@
 /* File: $Id$ */
 
-#include "config.h"
 #include "tmc.h"
 
 static long newcnt_tmtext = 0;

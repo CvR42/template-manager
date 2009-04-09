@@ -79,7 +79,7 @@ static const char helptext[] =
 ;
 
 /* Scan command line arguments and options as passed by 'argc' and 'argv'. */
-static void scanargs( int argc, char **argv, const_tmstring lp )
+static void scanargs( int argc, const char **argv, const_tmstring lp )
 {
     tmbool printusage = FALSE;
     int exitcode = EXIT_SUCCESS;
@@ -177,7 +177,7 @@ static void scanargs( int argc, char **argv, const_tmstring lp )
 	    case 's':
 	    case 'S':
 	    {
-		char *s;
+		const char *s;
 		char *pos;
 
 		if( argv[0][2] != '\0' ){

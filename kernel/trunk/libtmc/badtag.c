@@ -6,7 +6,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 void tm_badtag( const char *file, const int line, const int tag ) 

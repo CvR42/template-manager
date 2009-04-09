@@ -70,7 +70,7 @@ static struct sctnode *newsctnode( /*@null@*/ struct sctnode *nxt, int c )
     nw->sctchar = c;
     nw->sub     = SCTNIL;
     nw->valid   = FALSE;
-    nw->tokval = 0;
+    nw->tokval = NONE;
     nw->toknm = NULL;
     return nw;
 }
@@ -128,8 +128,6 @@ struct tok {
     lextok tokval;		/* associated token value for yacc */
     const char *toknm;		/* name for debugging */
 };
-
-#define TOKNIL (struct tok *) 0;
 
 /* A table of tokens. Is terminated by an entry with empty string. */
 static struct tok toktab[] =
@@ -300,7 +298,7 @@ static tmbool scan_string( tmstring *s )
 	    }
 	}
 	if( !done ){
-	    bufp[ix++] = c;
+	    bufp[ix++] = (char) c;
 	}
     }
     bufp[ix] = '\0';
@@ -420,7 +418,9 @@ again:
 	return STRING;
     }
     if( scan_symbol( yytext ) ){
-	for( struct tok *rwp = rwtab; rwp->tokstr != NULL; rwp++ ){
+        struct tok *rwp;
+
+	for( rwp = rwtab; rwp->tokstr != NULL; rwp++ ){
 	    if( strcmp( rwp->tokstr, yytext ) == 0 ){
 		lexshow(rwp->tokval,rwp->toknm);
 		return rwp->tokval;

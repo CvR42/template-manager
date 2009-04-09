@@ -1,7 +1,6 @@
 /* File: $Id$ */
 
 #include "tmc.h"
-#include "config.h"
 
 /* Given a tmtext 't' and a start and end position 'from' and 'to',
  * return a new tmtext that contains the tmtext between these positions.

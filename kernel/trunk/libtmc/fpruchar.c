@@ -5,7 +5,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 void fprint_tmuchar( FILE *f, const tmuchar c )

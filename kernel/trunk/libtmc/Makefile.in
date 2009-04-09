@@ -236,8 +236,16 @@ depend:
 
 LINTFLAGS = #+posixstrictlib
 
-lint: $(LINTSRCS) splint.flags config.h tmc.h
-	splint $(LINTFLAGS) -f splint.flags $(LINTSRCS) > lint
+lint_cmac.h:
+	touch _empty.c
+	gcc $(CFLAGS) -E -dM _empty.c > lint_cmac.h
+	rm -f _empty.c
+        
+flint: $(LINTSRCS) config.h tmc.h co-gcc.lnt fnprop.lnt suppress.lnt lint_cmac.h
+	flint std.lnt fnprop suppress $(LINTFLAGS) $(LINTSRCS) > lint.out
+
+splint: $(LINTSRCS) splint.flags config.h tmc.h
+	splint -f splint.flags $(LINTSRCS) > lint.out
 
 JUNK += lint
 DISTFILES += splint.flags

@@ -1,7 +1,6 @@
 /* File: $Id$
  */
 
-#include "config.h"
 #include "tmc.h"
 
 tmbool fscan_tmuchar( FILE *f, tmuchar *p )

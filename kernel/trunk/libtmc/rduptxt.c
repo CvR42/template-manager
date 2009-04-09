@@ -1,10 +1,9 @@
 /* File: $Id$ */
 
 #include "tmc.h"
-#include "config.h"
 
 /* Given a text 't', return a duplicate text. */
-tmtext rdup_tmtext_nolognew( const tmtext t )
+tmtext rdup_tmtext_nolognew( const_tmtext t )
 {
     tmtext nw = new_tmtext_nolognew();
 

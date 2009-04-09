@@ -3,7 +3,6 @@
  * Test of library programs.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 #define TESTARRAYSIZE 13000

@@ -4,7 +4,6 @@
  */
 
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
 
 /* Try to read a tmtext in the buffer 'buf'. Give an error

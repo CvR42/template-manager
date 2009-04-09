@@ -5,7 +5,6 @@
  * All rights reserved.
  */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Implementation of 'fprint' for a 'tmword', */

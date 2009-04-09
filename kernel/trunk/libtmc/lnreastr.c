@@ -4,7 +4,6 @@
  */
 
 #include <ctype.h>
-#include "config.h"
 #include "tmc.h"
 
 /* Reallocate tmstring size to 'sz'. Notice that the tmstring

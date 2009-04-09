@@ -55,11 +55,11 @@ static unsigned int types_hashval( const char *s )
     unsigned int v = 0;
 
     while( *s!= '\0' ){
-	 v = (v ^ *s);
+         char c = *s++;
+	 v = (v ^ ((unsigned int) c));
 	 v<<=1;
 	 if( (v & TYPES_HASHWIDTH) != 0 ) v++;
 	 v &= TYPES_HASHMASK;
-	 s++;
     }
     return v;
 }

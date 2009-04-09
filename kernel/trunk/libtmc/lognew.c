@@ -3,8 +3,8 @@
  * Log new_ and fre_ actions and their origin in the users' code.
  */
 
-#include "config.h"
 #include "tmc.h"
+#include "config.h"
 
 /* An entry in the pending pointer list. */
 typedef struct str_ptrlog {
@@ -63,7 +63,7 @@ static void print_plist( FILE *f )
         (void) fputs( "plist is NULL\n", f );
         return;
     }
-    for( ix=0l; ix<plistsz; ix++ ){
+    for( ix=0; ix<plistsz; ix++ ){
 	fprintf( f, "%s(%d) p=%p\n", plist[ix].file, plist[ix].line, plist[ix].ptr );
     }
 }
@@ -76,7 +76,7 @@ static void print_simple_plist( FILE *f )
         (void) fputs( "plist is NULL\n", f );
         return;
     }
-    for( ix=0l; ix<plistsz; ix++ ){
+    for( ix=0; ix<plistsz; ix++ ){
 	fprintf( f, "%s(%d)\n", plist[ix].file, plist[ix].line );
     }
 }
@@ -188,7 +188,7 @@ void tm_fre_logid( const long int i )
    if( idlist == NULL ){
        return;
    }
-   if( i<0l || i>idsz ){
+   if( i<0 || i>idsz ){
 	(void) snprintf( buf, TM_ERRLEN, "Id out of range in tm_fre_logid(): %ld", i );
         tm_fatal( "", 0, buf );
    }
@@ -212,8 +212,8 @@ static void print_idlist( FILE *f )
         return;
     }
     prcnt = 0l;
-    for( ix=0l; ix<idsz; ix++ ){
-	if( idlist[ix].line>=0l ){
+    for( ix=0L; ix<idsz; ix++ ){
+	if( idlist[ix].line>=0L ){
 	    fprintf( f, "%s(%d) id=%lu\n", idlist[ix].u.filenm, idlist[ix].line, (unsigned long) ix );
 	    prcnt++;
 	}

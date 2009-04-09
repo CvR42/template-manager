@@ -10,11 +10,10 @@
  * required character. Else complain.
  */
 
-#include "config.h"
 #include <ctype.h>
 #include "tmc.h"
 
-#define SZ 15
+#define BUFSZ 15
 
 /* Skip all `isspace()' characters, and try to character 'needc'.
    Compose an error message in 'tm_errmsg' and return 1 if this
@@ -23,8 +22,8 @@
 tmbool tm_fneedc( FILE *f, int needc )
 {
     int c;
-    char charstr[SZ];
-    char needcharstr[SZ];
+    char charstr[BUFSZ];
+    char needcharstr[BUFSZ];
 
     if( tm_fscanspace( f ) ){
 	return TMTRUE;
@@ -32,19 +31,19 @@ tmbool tm_fneedc( FILE *f, int needc )
     c = fgetc( f );
     if( c != needc ){
 	if( c == EOF ){
-	    (void) snprintf( charstr, SZ, "EOF" );
+	    (void) snprintf( charstr, BUFSZ, "EOF" );
 	}
 	else if( c>=' ' && c<='~' ){
-	    (void) snprintf( charstr, SZ, "char '%c'", c );
+	    (void) snprintf( charstr, BUFSZ, "char '%c'", c );
 	}
 	else {
-	    (void) snprintf( charstr, SZ, "char 0x%02x", (unsigned int) c );
+	    (void) snprintf( charstr, BUFSZ, "char 0x%02x", (unsigned int) c );
 	}
 	if( c>=' ' && c<='~' ){
-	    (void) snprintf( needcharstr, SZ, "'%c'", needc );
+	    (void) snprintf( needcharstr, BUFSZ, "'%c'", needc );
 	}
 	else {
-	    (void) snprintf( needcharstr, SZ, "0x%02x", (unsigned int) needc );
+	    (void) snprintf( needcharstr, BUFSZ, "0x%02x", (unsigned int) needc );
 	}
 	(void) snprintf(
 	    tm_errmsg,

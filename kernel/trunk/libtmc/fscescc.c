@@ -3,7 +3,6 @@
  * Scan a (possibly escaped) character from the given file.
  */
 
-#include "config.h"
 #include <ctype.h>
 #include "tmc.h"
 

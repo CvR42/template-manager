@@ -8,7 +8,6 @@
 
 /* File: cmptxt.c */
 
-#include "config.h"
 #include "tmc.h"
 
 /* Compare two texts. */

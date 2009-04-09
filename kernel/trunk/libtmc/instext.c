@@ -1,8 +1,6 @@
 /* File: $Id$ */
 
-#include <string.h>
 #include "tmc.h"
-#include "config.h"
 
 /* Given a tmtext 't', a position 'pos' and a tmtext 'nw',
  * insert 'nw' at position 'pos' of 't'. If 'pos' falls beyond
