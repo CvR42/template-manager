@@ -263,23 +263,28 @@ llutest.c: xxtest.c
 LINTTARGETS = tmcwalktest.lint tmcanalyzetest.lint tmctest.lint alutest.lint llutest.lint
 lint: $(LINTTARGETS)
 
-JUNK += LINTTARGETS
+lint_cmac.h:
+	touch _empty.c
+	gcc $(CFLAGS) -E -dM _empty.c > lint_cmac.h
+	rm -f _empty.c
 
-LINTRUN = splint -f splint.flags $(LINTFLAGS)
+JUNK += LINTTARGETS lint_cmac.h
 
-tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h splint.flags
+LINTRUN = flint std.lnt fnprop suppress $(LINTFLAGS)
+
+tmcwalktest.lint: tmcwalktest.c tmccode.c tmccode.h lint_cmac.h
 	-$(LINTRUN) tmcwalktest.c tmccode.c > tmcwalktest.lint
 
-tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h splint.flags
+tmcanalyzetest.lint: tmcanalyzetest.c tmccode.c tmccode.h lint_cmac.h
 	-$(LINTRUN) tmcanalyzetest.c tmccode.c > tmcanalyzetest.lint
 
-tmctest.lint: tmctest.c tmccode.c tmccode.h splint.flags
+tmctest.lint: tmctest.c tmccode.c tmccode.h lint_cmac.h
 	-$(LINTRUN) tmctest.c tmccode.c > tmctest.lint
 
-alutest.lint: alutest.c alucode.c alucode.h splint.flags
+alutest.lint: alutest.c alucode.c alucode.h lint_cmac.h
 	-$(LINTRUN) alutest.c alucode.c > alutest.lint
 
-llutest.lint: llutest.c llucode.c llucode.h splint.flags
+llutest.lint: llutest.c llucode.c llucode.h lint_cmac.h
 	-$(LINTRUN) llutest.c llucode.c > llutest.lint
 
 

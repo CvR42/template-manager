@@ -67,7 +67,7 @@ static long newcnt_$t = 0, frecnt_$t = 0;
 
 /* Error strings. */
 .if ${len $(need_delete_list) $(need_deletelist_list) $(need_extractlist_list) $(need_extract_list) $(need_insert_list) $(need_insertlist_list) $(need_concat_list)}
-static char tm_nilptr[] = "NIL pointer";
+static const char tm_nilptr[] = "NIL pointer";
 .endif
 
 #ifndef FATALTAG
@@ -1623,11 +1623,11 @@ $(stic_$t)$t_list extract_$t_list(
 	FATAL( tm_nilptr );
     }
     if( pos >= l->sz ){
-	*valid = TMFALSE;
+	*valid = 0;
         *e = $tNIL;
 	return l;
     }
-    *valid = TMTRUE;
+    *valid = 1;
     *e = l->arr[pos];
     l->sz--;
     for( ix=pos; ix<l->sz; ix++ ){
