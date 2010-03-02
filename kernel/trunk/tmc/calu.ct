@@ -30,16 +30,16 @@
  */
 
 #ifndef FIRSTROOM
-#define FIRSTROOM 0
+#define FIRSTROOM 0U
 #endif
 
 .if ${len $(need_stat_list) $(need_stat)}
 /* Counters for allocation and freeing. */
 .foreach t $(need_stat_list)
-static long newcnt_$t_list = 0, frecnt_$t_list = 0;
+static long newcnt_$t_list = 0L, frecnt_$t_list = 0L;
 .endforeach
 .foreach t $(need_stat)
-static long newcnt_$t = 0, frecnt_$t = 0;
+static long newcnt_$t = 0L, frecnt_$t = 0L;
 .endforeach
 
 .endif
@@ -137,7 +137,7 @@ $(stic_$t)$t_list new_$t_list( void )
 
     nw = TM_MALLOC( $t_list, sizeof(*nw) );
     nw->sz = 0;
-#if FIRSTROOM==0
+#if FIRSTROOM==0U
     nw->arr = ($t *) 0;
     nw->room = 0;
 #else
