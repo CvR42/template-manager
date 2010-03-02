@@ -552,7 +552,7 @@ static tmstring fntolower( const_origin org, const_tmstring_list sl )
 /* tochar */
 static tmstring fntochar( const_origin org, const_tmstring_list sl )
 {
-    tmstring ans = create_tmstring( 1+sl->sz );
+    tmstring ans = create_tmstring( (size_t) (1+sl->sz) );
     char *p = ans;
     unsigned int ix;
 
@@ -885,7 +885,7 @@ static tmstring fnsort( const_origin org, const_tmstring_list sl )
 
     (void) org;
     cmpf = sortcmp;
-    qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
+    qsort( sl->arr, (size_t) sl->sz, sizeof( sl->arr[0] ), cmpf );
     ans = flatstrings( sl );
     return ans;
 }
@@ -914,7 +914,7 @@ static tmstring fnsizesort( const_origin org, const_tmstring_list sl )
 
     (void) org;
     cmpf = sizesortcmp;
-    qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
+    qsort( sl->arr, (size_t) sl->sz, sizeof( sl->arr[0] ), cmpf );
     ans = flatstrings( sl );
     return ans;
 }
@@ -1024,7 +1024,7 @@ static tmstring fnuniq( const_origin org, const_tmstring_list sl )
 
     (void) org;
     cmpf = sortcmp;
-    qsort( sl->arr, sl->sz, sizeof( sl->arr[0] ), cmpf );
+    qsort( sl->arr, (size_t) sl->sz, sizeof( sl->arr[0] ), cmpf );
     nl = new_tmstring_list();
     prevstr = tmstringNIL;
     for( ix=0; ix<sl->sz; ix++ ){
