@@ -1,8 +1,0 @@
-tree == ( v:int, t:[tree] );
-
-btree ::= BTree l:btree r:btree | BLeaf v:int;
-
-ctree = 
-    treeBranch: { v:int, l:ctree, r:ctree } |
-    treeNull: {}
-    ;

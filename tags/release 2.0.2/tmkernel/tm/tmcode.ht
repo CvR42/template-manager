@@ -1,8 +1,0 @@
-.. Tm - an interface code generator.
-.. Author: C. van Reeuwijk.
-..
-.. All rights reserved.
-..
-.. file: tmcode.ht
-.insert tmspec.t
-.include tmc.ht

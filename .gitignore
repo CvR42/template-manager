@@ -1,0 +1,5 @@
+*.cache
+*.a
+*.o
+config.log
+config.status

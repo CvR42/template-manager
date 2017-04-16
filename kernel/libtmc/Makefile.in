@@ -1,0 +1,270 @@
+# Tm - an interface code generator.
+# Author: C. van Reeuwijk.
+#
+# All rights reserved.
+ 
+#  Tm C support library makefile
+
+# To customize this Makefile for your system, run config in the
+# parent directory.
+
+# The variables below are set by config
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datarootdir = @datarootdir@
+datadir = @datadir@
+includedir = @includedir@
+libdir = @libdir@
+LOCALLIB = $(libdir)
+LOCALINCLUDE = $(includedir)
+CC = @CC@
+RANLIB=@RANLIB@
+INSTALL=@INSTALL@
+INSTALL_DATA=@INSTALL_DATA@
+UNINSTALL_DATA=rm -f
+UNINSTALL_DIRECTORY=rmdir
+
+DBUGFLAGS = -g -DLOGNEW -DSTAT
+
+# Name of archive of this library
+LIBNAME = libtmc.a
+LIBS = @LIBS@ $(LIBNAME)
+
+LDFLAGS =
+
+CFLAGS = @CFLAGS@ $(DBUGFLAGS) -I$(LOCALINCLUDE)
+
+LINKER = @CC@
+
+INSTHFILES    = tmc.h
+
+TESTSRCS = testprog.c
+TESTFILES = testin goodout gooderr $(TESTSRCS)
+
+JUNK  = testprog testerr testout tmp core mon.out gmon.out \
+	tags makelog log dist.lst config.log
+
+PRECIOUSJUNK = 
+
+SRCS	= $(LIBSRCS) $(TESTSRCS)
+LINTSRCS = $(SRCS)
+
+HDRS = tmc.h
+
+
+LIBSRCS	 = \
+                badtag.c \
+                cmpdbl.c \
+                cmpstrtx.c \
+                cmptxt.c \
+                cpyblock.c \
+                delbtext.c \
+                errmsg.c \
+                escstr.c \
+                fatal.c \
+                badcast.c \
+                fneedc.c \
+                fprdbl.c \
+                fprint.c \
+                fprlong.c \
+                fprschar.c \
+                fprsshrt.c \
+                fprstr.c \
+                fprsym.c \
+                fprtext.c \
+                fpruchar.c \
+                fpruint.c \
+                fprulong.c \
+                fprushrt.c \
+                fprwrd.c \
+                fscbool.c \
+                fsccbrac.c \
+                fsccons.c \
+                fscdbl.c \
+                fscescc.c \
+                fscflt.c \
+                fscint.c \
+                fsclong.c \
+                fscobrac.c \
+                fscschar.c \
+                fscspace.c \
+                fscsshrt.c \
+                fscstr.c \
+                fscsym.c \
+                fsctext.c \
+                fscuchar.c \
+                fscuint.c \
+                fscul.c \
+                fscushrt.c \
+                fscwrd.c \
+                ietxt.c \
+                insblock.c \
+                instext.c \
+                lncrstr.c \
+                lnfrestr.c \
+                lnfretxt.c \
+                lnfscstr.c \
+                lnfsctxt.c \
+                lnfscwrd.c \
+                lnnewstr.c \
+                lnnewtxt.c \
+                lnreastr.c \
+                lns2t.c \
+                lnsltxt.c \
+                lnt2s.c \
+                lognew.c \
+                lrduptxt.c \
+                newstr.c \
+                noroom.c \
+                prdbl.c \
+                print.c \
+                prlong.c \
+                propt.c \
+                prschar.c \
+                prsshrt.c \
+                prstr.c \
+                prsym.c \
+                prtext.c \
+                pruchar.c \
+                pruint.c \
+                prulong.c \
+                prushrt.c \
+                prwrd.c \
+                putctext.c \
+                putstext.c \
+                rduptxt.c \
+                reastr.c \
+                repltext.c \
+                s2t.c \
+                setrmtxt.c \
+                sltxt.c \
+                symbol.c \
+                t2s.c \
+                text.c \
+                tmcalloc.c \
+                tmmalloc.c \
+                tmreallc.c
+
+LIBOBJS	    = $(LIBSRCS:.c=.o)
+
+TESTOBJS      = testprog.o
+
+DOC	= README.md
+
+PROGS   =
+
+MAKEFILE = Makefile
+
+CONFIGUREFILES = configure config.hin Makefile.in configure.in
+
+DISTFILES = $(LIBSRCS) $(HDRS) $(DOC) $(TESTFILES) $(CONFIGUREFILES)
+
+$(LIBNAME): $(LIBOBJS)
+	rm -f $@
+	ar cr $@ $(LIBOBJS)
+	$(RANLIB) $@
+
+# Installation dependent make variables.
+
+help :
+	@echo " Possible make targets:"
+	@echo "all		Create local running programs."
+	@echo "clean		Free disk space."
+	@echo "distfiles	List distribution files."
+	@echo "install		Install relevant files."
+	@echo "check		Run tests."
+
+all: $(LIBNAME) testprog
+
+# Add rules for the programs themselves here.
+
+# An explicit rule is necessary to enforce debugging flags, including LOGNEW
+testprog.o: testprog.c
+	$(CC) -c $(CFLAGS) -I$(LOCALINCLUDE) $< -o $*.o
+
+testprog: $(TESTOBJS) $(LIBNAME)
+	$(LINKER) $(LDFLAGS) $(TESTOBJS) $(LIBS) -o testprog
+
+check: testprog testin
+	-./testprog
+	diff testout goodout
+	diff testerr gooderr
+
+install: $(LIBNAME) $(INSTHFILES)
+	-$(INSTALL) -d $(LOCALLIB)
+	-$(INSTALL) -d $(LOCALINCLUDE)
+	$(INSTALL_DATA) $(LIBNAME) $(LOCALLIB)/$(LIBNAME)
+	$(RANLIB) $(LOCALLIB)/$(LIBNAME)
+	$(INSTALL_DATA) $(INSTHFILES) $(LOCALINCLUDE)
+
+uninstall:
+	$(UNINSTALL_DATA) $(LOCALLIB)/$(LIBNAME)
+	$(UNINSTALL_DATA) ${addprefix $(LOCALINCLUDE)/,$(INSTHFILES)}
+	-$(UNINSTALL_DIRECTORY) $(LOCALINCLUDE)
+	-$(UNINSTALL_DIRECTORY) $(LOCALLIB)
+
+tags: $(LIBSRCS) $(TESTSRCS)
+	ctags $(LIBSRCS) $(TESTSRCS)
+
+clean:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+
+distclean:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+	rm -f $(LIBNAME) testprog
+	rm -f cconfig.log config.status config.cache
+
+empty:
+	rm -f $(LIBOBJS) $(TESTOBJS) $(JUNK)
+	rm -f $(LIBNAME) testprog
+	rm -f $(PRECIOUSJUNK)
+
+distfiles:
+	@echo $(DISTFILES) | tr ' ' '\012'
+
+dist.lst: $(DISTFILES)
+	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+
+.c.o:
+	$(CC) -c $(CFLAGS) -D__TM_LIBTMC_INTERN__ -o $@ $<
+
+# TODO: do something better here
+depend:
+	echo "Nothing is done"
+
+# ---- lint rules ----
+
+LINTFLAGS = #+posixstrictlib
+
+lint_cmac.h:
+	touch _empty.c
+	gcc $(CFLAGS) -E -dM _empty.c > lint_cmac.h
+	rm -f _empty.c
+        
+flint: $(LINTSRCS) config.h tmc.h co-gcc.lnt fnprop.lnt suppress.lnt lint_cmac.h
+	flint std.lnt fnprop suppress $(LINTFLAGS) $(LINTSRCS) > lint.out
+
+splint: $(LINTSRCS) splint.flags config.h tmc.h
+	splint -f splint.flags $(LINTSRCS) > lint.out
+
+JUNK += lint
+DISTFILES += splint.flags
+
+
+# Configure-related rules.
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+
+JUNK += config.log config.cache
+PRECIOUSJUNK += config.status configure
+
+###
+$(LIBOBJS): tmc.h config.h
+$(TESTOBJS): tmc.h config.h

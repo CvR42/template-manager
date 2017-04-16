@@ -1,3 +1,0 @@
-// Describe the properties of special functions
--function(exit,tm_fatal)
--strong(B,TMBOOL)	// TMBOOL is a boolean type

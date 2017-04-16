@@ -1,5 +1,0 @@
-/* This config.h version is specific for Borland C++ 4.52. */
-
-#define huge
-#define STDC_HEADERS 1
-#define HAVE_STRERROR 1

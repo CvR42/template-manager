@@ -1,0 +1,140 @@
+# Makefile for the root of the Tm distribution
+
+SHELL=/bin/sh
+MAKEFILE = Makefile
+
+# The Tm directories that may require compilation, testing or installation
+srcdir=@srcdir@
+DIRLIST=libtmc tm tmc
+DOCDIRLIST=$(DIRLIST) manual
+CONFIGUREFILES = Makefile.in configure configure.in install-sh autoconfall
+DISTFILES = $(CONFIGUREFILES) $(DEBIANFILES) README.md INSTALL CHANGES gpl.txt lgpl.txt version.h
+DEBIANFILES = \
+    debian/changelog \
+    debian/compat \
+    debian/control \
+    debian/copyright \
+    debian/docs \
+    debian/postinst.ex \
+    debian/postrm.ex \
+    debian/preinst.ex \
+    debian/prerm.ex \
+    debian/rules
+JUNK = dist.lst
+
+all:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) all; cd ..; done
+
+help:
+	@echo "possible targets:"
+	@echo "all      Compile all sources."
+	@echo "check    Test all sources."
+	@echo "install  Install all compilation results."
+	@echo "clean    Delete intermediate files."
+	@echo "empty    Delete files that can be re-generated. * Use only after a successful install *"
+	@echo "dist.lst	Create a list of files to distribute."
+	@echo "dist	The distribution packages."
+
+check:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) check; cd ..; done
+
+tests:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) tests; cd ..; done
+
+test:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) test; cd ..; done
+
+depend:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) depend; cd ..; done
+
+install: all
+	for i in $(DIRLIST); do cd $$i; $(MAKE) install; cd ..; done
+
+uninstall:
+	for i in $(DIRLIST); do cd $$i; $(MAKE) uninstall; cd ..; done
+
+distclean:
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) distclean; cd ..; done
+	rm -f $(JUNK)
+
+clean:
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) clean; cd ..; done
+	rm -f $(JUNK)
+
+empty:
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) empty; cd ..; done
+	rm -f $(JUNK) $(PRECIOUSJUNK)
+	rm -f config.status config.log config.cache
+
+%/dist.lst: % %/Makefile
+	cd $* && make dist.lst
+
+dist.lst: Makefile $(DOCDIRLIST) tm/dist.lst tmc/dist.lst libtmc/dist.lst manual/dist.lst
+	echo $(DISTFILES) | tr ' ' '\012' > dist.lst
+	for i in $(DOCDIRLIST); do cd $$i; $(MAKE) dist.lst; cd ..; sed -e "s/^/$$i\//" $$i/dist.lst >> dist.lst; done
+
+# ----- Configuration
+
+$(srcdir)/configure: configure.in
+	cd $(srcdir) && autoconf
+
+Makefile: Makefile.in config.status
+	./config.status
+
+config.status: configure
+	./config.status --recheck
+
+# Makefile for the root of the Tm distribution
+
+# The version numbers below reflect release versions for the various
+# packages.
+VERSION = 2.2.1
+
+SHELL=/bin/sh
+FTPDIR=$(HOME)/website/software/Tm
+MAKEFILE=Makefile
+
+# ---- Distribution-related rules ----
+
+DISTBASENAME=tmkernel-$(VERSION)
+
+JUNK += distlist
+
+PACKAGES = $(DISTBASENAME).tar.gz $(DISTBASENAME).zip 
+
+PRECIOUSJUNK += $(PACKAGES)
+
+dist: $(PACKAGES)
+
+SVNURL="https://gforge.cs.vu.nl/svn/templatemanager/kernel/trunk"
+
+distlist: $(MAKEFILE) dist.lst tm tmc libtmc
+	sed -e "s/^/$(DISTBASENAME)\//" dist.lst > distlist
+
+$(DISTBASENAME).tar.gz $(DISTBASENAME).zip: distlist
+	rm -rf $(DISTBASENAME)
+	svn export . $(DISTBASENAME)
+	echo '#define TMKERNEL_VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
+	cd $(DISTBASENAME)/libtmc && autoconf
+	cd $(DISTBASENAME)/tm && autoconf
+	cd tm && make tmcode.c tmcode.h
+	cp tm/tmcode.c tm/tmcode.h $(DISTBASENAME)/tm
+	cd $(DISTBASENAME)/tmc && autoconf
+	cd $(DISTBASENAME) && autoconf
+	tar cf $(DISTBASENAME).tar `cat distlist`
+	gzip --best -f $(DISTBASENAME).tar
+	zip -q -9 $(DISTBASENAME).zip `cat distlist`
+	rm -rf $(DISTBASENAME)
+
+deb: distlist tm-executable
+	rm -rf $(DISTBASENAME)
+	svn export . $(DISTBASENAME)
+	echo '#define TMKERNEL_VERSION "$(VERSION)"' > $(DISTBASENAME)/tm/version.h
+	cd $(DISTBASENAME)/libtmc && autoconf
+	cd $(DISTBASENAME)/tm && autoconf
+	cd tm && make tmcode.c tmcode.h
+	cp tm/tmcode.c tm/tmcode.h $(DISTBASENAME)/tm
+	cd $(DISTBASENAME)/tmc && autoconf
+	cd $(DISTBASENAME) && autoconf
+	-cd $(DISTBASENAME) && dpkg-buildpackage -rfakeroot
+	rm -rf $(DISTBASENAME)

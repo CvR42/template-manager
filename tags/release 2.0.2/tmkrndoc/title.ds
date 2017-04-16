@@ -1,8 +1,0 @@
-data = { ix:int, nm:string };
-
-tree =
-    TLeaf: { e:data } |
-    TBranch: { l:tree, r:tree } |
-    TList: { l:[tree] };
-
-forest = { nm:string, l:[tree] };

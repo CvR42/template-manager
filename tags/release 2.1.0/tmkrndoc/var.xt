@@ -1,3 +1,0 @@
-.set b +
-.set bla b
-$b, $(b), $bla, $(bla), $($(bla))
