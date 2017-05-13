@@ -5,3 +5,7 @@ DIRS=`find $H -name configure.in -print | sed -e 's/configure.in//'`
 
 for i in $DIRS; do cd $i; autoconf; echo -n .; done
 echo
+cd $H
+# Horrible hack to discourage make from trying to build tmcode.[ch]
+# before there is a working tm executable.
+touch tm/tmcode.c tm/tmcode.h
