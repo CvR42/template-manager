@@ -85,7 +85,11 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
     unsigned int ix;
     unsigned int hv;
 
-    if( prev_types_ix<types->sz && ( types->arr[prev_types_ix]->name->sym == t ) ){
+    if(
+	prev_types_ix<types->sz &&
+       	(types->arr[prev_types_ix]->name != origsymbolNIL) &&
+       	(types->arr[prev_types_ix]->name->sym == t) 
+    ){
 	return prev_types_ix;
     }
     if( t == tmsymbolNIL ){
@@ -93,7 +97,11 @@ unsigned int find_type_ix( const_ds_list types, const_tmsymbol t )
     }
     hv = types_hashval( t->name );
     ix = types_hash[hv];
-    if( ix<types->sz && types->arr[ix]->name->sym == t ){
+    if(
+	ix<types->sz &&
+       	types->arr[ix]->name != origsymbolNIL &&
+       	types->arr[ix]->name->sym == t
+    ){
 	prev_types_ix = ix;
 	return ix;
     }
