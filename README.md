@@ -54,9 +54,9 @@ All Tm-related software is licensed under the Gnu Public License (GPL), or
 the Library Gnu Public License (LGPL).
 
 Tm is used extensively in our Timber compiler, a static compiler for
-a superset of Java. The Timber compiler has its own website at
+a superset of Java. The Timber compiler has its own GitHub repository at 
 
-<http://www.pds.twi.tudelft.nl/timber>
+<https://github.com/CvR42/timber-compiler>
 
 To give an indication of how intensively Tm is used in the Timber compiler:
 the Spar/Java frontend of the compiler has 47433 lines of code in Tm input
