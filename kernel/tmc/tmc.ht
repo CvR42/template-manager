@@ -45,15 +45,29 @@ typedef struct str_$t_list *$t_list;
 typedef const struct str_$t_list *const_$t_list;
 .endforeach
 .foreach t ${depsort $(need_ds)}
+.switch ${metatype $t}
+.case alias
+.error Internal error: alias $t still present.
+.case constructor constructorbase class
+#ifdef __cplusplus
+class str_$t;
+typedef str_$t *$t;
+typedef const str_$t *const_$t;
+#else
 typedef struct str_$t *$t;
 typedef const struct str_$t *const_$t;
+#endif
+.case tuple
+typedef struct str_$t *$t;
+typedef const struct str_$t *const_$t;
+.endswitch
 .endforeach
 
 .foreach t $(need_ds)
-#define $tNIL ($t)0
+#define $tNIL (($t)0)
 .endforeach
 .foreach t $(need_ds_list)
-#define $t_listNIL ($t_list)0
+#define $t_listNIL (($t_list)0)
 .endforeach
 
 .. taggedtypes contains a list of all types that have a TAG<type>
